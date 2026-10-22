@@ -1,0 +1,18 @@
+# Local environments and generated outputs
+.venv/
+.venv-isaac/
+.bootstrap/
+__pycache__/
+.pytest_cache/
+*.pyc
+MUJOCO_LOG.TXT
+*.code-workspace
+
+# Only explicitly tracked runtime sources and final evidence are retained here.
+/build/*
+/artifacts/*
+/third_party/ovphysx-0.4.13/
+
+# Tests tied only to superseded search and simulator runners.
+/tests/test_anytime_plan.py
+/tests/test_carry_probe.py
