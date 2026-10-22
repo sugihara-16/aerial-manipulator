@@ -1,0 +1,27 @@
+[package]
+title = "amsrr_det physics diagnostics"
+version = "0.1.0"
+[dependencies]
+"omni.kit.usd.layers" = {}
+"omni.kit.loop-isaac" = {}
+"omni.usd" = {}
+"omni.physx" = {}
+"omni.physics.tensors" = {}
+"omni.physx.tensors" = {}
+
+[settings]
+app.window.enabled = false
+app.renderer.enabled = false
+app.useFabricSceneDelegate = false
+physics.updateToUsd = false
+physics.updateVelocitiesToUsd = false
+app.settings.persistent = false
+app.extensions.registryEnabled = false
+[settings.app.exts.folders]
+'++' = [
+  "/home/leus/.local/share/mamba/envs/isaaclab3/lib/python3.12/site-packages/isaacsim/exts",
+  "/home/leus/.local/share/mamba/envs/isaaclab3/lib/python3.12/site-packages/isaacsim/extscache"
+]
+[settings.exts."omni.kit.registry.nucleus"]
+cachePath = "/home/leus/amsrr_det/build/kit_runtime/extension_cache"
+cachePrune.enabled = false
