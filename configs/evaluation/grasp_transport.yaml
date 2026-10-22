@@ -1,0 +1,52 @@
+# Implementation-selected evaluation panel, frozen before task-controller tuning.
+# User requirements: grasp/transport only, >=80%, no condition-concentrated failures,
+# simulation only, realistic compute time. Counts/ranges below are our test design.
+version: 1
+# Latest user instruction: generate the structure, spawn it, then execute.
+assembly_required: false
+seed_development: 194
+seed_holdout: 90261019
+holdout_cases: 120
+families: [box, elongated_box, cylinder, ellipsoid, triangular_prism, tapered_box]
+yaw_bins_rad:
+  - [0.0, 1.5707963267948966]
+  - [1.5707963267948966, 3.141592653589793]
+  - [3.141592653589793, 4.71238898038469]
+  - [4.71238898038469, 6.283185307179586]
+cases_per_family_yaw: 5
+# Resting orientations vary: large face/small face for boxes and prisms,
+# standing/lying for cylinders. Initial states settle freely on support.
+resting_orientations: [large_face, small_face]
+object_dimensions_m: [0.18, 0.50]
+object_mass_kg: [0.40, 1.00]
+source_xy_m: [-0.5, 0.5]
+support_height_m: [0.15, 0.35]
+transport_distance_m: [0.20, 0.50]
+minimum_lift_clearance_m: 0.10
+# Source spec 19.4.1 uses 1 mm for non-contact geometry. The 3 cm value in
+# its TaskSpec example is not a universal self-collision requirement.
+part_clearance_m: 0.001
+environment_clearance_m: 0.03
+placement_position_tolerance_m: 0.03
+placement_orientation_tolerance_rad: 0.20
+placement_angular_speed_tolerance_rad_s: 0.10
+placement_speed_tolerance_m_s: 0.02
+post_release_dwell_s: 2.0
+module_limit: 8
+object_friction: 0.6
+floor_friction: 0.8
+selected_gripper_friction: 4.5
+contact_force_limit_n: 30.0
+contact_moment_limit_nm: 5.0
+penetration_limit_m: 0.002
+contact_slip_displacement_limit_m: 0.030
+# A fixed gripper material point relative to the object, not the pressure center.
+# Pressure redistribution across an unchanged flat patch is logged separately.
+contact_slip_metric: contact_material_displacement_m
+minimum_success_fraction: 0.80
+required_strata: [family, yaw_bin, family_x_yaw_bin, resting_orientation, position_bin, size_bin, mass_bin]
+planning_target_s: 15.0
+control_period_s: 0.01
+# All generated inputs stay in the denominator, including planning failures.
+# Inspect repeated failure conditions in addition to the listed strata.
+# Reusing a holdout to tune changes its role to development; do not report it as held-out.
