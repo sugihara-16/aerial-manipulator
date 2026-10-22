@@ -1,0 +1,360 @@
+{
+  "scope": "fresh_generation_spawn_task",
+  "method_scope": "One continuous open-start grasp/transport evaluation of local mechanics.\n\nFresh generation uses static equations only; task simulation never selects a\ncandidate. --plan/--goal are explicit development replay options, not catalogues.\n",
+  "execution_entrypoint": "fresh_task_input",
+  "engine": "MuJoCo",
+  "execution_configuration_sha256": "3384c37ba1e7b5019bcac85e23c0e2d99692e5f1d9001389b5fe8a035e0758af",
+  "execution_configuration": {
+    "predictive_motion": true,
+    "condensed_solve": true,
+    "fast_solve": false,
+    "minimize_input": true,
+    "global_structure_search": true,
+    "structure_workers": 32,
+    "governed_motion": true,
+    "distance_closing": true,
+    "steps": 40,
+    "contact_counts": null,
+    "structure_contact_scope": "all nonempty free-pad subsets, 1..2N+2",
+    "duration": 110.0,
+    "generated_feedback": true,
+    "rigid_object_feedback": false,
+    "momentum_feedback": true,
+    "finite_slip_preload": true,
+    "bounded_allocation": true,
+    "hold_withdrawal_pose": true,
+    "preload_floor": true,
+    "contact_geometry_tolerance": 1e-12,
+    "contact_geometry_iterations": 1000,
+    "supported_load_transfer": false,
+    "constrained_load": false,
+    "interval_motion": false,
+    "interval_acquisition": false,
+    "constrained_motion": true,
+    "staged_approach": true,
+    "planned_withdrawal": false,
+    "hybrid_withdrawal": true,
+    "background_withdrawal": true,
+    "finite_acquisition_support": false,
+    "process_withdrawal": true,
+    "normal_tracking": false,
+    "internal_tracking": false,
+    "planned_preload_floor": false
+  },
+  "contact_engine": {
+    "sha256": "94578eaf23efafa2781dc77514811d28fd02cdcc4155d1bfdb574d4ae9a6fac3"
+  },
+  "predictive_motion": true,
+  "task_success": true,
+  "reason": "task_completed",
+  "phase": "RETREAT",
+  "fast_solve": false,
+  "distance_closing": true,
+  "condensed_solve": true,
+  "object_position_error_m": 4.548931084077473e-05,
+  "object_orientation_error_rad": 0.07987791039492928,
+  "object_velocity": [
+    1.0486120276879408e-06,
+    0.0007339959324195028,
+    -0.000502142139961131,
+    0.00340240899864171,
+    -0.0027587057474213047,
+    -0.004025351559069957
+  ],
+  "initial_planning_s": 9.981161545962095,
+  "planning": [
+    {
+      "phase": "REFINE",
+      "background": true,
+      "wall_s": 0.6292696259915829,
+      "simulated_wait_s": 0.6299999999985317
+    },
+    {
+      "phase": "LOAD",
+      "wall_s": 1.1387979611754417e-05
+    },
+    {
+      "phase": "DESCEND",
+      "wall_s": 7.909256964921951e-07
+    }
+  ],
+  "simulation_s": 57.59000000018397,
+  "wall_s": 61.84597881510854,
+  "governed_paths": {
+    "LIFT": {
+      "scope": "One-dimensional reference progress with discrete nominal stopping distance.\n\nThe fixed braking model is conditional, not a robust stopping certificate for\nthe articulated/contact system. Actual task execution remains independently\naudited. An empty feasible intersection is a failure, never a fictitious hold.\n",
+      "nominal_brake_m_s2": 0.05412658773652742,
+      "maximum_speed_m_s": 0.0703125,
+      "steps": 499,
+      "nominal_stopping_only": true,
+      "position_m": 0.15,
+      "speed_m_s": 2.7690662683923324e-15,
+      "elapsed_s": 4.989999999999938
+    },
+    "CARRY": {
+      "scope": "One-dimensional reference progress with discrete nominal stopping distance.\n\nThe fixed braking model is conditional, not a robust stopping certificate for\nthe articulated/contact system. Actual task execution remains independently\naudited. An empty feasible intersection is a failure, never a fictitious hold.\n",
+      "nominal_brake_m_s2": 0.06572758956026133,
+      "maximum_speed_m_s": 0.1280739651495821,
+      "steps": 801,
+      "nominal_stopping_only": true,
+      "position_m": 0.40983668847866284,
+      "speed_m_s": 0.0,
+      "elapsed_s": 8.009999999999874
+    },
+    "DESCEND": {
+      "scope": "One-dimensional reference progress with discrete nominal stopping distance.\n\nThe fixed braking model is conditional, not a robust stopping certificate for\nthe articulated/contact system. Actual task execution remains independently\naudited. An empty feasible intersection is a failure, never a fictitious hold.\n",
+      "nominal_brake_m_s2": 0.05412658153624837,
+      "maximum_speed_m_s": 0.07031249194560124,
+      "steps": 341,
+      "nominal_stopping_only": true,
+      "position_m": 0.14998594187892383,
+      "speed_m_s": 0.001211156512793628,
+      "elapsed_s": 3.4099999999999713
+    }
+  },
+  "audit": {
+    "engine": "MuJoCo",
+    "contact_force_components": "normal_and_friction",
+    "clearance_detection": "refitted_body_bounds",
+    "support_representation": "native_unsplit",
+    "clearance_queries": 3203,
+    "clearance_motion_bound_reuses": 227157,
+    "peak_contact_force_n": 8.125218735394315,
+    "peak_contact_moment_nm": 0.8282373766324679,
+    "peak_penetration_m": 0.0003210194010803493,
+    "peak_joint_speed_rad_s": 0.5190601015286883,
+    "peak_effort_ratio": 1.0,
+    "joint_limit_violation_rad": 0.0,
+    "peak_unsaturated_servo_effort_ratio": 1.392058002125069,
+    "maximum_servo_reference_error_rad": null,
+    "actuator_saturation_time_s": {
+      "m0/pitch_dock_mech_joint1": 0.00125,
+      "m0/pitch_dock_mech_joint2": 0.0027500000000000007,
+      "m2/yaw_dock_mech_joint2": 0.01250000000000001,
+      "m2/pitch_dock_mech_joint1": 0.009750000000000007,
+      "m3/pitch_dock_mech_joint1": 0.0005,
+      "m4/yaw_dock_mech_joint2": 0.009250000000000006
+    },
+    "maximum_lift_clearance_m": 0.14999998416451943,
+    "minimum_transport_clearance_m": 0.14998636439772667,
+    "time_since_gripper_contact_s": 25.298750000120798,
+    "minimum_part_gap_capped_m": 0.000999008972699994,
+    "minimum_environment_gap_capped_m": 0.03,
+    "clearance_violations": [],
+    "contact_center_displacement_m": 4.034028154157817e-05,
+    "contact_material_displacement_m": 4.544412346481525e-05,
+    "longest_carried_contact_gap_s": 0.0,
+    "unexpected_contacts": []
+  },
+  "material": {
+    "anchors_captured_pads": [
+      0,
+      1,
+      2
+    ],
+    "maximum_displacement_m": [
+      0.0002355382530145418,
+      0.0001606305271572557,
+      0.0016091914944162565
+    ],
+    "maximum_sampled_path_m": 0.004151215963959937
+  },
+  "control_time_s": {
+    "mean": 0.005229590154784899,
+    "p95": 0.009346607257612051,
+    "maximum": 0.04921425296925008
+  },
+  "prediction_errors": {
+    "samples": 0,
+    "object_position_m": 0.0,
+    "joint_position_rad": 0.0,
+    "object_linear_velocity_m_s": 0.0,
+    "joint_velocity_rad_s": 0.0,
+    "pad_normal_force_n": 0.0
+  },
+  "motion_methods": {
+    "lift": "finite_slip_reference",
+    "carry": "finite_slip_reference",
+    "descent": "finite_slip_reference"
+  },
+  "phase_control_time_s": {
+    "APPROACH": {
+      "mean": 0.005968201221069219,
+      "p95": 0.007313099282328039,
+      "maximum": 0.008015732048079371
+    },
+    "ACQUIRE": {
+      "mean": 0.00940505900105007,
+      "p95": 0.012141643208451564,
+      "maximum": 0.04921425296925008
+    },
+    "REFINE": {
+      "mean": 0.011939691323465828,
+      "p95": 0.012545086396858095,
+      "maximum": 0.013317232020199299
+    },
+    "LOAD": {
+      "mean": 0.00180024779448131,
+      "p95": 0.0019017900340259075,
+      "maximum": 0.011979974107816815
+    },
+    "LIFT": {
+      "mean": 0.006244409567152032,
+      "p95": 0.010510530462488527,
+      "maximum": 0.024343030992895365
+    },
+    "CARRY": {
+      "mean": 0.004790634780947585,
+      "p95": 0.0050662865745835,
+      "maximum": 0.007009493187069893
+    },
+    "DESCEND": {
+      "mean": 0.0048819875265662255,
+      "p95": 0.005164961982518435,
+      "maximum": 0.0055010681971907616
+    },
+    "UNLOAD": {
+      "mean": 0.006773049062273154,
+      "p95": 0.007863144704606384,
+      "maximum": 0.029023173032328486
+    },
+    "RETREAT": {
+      "mean": 0.004356968764817531,
+      "p95": 0.004589746007695794,
+      "maximum": 0.014957856154069304
+    }
+  },
+  "contacts": 3,
+  "modules": 5,
+  "release": {
+    "planning_s": 0.8812363529577851,
+    "duration_s": 25.392815759222803,
+    "withdrawal": "lift",
+    "clearance": {
+      "opening": {
+        "queries": 3,
+        "reuses": 0,
+        "intervals": 3
+      },
+      "withdrawal": {
+        "queries": 11,
+        "reuses": 0,
+        "intervals": 11
+      }
+    },
+    "repairs": [],
+    "background_plan": {
+      "wall_s": 0.8939262109342963,
+      "simulated_wait_s": 0.9000000000000008,
+      "worker": "process"
+    }
+  },
+  "control_timing_includes_failed_calls": true,
+  "finite_basis_observation_s": 10.649999999997855,
+  "actuation_wrench": {
+    "scope": "Audit requested total actuator wrench against independent rotor-site sums.\n\nInternal joint torques cancel in the whole assembly. No contact-force signal\nenters the controller; this class only records issuance and held-period error.\n",
+    "commands": 1941,
+    "steps": 77640,
+    "peak_issuance_difference": [
+      3.1657010346464176e-11,
+      9.874878692528455e-12,
+      1.7037393718055682e-10,
+      5.46265255252365e-11,
+      1.3717738056584494e-10,
+      1.491989864987886e-11
+    ],
+    "peak_held_difference": [
+      0.00021354047311444857,
+      0.00022699120204074975,
+      1.2888685887446627e-05,
+      0.08958881034175192,
+      0.09649787358495487,
+      0.00025771182357814393
+    ],
+    "accumulated_difference_impulse": [
+      9.944724884438268e-05,
+      -0.0001753808875803142,
+      2.45313230417917e-06,
+      -0.14336754741347235,
+      0.15440448127427012,
+      0.00012702508754133625
+    ],
+    "units": "force N, moment N m; integrated N s, N m s"
+  },
+  "generated_feedback": {
+    "method": "bounded_whole_momentum_geometry",
+    "scope": "Outer correction from whole-system momentum and physical input geometry.\n\nNo contact derivative, fitted response or force observation is used. The\nallocation minimizes mass-weighted relative forcing for a prescribed whole\nwrench. That objective is not a bound on contact forces or internal motion:\nthe supplied nominal and joint servos must independently preserve the grasp.\nGround support remains an external disturbance, not a fictitious control.\n",
+    "period_s": 0.01,
+    "preparation_s": 0.0024089738726615906,
+    "wrench_balance_max": 7.105427357601002e-15,
+    "relative_forcing_metric": [
+      [
+        2.0390314213419445,
+        -0.0011820802070534257,
+        -0.03277500738953011,
+        -0.004235919134339381,
+        0.019111983873392288,
+        0.012059026733035376
+      ],
+      [
+        -0.0011820802070534257,
+        2.0724902314628757,
+        0.018316921466307402,
+        -0.02197169211821024,
+        1.2659134543214338e-05,
+        -0.07342491548792147
+      ],
+      [
+        -0.03277500738953011,
+        0.018316921466307402,
+        1.7244807364557881,
+        -0.0018553623883046778,
+        0.0014197956263742144,
+        0.004661426624099155
+      ],
+      [
+        -0.004235919134339381,
+        -0.02197169211821024,
+        -0.0018553623883046778,
+        0.03441041462863076,
+        -0.0010640047945922756,
+        0.010420853354994555
+      ],
+      [
+        0.019111983873392288,
+        1.2659134543214338e-05,
+        0.0014197956263742144,
+        -0.0010640047945922756,
+        0.03164461436543963,
+        -0.0060071561174844315
+      ],
+      [
+        0.012059026733035376,
+        -0.07342491548792147,
+        0.004661426624099155,
+        0.010420853354994555,
+        -0.0060071561174844315,
+        0.21465778631674368
+      ]
+    ],
+    "rigid_model_radius": 0.9950124490876779,
+    "instantaneous_allocation_only": true,
+    "normal_tracking": false,
+    "internal_tracking": false,
+    "rigid_object_only": false,
+    "acquisition_minimum_normal_load_n": 0.5695048911462163,
+    "acquisition_preload_activation": "all pads touching and existing tangent-speed criterion retained for 0.3 s",
+    "clipped_control_periods": 0,
+    "timing_scope": "grasp feedback and transfer planning run while control continues; ordinary withdrawal planning also runs in background; legacy rotor transition remains synchronous"
+  },
+  "condensed_solver": {
+    "calls": 612,
+    "fallbacks": 1,
+    "statuses": {
+      "Solved": 525,
+      "AlmostSolved": 86,
+      "InsufficientProgress": 1
+    },
+    "largest_original_residual": 2.9307745519346895e-07
+  }
+}

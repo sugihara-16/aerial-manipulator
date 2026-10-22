@@ -1,0 +1,1269 @@
+{
+  "scope": "One continuous open-start grasp/transport evaluation of local mechanics.\n\nFresh generation uses static equations only; task simulation never selects a\ncandidate. --plan/--goal are explicit development replay options, not catalogues.\n",
+  "initial_q": [
+    -0.08674060239685072,
+    -0.5918059353433968,
+    0.5091732986484312,
+    0.027097799886933584,
+    -0.0688494176369636,
+    -0.3804426208360217,
+    0.9218399422805228,
+    -0.138124755187089,
+    4.209724431184813e-15,
+    0.24537778864949,
+    -0.030987233134176183,
+    -2.471825631977969e-07,
+    -0.013743509122583217,
+    1.5460143766079455e-17,
+    0.24341234199559825,
+    -1.5718536917618105e-18,
+    0.15452418513105498,
+    1.5307999999999997,
+    0.1015047184161636,
+    -0.13538555073239,
+    -1.5307999999998023,
+    -0.05656578622131122,
+    0.0,
+    -0.20744925668387126,
+    -0.3872822415556082,
+    0.28491691940977765,
+    -0.49587192433726535,
+    0.5040942715941704,
+    0.5040942715941705,
+    -0.49587192433726546
+  ],
+  "open_q": [
+    0.0895199954732083,
+    -0.7690972257061479,
+    0.31575027837473874,
+    0.027097799886933584,
+    -0.0688494176369636,
+    -0.3804426208360217,
+    0.9218399422805228,
+    -0.138124755187089,
+    4.209724431184813e-15,
+    0.24537778864949,
+    -0.030987233134176183,
+    -2.471825631977969e-07,
+    -0.013743509122583217,
+    1.5460143766079455e-17,
+    0.24341234199559825,
+    -1.5718536917618105e-18,
+    0.15452418513105498,
+    1.5307999999999997,
+    0.1015047184161636,
+    -0.13538555073239,
+    -1.5307999999998023,
+    -0.05656578622131122,
+    0.0,
+    -0.20744925668387126,
+    -0.3872822415556082,
+    0.28491691940977765,
+    -0.49587192433726535,
+    0.5040942715941704,
+    0.5040942715941705,
+    -0.49587192433726546
+  ],
+  "closed_q": [
+    0.08091043621470424,
+    -0.7755911327988857,
+    0.3057110381817022,
+    0.02603086304735975,
+    -0.05329478905128134,
+    -0.45279661949979866,
+    0.8896388486338395,
+    -0.138124755187089,
+    9.363981600115061e-19,
+    0.24537778864949,
+    0.22659769657089746,
+    -2.8177292224986944e-08,
+    -0.013743509122583217,
+    2.0931992154553563e-19,
+    0.24341234199559825,
+    2.14890493082291e-22,
+    0.15452418513105498,
+    1.48394548863008,
+    0.1015047184161636,
+    -0.13538555073239,
+    -1.4310481598537743,
+    -0.05656578622131122,
+    0.0,
+    -0.20744925668387126,
+    -0.3872822415556082,
+    0.28491691940977765,
+    -0.49587192433726535,
+    0.5040942715941704,
+    0.5040942715941705,
+    -0.49587192433726546
+  ],
+  "surfaces": [
+    [
+      0,
+      "yaw2"
+    ],
+    [
+      1,
+      "yaw2"
+    ]
+  ],
+  "points": [
+    [
+      0.22550523637242628,
+      0.002812709021628082,
+      -0.004042420208318171
+    ],
+    [
+      -0.22550523637242628,
+      0.001783244999933563,
+      0.004590239315459188
+    ]
+  ],
+  "normals": [
+    [
+      -1.0,
+      -0.0,
+      -0.0
+    ],
+    [
+      1.0,
+      -0.0,
+      -0.0
+    ]
+  ],
+  "lift_height": 0.12,
+  "approach_height": 0.1934230202736924,
+  "trims": [
+    {
+      "scope": "fixed_pose_inner_force_screen_only",
+      "task_accepted": false,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "iterations": 14,
+      "wall_s": 0.008479145122691989,
+      "physical_impossibility_proven": false,
+      "minimum_peak_effort_ratio": 0.08687919738321824,
+      "secondary_peak_bound": 0.10687919738321824,
+      "balanced_refinement_success": true,
+      "status": "static_screen_pass",
+      "max_normalized_joint_effort": 0.09536037350452121,
+      "equilibrium_residual": 4.440892098500626e-16,
+      "inequality_residual": 0.0,
+      "thrust": [
+        0.6913739133328555,
+        14.19627544973944,
+        3.170697273952035,
+        3.6924024224642644,
+        4.905442222337567,
+        7.6976779153772155,
+        1.406488942686942,
+        1.1686018458119012
+      ],
+      "minimum_pad_normal_force_n": 0.0,
+      "pad_normal_forces_n": {},
+      "joints": [
+        {
+          "name": "m0/gimbal1",
+          "effort_nm": 0.002664524184752214,
+          "limit_nm": 0.152,
+          "normalized": 0.01752976437336983
+        },
+        {
+          "name": "m0/pitch_dock_mech_joint1",
+          "effort_nm": -0.06257566499966533,
+          "limit_nm": 1.3,
+          "normalized": 0.04813512692281948
+        },
+        {
+          "name": "m0/gimbal2",
+          "effort_nm": -0.0023767037889421794,
+          "limit_nm": 0.152,
+          "normalized": 0.015636209137777496
+        },
+        {
+          "name": "m0/yaw_dock_mech_joint1",
+          "effort_nm": -0.12396848555587758,
+          "limit_nm": 1.3,
+          "normalized": 0.09536037350452121
+        },
+        {
+          "name": "m1/pitch_dock_mech_joint2",
+          "effort_nm": 0.001965622862459604,
+          "limit_nm": 1.3,
+          "normalized": 0.0015120175865073876
+        },
+        {
+          "name": "m1/gimbal1",
+          "effort_nm": -5.039485643437432e-05,
+          "limit_nm": 0.152,
+          "normalized": 0.0003315451081208837
+        },
+        {
+          "name": "m1/pitch_dock_mech_joint1",
+          "effort_nm": -0.06257565464745962,
+          "limit_nm": 1.3,
+          "normalized": 0.048135118959584326
+        },
+        {
+          "name": "m1/gimbal2",
+          "effort_nm": -0.002334696072230725,
+          "limit_nm": 0.152,
+          "normalized": 0.015359842580465298
+        },
+        {
+          "name": "m1/yaw_dock_mech_joint1",
+          "effort_nm": -0.014058983932100958,
+          "limit_nm": 1.3,
+          "normalized": 0.010814603024693044
+        },
+        {
+          "name": "m1/gimbal3",
+          "effort_nm": -0.0035092298873247735,
+          "limit_nm": 0.152,
+          "normalized": 0.023087038732399826
+        },
+        {
+          "name": "m1/yaw_dock_mech_joint2",
+          "effort_nm": 0.01403900420246461,
+          "limit_nm": 1.3,
+          "normalized": 0.010799234001895853
+        },
+        {
+          "name": "m1/gimbal4",
+          "effort_nm": -0.005566072471768395,
+          "limit_nm": 0.152,
+          "normalized": 0.036618897840581546
+        },
+        {
+          "name": "m0/gimbal3",
+          "effort_nm": 0.0024882161486335375,
+          "limit_nm": 0.152,
+          "normalized": 0.016369843083115378
+        },
+        {
+          "name": "m0/yaw_dock_mech_joint2",
+          "effort_nm": -0.014039073495557795,
+          "limit_nm": 1.3,
+          "normalized": 0.010799287304275226
+        },
+        {
+          "name": "m0/gimbal4",
+          "effort_nm": -0.0022544229875147413,
+          "limit_nm": 0.152,
+          "normalized": 0.014831730181018035
+        },
+        {
+          "name": "m0/pitch_dock_mech_joint2",
+          "effort_nm": -0.06266797100902946,
+          "limit_nm": 1.3,
+          "normalized": 0.048206131545407274
+        }
+      ],
+      "contacts": []
+    },
+    {
+      "scope": "fixed_pose_inner_force_screen_only",
+      "task_accepted": false,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "iterations": 10,
+      "wall_s": 0.007314509944990277,
+      "physical_impossibility_proven": false,
+      "minimum_peak_effort_ratio": 0.04840633451407117,
+      "secondary_peak_bound": 0.06840633451407117,
+      "balanced_refinement_success": true,
+      "status": "static_screen_pass",
+      "max_normalized_joint_effort": 0.04840633451407117,
+      "equilibrium_residual": 1.7763568394002505e-15,
+      "inequality_residual": 0.0,
+      "thrust": [
+        1.813290595473964,
+        11.530633695276132,
+        3.2988282961511097,
+        4.195144263304707,
+        4.520959789144573,
+        6.705386171763834,
+        2.826088529750011,
+        2.107173879200428
+      ],
+      "minimum_pad_normal_force_n": 0.0,
+      "pad_normal_forces_n": {},
+      "joints": [
+        {
+          "name": "m0/gimbal1",
+          "effort_nm": 0.002266173744437847,
+          "limit_nm": 0.152,
+          "normalized": 0.014909037792354257
+        },
+        {
+          "name": "m0/pitch_dock_mech_joint1",
+          "effort_nm": -0.06284293368075952,
+          "limit_nm": 1.3,
+          "normalized": 0.04834071821596886
+        },
+        {
+          "name": "m0/gimbal2",
+          "effort_nm": -0.0030226028809798486,
+          "limit_nm": 0.152,
+          "normalized": 0.019885545269604267
+        },
+        {
+          "name": "m0/yaw_dock_mech_joint1",
+          "effort_nm": -0.015975166046290235,
+          "limit_nm": 1.3,
+          "normalized": 0.012288589266377103
+        },
+        {
+          "name": "m1/pitch_dock_mech_joint2",
+          "effort_nm": -0.013995452542636677,
+          "limit_nm": 1.3,
+          "normalized": 0.010765732725105136
+        },
+        {
+          "name": "m1/gimbal1",
+          "effort_nm": 0.00020632746508816478,
+          "limit_nm": 0.152,
+          "normalized": 0.0013574175334747684
+        },
+        {
+          "name": "m1/pitch_dock_mech_joint1",
+          "effort_nm": -0.06284248214665358,
+          "limit_nm": 1.3,
+          "normalized": 0.04834037088204122
+        },
+        {
+          "name": "m1/gimbal2",
+          "effort_nm": -0.0029664881798012258,
+          "limit_nm": 0.152,
+          "normalized": 0.019516369603955433
+        },
+        {
+          "name": "m1/yaw_dock_mech_joint1",
+          "effort_nm": -0.011243369724122355,
+          "limit_nm": 1.3,
+          "normalized": 0.00864874594163258
+        },
+        {
+          "name": "m1/gimbal3",
+          "effort_nm": -0.003776381975807833,
+          "limit_nm": 0.152,
+          "normalized": 0.024844618261893638
+        },
+        {
+          "name": "m1/yaw_dock_mech_joint2",
+          "effort_nm": 0.011282388423543488,
+          "limit_nm": 1.3,
+          "normalized": 0.008678760325802682
+        },
+        {
+          "name": "m1/gimbal4",
+          "effort_nm": -0.004948585176723375,
+          "limit_nm": 0.152,
+          "normalized": 0.032556481425811676
+        },
+        {
+          "name": "m0/gimbal3",
+          "effort_nm": 0.0029070894009179506,
+          "limit_nm": 0.152,
+          "normalized": 0.019125588163933886
+        },
+        {
+          "name": "m0/yaw_dock_mech_joint2",
+          "effort_nm": -0.011282388717175108,
+          "limit_nm": 1.3,
+          "normalized": 0.00867876055167316
+        },
+        {
+          "name": "m0/gimbal4",
+          "effort_nm": -0.001605344496250753,
+          "limit_nm": 0.152,
+          "normalized": 0.010561476949018113
+        },
+        {
+          "name": "m0/pitch_dock_mech_joint2",
+          "effort_nm": -0.06292823486829252,
+          "limit_nm": 1.3,
+          "normalized": 0.04840633451407117
+        }
+      ],
+      "contacts": []
+    },
+    {
+      "scope": "fixed_pose_inner_force_screen_only",
+      "task_accepted": false,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "iterations": 133,
+      "wall_s": 0.5211151260882616,
+      "physical_impossibility_proven": false,
+      "minimum_peak_effort_ratio": 0.690454391151666,
+      "secondary_peak_bound": 0.710454391151666,
+      "balanced_refinement_success": true,
+      "status": "static_screen_pass",
+      "max_normalized_joint_effort": 0.6905696789616866,
+      "equilibrium_residual": 3.552713678800501e-15,
+      "inequality_residual": 3.8028299430657785e-14,
+      "thrust": [
+        3.704893509429668e-16,
+        17.38527737006771,
+        9.742896424881426,
+        1.1397469820565012,
+        0.0,
+        7.2343775870391935,
+        11.444182917769696,
+        0.7425067332648261
+      ],
+      "minimum_pad_normal_force_n": 0.5,
+      "pad_normal_forces_n": {
+        "m0/yaw_connect_dummy_2": 2.320431057002568,
+        "m1/yaw_connect_dummy_2": 2.3204310570025704
+      },
+      "joints": [
+        {
+          "name": "m0/gimbal1",
+          "effort_nm": 0.0022661737444377764,
+          "limit_nm": 0.152,
+          "normalized": 0.014909037792353792
+        },
+        {
+          "name": "m0/pitch_dock_mech_joint1",
+          "effort_nm": -0.06284293368075952,
+          "limit_nm": 1.3,
+          "normalized": 0.04834071821596886
+        },
+        {
+          "name": "m0/gimbal2",
+          "effort_nm": -0.003022602880979803,
+          "limit_nm": 0.152,
+          "normalized": 0.01988554526960397
+        },
+        {
+          "name": "m0/yaw_dock_mech_joint1",
+          "effort_nm": 0.8977405826501926,
+          "limit_nm": 1.3,
+          "normalized": 0.6905696789616866
+        },
+        {
+          "name": "m1/pitch_dock_mech_joint2",
+          "effort_nm": 0.21956110447910238,
+          "limit_nm": 1.3,
+          "normalized": 0.16889315729161722
+        },
+        {
+          "name": "m1/gimbal1",
+          "effort_nm": 0.00020632746508816575,
+          "limit_nm": 0.152,
+          "normalized": 0.0013574175334747746
+        },
+        {
+          "name": "m1/pitch_dock_mech_joint1",
+          "effort_nm": -0.06284248214665358,
+          "limit_nm": 1.3,
+          "normalized": 0.04834037088204122
+        },
+        {
+          "name": "m1/gimbal2",
+          "effort_nm": -0.002966488179801225,
+          "limit_nm": 0.152,
+          "normalized": 0.019516369603955426
+        },
+        {
+          "name": "m1/yaw_dock_mech_joint1",
+          "effort_nm": -0.011243369724122355,
+          "limit_nm": 1.3,
+          "normalized": 0.00864874594163258
+        },
+        {
+          "name": "m1/gimbal3",
+          "effort_nm": -0.003776381975807818,
+          "limit_nm": 0.152,
+          "normalized": 0.02484461826189354
+        },
+        {
+          "name": "m1/yaw_dock_mech_joint2",
+          "effort_nm": 0.07751602523214078,
+          "limit_nm": 1.3,
+          "normalized": 0.059627711717031365
+        },
+        {
+          "name": "m1/gimbal4",
+          "effort_nm": -0.004948585176723372,
+          "limit_nm": 0.152,
+          "normalized": 0.03255648142581166
+        },
+        {
+          "name": "m0/gimbal3",
+          "effort_nm": 0.0029070894009176826,
+          "limit_nm": 0.152,
+          "normalized": 0.019125588163932124
+        },
+        {
+          "name": "m0/yaw_dock_mech_joint2",
+          "effort_nm": -0.07751605651942428,
+          "limit_nm": 1.3,
+          "normalized": 0.05962773578417252
+        },
+        {
+          "name": "m0/gimbal4",
+          "effort_nm": -0.001605344496250765,
+          "limit_nm": 0.152,
+          "normalized": 0.01056147694901819
+        },
+        {
+          "name": "m0/pitch_dock_mech_joint2",
+          "effort_nm": -0.06292823486829252,
+          "limit_nm": 1.3,
+          "normalized": 0.04840633451407117
+        }
+      ],
+      "contacts": [
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -0.015822384093165658,
+            -0.9620597986133204,
+            -2.1649272753324
+          ],
+          "normal_force": 0.9621899001477278
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            2.3739159231424515e-15,
+            -3.9042281566051813e-17,
+            2.5479606505960013e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            3.3948606432069775e-15,
+            -4.809022872472014e-16,
+            -2.13124627177132e-16
+          ],
+          "normal_force": 4.2501170353103022e-16
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -0.004204082964983895,
+            -0.25562387986726,
+            -0.5752315090481941
+          ],
+          "normal_force": 0.2556584484658542
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -3.3299695894164193e-15,
+            5.4765886630174604e-17,
+            -2.11521598074408e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -4.409929099294669e-16,
+            7.252729210100847e-18,
+            -2.4470811146761084e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -0.00368903944625934,
+            -0.22430731840722523,
+            -0.5047597169910019
+          ],
+          "normal_force": 0.2243376519959955
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -1.9493982101808404e-14,
+            3.206050941580493e-16,
+            -1.8531681113318075e-14
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -0.014441983446344214,
+            -0.8781263053757482,
+            -1.9760513768842407
+          ],
+          "normal_force": 0.8782450563929901
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            1.241085993928242e-14,
+            -2.0411350018870094e-16,
+            2.3335517884822023e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m0/yaw_connect_dummy_2",
+          "force_world": [
+            -1.4970669048093487e-15,
+            -1.0344977152636593e-16,
+            -6.155708879992629e-15
+          ],
+          "normal_force": 1.2805375937056896e-16
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            0.00907567501435355,
+            0.5518347946285946,
+            -1.241796196131353
+          ],
+          "normal_force": 0.5519094205028117
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            3.2457670347153766e-15,
+            -5.3381060901019366e-17,
+            8.8974305992471e-16
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            9.732037212841137e-16,
+            -1.6005661083905095e-17,
+            -5.202199801576953e-16
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            0.015848212613716564,
+            0.9636302687228282,
+            -2.1684613109298403
+          ],
+          "normal_force": 0.9637605826354799
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            2.471963889715772e-15,
+            -4.065481395635951e-17,
+            6.605311041563611e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            1.7533513435931065e-15,
+            -2.8836251601598764e-17,
+            -3.3178306252214763e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            0.0033468479197434884,
+            0.20350080093485834,
+            -0.45793872182466
+          ],
+          "normal_force": 0.20352832081095432
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            -1.239481015493008e-15,
+            2.0384953961888895e-17,
+            -1.6070022173224332e-15
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            0.00988675440294084,
+            0.6011514379772754,
+            -1.3527736493699851
+          ],
+          "normal_force": 0.6012327330533245
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            9.997915443486152e-16,
+            -1.6442934057304476e-17,
+            -8.02426774736984e-16
+          ],
+          "normal_force": 0.0
+        },
+        {
+          "frame": "m1/yaw_connect_dummy_2",
+          "force_world": [
+            -2.918687973895497e-15,
+            4.8001800135126074e-17,
+            7.824047697462155e-16
+          ],
+          "normal_force": 0.0
+        }
+      ]
+    }
+  ],
+  "fit": {
+    "position_error_m": 8.728194075806933e-10,
+    "normal_error": 3.428028330934193e-09,
+    "evaluations": 5,
+    "scope": "kinematic_fit_only",
+    "task_success": false,
+    "material_gap_m": [
+      -8.59489618365572e-10,
+      -8.362423531416141e-10
+    ],
+    "material_normal_error": 6.647136347368169e-07,
+    "nominal_contact_gap_m": 0.0,
+    "physical_contact_equilibrium_verified": false,
+    "contact_target_shift_m": [
+      0.0049246820385652436,
+      0.004924455269669457
+    ],
+    "opening_method": "joint_fit",
+    "open_material_gap_m": [
+      0.040257983508367595,
+      0.04005748565244363
+    ],
+    "restoring_load_screen": {
+      "scope": "sampled_static_restoring_load_screen",
+      "passed": true,
+      "directions": [
+        {
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "sign": -1.0,
+          "required_moment_nm": [
+            -0.006467013381320875,
+            7.449779932477795e-05,
+            3.751403635944035e-20
+          ],
+          "status": "static_screen_pass",
+          "max_normalized_joint_effort": 0.6905941224767911
+        },
+        {
+          "axis": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "sign": 1.0,
+          "required_moment_nm": [
+            0.006467013381320875,
+            -7.449779932477795e-05,
+            -3.751403635944035e-20
+          ],
+          "status": "static_screen_pass",
+          "max_normalized_joint_effort": 0.6908916252959995
+        },
+        {
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "sign": -1.0,
+          "required_moment_nm": [
+            7.449779932477796e-05,
+            -0.0019384953320232198,
+            -2.3617688277716313e-20
+          ],
+          "status": "static_screen_pass",
+          "max_normalized_joint_effort": 0.6900906639029962
+        },
+        {
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "sign": 1.0,
+          "required_moment_nm": [
+            -7.449779932477796e-05,
+            0.0019384953320232198,
+            2.3617688277716313e-20
+          ],
+          "status": "static_screen_pass",
+          "max_normalized_joint_effort": 0.6908181184003355
+        },
+        {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "sign": -1.0,
+          "required_moment_nm": [
+            3.751403635944046e-20,
+            -2.3617688277716313e-20,
+            -0.006298415802614955
+          ],
+          "status": "static_screen_pass",
+          "max_normalized_joint_effort": 0.6922898766111963
+        },
+        {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "sign": 1.0,
+          "required_moment_nm": [
+            -3.751403635944046e-20,
+            2.3617688277716313e-20,
+            0.006298415802614955
+          ],
+          "status": "static_screen_pass",
+          "max_normalized_joint_effort": 0.6886752152084736
+        }
+      ]
+    },
+    "approach_durations_s": [
+      5.859374999999999,
+      5.0
+    ],
+    "sampled_path_configurations": 63
+  },
+  "planning_time_s": 1.7493836870416999,
+  "model": {
+    "schema": "amsrr_det.model.v1",
+    "modules": 2,
+    "edges": [
+      {
+        "a": 1,
+        "port_a": "pitch2",
+        "b": 0,
+        "port_b": "yaw1"
+      }
+    ],
+    "nq": 30,
+    "nv": 28,
+    "frames": {
+      "m0/root": 1,
+      "m0/main_body": 2,
+      "m0/rotor_arm1": 3,
+      "m0/gimbal_link1": 4,
+      "m0/rotor_parent1": 5,
+      "m0/thrust_1": 6,
+      "m0/pitch_dock_mech1": 7,
+      "m0/pitch_connect_dummy_1": 8,
+      "m0/pitch_grasp_contact_frame_1": 9,
+      "m0/rotor_arm2": 10,
+      "m0/gimbal_link2": 11,
+      "m0/rotor_parent2": 12,
+      "m0/thrust_2": 13,
+      "m0/yaw_dock_mech1": 14,
+      "m0/yaw_connect_dummy_1": 15,
+      "m1/pitch_connect_dummy_2": 16,
+      "m1/pitch_dock_mech2": 17,
+      "m1/rotor_arm4": 18,
+      "m1/main_body": 19,
+      "m1/root": 20,
+      "m1/rotor_arm1": 21,
+      "m1/gimbal_link1": 22,
+      "m1/rotor_parent1": 23,
+      "m1/thrust_1": 24,
+      "m1/pitch_dock_mech1": 25,
+      "m1/pitch_connect_dummy_1": 26,
+      "m1/pitch_grasp_contact_frame_1": 27,
+      "m1/rotor_arm2": 28,
+      "m1/gimbal_link2": 29,
+      "m1/rotor_parent2": 30,
+      "m1/thrust_2": 31,
+      "m1/yaw_dock_mech1": 32,
+      "m1/yaw_connect_dummy_1": 33,
+      "m1/rotor_arm3": 34,
+      "m1/gimbal_link3": 35,
+      "m1/rotor_parent3": 36,
+      "m1/thrust_3": 37,
+      "m1/yaw_dock_mech2": 38,
+      "m1/yaw_connect_dummy_2": 39,
+      "m1/fc": 40,
+      "m1/battery1": 41,
+      "m1/battery2": 42,
+      "m1/gimbal_link4": 43,
+      "m1/rotor_parent4": 44,
+      "m1/thrust_4": 45,
+      "m1/pitch_grasp_contact_frame_2": 46,
+      "m0/rotor_arm3": 47,
+      "m0/gimbal_link3": 48,
+      "m0/rotor_parent3": 49,
+      "m0/thrust_3": 50,
+      "m0/yaw_dock_mech2": 51,
+      "m0/yaw_connect_dummy_2": 52,
+      "m0/rotor_arm4": 53,
+      "m0/gimbal_link4": 54,
+      "m0/rotor_parent4": 55,
+      "m0/thrust_4": 56,
+      "m0/pitch_dock_mech2": 57,
+      "m0/pitch_connect_dummy_2": 58,
+      "m0/pitch_grasp_contact_frame_2": 59,
+      "m0/fc": 60,
+      "m0/battery1": 61,
+      "m0/battery2": 62,
+      "object": 63
+    },
+    "actuators": [
+      {
+        "name": "m0/gimbal1",
+        "joint": 2,
+        "q": 7,
+        "v": 6,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/pitch_dock_mech_joint1",
+        "joint": 3,
+        "q": 8,
+        "v": 7,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/gimbal2",
+        "joint": 4,
+        "q": 9,
+        "v": 8,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/yaw_dock_mech_joint1",
+        "joint": 5,
+        "q": 10,
+        "v": 9,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/pitch_dock_mech_joint2",
+        "joint": 6,
+        "q": 11,
+        "v": 10,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/gimbal1",
+        "joint": 7,
+        "q": 12,
+        "v": 11,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/pitch_dock_mech_joint1",
+        "joint": 8,
+        "q": 13,
+        "v": 12,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/gimbal2",
+        "joint": 9,
+        "q": 14,
+        "v": 13,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/yaw_dock_mech_joint1",
+        "joint": 10,
+        "q": 15,
+        "v": 14,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/gimbal3",
+        "joint": 11,
+        "q": 16,
+        "v": 15,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/yaw_dock_mech_joint2",
+        "joint": 12,
+        "q": 17,
+        "v": 16,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m1/gimbal4",
+        "joint": 13,
+        "q": 18,
+        "v": 17,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/gimbal3",
+        "joint": 14,
+        "q": 19,
+        "v": 18,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/yaw_dock_mech_joint2",
+        "joint": 15,
+        "q": 20,
+        "v": 19,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/gimbal4",
+        "joint": 16,
+        "q": 21,
+        "v": 20,
+        "role": "vectoring",
+        "lower": -2.0,
+        "upper": 2.0,
+        "kp": 20.0,
+        "kd": 1.0,
+        "effort": 0.152,
+        "peak": 0.76,
+        "speed": 3.0
+      },
+      {
+        "name": "m0/pitch_dock_mech_joint2",
+        "joint": 17,
+        "q": 22,
+        "v": 21,
+        "role": "dock",
+        "lower": -1.5708,
+        "upper": 1.5708,
+        "kp": 200.0,
+        "kd": 5.0,
+        "effort": 1.3,
+        "peak": 4.1,
+        "speed": 3.0
+      }
+    ],
+    "bases": [
+      {
+        "joint": 1,
+        "q": 0,
+        "v": 0,
+        "module": 0
+      }
+    ],
+    "rotors": [
+      {
+        "frame": 6,
+        "gimbal": 0,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 0
+      },
+      {
+        "frame": 13,
+        "gimbal": 2,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 0
+      },
+      {
+        "frame": 50,
+        "gimbal": 12,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 0
+      },
+      {
+        "frame": 56,
+        "gimbal": 14,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 0
+      },
+      {
+        "frame": 24,
+        "gimbal": 5,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 1
+      },
+      {
+        "frame": 31,
+        "gimbal": 7,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 1
+      },
+      {
+        "frame": 37,
+        "gimbal": 9,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 1
+      },
+      {
+        "frame": 45,
+        "gimbal": 11,
+        "minimum": 0.0,
+        "maximum": 20.0,
+        "module": 1
+      }
+    ],
+    "object": {
+      "joint": 18,
+      "frame": 63,
+      "q": 23,
+      "v": 22,
+      "mass": 1.064781526465378,
+      "size": [
+        0.45101047274485256,
+        0.1989420491428967,
+        0.18220403180938885
+      ],
+      "com": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inertia": [
+        [
+          0.006457567047393109,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.020994719342049852,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.021560795330420542
+        ]
+      ]
+    },
+    "mass": 4.7982621286639855,
+    "gravity": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "source_hashes": {
+      "assets/robots/holon/holon.urdf": "20a3363b560713469d2582d1c3610709bcbd050899af9746e667b451d28cc94b",
+      "configs/robot/joint_actuators.yaml": "9420dccfc30b473753e6764b9e38295b83dc68809047d29225b6d9ca71ee9077",
+      "configs/robot/thrust_model.yaml": "4419dbe6264e8ce2677ae9d88c742248a42ed8eca979a87d5540c99a96298722"
+    },
+    "assumptions": [
+      "zero rotor spin and reaction torque",
+      "rigid dock seam; latch transients not modeled",
+      "source simulation PD/armature; not identified hardware response",
+      "backlash, backdrive friction and electrical/thermal drive limits not modeled"
+    ],
+    "material_mesh_cache": "/home/leus/amsrr_det/build/collision_physx_docks"
+  },
+  "operating_point": null
+}

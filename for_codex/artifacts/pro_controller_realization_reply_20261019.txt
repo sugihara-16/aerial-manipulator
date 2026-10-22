@@ -1,0 +1,187 @@
+優先順は、最終判定に使う物理エンジン、計画が要求する接触集合、予圧指令の整合です。接触・制御の次の調整は元PhysX上で進め、Aでは(i)を先に行います。(ii)の参照制限を主な対策にはしません。
+							2447 heading C：接触を含む最終受理はPhysXへ寄せる, Value: 2
+								2448 text C：接触を含む最終受理はPhysXへ寄せる
+							2449 container
+								2450 text 新しい過渡データを受け、 MuJoCo上で接触差の補正を重ねるより、元PhysXを最終受理に使う構成を優先します。  前回の静的剛性差に加え、今回は力積と法線・横力にも差が確認されたためです。
+							2451 container
+								2452 text 初期150 µm押込みの試験だけで、通常取得でも同じ差が出るとは断定できません。しかし、MuJoCoで予圧を精密に合わせ込む作業を先行させる根拠は弱くなりました。距離開始の17 nm一致も、多点接触の法線・荷重の一致を意味しません。上流の#3691は特定の法線計算不具合の再現例であり、今回の主要差が同じ原因だとは扱いません。
+								2453 link Value: github.com/google-deepmind/mujoco/issues/3691?utm_source=chatgpt.com, Description: GitHub: Mesh polygon normal computed from three nearly collinear outline vertices; multiccd then returns a deep contact with a sideways normal · Issue #3691 · google-deepmind/mujoco, https://github.com/google-deepmind/mujoco/issues/3691?utm_source=chatgpt.com
+							2454 text 切替え前の確認は三つです。
+							2455 content list
+								2456 container
+									2457 AXListMarker 1. 
+									2458 text 接触なしの短い駆動再生。  同じ構造・入力で、飽和PD、関節慣性、ロータ作用点、推力応答を照合する。PhysX標準の関節駆動と外から与えるPDトルクを二重に働かせない。
+								2459 container
+									2460 AXListMarker 2. 
+									2461 text 正の隙間からの接近→保持→離脱。  横移動・回転を許す条件も一つ入れる。鉛直1自由度の治具では、横反力を治具が吸収してしまいます。
+								2462 container
+									2463 AXListMarker 3. 
+									2464 text PhysX内で取得から進めた代表把持。  同じ観測と実行器で、荷重移行・運搬開始・除荷を確認する。MuJoCoの接触履歴を、そのまま同じPhysX状態として移さない。
+							2465 text 刻み半減と解法の収束確認は残します。PhysXの方が速いとは未測定なので言えません。ここで減らすのは、二つの接触モデルを合わせ続ける開発負担です。
+							2466 container
+								2467 text 以後、MuJoCoは幾何探索・動力学照合・候補順位付けに残せますが、 エンジン差のある接触失敗を、MuJoCoだけで物理的不成立として棄却しない 扱いにします。全候補の全長試験を両エンジンで必須にする必要もありません。
+							2468 heading B：3面計画を、事後に2面成功へ読み替えてはいけない, Value: 2
+								2469 text B：3面計画を、事後に2面成功へ読み替えてはいけない
+							2470 container
+								2471 text 現在の楕円体結果は、3面維持を要求した候補としての不合格を保持します。 [2,4] は候補生成時に選ぶ接触数の範囲であり、3面に依存して作った計画から、実行後に一面を除いてよいという意味ではありません。本家仕様も選択した接触群と接触維持を対応させています。参照：
+								2592 button A-MSRR_codex_ready_spec_v0_5_ja.md のプレビューを開く
+									2593 text 本家仕様
+								2594 text 。
+							2472 container
+								2473 text ただし、先に監査方法を照合してください。 0.5 Nの集計区間、取得の継続時間、接触喪失の猶予 を本家と揃える必要があります。「常時」の実装が物理刻みごとの最小値なのか、所定区間の力積から計算した値なのかで結果が変わります。累積7.095秒だけでは、その違いや最大連続不足時間は分かりません。この修正をする場合は、楕円体だけでなく保存例すべてへ同じ規則を適用します。
+							2474 container
+								2475 text 最小構成では、まだ「触れてもよい補助接触」という新しい扱いを増やさず、 選択集合 
+								2476 text 𝑆
+								2477 text  を候補生成時に2・3・4面のいずれかへ固定 します。
+							2478 content list
+								2479 container
+									2480 AXListMarker • 
+									2481 text 3面案なら、LP・運動写像・補正・維持監査の全てで3面を使う。
+								2482 container
+									2483 AXListMarker • 
+									2484 text 2面案なら、上面の力の変数、物体追従の行、荷重補正への寄与を外し、上パッドは物体から離す。
+								2485 container
+									2486 AXListMarker • 
+									2487 text 2面だけの実接触領域で、重量支持とタスクに必要な回転方向の余裕を調べ、同じ実行器で確認する。
+							2488 container
+								2489 text 「上面が姿勢安定化補助として機能した」は、低荷重の記録と完走だけでは確定していません。  同じ5台構造で、上面を離した2面候補との比較が必要です。主2面が重量を支えたことは、回転の安定にも上面が不要だった証拠にはなりません。
+							2490 heading A：最初は最大4個の「閉じ指令」を整合させる, Value: 2
+								2491 text A：最初は最大4個の「閉じ指令」を整合させる
+							2492 text 三案の役割は次のように分かれます。
+							2493 container
+								2494 table
+									2495 row
+										2496 cell
+											2497 text 案
+										2498 cell
+											2499 text 役割
+										2500 cell
+											2501 text 今の優先度
+									2502 row
+										2503 cell
+											2504 text (i) 接触と指令の整合
+										2505 cell
+											2506 text 指令から実際に生じる変形・荷重・モータ負担を確認する
+										2507 cell
+											2508 text 最優先
+									2509 row
+										2510 cell
+											2511 text (ii) 連続的な参照制限
+										2512 cell
+											2513 text 飽和中の参照偏差の蓄積や指令の急変を抑える
+										2514 cell
+											2515 text 補助。単独比較する
+									2516 row
+										2517 cell
+											2518 text (iii) 接触配置・構造の変更
+										2519 cell
+											2520 text 固定実行器と有限の指令候補で成立しない場合に別案へ進む
+										2521 cell
+											2522 text 必要な戻り先
+								2523 button 表をコピー
+								2524 pop up button (collapsed) Description: 表を展開, Secondary Actions: Expand
+							2525 container
+								2526 text (i)は、各接触点について 
+								2527 container
+									2528 text 𝛿 =
+									2529 text 𝜆
+									2530 container
+										2531 text L P
+									2532 text / 𝐾
+								2533 text  を解く方法にはしません。 各パッドの法線方向の閉じ参照量 
+								2534 container
+									2535 text 𝑝 𝑖
+								2536 text  だけを候補変数にします。最大4変数です。
+							2537 text 例えば、取得時の幾何基準に対して、
+							2538 container
+								2539 text 𝑔
+								2540 container
+									2541 text 𝑖 ,
+									2542 text r
+									2543 text e
+									2544 text f
+								2545 text ( 𝑡 ) =
+								2546 text 𝑔
+								2547 container
+									2548 text 𝑖 , 0
+								2549 text − 𝑠 ( 𝑡 )
+								2550 text 𝑝
+								2551 text 𝑖
+							2552 container
+								2553 text とし、
+								2554 container
+									2555 text 𝑠 ( 𝑡 )
+								2556 text  は全候補で共通の滑らかな移行関数にします。
+								2557 container
+									2558 text 𝑝 𝑖
+								2559 text  は指令変位であり、実圧込みではありません。実圧込み、接触力、PD負担は、 同じ実行器を含む短いPhysX試験から従属的に計算 します。
+							2560 text 最初の比較は次だけで十分です。
+							2561 content list
+								2562 container
+									2563 AXListMarker 1. 
+									2564 text 現行の150 µm下限ありを保存する。
+								2565 container
+									2566 AXListMarker 2. 
+									2567 text 下限だけを外し、取得時の圧込みを保存する比較を一度行う。
+								2568 container
+									2569 AXListMarker 3. 
+									2570 text 必須接触集合を固定した上で、事前に定めた少数の 
+									2571 container
+										2572 text 𝑝 𝑖
+									2573 text  候補を、荷重移行→支持面離脱→運搬開始まで評価する。
+							2574 container
+								2575 text 評価側で各面の接触維持・荷重・侵入量、物体姿勢、関節偏差・飽和を検査します。力は実行器へ渡しません。LPのDock補正も、 固定候補指令として検査対象に含める のであって、実荷重の推定値とは扱いません。
+							2576 text 下限を外して過負荷が減っても、必要な接触が失われれば解決ではありません。有限の指令候補で成立しなければ、(iii)へ戻します。三角柱の別接触軸探索を並行する判断は妥当ですが、同じ一律下限の不整合を全候補へ持ち込まないことが必要です。
+							2595 container
+								2596 text (ii)を後で入れる場合も、現在参照の即時巻戻しではなく、 新たに加える参照増分の速度・加速度と、飽和方向への蓄積を制限する 変更に限定します。それだけで次周期の接触力や必要トルクを保証するものではありません。
+							2597 container
+								2598 text 次工程は、PhysXへの小さい移植確認 → 接触集合と監査規則の固定 → 150 µm下限の単独比較と少数閉じ指令探索 → 通過候補の全工程です。  未使用120条件へ進む前に、この規則と再試行予算を固定します。旧7/12と今回の不合格は、その時点の方式の結果として残します。
+							2599 container
+								2600 button A-MSRR_codex_ready_spec_v0_5_ja.md のプレビューを開く
+								2601 text A-MSRR_codex_ready_spec_v0_5_ja.md ドキュメント
+								2602 button ファイルをダウンロード
+							2603 button コピーする
+								2604 image
+							2605 button 共有
+							2606 checkbox Description: プロジェクトのソースに追加, Value: 0
+							2607 checkbox Description: 読み上げ, Value: 0
+							2608 pop up button (collapsed) Description: 回答を再生成, ID: radix-_r_vi_, Secondary Actions: Expand
+							2609 pop up button (collapsed) Description: その他のアクション, ID: radix-_r_vm_, Secondary Actions: Expand
+							2610 button ソース
+						694 container
+							695 text ChatGPT は間違えることがあります。重要な情報は確認してください。
+						696 container
+							1069 button 一番下までスクロール
+							697 heading 最新の応答, Value: 4
+								698 text 最新の応答
+							699 container
+								700 container
+									1720 button (collapsed) Description: ファイルなどを追加, Secondary Actions: Expand
+									1732 text entry area (settable) Description: ChatGPT に聞く, Value: 
+
+										1733 container
+											2577 text ChatGPT に聞く
+									712 pop up button (collapsed) Description: ChatGPT モデルを選択, ID: radix-_r_5t_, Secondary Actions: Expand
+									713 button 音声入力
+									2611 button 音声会話を開始
+		2612 text 回答が完了しました
+		2425 container
+			2426 heading アクティビティ, Value: 3
+				2427 text アクティビティ
+			2428 button 23個を使用
+				2429 text サブエージェント
+				2430 text 23個を使用
+			2431 button (collapsed) 進捗, Secondary Actions: Expand
+			2432 button (expanded) 出力, Secondary Actions: Collapse
+			2433 container
+				2434 button THEORY_AND_METHOD_v0_2_ja.md を開く
+					2435 text THEORY_AND_METHOD_v0_2_ja.md
+					2436 text ドキュメント
+				2437 button joint_actuators.yaml を開く
+					2438 text joint_actuators.yaml
+					2439 text コード
+				2578 button A-MSRR_codex_ready_spec_v0_5_ja.md を開く
+					2579 text A-MSRR_codex_ready_spec_v0_5_ja.md
+					2580 text ドキュメント
+
+The focused UI element is 1732 text entry area (settable) Description: ChatGPT に聞く, Value: 

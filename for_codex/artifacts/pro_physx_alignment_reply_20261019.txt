@@ -1,0 +1,154 @@
+移植方針は、今後の開発基準として採用してよいです。制御幾何は(a)を選びます。  原係数と元PhysXの衝突形状を固定して差を評価する構成へ進めます。ただし、これは「同じ名目係数・衝突形状による移植」の採用であり、接触応答の等価性まで確認済みという意味ではありません。
+							2256 heading 1. 移植方針の採否, Value: 2
+								2257 text 1. 移植方針の採否
+							2258 container
+								2259 text 今回の比較は、旧CoACDの分割を使い続けるより、元PhysX凸形状へ移す判断を支持しています。 形状分割という大きな差を取り除き、沈み込みの差が縮まった ためです。pitchに残る差は、今後の照合対象として明示します。
+							2260 container
+								2261 text 定常法線合力の0.12%以内の一致は、釣合いの確認です。物性応答の一致を判断する量は、沈み込み、過渡の荷重、減衰、回転に対するモーメントです。PhysXは各接触点のばね・減衰を用い、MuJoCoは拘束空間の応答を設定して結合した力を解くため、同じ名目係数だけでは応答一致は導けません。
+								2262 link Value: mujoco.readthedocs.io/en/stable/modeling.html?utm_source=chatgpt.com, Description: MuJoCo Documentation: Modeling, https://mujoco.readthedocs.io/en/stable/modeling.html?utm_source=chatgpt.com, 追加の情報源 1 件
+							2263 container
+								2264 text 今回は係数を調整せず、差を測る方針でよいです。  将来、独立した基準試験で換算式の誤りが分かった場合、その修正まで禁止する必要はありません。成功率を上げるための物性変更と、元応答を再現するための換算修正は区別してください。
+							2265 text また、pitchの静的剛性差を、全タスクの荷重誤差や減衰誤差の上界へ転用しない判断も正しいです。
+							2266 heading 2. 追加照合は三つに絞る, Value: 2
+								2267 text 2. 追加照合は三つに絞る
+							2268 container
+								2269 table
+									2270 row
+										2271 cell
+											2272 text 試験
+										2273 cell
+											2274 text 揃える条件
+										2275 cell
+											2276 text 必須の比較量
+									2277 row
+										2278 cell
+											2279 text yaw／pitchの接近→保持→離脱
+										2280 cell
+											2281 text 現行動作で使う接近・離脱速度、押込み範囲、同じ運動入力
+										2282 cell
+											2283 text 荷重―変形曲線、荷重ピーク、力積、戻り、接触が消える時点
+									2284 row
+										2285 cell
+											2286 text pitch＋楕円体の傾斜・横ずれ
+										2287 cell
+											2288 text 同じ初期配置・質量・慣性・外力／モーメント。回転と接線運動を許す
+										2289 cell
+											2290 text 同じ基準点での合力・モーメント、接触中心移動、滑り開始、角速度、点の入替え時の跳び
+									2291 row
+										2292 cell
+											2293 text 既存の三面把持の代表例
+										2294 cell
+											2295 text 同じ観測、固定した制御則・参照・駆動上限
+										2296 cell
+											2297 text 取得→荷重移行→運搬開始→配置・除荷の荷重ピーク、接触消失、飽和、物体姿勢、完了判定
+								2298 button 表をコピー
+								2299 pop up button (collapsed) Description: 表を展開, Secondary Actions: Expand
+							2300 text 最初の二つは接触モデル差を分離する試験、三つ目はその差が制御と結合した結果を見る試験です。三つ目では、同じ制御則でも観測が異なるので、生成される入力まで同じになる必要はありません。
+							2301 container
+								2302 text 各エンジンでまず  0.5→0.25 ms  を比較し、判定が変わる条件だけ追加で細分化します。解法の反復・収束許容の確認は、刻み変更と分けます。
+								2303 container
+									2304 text 𝐾 , 𝐶
+								2305 text  の感度試験も名目条件とは別に記録し、名目の成功率へ混ぜません。
+							2306 text 採否は次のように置けます。
+							2307 content list
+								2308 container
+									2309 AXListMarker • 
+									2310 text 刻みや解法設定で元の荷重上限・完了判定が反転するなら、その数値設定では未採用。
+								2311 container
+									2312 AXListMarker • 
+									2313 text 両エンジンがそれぞれ収束しても、MuJoCo成功／PhysX過負荷・滑落となるなら、 その条件をMuJoCoだけで受理する運用は未採用 。
+								2314 container
+									2315 AXListMarker • 
+									2316 text 差がpitchや曲面へ集中する場合は、全条件の平均差で埋めない。
+							2317 text 代表試験の一致は、試した条件についての根拠です。80%の評価は、固定した多様条件での全工程試験として別に残します。
+							2318 heading 3. 制御幾何は(a)。試験持上げも残す, Value: 2
+								2319 text 3. 制御幾何は(a)。試験持上げも残す
+							2320 text (a)が最小です。(b)だけでは取得開始条件は直せても、把持中の接触点・法線・変形基準の不一致が残ります。
+							2321 text 変更は、既存の幾何照会が使う形状を共有することに絞れます。
+							2322 content list
+								2323 container
+									2324 AXListMarker • 
+									2325 text 選択パッドと物体について、 実際にシミュレータへ渡した凸片集合、局所座標、スケール を使用する。
+								2326 container
+									2327 AXListMarker • 
+									2328 text 既存の観測姿勢から距離と近傍面の法線を計算する。
+								2329 container
+									2330 AXListMarker • 
+									2331 text 幾何表面からの距離 
+									2332 container
+										2333 text 𝑑 𝑖
+									2334 text  と、設定上の接触作用開始距離 
+									2335 container
+										2336 text 𝑑
+										2337 container
+											2338 text o n
+										2339 text ,
+										2340 text 𝑖
+									2341 text  を分け、
+									2342 container
+										2343 text 𝑔
+										2344 text 𝑖
+										2345 text =
+										2346 text 𝑑
+										2347 text 𝑖
+										2348 text −
+										2349 text 𝑑
+										2350 container
+											2351 text o
+											2352 text n
+											2353 text , 𝑖
+									2354 text を近接・変形の基準にする。
+							2355 text これは既知形状による計算であり、接触力やシミュレータ内部の接触状態を観測へ追加する変更ではありません。大きな計画器も必要ありません。
+							2356 container
+								2357 text 元CADは変更せず、材料領域の指定と近似誤差の検査に残します。  凸形状を元CADそのものと呼ばず、凹部を埋めた面や作業外面を、新しい把持材料として黙って採用しない扱いにします。
+							2358 container
+								2359 text 257 µmは今回の標本で確認した形状差です。数値計算の許容 
+								2360 container
+									2361 text 10
+									2362 container
+										2363 text − 7
+									2364 text m
+								2365 text  に吸収せず、未知条件の最大誤差にも使いません。逆に、接触姿勢をnm単位まで解けても、その精度がこの形状差を解消するわけではありません。
+							2366 container
+								2367 text 最初の検査には、 CADでは隙間があるのに、使用中の衝突形状では接触が始まるpitch–楕円体の配置 を使ってください。制御側の近接判定が、力を参照せずにモデルの作用開始と整合するかを確認できます。
+							2368 text (a)へ揃えても、近接だけでは荷重支持は確認できません。小さな試験持上げと、その後の運搬開始試験は引き続き受理手順に残します。
+							2369 button コピーする
+								2370 image
+							2371 button 共有
+							2372 checkbox Description: 読み上げ, Value: 0
+							2373 pop up button (collapsed) Description: 回答を再生成, ID: radix-_r_sg_, Secondary Actions: Expand
+							2374 pop up button (collapsed) Description: その他のアクション, ID: radix-_r_sk_, Secondary Actions: Expand
+						694 container
+							695 text ChatGPT は間違えることがあります。重要な情報は確認してください。
+						696 container
+							1069 button 一番下までスクロール
+							697 heading 最新の応答, Value: 4
+								698 text 最新の応答
+							699 container
+								700 container
+									1720 button (collapsed) Description: ファイルなどを追加, Secondary Actions: Expand
+									1732 text entry area (settable) Description: ChatGPT に聞く, Value: 
+
+										1733 container
+											2375 text ChatGPT に聞く
+									712 pop up button (collapsed) Description: ChatGPT モデルを選択, ID: radix-_r_5t_, Secondary Actions: Expand
+									713 button 音声入力
+									2376 button 音声会話を開始
+		2377 text 回答が完了しました
+		2378 container
+			2379 heading アクティビティ, Value: 3
+				2380 text アクティビティ
+			2381 button 20個を使用
+				2382 text サブエージェント
+				2383 text 20個を使用
+			2384 button (collapsed) 進捗, Secondary Actions: Expand
+			2385 button (expanded) 出力, Secondary Actions: Collapse
+			2386 container
+				2387 button THEORY_AND_METHOD_v0_2_ja.md を開く
+					2388 text THEORY_AND_METHOD_v0_2_ja.md
+					2389 text ドキュメント
+				2390 button joint_actuators.yaml を開く
+					2391 text joint_actuators.yaml
+					2392 text コード
+
+The focused UI element is 1732 text entry area (settable) Description: ChatGPT に聞く, Value: 

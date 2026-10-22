@@ -1,0 +1,2123 @@
+{
+  "role": "heldout",
+  "overall": {
+    "successes": 98,
+    "total": 120,
+    "fraction": 0.8166666666666667,
+    "reaches_threshold": true,
+    "failures": {
+      "contact_load_limit": 7,
+      "carried_pad_load_gap": 1,
+      "initial_planning_deadline": 7,
+      "clearance_violation": 1,
+      "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+      "task_timeout": 2,
+      "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+      "structure selection did not complete": 1,
+      "finite-slip geometry refinement did not converge": 1
+    }
+  },
+  "strata": {
+    "family": {
+      "box": {
+        "successes": 17,
+        "total": 20,
+        "fraction": 0.85,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "carried_pad_load_gap": 1,
+          "initial_planning_deadline": 1
+        }
+      },
+      "elongated_box": {
+        "successes": 15,
+        "total": 20,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 3,
+          "clearance_violation": 1,
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "cylinder": {
+        "successes": 14,
+        "total": 20,
+        "fraction": 0.7,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 3,
+          "task_timeout": 1,
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "initial_planning_deadline": 1
+        }
+      },
+      "ellipsoid": {
+        "successes": 15,
+        "total": 20,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "initial_planning_deadline": 3,
+          "task_timeout": 1,
+          "structure selection did not complete": 1
+        }
+      },
+      "triangular_prism": {
+        "successes": 19,
+        "total": 20,
+        "fraction": 0.95,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 1
+        }
+      },
+      "tapered_box": {
+        "successes": 18,
+        "total": 20,
+        "fraction": 0.9,
+        "reaches_threshold": true,
+        "failures": {
+          "finite-slip geometry refinement did not converge": 1,
+          "initial_planning_deadline": 1
+        }
+      }
+    },
+    "yaw_bin": {
+      "0": {
+        "successes": 22,
+        "total": 30,
+        "fraction": 0.7333333333333333,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 4,
+          "carried_pad_load_gap": 1,
+          "task_timeout": 1,
+          "initial_planning_deadline": 2
+        }
+      },
+      "1": {
+        "successes": 28,
+        "total": 30,
+        "fraction": 0.9333333333333333,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "finite-slip geometry refinement did not converge": 1
+        }
+      },
+      "2": {
+        "successes": 24,
+        "total": 30,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 4,
+          "clearance_violation": 1,
+          "contact_load_limit": 1
+        }
+      },
+      "3": {
+        "successes": 24,
+        "total": 30,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "contact_load_limit": 1,
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "initial_planning_deadline": 1,
+          "task_timeout": 1,
+          "structure selection did not complete": 1
+        }
+      }
+    },
+    "family_x_yaw_bin": {
+      "box:0": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 1,
+          "carried_pad_load_gap": 1
+        }
+      },
+      "box:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "box:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 1
+        }
+      },
+      "box:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:0": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 2
+        }
+      },
+      "elongated_box:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "clearance_violation": 1
+        }
+      },
+      "elongated_box:3": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "contact_load_limit": 1
+        }
+      },
+      "cylinder:0": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 1,
+          "task_timeout": 1
+        }
+      },
+      "cylinder:1": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1
+        }
+      },
+      "cylinder:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1
+        }
+      },
+      "cylinder:3": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "initial_planning_deadline": 1
+        }
+      },
+      "ellipsoid:0": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "initial_planning_deadline": 2
+        }
+      },
+      "ellipsoid:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "ellipsoid:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 1
+        }
+      },
+      "ellipsoid:3": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "task_timeout": 1,
+          "structure selection did not complete": 1
+        }
+      },
+      "triangular_prism:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "triangular_prism:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "triangular_prism:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 1
+        }
+      },
+      "triangular_prism:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:1": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "finite-slip geometry refinement did not converge": 1
+        }
+      },
+      "tapered_box:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 1
+        }
+      },
+      "tapered_box:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      }
+    },
+    "resting_orientation": {
+      "large_face": {
+        "successes": 23,
+        "total": 28,
+        "fraction": 0.8214285714285714,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 2,
+          "carried_pad_load_gap": 1,
+          "initial_planning_deadline": 1,
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "small_or_sloped_face": {
+        "successes": 46,
+        "total": 52,
+        "fraction": 0.8846153846153846,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 2,
+          "clearance_violation": 1,
+          "initial_planning_deadline": 2,
+          "finite-slip geometry refinement did not converge": 1
+        }
+      },
+      "standing": {
+        "successes": 8,
+        "total": 12,
+        "fraction": 0.6666666666666666,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 3,
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "lying": {
+        "successes": 6,
+        "total": 8,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "task_timeout": 1,
+          "initial_planning_deadline": 1
+        }
+      },
+      "curved_stable": {
+        "successes": 15,
+        "total": 20,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "initial_planning_deadline": 3,
+          "task_timeout": 1,
+          "structure selection did not complete": 1
+        }
+      }
+    },
+    "position_bin": {
+      "0:1": {
+        "successes": 29,
+        "total": 32,
+        "fraction": 0.90625,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "initial_planning_deadline": 1
+        }
+      },
+      "0:0": {
+        "successes": 24,
+        "total": 33,
+        "fraction": 0.7272727272727273,
+        "reaches_threshold": false,
+        "failures": {
+          "carried_pad_load_gap": 1,
+          "clearance_violation": 1,
+          "contact_load_limit": 3,
+          "initial_planning_deadline": 1,
+          "task_timeout": 1,
+          "structure selection did not complete": 1,
+          "finite-slip geometry refinement did not converge": 1
+        }
+      },
+      "1:0": {
+        "successes": 21,
+        "total": 26,
+        "fraction": 0.8076923076923077,
+        "reaches_threshold": true,
+        "failures": {
+          "initial_planning_deadline": 3,
+          "task_timeout": 1,
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "1:1": {
+        "successes": 24,
+        "total": 29,
+        "fraction": 0.8275862068965517,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 3,
+          "initial_planning_deadline": 2
+        }
+      }
+    },
+    "size_bin": {
+      "large": {
+        "successes": 92,
+        "total": 114,
+        "fraction": 0.8070175438596491,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 7,
+          "carried_pad_load_gap": 1,
+          "initial_planning_deadline": 7,
+          "clearance_violation": 1,
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "task_timeout": 2,
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "structure selection did not complete": 1,
+          "finite-slip geometry refinement did not converge": 1
+        }
+      },
+      "small": {
+        "successes": 6,
+        "total": 6,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      }
+    },
+    "mass_bin": {
+      "light": {
+        "successes": 30,
+        "total": 33,
+        "fraction": 0.9090909090909091,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 2,
+          "task_timeout": 1
+        }
+      },
+      "heavy": {
+        "successes": 68,
+        "total": 87,
+        "fraction": 0.7816091954022989,
+        "reaches_threshold": false,
+        "failures": {
+          "carried_pad_load_gap": 1,
+          "initial_planning_deadline": 7,
+          "contact_load_limit": 5,
+          "clearance_violation": 1,
+          "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "task_timeout": 1,
+          "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+          "structure selection did not complete": 1,
+          "finite-slip geometry refinement did not converge": 1
+        }
+      }
+    }
+  },
+  "missing": 0,
+  "runtime_source_changes": {},
+  "all_results_same_runtime_sources": true,
+  "execution_setting_changes": {},
+  "all_results_same_execution_settings": true,
+  "scope_counts": {
+    "fresh_generation_spawn_task": 120
+  },
+  "reaches_all_rate_thresholds": false,
+  "failure_concentration": {
+    "method": "one-sided Fisher exact; Holm across all predeclared group comparisons",
+    "alpha": 0.05,
+    "clear_concentration": false,
+    "equal_failure_rates_certified": false,
+    "mechanical_cause_review_required": true,
+    "comparisons": [
+      {
+        "axis": "family",
+        "group": "box",
+        "total": 20,
+        "failures": 3,
+        "failure_fraction": 0.15,
+        "other_failure_fraction": 0.19,
+        "p_value": 0.7623985591212752,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "elongated_box",
+        "total": 20,
+        "failures": 5,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.17,
+        "p_value": 0.2881025245812588,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "cylinder",
+        "total": 20,
+        "failures": 6,
+        "failure_fraction": 0.3,
+        "other_failure_fraction": 0.16,
+        "p_value": 0.12479153197655245,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "ellipsoid",
+        "total": 20,
+        "failures": 5,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.17,
+        "p_value": 0.2881025245812588,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "triangular_prism",
+        "total": 20,
+        "failures": 1,
+        "failure_fraction": 0.05,
+        "other_failure_fraction": 0.21,
+        "p_value": 0.9883863796879077,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "tapered_box",
+        "total": 20,
+        "failures": 2,
+        "failure_fraction": 0.1,
+        "other_failure_fraction": 0.2,
+        "p_value": 0.9237029247851147,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "0",
+        "total": 30,
+        "failures": 8,
+        "failure_fraction": 0.26666666666666666,
+        "other_failure_fraction": 0.15555555555555556,
+        "p_value": 0.1386089096732774,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "1",
+        "total": 30,
+        "failures": 2,
+        "failure_fraction": 0.06666666666666667,
+        "other_failure_fraction": 0.2222222222222222,
+        "p_value": 0.9910806966333301,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "2",
+        "total": 30,
+        "failures": 6,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.17777777777777778,
+        "p_value": 0.4881783257076586,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "3",
+        "total": 30,
+        "failures": 6,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.17777777777777778,
+        "p_value": 0.4881783257076586,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:3",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:1",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:3",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:3",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.17391304347826086,
+        "p_value": 0.22666307002952246,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:1",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.1826086956521739,
+        "p_value": 0.643658473444976,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19130434782608696,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "large_face",
+        "total": 28,
+        "failures": 5,
+        "failure_fraction": 0.17857142857142858,
+        "other_failure_fraction": 0.18478260869565216,
+        "p_value": 0.626680162565549,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "small_or_sloped_face",
+        "total": 52,
+        "failures": 6,
+        "failure_fraction": 0.11538461538461539,
+        "other_failure_fraction": 0.23529411764705882,
+        "p_value": 0.9746718563531378,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "standing",
+        "total": 12,
+        "failures": 4,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.16666666666666666,
+        "p_value": 0.152407011572969,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "lying",
+        "total": 8,
+        "failures": 2,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.17857142857142858,
+        "p_value": 0.4505004536011303,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "curved_stable",
+        "total": 20,
+        "failures": 5,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.17,
+        "p_value": 0.2881025245812588,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:1",
+        "total": 32,
+        "failures": 3,
+        "failure_fraction": 0.09375,
+        "other_failure_fraction": 0.2159090909090909,
+        "p_value": 0.9703228776962444,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:0",
+        "total": 33,
+        "failures": 9,
+        "failure_fraction": 0.2727272727272727,
+        "other_failure_fraction": 0.14942528735632185,
+        "p_value": 0.09989945610579473,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:0",
+        "total": 26,
+        "failures": 5,
+        "failure_fraction": 0.19230769230769232,
+        "other_failure_fraction": 0.18085106382978725,
+        "p_value": 0.546651897673601,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:1",
+        "total": 29,
+        "failures": 5,
+        "failure_fraction": 0.1724137931034483,
+        "other_failure_fraction": 0.18681318681318682,
+        "p_value": 0.6639470672198012,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "large",
+        "total": 114,
+        "failures": 22,
+        "failure_fraction": 0.19298245614035087,
+        "other_failure_fraction": 0.0,
+        "p_value": 0.2881718432140629,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "small",
+        "total": 6,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.19298245614035087,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "light",
+        "total": 33,
+        "failures": 3,
+        "failure_fraction": 0.09090909090909091,
+        "other_failure_fraction": 0.21839080459770116,
+        "p_value": 0.9758118489640176,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "heavy",
+        "total": 87,
+        "failures": 19,
+        "failure_fraction": 0.21839080459770116,
+        "other_failure_fraction": 0.09090909090909091,
+        "p_value": 0.08456683498148808,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      }
+    ]
+  },
+  "all_cases_cover_required_sequence": true,
+  "assembly_required": false,
+  "ready_for_completion_review": true,
+  "rows": [
+    {
+      "case": "box_y0_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y0_0/result.json"
+    },
+    {
+      "case": "box_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y0_1/result.json"
+    },
+    {
+      "case": "box_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y0_2/result.json"
+    },
+    {
+      "case": "box_y0_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "carried_pad_load_gap",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y0_3/result.json"
+    },
+    {
+      "case": "box_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y0_4/result.json"
+    },
+    {
+      "case": "box_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y1_0/result.json"
+    },
+    {
+      "case": "box_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y1_1/result.json"
+    },
+    {
+      "case": "box_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y1_2/result.json"
+    },
+    {
+      "case": "box_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y1_3/result.json"
+    },
+    {
+      "case": "box_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y1_4/result.json"
+    },
+    {
+      "case": "box_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y2_0/result.json"
+    },
+    {
+      "case": "box_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y2_1/result.json"
+    },
+    {
+      "case": "box_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y2_2/result.json"
+    },
+    {
+      "case": "box_y2_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y2_3/result.json"
+    },
+    {
+      "case": "box_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y2_4/result.json"
+    },
+    {
+      "case": "box_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y3_0/result.json"
+    },
+    {
+      "case": "box_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y3_1/result.json"
+    },
+    {
+      "case": "box_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y3_2/result.json"
+    },
+    {
+      "case": "box_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y3_3/result.json"
+    },
+    {
+      "case": "box_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/box_y3_4/result.json"
+    },
+    {
+      "case": "elongated_box_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y0_0/result.json"
+    },
+    {
+      "case": "elongated_box_y0_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y0_1/result.json"
+    },
+    {
+      "case": "elongated_box_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y0_2/result.json"
+    },
+    {
+      "case": "elongated_box_y0_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y0_3/result.json"
+    },
+    {
+      "case": "elongated_box_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y0_4/result.json"
+    },
+    {
+      "case": "elongated_box_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y1_0/result.json"
+    },
+    {
+      "case": "elongated_box_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y1_1/result.json"
+    },
+    {
+      "case": "elongated_box_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y1_2/result.json"
+    },
+    {
+      "case": "elongated_box_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y1_3/result.json"
+    },
+    {
+      "case": "elongated_box_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y1_4/result.json"
+    },
+    {
+      "case": "elongated_box_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y2_0/result.json"
+    },
+    {
+      "case": "elongated_box_y2_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "clearance_violation",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y2_1/result.json"
+    },
+    {
+      "case": "elongated_box_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y2_2/result.json"
+    },
+    {
+      "case": "elongated_box_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y2_3/result.json"
+    },
+    {
+      "case": "elongated_box_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y2_4/result.json"
+    },
+    {
+      "case": "elongated_box_y3_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact friction branches unresolved: [{'modes': ((5,), (), (), (), (), (), (5, 6), (2,), (), (2, 3), (), (2, 3), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (6, 7), (6,), (6, 7), (), (), 'apex', (2,), (), 'apex', (), 'apex', 'apex'), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (5, 6), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (2,), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (2, 3), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((6, 7), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (6, 7), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (6,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), 'apex', ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), 'apex'), 'reason': 'contact solve PrimalInfeasible'}]",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y3_0/result.json"
+    },
+    {
+      "case": "elongated_box_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y3_1/result.json"
+    },
+    {
+      "case": "elongated_box_y3_2",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y3_2/result.json"
+    },
+    {
+      "case": "elongated_box_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y3_3/result.json"
+    },
+    {
+      "case": "elongated_box_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/elongated_box_y3_4/result.json"
+    },
+    {
+      "case": "cylinder_y0_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y0_0/result.json"
+    },
+    {
+      "case": "cylinder_y0_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "task_timeout",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y0_1/result.json"
+    },
+    {
+      "case": "cylinder_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y0_2/result.json"
+    },
+    {
+      "case": "cylinder_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y0_3/result.json"
+    },
+    {
+      "case": "cylinder_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y0_4/result.json"
+    },
+    {
+      "case": "cylinder_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y1_0/result.json"
+    },
+    {
+      "case": "cylinder_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y1_1/result.json"
+    },
+    {
+      "case": "cylinder_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y1_2/result.json"
+    },
+    {
+      "case": "cylinder_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y1_3/result.json"
+    },
+    {
+      "case": "cylinder_y1_4",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y1_4/result.json"
+    },
+    {
+      "case": "cylinder_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y2_0/result.json"
+    },
+    {
+      "case": "cylinder_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y2_1/result.json"
+    },
+    {
+      "case": "cylinder_y2_2",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y2_2/result.json"
+    },
+    {
+      "case": "cylinder_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y2_3/result.json"
+    },
+    {
+      "case": "cylinder_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y2_4/result.json"
+    },
+    {
+      "case": "cylinder_y3_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact friction branches unresolved: [{'modes': ((3,), (3,), (5,), (3,), (5,), (5,), (), (1, 2), (7,), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve AlmostSolved'}, {'modes': ((3, 4), (5, 6), (5, 6), (3, 4), (3, 4), (3, 4), 'apex', (6, 7), (6, 7), 'apex', (1, 2), (1, 2), (5, 6), (2, 3), (2, 3), (5, 6), (3, 4), (3, 4)), 'reason': 'contact solve Solved'}, {'modes': ((3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve Solved'}, {'modes': ((), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (3,), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (5,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (7,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (3,), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve AlmostPrimalInfeasible'}, {'modes': ((), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (5, 6), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (3, 4), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (6, 7), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), 'apex', (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (1, 2), (), (), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (2, 3), (), (), ()), 'reason': 'contact solve MaxIterations'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (5, 6), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (3, 4)), 'reason': 'contact solve PrimalInfeasible'}]",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y3_0/result.json"
+    },
+    {
+      "case": "cylinder_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y3_1/result.json"
+    },
+    {
+      "case": "cylinder_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y3_2/result.json"
+    },
+    {
+      "case": "cylinder_y3_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y3_3/result.json"
+    },
+    {
+      "case": "cylinder_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/cylinder_y3_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y0_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y0_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y0_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y0_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y0_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y1_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y1_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y1_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y1_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y1_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y2_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y2_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y2_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y2_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y2_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y3_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y3_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_2",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "task_timeout",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y3_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y3_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_4",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "structure selection did not complete",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/ellipsoid_y3_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y0_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y0_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y0_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y0_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y0_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y1_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y1_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y1_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y1_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y1_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y2_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y2_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y2_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y2_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y2_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y3_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y3_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y3_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y3_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/triangular_prism_y3_4/result.json"
+    },
+    {
+      "case": "tapered_box_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y0_0/result.json"
+    },
+    {
+      "case": "tapered_box_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y0_1/result.json"
+    },
+    {
+      "case": "tapered_box_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y0_2/result.json"
+    },
+    {
+      "case": "tapered_box_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y0_3/result.json"
+    },
+    {
+      "case": "tapered_box_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y0_4/result.json"
+    },
+    {
+      "case": "tapered_box_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y1_0/result.json"
+    },
+    {
+      "case": "tapered_box_y1_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "finite-slip geometry refinement did not converge",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y1_1/result.json"
+    },
+    {
+      "case": "tapered_box_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y1_2/result.json"
+    },
+    {
+      "case": "tapered_box_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y1_3/result.json"
+    },
+    {
+      "case": "tapered_box_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y1_4/result.json"
+    },
+    {
+      "case": "tapered_box_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y2_0/result.json"
+    },
+    {
+      "case": "tapered_box_y2_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "initial_planning_deadline",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y2_1/result.json"
+    },
+    {
+      "case": "tapered_box_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y2_2/result.json"
+    },
+    {
+      "case": "tapered_box_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y2_3/result.json"
+    },
+    {
+      "case": "tapered_box_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y2_4/result.json"
+    },
+    {
+      "case": "tapered_box_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y3_0/result.json"
+    },
+    {
+      "case": "tapered_box_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y3_1/result.json"
+    },
+    {
+      "case": "tapered_box_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y3_2/result.json"
+    },
+    {
+      "case": "tapered_box_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y3_3/result.json"
+    },
+    {
+      "case": "tapered_box_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/resumed_holdout120_20261022/tapered_box_y3_4/result.json"
+    }
+  ]
+}
