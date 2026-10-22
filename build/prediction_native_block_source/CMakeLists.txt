@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(drive_interval_probe LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(pinocchio 3.8 REQUIRED)
+add_library(drive_interval SHARED interval.cpp)
+target_include_directories(drive_interval PRIVATE ../../third_party/nlohmann_json)
+target_link_libraries(drive_interval PRIVATE pinocchio::pinocchio)
+target_compile_options(drive_interval PRIVATE -O3 -Wall -Wextra)

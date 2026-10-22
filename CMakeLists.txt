@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.16)
+project(amsrr_det LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(pinocchio 3.8 REQUIRED)
+add_executable(det_rollout native/main.cpp native/plant.cpp native/control.cpp)
+target_include_directories(det_rollout PRIVATE third_party/nlohmann_json)
+target_link_libraries(det_rollout PRIVATE pinocchio::pinocchio)
+target_compile_options(det_rollout PRIVATE -O3 -Wall -Wextra)
+add_library(geometry_kernel SHARED native/geometry_kernel.cpp)
+target_link_libraries(geometry_kernel PRIVATE pinocchio::pinocchio)
+target_compile_options(geometry_kernel PRIVATE -O3 -Wall -Wextra)
+# Deliberately no -ffast-math; NaN detection and numerical checks must work.

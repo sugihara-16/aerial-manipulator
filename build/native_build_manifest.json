@@ -1,0 +1,27 @@
+{
+  "scope": "Native sources and original build settings; generated binaries are not versioned.",
+  "libraries": [
+    {
+      "build_directory": "build/prediction_native_avx_fixed",
+      "sources": {
+        "build/prediction_native_block_source/CMakeLists.txt": "d62d869ad2b4c3166a7f0b6f6f8566835cd2d51509cb424c9f7df81633d4aaf6",
+        "build/prediction_native_block_source/interval.cpp": "f75397aa0d106196691ece3ee6c2ae444cb9cb6b40bd864ee07bee4328c22a96"
+      },
+      "cmake_configuration": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS": "-mavx2 -ffp-contract=off -DEIGEN_MAX_ALIGN_BYTES=16 -DEIGEN_MAX_STATIC_ALIGN_BYTES=16 -DEIGEN_MALLOC_ALREADY_ALIGNED=1",
+        "CMAKE_HOME_DIRECTORY": "/home/leus/amsrr_det/build/prediction_native_block_source"
+      },
+      "validated_library_sha256": "da21a775bd58f7abfc03462a901245159d8143e4fe13e4cede5ddcbeba6cdefa"
+    },
+    {
+      "build_directory": "build/native_bvls",
+      "sources": {
+        "build/native_bvls/solver.py": "1d6efa59eb874946b089090f00c6c5492f71bd60c3ec8ffa31e51667dbf4def8",
+        "build/native_bvls/bvls.cpp": "fea782753fec4cf6e4f9107e2c14884623d7be756f121d046a663d149f744ea7"
+      },
+      "cmake_configuration": {},
+      "validated_library_sha256": "29cfec70521d0161f28b7e164ceeb8d129945d21aa28155b04140ff4c3a95dd5"
+    }
+  ]
+}
