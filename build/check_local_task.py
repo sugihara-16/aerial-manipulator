@@ -60,7 +60,7 @@ if _contact_binary.exists():_DEPENDENCIES[str(_contact_binary.relative_to(_ROOT)
 
 
 
-def main():
+def main(argv=None, observer=None):
     parser=argparse.ArgumentParser();src=parser.add_mutually_exclusive_group(required=True)
     src.add_argument('--plan');src.add_argument('--request')
     parser.add_argument('--goal');parser.add_argument('--output',type=Path,required=True)
@@ -102,7 +102,7 @@ def main():
     parser.add_argument('--background-withdrawal',action='store_true',help='continue unloaded control while preparing the ordinary withdrawal path')
     parser.add_argument('--distance-closing',action='store_true')
     parser.add_argument('--contact-counts',nargs='+',type=int,default=[2,3,4])
-    args=parser.parse_args()
+    args=parser.parse_args(argv)
     if args.steps<2 or args.steps%2:parser.error('physics steps must be a positive even number for 5 ms contact updates')
     out=args.output;out.mkdir(exist_ok=False);started=time.perf_counter()
     if args.rigid_object_feedback and not args.generated_feedback:raise ValueError('object-only comparison requires generated feedback')
@@ -598,6 +598,9 @@ def main():
         if step%200==0:
             trace.append(dict(time_s=float(d.time),phase=phase,gaps=gaps.tolist(),loads=audit.last_normal_loads.tolist()))
             print(json.dumps(trace[-1]),flush=True)
+        # Optional display hook: the observer reads state, never advances physics.
+        if observer is not None and not observer(m,d,phase):
+            reason='viewer_interrupted'
         if reason:break
     if recovery is not None:recovery.close()
     if grasp_job is not None:grasp_job.close()
