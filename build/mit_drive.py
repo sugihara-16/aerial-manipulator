@@ -26,7 +26,13 @@ def dock_mit_model(plant, *, kp=0., kd=5.):
         node.set('biasprm',numbers([0,-kp,-kd]))
         actuator.update(kp=float(kp),kd=float(kd),command_encoding='mit_combined')
     xml=ET.tostring(doc,encoding='unicode')
-    model=mujoco.MjModel.from_xml_string(xml)
+    # Only affine drive coefficients change; preserve the compiled geometry.
+    model=copy.copy(plant.mj)
+    for actuator in meta['actuators']:
+        if actuator['role']!='dock':continue
+        i=model.actuator(actuator['name']).id
+        model.actuator_gainprm[i]=0.;model.actuator_gainprm[i,0]=1.
+        model.actuator_biasprm[i]=0.;model.actuator_biasprm[i,:3]=[0.,-kp,-kd]
     model.opt.timestep=plant.mj.opt.timestep
     for name in ['nq','nv','nu']:
         if getattr(model,name)!=getattr(plant.mj,name):raise ValueError('drive change altered dimensions')

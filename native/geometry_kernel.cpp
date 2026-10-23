@@ -7,6 +7,7 @@
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
+#include <list>
 
 using Vec = Eigen::VectorXd;
 using V3 = Eigen::Vector3d;
@@ -87,6 +88,9 @@ extern "C" void ellipsoid_points(int count,const double* points,const double* ax
 }
 namespace {
 thread_local std::string last_error;
+// Parsing the identical Pinocchio model is independent of fitting targets.
+// Keep a small exact-byte cache; each Context still owns its model and Data.
+thread_local std::list<std::pair<std::string,pinocchio::Model>> parsed_models;
 struct Part { int frame; V3 center,half; };
 struct Box { V3 center,half; };
 struct Context {
@@ -108,7 +112,15 @@ extern "C" void* geometry_create(const char* serialized,int nf,const int* frames
     int no,const double* obstacles,int floor,double floor_height) {
   try {
     auto c=std::make_unique<Context>();
-    c->model.loadFromString(std::string(serialized));
+    const std::string encoded(serialized);
+    auto found=std::find_if(parsed_models.begin(),parsed_models.end(),
+        [&](const auto& entry) {return entry.first==encoded;});
+    if(found==parsed_models.end()) {
+      pinocchio::Model model;model.loadFromString(encoded);
+      parsed_models.emplace_front(encoded,std::move(model));
+      if(parsed_models.size()>4)parsed_models.pop_back();
+    } else parsed_models.splice(parsed_models.begin(),parsed_models,found);
+    c->model=parsed_models.front().second;
     c->data=std::make_unique<pinocchio::Data>(c->model);
     c->frames.assign(frames,frames+nf);
     for(int i=0;i<nb;++i)c->parts.push_back({part_frames[i],Eigen::Map<const V3>(centers+3*i),Eigen::Map<const V3>(halves+3*i)});
@@ -245,7 +257,7 @@ void primitive_surface(int shape,const V3& x,const V3& a,double& gap,V3& normal,
 extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
     const double* tangent_map,int nx,int count,const double* target_points,
     const double* target_normals,int shape,const double* half_size,double contact_gap,
-    int ne,const double* equations,int nt,const double* triangles,double triangle_zero,
+    int ne,const double* equations,int nt,const double* triangles,double triangle_zero,double opposed_friction,
     const double* delta,double* residuals,double* derivatives) {
   try {
     auto& c=*static_cast<Context*>(pointer);
@@ -255,10 +267,12 @@ extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
     std::vector<double> poses(12*c.frames.size()),jac(6*nx*c.frames.size()),br(nb),bj(nb*nx);
     int status=geometry_evaluate(pointer,configuration,tangent_map,nx,poses.data(),jac.data(),br.data(),bj.data());
     if(status)return status;
-    int rows=count*(shape?7:6),total=rows+nb+nx;
+    if(opposed_friction>0. && (count!=2||!shape))throw std::runtime_error("invalid opposed contact fit");
+    int rows=count*(shape?7:6)+(opposed_friction>0.?3:0),total=rows+nb+nx;
     Eigen::Map<Vec> r(residuals,total);Eigen::Map<RowMat> D(derivatives,total,nx);D.setZero();
     Eigen::Matrix3d R=Eigen::Matrix3d::Identity();V3 object=V3::Zero(),axes=V3::Ones();
     if(shape) {R=Eigen::Map<const RowMat>(poses.data()+12*count+3,3,3);object=Eigen::Map<const V3>(poses.data()+12*count);axes=Eigen::Map<const V3>(half_size);}
+    V3 sites[2],inward[2];Mat site_jac[2],inward_jac[2];
     for(int i=0;i<count;++i) {
       V3 position=Eigen::Map<const V3>(poses.data()+12*i);
       Eigen::Matrix3d rotation=Eigen::Map<const RowMat>(poses.data()+12*i+3,3,3);
@@ -284,7 +298,26 @@ extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
         D.row(7*i)=gradient.transpose()*local_jac;
         D.middleRows(7*i+1,3)=.15*(normal_jac+R*dn*local_jac);
         D.middleRows(7*i+4,3)=.03*J.topRows(3);
+        if(opposed_friction>0.) {
+          sites[i]=local-gap*outward;inward[i]=-outward;
+          site_jac[i]=(Eigen::Matrix3d::Identity()-outward*gradient.transpose()-gap*dn)*local_jac;
+          inward_jac[i]=-dn*local_jac;
+        }
       }
+    }
+    if(opposed_friction>0.) {
+      V3 diff=sites[1]-sites[0];double length=std::max(diff.norm(),1e-9);V3 axis=diff/length;
+      Mat axis_jac=(Eigen::Matrix3d::Identity()-axis*axis.transpose())*(site_jac[1]-site_jac[0])/length;
+      double cosine=1./std::sqrt(1.+opposed_friction*opposed_friction);
+      for(int i=0;i<2;++i) {
+        double sign=i==0?1.:-1.,raw=cosine-sign*inward[i].dot(axis);
+        r[rows-3+i]=.15*std::max(0.,raw);
+        if(raw>0.)D.row(rows-3+i)=-.15*sign*(axis.transpose()*inward_jac[i]+inward[i].transpose()*axis_jac);
+      }
+      double limit=(Eigen::Map<const V3>(target_normals)+Eigen::Map<const V3>(target_normals+3)).norm();
+      V3 sum=inward[0]+inward[1];double raw=sum.norm()-limit;
+      r[rows-1]=.15*std::max(0.,raw);
+      if(raw>0.)D.row(rows-1)=.15*sum.transpose()*(inward_jac[0]+inward_jac[1])/std::max(sum.norm(),1e-9);
     }
     r.segment(rows,nb)=Eigen::Map<Vec>(br.data(),nb);
     D.middleRows(rows,nb)=Eigen::Map<RowMat>(bj.data(),nb,nx);

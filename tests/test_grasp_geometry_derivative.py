@@ -26,6 +26,7 @@ def test_surface_sliding_derivative_against_whole_configuration_difference(monke
         return SimpleNamespace(x=x0,nfev=0)
     monkeypatch.setattr(geometry,'least_squares',inspect)
     extra=dict(normal_moment_axis=[0.,0.,1.],normal_moment_samples=[np.array([[.002,.004,-.001],[.001,-.002,.003]]) for _ in surfaces]) if normal_moments else {}
+    if surface_count==2:extra['opposed_friction']=4.5
     geometry.fit_contacts(m,meta,q,surfaces,points,normals,base_rotation=True,object_shape=shape,**extra)
 
 

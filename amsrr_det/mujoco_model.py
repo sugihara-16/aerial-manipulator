@@ -11,6 +11,7 @@ import numpy as np
 import pinocchio as pin
 import mujoco
 from .model import ROOT, build_model, transform
+from .planning_memo import evaluate as memoized
 
 # Source PhysX Dock decomposition; other parts retain the CAD component hulls.
 # This is a reusable part cache, not a catalogue of assembled structures.
@@ -122,6 +123,17 @@ class PlantModel:
 
 def make_plant(n=1, edges=(), payload=None, *, timestep=.001,
                meshes=True, mesh_cache=None, floor=False):
+    # Different postures of the same generated structure share this immutable
+    # construction within one planning call. Loading returns an independent
+    # model: later option, support and actuator changes must not leak.
+    inputs=dict(operation='make_plant',modules=n,edges=edges,payload=payload,
+                timestep=timestep,meshes=meshes,
+                mesh_cache=None if mesh_cache is None else str(Path(mesh_cache).resolve()),floor=floor)
+    return memoized(inputs,lambda:_make_plant(n,edges,payload,timestep=timestep,
+                    meshes=meshes,mesh_cache=mesh_cache,floor=floor))
+
+
+def _make_plant(n,edges,payload,*,timestep,meshes,mesh_cache,floor):
     model, meta = build_model(n, edges, payload)
     meta['material_mesh_cache']=str(Path(mesh_cache or ROOT/'build/collision_meshes').resolve()) if meshes else None
     doc = ET.Element('mujoco', model='amsrr_det')

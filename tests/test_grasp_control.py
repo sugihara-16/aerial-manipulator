@@ -20,6 +20,31 @@ def test_material_points_do_not_change_with_joint_configuration(port):
     assert len(points)>=3 and np.linalg.matrix_rank(points-points[0],tol=1e-6)>=2
 
 
+@pytest.mark.parametrize('port',['yaw1','pitch2'])
+def test_reused_material_vertices_match_direct_source_mesh(port):
+    import xml.etree.ElementTree as ET
+    import trimesh
+    from amsrr_det.model import ROOT,transform
+    edges=[dict(a=0,port_a='pitch1',b=1,port_b='yaw2')]
+    model,meta=build_model(2,edges);q=pin.neutral(model)
+    surface=(1,port);frame,points=surface_points(model,meta,q,surface)
+    source=ROOT/'assets/robots/holon/holon.urdf'
+    link=('pitch_dock_mech' if port.startswith('pitch') else 'yaw_dock_mech')+port[-1]
+    collision=ET.parse(source).find(f"link[@name='{link}']/collision")
+    mesh=collision.find('geometry/mesh')
+    vertices=np.asarray(trimesh.load_mesh(source.parent/mesh.get('filename')).vertices)
+    vertices=vertices*np.fromstring(mesh.get('scale','1 1 1'),sep=' ')
+    body=meta['frames']['m1/'+link]
+    T=model.frames[frame].placement.inverse()*model.frames[body].placement*transform(collision.find('origin'))
+    vertices=vertices@T.rotation.T+T.translation
+    front=vertices[vertices[:,0]>vertices[:,0].max()-.0001]
+    angles=np.linspace(0,2*np.pi,8,endpoint=False)
+    indices=np.unique([np.argmax(front[:,1]*np.cos(a)+front[:,2]*np.sin(a)) for a in angles])
+    np.testing.assert_array_equal(points,front[indices])
+    points[:]=0.
+    np.testing.assert_array_equal(surface_points(model,meta,q,surface)[1],front[indices])
+
+
 def test_joint_at_reference_bound_does_not_freeze_requested_base_motion():
     model,meta=build_model(1,payload=dict(size=[.3,.3,.3],mass=.6))
     q=pin.neutral(model);q[2]=q[meta['object']['q']+2]=1.

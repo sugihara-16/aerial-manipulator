@@ -3,7 +3,7 @@
 @@ -385,68 +385,6 @@
    // record vertex index of maximum
    obj->vertindex = imax;
- 
+
 -  local_dir[0] = (mjtNum)verts[3*imax + 0];
 -  local_dir[1] = (mjtNum)verts[3*imax + 1];
 -  local_dir[2] = (mjtNum)verts[3*imax + 2];
@@ -82,8 +82,152 @@
        obj->data.mesh.nvert = m->mesh_vertnum[dataid];
 --- a/src/engine/engine_collision_gjk.c
 +++ b/src/engine/engine_collision_gjk.c
-@@ -1300,8 +1300,11 @@
- 
+@@ -15,6 +15,7 @@
+ #include "engine/engine_collision_gjk.h"
+
+ #include <stddef.h>
++#include <math.h>
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -514,36 +515,23 @@
+ // res = origin projected onto plane defined by v1, v2, v3
+ static int projectOriginPlane(mjtNum res[3], const mjtNum v1[3], const mjtNum v2[3],
+                               const mjtNum v3[3]) {
+-  mjtNum diff21[3], diff31[3], diff32[3], n[3], nv, nn;
+-  sub3(diff21, v2, v1);
+-  sub3(diff31, v3, v1);
+-  sub3(diff32, v3, v2);
+-
+-  // n = (v1 - v2) x (v3 - v2)
+-  cross3(n, diff32, diff21);
+-  nv = dot3(n, v2);
+-  nn = dot3(n, n);
++  // Form the plane in extended precision: thin triangles can lose their
++  // normal in double precision before EPA selects its next closest face.
++  long double u[3], v[3], n[3];
++  for (int i = 0; i < 3; ++i) {
++    u[i] = (long double)v2[i] - v1[i];
++    v[i] = (long double)v3[i] - v1[i];
++  }
++  n[0] = u[1]*v[2] - u[2]*v[1];
++  n[1] = u[2]*v[0] - u[0]*v[2];
++  n[2] = u[0]*v[1] - u[1]*v[0];
++  long double nn = 0, nv = 0;
++  for (int i = 0; i < 3; ++i) {
++    nn += n[i]*n[i];
++    nv += n[i]*v1[i];
++  }
+   if (nn == 0) return 1;
+-  if (nv != 0 && nn > mjMINVAL) {
+-    scl3(res, n, nv / nn);
+-    return 0;
+-  }
+-
+-  // n = (v2 - v1) x (v3 - v1)
+-  cross3(n, diff21, diff31);
+-  nv = dot3(n, v1);
+-  nn = dot3(n, n);
+-  if (nn == 0) return 1;
+-  if (nv != 0 && nn > mjMINVAL) {
+-    scl3(res, n, nv / nn);
+-    return 0;
+-  }
+-
+-  // n = (v1 - v3) x (v2 - v3)
+-  cross3(n, diff31, diff32);
+-  nv = dot3(n, v3);
+-  nn = dot3(n, n);
+-  scl3(res, n, nv / nn);
++  for (int i = 0; i < 3; ++i) res[i] = (mjtNum)(n[i]*nv/nn);
+   return 0;
+ }
+
+@@ -1083,6 +1071,72 @@
+ }
+
+
++
++// Signed plane distance, computed without subtracting large triangle minors.
++static long double seedPlaneDistance(const mjtNum a[3], const mjtNum b[3],
++                                    const mjtNum c[3], const mjtNum p[3]) {
++  long double u[3], v[3], n[3];
++  for (int i = 0; i < 3; ++i) {
++    u[i] = (long double)b[i] - a[i];
++    v[i] = (long double)c[i] - a[i];
++  }
++  n[0] = u[1]*v[2] - u[2]*v[1];
++  n[1] = u[2]*v[0] - u[0]*v[2];
++  n[2] = u[0]*v[1] - u[1]*v[0];
++  long double nn = n[0]*n[0] + n[1]*n[1] + n[2]*n[2];
++  if (nn == 0) return 0;
++  long double d = 0;
++  for (int i = 0; i < 3; ++i) d += n[i]*((long double)p[i] - a[i]);
++  return d / sqrtl(nn);
++}
++
++// A triangle's two support points do not always form a convex bipyramid.
++// Keep ordinary seeds unchanged. For a nonconvex seed, select an existing
++// tetrahedron strictly containing the origin; no geometry is moved or added.
++static int repairNonconvexSeed(Polytope* pt, mjCCDStatus* status,
++                              mjCCDObj* obj1, mjCCDObj* obj2) {
++  int invalid = 0;
++  for (int i = 0; i < pt->nfaces && !invalid; ++i) {
++    int ids[3] = EPA_VERT_EXPAND(pt->faces[i].verts);
++    int positive = 0, negative = 0;
++    for (int j = 0; j < pt->nverts; ++j) {
++      long double d = seedPlaneDistance(pt->verts[ids[0]].vert, pt->verts[ids[1]].vert,
++                                       pt->verts[ids[2]].vert, pt->verts[j].vert);
++      positive |= d > mjMINVAL;
++      negative |= d < -mjMINVAL;
++    }
++    invalid = positive && negative;
++  }
++  if (!invalid || pt->nverts != 5) return -1;
++  const mjtNum zero[3] = {0, 0, 0};
++  long double best = 2 * sqrtl(mjMINDIST4);
++  int chosen[4], found = 0;
++  for (int omit = 0; omit < 5; ++omit) {
++    int ids[4], count = 0;
++    for (int i = 0; i < 5; ++i) if (i != omit) ids[count++] = i;
++    long double minimum = mjMAX_LIMIT;
++    for (int opposite = 0; opposite < 4; ++opposite) {
++      int face[3], k = 0;
++      for (int i = 0; i < 4; ++i) if (i != opposite) face[k++] = ids[i];
++      const mjtNum *a = pt->verts[face[0]].vert, *b = pt->verts[face[1]].vert,
++                   *c = pt->verts[face[2]].vert;
++      long double side = seedPlaneDistance(a, b, c, pt->verts[ids[opposite]].vert);
++      long double d = seedPlaneDistance(a, b, c, zero) * (side > 0 ? 1 : -1);
++      if (side == 0) d = 0;
++      if (d < minimum) minimum = d;
++    }
++    if (minimum > best) {
++      best = minimum; found = 1;
++      for (int i = 0; i < 4; ++i) chosen[i] = ids[i];
++    }
++  }
++  if (!found) return -1;
++  for (int i = 0; i < 4; ++i) status->simplex[i] = pt->verts[chosen[i]];
++  status->nsimplex = 4;
++  pt->nfaces = pt->nmap = pt->nverts = pt->horizon.nedges = 0;
++  return polytope4(pt, status, obj1, obj2);
++}
++
+ // create a polytope from a 2-simplex (returns 0 on success)
+ static int polytope3(Polytope* pt, mjCCDStatus* status, mjCCDObj* obj1, mjCCDObj* obj2) {
+   // get vertices of simplex from GJK
+@@ -1165,6 +1219,9 @@
+     return mjEPA_P3_ORIGIN_ON_FACE;
+   }
+
++  int repaired = repairNonconvexSeed(pt, status, obj1, obj2);
++  if (repaired >= 0) return repaired;
++
+   // populate face map
+   for (int i = 0; i < 6; i++) {
+     pt->map[i] = pt->faces + i;
+@@ -1300,8 +1357,11 @@
+
  // recursive call to build horizon; return 1 if face is visible from w otherwise 0
  static int horizonRec(Polytope* pt, Face* face, int e) {
 -    // v is visible from w so it is deleted and adjacent faces are checked
@@ -96,10 +240,59 @@
        int verts[3] = EPA_VERT_EXPAND(face->verts);
        deleteFace(pt, face);
        int ret = 1;
-@@ -1387,8 +1390,12 @@
+@@ -1363,6 +1423,48 @@
+ }
+
+
++
++// Thin EPA triangles can lose area-ratio precision in double arithmetic.
++// Retry witness reconstruction at higher precision; the original distance,
++// direction and consistency tolerance remain unchanged.
++static void epaWitnessAccurate(const Polytope* pt, const Face* face,
++                              mjtNum x1[3], mjtNum x2[3]) {
++  int indices[3] = EPA_VERT_EXPAND(face->verts);
++  const Vertex* vertices[3] = {pt->verts + indices[0], pt->verts + indices[1], pt->verts + indices[2]};
++  long double u[3], v[3], w[3], cross[3];
++  for (int i = 0; i < 3; ++i) {
++    u[i] = (long double)vertices[1]->vert[i] - vertices[0]->vert[i];
++    v[i] = (long double)vertices[2]->vert[i] - vertices[0]->vert[i];
++    w[i] = (long double)face->v[i] - vertices[0]->vert[i];
++  }
++  cross[0] = u[1]*v[2] - u[2]*v[1];
++  cross[1] = u[0]*v[2] - u[2]*v[0];
++  cross[2] = u[0]*v[1] - u[1]*v[0];
++  int x, y;
++  if (fabsl(cross[0]) >= fabsl(cross[1]) && fabsl(cross[0]) >= fabsl(cross[2])) {
++    x = 1; y = 2;
++  } else if (fabsl(cross[1]) >= fabsl(cross[2])) {
++    x = 0; y = 2;
++  } else {
++    x = 0; y = 1;
++  }
++  long double area = u[x]*v[y] - u[y]*v[x];
++  if (area == 0) return;
++  long double lambda[3];
++  lambda[1] = (w[x]*v[y] - w[y]*v[x]) / area;
++  lambda[2] = (u[x]*w[y] - u[y]*w[x]) / area;
++  lambda[0] = 1 - lambda[1] - lambda[2];
++  for (int i = 0; i < 3; ++i) {
++    long double a = 0, b = 0;
++    for (int j = 0; j < 3; ++j) {
++      a += lambda[j] * vertices[j]->vert1[i];
++      b += lambda[j] * vertices[j]->vert2[i];
++    }
++    x1[i] = (mjtNum)a;
++    x2[i] = (mjtNum)b;
++  }
++}
++
+ // return a face of the expanded polytope that best approximates the pentration depth
+ // witness points are in status->{x1, x2}
+ static Face* epa(mjCCDStatus* status, Polytope* pt, mjCCDObj* obj1, mjCCDObj* obj2) {
+@@ -1387,8 +1489,12 @@
        }
      }
- 
+
 +    // Keep faces at the numerical upper bound. Exact squared comparisons
 +    // can discard the converged face after roundoff of its plane projection.
 +    mjtNum bound_slack = status->tolerance * status->tolerance
@@ -110,7 +303,7 @@
        face = pface;
        break;
      }
-@@ -1408,7 +1415,9 @@
+@@ -1408,7 +1514,9 @@
        upper = upper_k;
        upper2 = upper * upper;
      }
@@ -121,9 +314,9 @@
        // terminate without contact when upper < lower on first iteration
        if (k == 0 && upper < lower - 1e-10) {
          face = NULL;
-@@ -1471,7 +1480,9 @@
+@@ -1471,7 +1579,9 @@
      }
- 
+
      // store face in map
 -    if (dist2 >= lower2 && dist2 <= upper2) {
 +    if (dist2 + status->tolerance * (2 * lower + status->tolerance) >= lower2 &&
@@ -132,9 +325,9 @@
        int i = pt->nmap++;
        pt->map[i] = &pt->faces[pt->nfaces - 1];
        pt->map[i]->index = i;
-@@ -1497,7 +1508,9 @@
+@@ -1497,7 +1607,9 @@
        }
- 
+
        // store face in map
 -      if (dist2 >= lower2 && dist2 <= upper2) {
 +    if (dist2 + status->tolerance * (2 * lower + status->tolerance) >= lower2 &&
@@ -143,7 +336,7 @@
          int idx = pt->nmap++;
          pt->map[idx] = &pt->faces[pt->nfaces - 1];
          pt->map[idx]->index = idx;
-@@ -1609,9 +1622,10 @@
+@@ -1609,9 +1721,10 @@
                                     const mjtNum* p, const mjtNum n[3], const mjtNum dir[3]) {
    mjtNum d[3] = {v[0] - p[0], v[1] - p[1], v[2] - p[2]};
    mjtNum dist = dot3(d, n);
@@ -154,12 +347,12 @@
 -  return dist;
 +  return dist / mju_abs(denominator);
  }
- 
- 
-@@ -1629,11 +1643,15 @@
+
+
+@@ -1629,11 +1742,15 @@
    mjtNum* pn = clipped + 6 * npolygonmax;
    mjtNum* pd = pn + 3 * npolygonmax;
- 
+
 -  // compute plane normal and distance to plane for each vertex
 +  // Project along one validated EPA direction, including the side clipping
 +  // planes. The ray must enter the outward-facing reference plane.
@@ -173,19 +366,19 @@
 +    pd[i] = planeNormal(&pn[3*i], &face1[3*i], &face1[3*i + 3], outward);
 +  }
 +  pd[nface1 - 1] = planeNormal(&pn[3*(nface1 - 1)], &face1[3*(nface1 - 1)], &face1[0], outward);
- 
+
    // reserve 2 * max_sides as max sides for a clipped polygon
    int npolygon = nface2, nclipped = 0;
-@@ -2130,7 +2148,7 @@
- 
- 
+@@ -2130,7 +2247,7 @@
+
+
  // recover mesh polygon from its index, return number of edges
 -static int meshFace(mjtNum* res, mjCCDObj* obj, int idx) {
 +static int meshFace(mjtNum* res, mjCCDObj* obj, int idx, mjtNum tolerance) {
    const mjtNum* mat = obj->mat;
    const mjtNum* pos = obj->pos;
- 
-@@ -2138,6 +2156,16 @@
+
+@@ -2138,6 +2255,16 @@
    int nvert = obj->data.mesh.polyvertnum[idx];
    const float* vert = obj->data.mesh.vert;
    const int* polyvert = obj->data.mesh.polyvert + adr;
@@ -202,7 +395,7 @@
    for (int i = nvert - 1; i >= 0; i--) {
      const float* v = vert + 3*polyvert[i];
      globalcoord(res + 3*j++, mat, pos, v[0], v[1], v[2]);
-@@ -2169,9 +2197,13 @@
+@@ -2169,9 +2296,13 @@
  // find two normals that are perpendicular to each other within a tolerance, return 1 if found
  static inline int alignedFaceEdge(int res[2], const mjtNum* edge, int nedge,
                                    const mjtNum* face, int nface, const mjtNum dir[3]) {
@@ -217,8 +410,8 @@
 +    if (alignment <= best) {
        continue;
      }
- 
-@@ -2179,11 +2211,13 @@
+
+@@ -2179,11 +2310,13 @@
        if (mju_abs(dot3(edge + 3*j, face + 3*i)) < mjEDGE_TOL) {
          res[0] = j;
          res[1] = i;
@@ -235,12 +428,12 @@
 +  }
 +  return found;
  }
- 
- 
-@@ -2199,10 +2233,38 @@
+
+
+@@ -2199,10 +2332,38 @@
  }
- 
- 
+
+
 +// Check the EPA witness against the separating support plane in its direction.
 +// This checks numerical consistency, not global optimality of the EPA result.
 +static int consistentPenetration(const mjCCDStatus* status, const mjtNum direction[3],
@@ -277,28 +470,28 @@
    if (obj1->geom_type == mjGEOM_MESH && !obj1->data.mesh.mesh_polynum) {
      return;
    }
-@@ -2221,6 +2283,9 @@
+@@ -2221,6 +2382,9 @@
      nmeshdegmax = nmeshdegmax < 2 ? 2 : nmeshdegmax;
      npolygonmax = npolygonmax < 2 ? 2 : npolygonmax;
    }
 +
 +  // Do not magnify a direction whose depth is below the numerical tolerance.
 +  if (-status->dist[0] <= status->tolerance) return;
- 
+
    // copy face data from vertex data (hard copy in case buffer is being reused)
    int triface1i[3] = {v1->index1, v2->index1, v3->index1};
-@@ -2249,8 +2314,8 @@
+@@ -2249,8 +2413,8 @@
    int nnorms1 = 0, nnorms2 = 0;
- 
+
    mjtNum dir[3], dir_neg[3];
 -  sub3(dir, status->x2, status->x1);
 -  sub3(dir_neg, status->x1, status->x2);
 +  scl3(dir, epa_normal, status->dist[0]);
 +  scl3(dir_neg, epa_normal, -status->dist[0]);
- 
+
    // get all possible face normals for each geom
    if (obj1->geom_type == mjGEOM_BOX) {
-@@ -2318,7 +2383,7 @@
+@@ -2318,7 +2482,7 @@
        nface1 = boxFace(face1, obj1, ind);
      } else if (obj1->geom_type == mjGEOM_MESH) {
        int ind = (edgecon2 ? idx1[j] : idx1[i]);
@@ -307,7 +500,7 @@
      } else if (obj1->geom_type == mjGEOM_CYLINDER) {
        int ind = (edgecon2 ? idx1[j] : idx1[i]);
        nface1 = cylinderFace(face1, obj1, ind);
-@@ -2334,7 +2399,7 @@
+@@ -2334,7 +2498,7 @@
      if (obj2->geom_type == mjGEOM_BOX) {
        nface2 = boxFace(face2, obj2, idx2[j]);
      } else if (obj2->geom_type == mjGEOM_MESH) {
@@ -316,14 +509,14 @@
      } else if (obj2->geom_type == mjGEOM_CYLINDER) {
        nface2 = cylinderFace(face2, obj2, idx2[j]);
      }
-@@ -2346,25 +2411,65 @@
+@@ -2346,25 +2510,65 @@
    // save status members
    int nx, nconmax = status->max_contacts;
    mjtNum* dist = status->dist, *x1 = status->x1, *x2 = status->x2;
 +  mjtNum original_distance = dist[0], original_x1[3], original_x2[3];
 +  copy3(original_x1, x1);
 +  copy3(original_x2, x2);
- 
+
    if (edgecon1) {
      // face1 is an edge; clip face1 against face2
 -    scl3(wit_dir, n2 + 3*j, -1.0);
@@ -344,7 +537,7 @@
      nx = polygonClip(x1, x2, dist, nconmax, face1, nface1, face2, nface2, n1 + 3*i, wit_dir,
                       polygon, npolygonmax);
    }
- 
+
    if (nx > 0) {
 +    // Compare actual witness pairs in the validated EPA direction. Direct
 +    // depths in different normal directions cannot be compared as scalars.
@@ -385,9 +578,9 @@
      status->nx = nx;
    }
  }
-@@ -2419,7 +2524,8 @@
- 
- 
+@@ -2419,7 +2623,8 @@
+
+
  // general convex collision detection
 -mjtNum mjc_ccd(const mjCCDConfig* config, mjCCDStatus* status, mjCCDObj* obj1, mjCCDObj* obj2) {
 +static mjtNum ccdValidated(const mjCCDConfig* config, mjCCDStatus* status,
@@ -395,7 +588,7 @@
    // setup
    obj1->center(status->x1, obj1);
    obj2->center(status->x2, obj2);
-@@ -2481,7 +2587,7 @@
+@@ -2481,7 +2686,7 @@
          const Vertex* v2 = &status->simplex[status->nsimplex > 1 ? 1 : 0];
          const Vertex* v3 = &status->simplex[status->nsimplex > 2 ? 2 : 0];
          multicontact(config->nmeshdegmax, config->npolygonmax, config->buffer, v1, v2, v3,
@@ -404,13 +597,19 @@
          mjtNum min_dist = status->dist[0];
          for (int i = 1; i < status->nx; i++) {
            if (status->dist[i] < min_dist) {
-@@ -2548,12 +2654,29 @@
+@@ -2548,12 +2753,35 @@
      if (!ret) {
        Face* face = epa(status, &pt, obj1, obj2);
- 
+
++      int consistent = !face || consistentPenetration(status, face->v, obj1, obj2, accuracy_tolerance);
++      if (!consistent) {
++        epaWitnessAccurate(&pt, face, status->x1, status->x2);
++        consistent = consistentPenetration(status, face->v, obj1, obj2, accuracy_tolerance);
++      }
++
 +      // Reject an inconsistent direction before it can select distant faces.
 +      // Retry once with a fixed tighter tolerance and a single contact.
-+      if (face && !consistentPenetration(status, face->v, obj1, obj2, accuracy_tolerance)) {
++      if (!consistent) {
 +        if (config->tolerance > 1e-12) {
 +          mjCCDConfig refined = *config;
 +          refined.tolerance = 1e-12;
@@ -433,12 +632,12 @@
 -                     status, obj1, obj2);
 +                     status, obj1, obj2, face->v);
        }
- 
+
        // if EPA found no contact during a distance query, restore GJK distance and witness count
-@@ -2572,4 +2695,10 @@
+@@ -2572,4 +2800,10 @@
    return min_dist;
  }
- 
+
 +// Refinement spends more work to meet the original accuracy request; it does
 +// not silently replace that request by a stricter acceptance threshold.
 +mjtNum mjc_ccd(const mjCCDConfig* config, mjCCDStatus* status, mjCCDObj* obj1, mjCCDObj* obj2) {
@@ -458,13 +657,13 @@
 -  // tolerance for edge-face alignment (~5.1 deg)
    #define mjEDGE_TOL 0.0888
  #endif
- 
+
 --- a/src/engine/engine_collision_driver.c
 +++ b/src/engine/engine_collision_driver.c
 @@ -1267,6 +1267,32 @@
    mjtNum aamm[6];
    mjtNum override_margin = mjENABLED(mjENBL_OVERRIDE) ? 0.5 * m->opt.o_margin : 0;
- 
+
 +  // The existing rigid-body BVH root contains every finite geom. Transform
 +  // it once instead of projecting each convex decomposition piece. A looser
 +  // conservative box only adds candidates; mid/narrow phase are unchanged.
@@ -497,7 +696,7 @@
 @@ -1586,6 +1612,37 @@
    int sleep_filter = mjENABLED(mjENBL_SLEEP) && d->nbody_awake < nbody;
    mjtNum cov[9], cen[3], eigval[3], eigvec[9], frame[9], quat[4];
- 
+
 +  // With very few collidable rigid bodies, enumerating their pairs costs
 +  // less than constructing a PCA frame and bounds from every convex piece.
 +  // This is a conservative broad phase: unchanged mid/narrow phases still

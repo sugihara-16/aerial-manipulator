@@ -11,7 +11,9 @@ import amsrr_det.native_grasp_geometry as native
 
 @pytest.mark.parametrize('family',[None,'box','elongated_box','cylinder','ellipsoid','triangular_prism','tapered_box'])
 @pytest.mark.parametrize('rotate',[False,True])
-def test_residual_and_derivative_match_python(monkeypatch,family,rotate):
+@pytest.mark.parametrize('opposed',[False,True])
+def test_residual_and_derivative_match_python(monkeypatch,family,rotate,opposed):
+    if opposed and family is None:return
     library=native.library()
     if library is None:pytest.skip('optional geometry kernel not built')
     shape=ObjectShape(family or 'box',[.38,.38 if family=='cylinder' else .25,.31],.7)
@@ -35,6 +37,7 @@ def test_residual_and_derivative_match_python(monkeypatch,family,rotate):
         monkeypatch.setattr(native,'library',lambda:value)
         geometry.fit_contacts(model,meta,q,surfaces,points,normals,base_rotation=rotate,
             object_shape=shape if family else None,floor_clearance=1.,
+            opposed_friction=4.5 if opposed else None,
             obstacles=[([.1,.2,.3],[.8,.7,.6]),([1.,-.3,.1],[.3,.2,.3])])
     np.testing.assert_allclose(evaluations[0][0],evaluations[1][0],atol=2e-14,rtol=2e-13)
     np.testing.assert_allclose(evaluations[0][1],evaluations[1][1],atol=5e-10,rtol=1e-9)

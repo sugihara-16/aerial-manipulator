@@ -9,6 +9,16 @@ import pinocchio as pin
 from scipy.linalg import cho_factor, cho_solve
 
 
+def constraint_jacobian(model, data):
+    """Read the same contact geometry in either native storage layout."""
+    if not mujoco.mj_isSparse(model):
+        return data.efc_J.reshape(data.nefc, model.nv)
+    matrix = np.empty((data.nefc, model.nv))
+    mujoco.mju_sparse2dense(matrix, data.efc_J, data.efc_J_rownnz,
+                           data.efc_J_rowadr, data.efc_J_colind)
+    return matrix
+
+
 def contact_hessian(model, data, jar):
     """Derivative of the force law at this independent model's contact rows."""
     m,d=model,data
@@ -30,12 +40,12 @@ def local_input_tangent(model, data):
         raise ValueError('local tangent requires stateless fixed-gain drives')
     if np.any(m.jnt_actfrclimited) or m.ntendon or m.nflex:
         raise ValueError('unsupported effective metric or extra force limits')
-    if not d.efm_active or mujoco.mj_isSparse(m):
-        raise ValueError('diagnostic requires dense discrete effective metric')
+    if not d.efm_active:
+        raise ValueError('diagnostic requires discrete effective metric')
     M = np.zeros((m.nv, m.nv))
     mujoco.mj_fullM(m, d, M)
     M += np.diag(d.efm_sdiag)
-    J = d.efc_J.reshape(d.nefc, m.nv).copy()
+    J = constraint_jacobian(m, d).copy()
     jar = J @ d.qacc - d.efc_aref
     C = contact_hessian(m,d,jar)
     moment = np.zeros((m.nu, m.nv))

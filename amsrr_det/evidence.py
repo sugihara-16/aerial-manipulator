@@ -11,6 +11,7 @@ _paths=[*ROOT.glob('amsrr_det/*.py'),*ROOT.glob('amsrr_det/*.cc'),*ROOT.glob('sc
         ROOT/'requirements.lock.txt',ROOT/'requirements.txt',ROOT/'requirements-physx-local.txt']
 _paths.append(ROOT/'build/run_mujoco_task.py')
 _paths.extend(ROOT/p for p in ['CMakeLists.txt','native/geometry_kernel.cpp',
+    'third_party/mujoco/contact.patch','third_party/mujoco/manifest.json',
     'build/geometry_kernel/libgeometry_kernel.so','build/geometry_kernel/identity.json',
     'assets/generated/authored_part_bounds.json','assets/generated/material_surfaces.npz'])
 # Capture once per process before a long batch, not again from changing files

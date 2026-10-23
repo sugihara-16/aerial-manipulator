@@ -21,24 +21,38 @@ def _source_vertices(raw, file_type):
     return vertices
 
 
+@lru_cache(maxsize=4)
+def _surface_source(link):
+    """Authored parts are immutable for the lifetime of a planning process."""
+    source=ROOT/'assets/robots/holon/holon.urdf'
+    collision=ET.parse(source).find(f"link[@name='{link}']/collision")
+    mesh=collision.find('geometry/mesh');path=source.parent/mesh.get('filename')
+    vertices=_source_vertices(path.read_bytes(),path.suffix.lstrip('.'))
+    vertices=vertices*np.fromstring(mesh.get('scale','1 1 1'),sep=' ')
+    vertices.setflags(write=False)
+    return vertices,transform(collision.find('origin'))
+
+
+@lru_cache(maxsize=128)
+def _exposed_vertices(link,rotation,translation):
+    vertices=_surface_source(link)[0]
+    vertices=vertices@np.asarray(rotation).reshape(3,3).T+translation
+    front=vertices[vertices[:,0]>vertices[:,0].max()-.0001]
+    angles=np.linspace(0,2*np.pi,8,endpoint=False)
+    indices=np.unique([np.argmax(front[:,1]*np.cos(a)+front[:,2]*np.sin(a)) for a in angles])
+    result=front[indices];result.setflags(write=False)
+    return result
+
+
 def surface_points(model,meta,q,surface):
     """Eight exposed material vertices, from the source mesh (not collision truth)."""
     module,port=surface
     link=('pitch_dock_mech' if port.startswith('pitch') else 'yaw_dock_mech')+port[-1]
-    source=ROOT/'assets/robots/holon/holon.urdf'
-    collision=ET.parse(source).find(f"link[@name='{link}']/collision")
-    mesh=collision.find('geometry/mesh');path=source.parent/mesh.get('filename')
-    source_vertices=_source_vertices(path.read_bytes(),path.suffix.lstrip('.'))
     frame=meta['frames'][grasp_frame(*surface)];body=meta['frames'][f'm{module}/{link}']
     if model.frames[frame].parentJoint!=model.frames[body].parentJoint:
         raise ValueError('grasp material frame must be fixed on its collision body')
-    T=model.frames[frame].placement.inverse()*model.frames[body].placement*transform(collision.find('origin'))
-    vertices=source_vertices*np.fromstring(mesh.get('scale','1 1 1'),sep=' ')
-    vertices=vertices@T.rotation.T+T.translation
-    front=vertices[vertices[:,0]>vertices[:,0].max()-.0001]
-    angles=np.linspace(0,2*np.pi,8,endpoint=False)
-    indices=np.unique([np.argmax(front[:,1]*np.cos(a)+front[:,2]*np.sin(a)) for a in angles])
-    return frame,front[indices]
+    T=model.frames[frame].placement.inverse()*model.frames[body].placement*_surface_source(link)[1]
+    return frame,_exposed_vertices(link,tuple(T.rotation.ravel()),tuple(T.translation)).copy()
 
 
 class GraspReferences:

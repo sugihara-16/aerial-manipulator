@@ -23,7 +23,7 @@ def library():
     lib.geometry_evaluate.restype=ct.c_int
     lib.geometry_fit_evaluate.argtypes=[ct.c_void_p,ct.c_void_p,ct.c_void_p,ct.c_int,
         ct.c_int,ct.c_void_p,ct.c_void_p,ct.c_int,ct.c_void_p,ct.c_double,
-        ct.c_int,ct.c_void_p,ct.c_int,ct.c_void_p,ct.c_double,ct.c_void_p,ct.c_void_p,ct.c_void_p]
+        ct.c_int,ct.c_void_p,ct.c_int,ct.c_void_p,ct.c_double,ct.c_double,ct.c_void_p,ct.c_void_p,ct.c_void_p]
     lib.geometry_fit_evaluate.restype=ct.c_int
     lib.ellipsoid_points.argtypes=[ct.c_int,ct.c_void_p,ct.c_void_p,ct.c_void_p]
     lib.ellipsoid_points.restype=None
@@ -88,7 +88,7 @@ class GeometryKernel:
         if status:raise RuntimeError(self.lib.geometry_error().decode())
         return self.poses,self.jacobians,self.residual,self.derivative
 
-    def fit(self,q,lift,points,normals,shape,gap,delta):
+    def fit(self,q,lift,points,normals,shape,gap,delta,opposed_friction=None):
         kind=0 if shape is None else {'box':1,'elongated_box':1,'cylinder':2,'ellipsoid':3,'triangular_prism':4,'tapered_box':4}.get(getattr(shape,'family',None))
         if kind is None:return None
         from trimesh.constants import tol
@@ -97,11 +97,11 @@ class GeometryKernel:
         arrays=[np.ascontiguousarray(a,dtype=float) for a in
                 [q,lift,points,normals,np.ones(3) if shape is None else shape.size/2,delta]]
         q,lift,points,normals,size,delta=arrays
-        rows=len(points)*(7 if kind else 6)+len(self.residual)+self.nx
+        rows=len(points)*(7 if kind else 6)+len(self.residual)+self.nx+(3 if opposed_friction is not None else 0)
         residual=np.empty(rows);derivative=np.empty((rows,self.nx))
         status=self.lib.geometry_fit_evaluate(self.handle,q.ctypes.data,lift.ctypes.data,self.nx,
             len(points),points.ctypes.data,normals.ctypes.data,kind,size.ctypes.data,float(gap),
-            len(equations),equations.ctypes.data,len(triangles),triangles.ctypes.data,float(tol.zero),
+            len(equations),equations.ctypes.data,len(triangles),triangles.ctypes.data,float(tol.zero),float(opposed_friction or 0.),
             delta.ctypes.data,residual.ctypes.data,derivative.ctypes.data)
         if status:raise RuntimeError(self.lib.geometry_error().decode())
         return residual,derivative

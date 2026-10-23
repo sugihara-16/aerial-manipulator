@@ -9,6 +9,14 @@ ENVIRONMENT_CLEARANCE = .03
 SUPPORT_NAMES = ('floor', 'support', 'destination_support')
 
 
+def forward_collision(model,data):
+    """Refresh rigid geometry without constructing unused force constraints."""
+    if not model.nflex and not (model.opt.enableflags & mujoco.mjtEnableBit.mjENBL_SLEEP):
+        mujoco.mj_kinematics(model,data);mujoco.mj_collision(model,data)
+    else:
+        mujoco.mj_fwdPosition(model,data)
+
+
 def proximity_model(model, *, omit_permitted_support=False):
     """Separate model: mesh CCD with a gap can change active-contact results."""
     result=copy.copy(model)
@@ -158,10 +166,7 @@ class MotionBoundedClearance:
         # Rigid distance queries need poses and collision detection, not
         # inertia factorization or contact-force constraint construction.
         # Preserve the full pipeline for deformable/sleeping models.
-        if not m.nflex and not (m.opt.enableflags & mujoco.mjtEnableBit.mjENBL_SLEEP):
-            mujoco.mj_kinematics(m,d);mujoco.mj_collision(m,d)
-        else:
-            mujoco.mj_fwdPosition(m,d)
+        forward_collision(m,d)
         self.queries+=1
         intended,limits=self.classifiers[grasp_contact_allowed](d)
         gap=np.asarray(d.contact.dist);is_environment=limits==ENVIRONMENT_CLEARANCE

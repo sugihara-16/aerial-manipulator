@@ -5,6 +5,25 @@ from amsrr_det.clearance import detection_buffers,classify_contacts,proximity_mo
 from amsrr_det.clearance import MotionBoundedClearance,ContactClassifier
 
 
+def test_geometry_query_keeps_all_contacts_without_unused_constraint_memory():
+    from amsrr_det.clearance import forward_collision
+    geoms=''.join('<geom type="sphere" size=".1" mass=".01"/>' for _ in range(32))
+    xml='<mujoco><size memory="MEMORY"/><worldbody><body pos="0 0 1"><freejoint/>'+geoms+'</body><body pos=".19 0 1"><freejoint/>'+geoms+'</body></worldbody></mujoco>'
+    limited=mujoco.MjModel.from_xml_string(xml.replace('MEMORY','1M'))
+    full=mujoco.MjModel.from_xml_string(xml.replace('MEMORY','2M'))
+    a,b,c=mujoco.MjData(limited),mujoco.MjData(limited),mujoco.MjData(full)
+    warnings=[];previous=mujoco.get_mju_user_warning();mujoco.set_mju_user_warning(warnings.append)
+    try:
+        mujoco.mj_fwdPosition(limited,a)
+        assert any('arena memory' in warning for warning in warnings)
+        warnings.clear();forward_collision(limited,b);mujoco.mj_fwdPosition(full,c)
+        assert not warnings
+    finally:mujoco.set_mju_user_warning(previous)
+    assert b.ncon==c.ncon==1024
+    for name in ['geom1','geom2','dist','pos','frame']:
+        np.testing.assert_array_equal(getattr(b.contact,name),getattr(c.contact,name))
+
+
 def test_buffer_reports_near_environment_without_force_and_preserves_contact():
     xml='''<mujoco><option cone="elliptic"/><default><geom/></default><worldbody>
     <geom name="floor" type="plane" size="1 1 .1"/>

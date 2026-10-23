@@ -63,7 +63,29 @@ def robot_bottom(model,meta,q):
     return lowest
 
 
-def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None):
+def opposed_contact_terms(points,normals,friction,point_jac=None,normal_jac=None,normal_sum_limit=None):
+    """Both ends can push along their connecting line inside the friction cone.
+
+    Zero error permits a pair of equal, opposite, collinear compressive forces;
+    it does not certify gravity support or full grasp stability.
+    """
+    delta=points[1]-points[0];length=max(float(np.linalg.norm(delta)),1e-9);axis=delta/length
+    cosine=1/np.sqrt(1+friction**2)
+    raw=cosine-np.array([normals[0]@axis,-normals[1]@axis])
+    if normal_sum_limit is not None:
+        total=normals.sum(axis=0);total_length=float(np.linalg.norm(total))
+        raw=np.r_[raw,total_length-normal_sum_limit]
+    error=np.maximum(raw,0.)
+    if point_jac is None:return error
+    axis_jac=(np.eye(3)-np.outer(axis,axis))@(point_jac[1]-point_jac[0])/length
+    derivative=np.vstack([-axis@normal_jac[0]-normals[0]@axis_jac,
+                           axis@normal_jac[1]+normals[1]@axis_jac])
+    if normal_sum_limit is not None:
+        derivative=np.vstack([derivative,total@normal_jac.sum(axis=0)/max(total_length,1e-9)])
+    return error,derivative*(raw>0)[:,None]
+
+
+def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None):
     if not set(surfaces)<=set(free_surfaces(meta)):
         raise ValueError('contact surface is occupied or does not exist')
     active=[a for a in meta['actuators'] if a['role']=='dock']
@@ -75,6 +97,9 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
             for i in range(meta['modules']) for link,center,half in part_bounds()]
     if points.shape!=(len(surfaces),3) or normals.shape!=points.shape or not np.allclose(np.linalg.norm(normals,axis=1),1):
         raise ValueError('invalid contact targets')
+    if opposed_friction is not None and (len(surfaces)!=2 or object_shape is None or opposed_friction<=0):
+        raise ValueError('opposed contact fitting needs two movable surface sites and positive friction')
+    opposition_limit=float(np.linalg.norm(normals.sum(axis=0))) if opposed_friction is not None else None
     if normal_moment_axis is not None:
         normal_moment_axis=np.asarray(normal_moment_axis,dtype=float)
         if (object_shape is None or normal_moment_axis.shape!=(3,) or
@@ -111,7 +136,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 lift[3:6,3:6]=rotation.T@left
             lift[[a['v'] for a in active],3+nr+np.arange(len(active))]=1
             if kernel is not None:
-                fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0)
+                fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0,opposed_friction)
                 if fused is not None:return fused
                 poses,J,br,bj=kernel.evaluate(q,lift)
                 count=len(frames);position=poses[:count,:3];normal=poses[:count,3:].reshape(-1,3,3)[:,:,0]
@@ -123,7 +148,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 else:
                     obj_position=poses[-1,:3];obj_rotation=poses[-1,3:].reshape(3,3)
                     local=(position-obj_position)@obj_rotation
-                    _,gaps,outward=object_shape.project_surface(local)
+                    surface,gaps,outward=object_shape.project_surface(local)
                     h=1e-6;offset=h*np.eye(3)
                     perturb=np.concatenate([local[:,None,:]+offset,local[:,None,:]-offset],axis=1)
                     _,dg,dn=object_shape.project_surface(perturb.reshape(-1,3))
@@ -135,8 +160,12 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                                             .15*(normal+outward@obj_rotation.T),.03*(position-points)],axis=1)
                     derivative=np.concatenate([(gap_gradient[:,None,:]@local_jac),
                         .15*(normal_jac+obj_rotation@normal_gradient@local_jac),.03*linear],axis=1)
-                return (np.r_[contact.ravel(),br,.0001*(x-x0)],
-                        np.vstack([derivative.reshape(-1,len(x)),bj,.0001*np.eye(len(x))]))
+                extra=np.empty(0);extra_jac=np.empty((0,len(x)))
+                if opposed_friction is not None:
+                    sj=(np.eye(3)-outward[:,:,None]*gap_gradient[:,None,:]-gaps[:,None,None]*normal_gradient)@local_jac
+                    extra,extra_jac=opposed_contact_terms(surface,-outward,opposed_friction,sj,-normal_gradient@local_jac,opposition_limit)
+                return (np.r_[contact.ravel(),.15*extra,br,.0001*(x-x0)],
+                        np.vstack([derivative.reshape(-1,len(x)),.15*extra_jac,bj,.0001*np.eye(len(x))]))
             pin.computeJointJacobians(model,data,q);pin.updateFramePlacements(model,data)
         else:pin.framesForwardKinematics(model,data,q)
         r=[];rows=[];jacobians={}
@@ -146,7 +175,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
         if object_shape is not None:
             obj=data.oMf[meta['object']['frame']]
             local_points=np.array([obj.actInv(data.oMf[f].translation) for f in frames])
-            _,gaps,outwards=object_shape.project_surface(local_points)
+            surface,gaps,outwards=object_shape.project_surface(local_points)
             if want_jac:
                 h=1e-6;offset=h*np.eye(3)
                 perturb=np.concatenate([local_points[:,None,:]+offset,local_points[:,None,:]-offset],axis=1)
@@ -191,6 +220,14 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                         for point,gradient in zip(material,gradients):
                             point_jac=J[:3]-pin.skew(T.rotation@point)@J[3:]
                             rows.append(scale*gradient@obj.rotation.T@point_jac)
+        if opposed_friction is not None:
+            if want_jac:
+                local_jac=np.array([obj.rotation.T@jac(f)[:3] for f in frames])
+                sj=(np.eye(3)-outwards[:,:,None]*gap_gradients[:,None,:]-gaps[:,None,None]*normal_gradients)@local_jac
+                extra,extra_jac=opposed_contact_terms(surface,-outwards,opposed_friction,sj,-normal_gradients@local_jac,opposition_limit)
+                rows.extend(.15*extra_jac)
+            else:extra=opposed_contact_terms(surface,-outwards,opposed_friction,normal_sum_limit=opposition_limit)
+            r.extend(.15*extra)
         if bounds:
             # Keep each transform evaluation in the original arithmetic order.
             # Batch only the box-overlap and inactive-row bookkeeping.
@@ -272,6 +309,10 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
         report.update(position_error_m=float(np.max(abs(gaps-contact_gap))),
             normal_error=max(np.linalg.norm(data.oMf[f].rotation[:,0]+obj.rotation@n) for f,n in zip(frames,outward)),
             object_points=surface.tolist(),inward_normals=(-outward).tolist())
+        if opposed_friction is not None:
+            report.update(opposed_friction=opposed_friction,
+                opposition_normal_sum_limit=opposition_limit,
+                opposition_error=float(opposed_contact_terms(surface,-outward,opposed_friction,normal_sum_limit=opposition_limit).max()))
     return q,report
 
 
