@@ -41,7 +41,7 @@ def pad_gap_jacobians(m,d,links,groups=None):
 
 
 class ContactStepControl:
-    def __init__(self,plant,links,period=.01,input_weight=1e-6,regularized_friction=False,finite_support=False,fast_solve=False,distance_closing=False,condensed_solve=False,clearance_model=None):
+    def __init__(self,plant,links,period=.01,input_weight=1e-6,regularized_friction=False,finite_support=False,fast_solve=False,distance_closing=False,condensed_solve=False,clearance_model=None,inertial_updates=False):
         self.separation=None
         if clearance_model is not None:
             from build.separation_rate_constraints import SeparationRateConstraints
@@ -49,6 +49,8 @@ class ContactStepControl:
         self.plant=plant;self.m=plant.mj;self.d=mujoco.MjData(self.m);self.links=links;self.h=period
         self.groups=[tuple(g for g in range(self.m.ngeom) if self.m.geom(g).name.startswith(link+'/'))for link in links]
         self.input_weight=input_weight
+        self.inertial_updates=inertial_updates
+        self.previous_input=None
         self.regularized_friction=regularized_friction
         self.finite_support=finite_support
         self.fast_solve=fast_solve
@@ -71,6 +73,10 @@ class ContactStepControl:
         self.sites=[self.m.site(plant.pin.frames[r['frame']].name).id for r in meta['rotors']]
         self.limit=np.r_[self.effort,[r['maximum'] for r in meta['rotors']]]
         self.speed=np.full(self.nv,3.)
+        # Track joint errors in units of one rated servo effort, restored
+        # over the same 0.5 s as the geometric objective. This changes the
+        # objective's units; the actual 3 rad/s bounds below stay unchanged.
+        self.speed[self.vi]=np.minimum(3.,self.effort/np.maximum(self.kp,1e-12)/.5)
         for j in np.flatnonzero(self.m.jnt_type==mujoco.mjtJoint.mjJNT_FREE):
             v=self.m.jnt_dofadr[j];self.speed[v:v+6]=[.02]*3+[.1]*3
 
@@ -216,6 +222,19 @@ class ContactStepControl:
             target[nv:nv+nj]=np.where(self.dock,input_reference[:nj],self.kp*input_reference[:nj])-self.kp*q[self.qi]-self.kd*v[self.vi]
             target[nv+nj:nv+nu]=input_reference[nj:]
         objective=np.diag(weights);linear=-weights*target
+        if self.inertial_updates:
+            if self.previous_input is None:raise ValueError('inertial update requires the last issued input')
+            # Measure the input increment through the same finite contact,
+            # support and servo equations used for tracking. Free-motion
+            # inertia over-penalizes corrections when contact restrains motion.
+            # This remains an objective, not a bound on interval peak loads.
+            from amsrr_det.contact_increment import velocity_response
+            effect=velocity_response(E,B,C,contact_rows[:,nv+nu:])/self.speed[:,None]
+            metric=effect.T@effect
+            previous=np.asarray(self.previous_input).copy()
+            previous[:nj]=np.where(self.dock,previous[:nj],self.kp*previous[:nj])-self.kp*q[self.qi]-self.kd*v[self.vi]
+            objective[nv:nv+nu,nv:nv+nu]+=metric
+            linear[nv:nv+nu]-=metric@previous
         pad_gaps=None
         if normal_targets is not None:
             pad_gaps,jacobian=pad_gap_jacobians(m,d,self.links,self.groups)
@@ -326,6 +345,9 @@ class ContactStepControl:
         if np.max(np.linalg.norm(predicted_force,axis=1))>30.00001 or np.max(np.linalg.norm(predicted_moment,axis=1))>5.00001:
             raise ValueError('contact step pad load residual')
         loss=.5*float(np.sum(weights*(x-target)**2))
+        if self.inertial_updates:
+            change=x[nv:nv+nu]-previous
+            loss+=.5*float(change@metric@change)
         if normal_targets is not None:loss+=.5*float(np.sum(((jacobian@pred-rate)/scale)**2))
         cmd=(effort[:nj]+self.kp*q[self.qi]+self.kd*v[self.vi])/np.where(self.dock,1.,self.kp)
         self.diagnostics=dict(gripper_elements=ne,support_elements=len(mus),free_object_velocity_observation=free_object,iterations=iterations,solver_note=solver_note,

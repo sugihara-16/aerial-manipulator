@@ -4,16 +4,16 @@ Objective and every force/input cone are unchanged. Reconstruction is checked
 against the original constraints; failed numerical solves use the original QP.
 """
 import time
+from types import SimpleNamespace
 import numpy as np
 import scipy.sparse as sp
 import clarabel
 from build.held_input_solver import violation
 
-STATISTICS=dict(calls=0,fallbacks=0,statuses={},largest_original_residual=0.)
+STATISTICS=dict(active_calls=0,active_accepted=0,active_fallbacks=0,calls=0,fallbacks=0,statuses={},largest_original_residual=0.)
 
 
-def scaled_recovery(P,c,A,b,cones):
-    """Same optimization with bounded row scaling; never amplify empty rows."""
+def _scaled_solve(P,c,A,b,cones):
     rows=np.maximum(1.,np.maximum(np.max(abs(A),axis=1),abs(b)));offset=0
     for cone in cones:
         # A norm cone must be scaled as a whole to preserve its geometry.
@@ -25,10 +25,36 @@ def scaled_recovery(P,c,A,b,cones):
     settings.reduced_tol_feas=1e-9;settings.reduced_tol_gap_abs=1e-13;settings.reduced_tol_gap_rel=1e-8
     solver=clarabel.DefaultSolver(sp.csc_matrix(np.triu(P/cost)),c/cost,
         sp.csc_matrix(A/rows[:,None]),b/rows,cones,settings)
-    answer=solver.solve();x=np.asarray(answer.x);residual=violation(A,b,cones,x)
-    if str(answer.status)not in ['Solved','AlmostSolved']or not np.isfinite(residual)or residual>1e-7:
-        raise ValueError('contact solve '+str(answer.status))
-    return answer,dict(original_residual=residual,original_objective_gap_reported=float(solver.get_info().gap_abs*cost))
+    answer=solver.solve()
+    return answer,float(solver.get_info().gap_abs*cost)
+
+
+def scaled_recovery(P,c,A,b,cones):
+    """Recheck original units; eliminate equalities if row scaling fails."""
+    answer,gap=_scaled_solve(P,c,A,b,cones)
+    x=np.asarray(answer.x);residual=violation(A,b,cones,x);rank=0
+    def accepted():
+        return str(answer.status) in ['Solved','AlmostSolved'] and np.isfinite(residual) and residual<=1e-7
+    if not accepted() and cones and isinstance(cones[0],clarabel.ZeroConeT) and cones[0].dim:
+        ne=cones[0].dim;E=A[:ne]
+        rows=np.maximum(np.linalg.norm(E,axis=1),1e-30)
+        U,s,Vt=np.linalg.svd(E/rows[:,None],full_matrices=True)
+        rank=int(np.count_nonzero(s>s[0]*1e-12))
+        origin=Vt[:rank].T@((U[:,:rank].T@(b[:ne]/rows))/s[:rank])
+        basis=Vt[rank:].T
+        if basis.shape[1]:
+            reduced,gap=_scaled_solve(basis.T@P@basis,basis.T@(P@origin+c),
+                A[ne:]@basis,b[ne:]-A[ne:]@origin,cones[1:])
+            x=origin+basis@np.asarray(reduced.x)
+            answer=SimpleNamespace(x=x,status=reduced.status,iterations=reduced.iterations)
+        else:
+            x=origin;gap=0.
+            answer=SimpleNamespace(x=x,status='Solved',iterations=0)
+        # This also rejects inconsistent or numerically discarded equations.
+        residual=violation(A,b,cones,x)
+    if not accepted():raise ValueError('contact solve '+str(answer.status))
+    return answer,dict(original_residual=residual,original_objective_gap_reported=gap,
+                       eliminated_equalities=rank)
 
 
 def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
@@ -53,6 +79,14 @@ def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
         if not np.isfinite(residual) or residual>1e-5:raise ValueError('zero-support reconstruction residual')
         note.update(fixed_zero_support_variables=fixed_zero_tail,original_residual=residual)
         return x,note
+    from build.contact_active_solver import solve as active_solve
+    STATISTICS['active_calls']+=1
+    try:
+        x,note=active_solve(P,c,A,b,cones)
+        STATISTICS['active_accepted']+=1
+        return x,dict(**note,active_set=True,fallback=False)
+    except (ValueError,ArithmeticError):
+        STATISTICS['active_fallbacks']+=1
     begin=time.perf_counter();size=len(c)
     columns=np.arange(nv+nu,nv+nu+nt);rows=np.arange(nv,nv+nt)
     keep=np.r_[np.arange(nv+nu),np.arange(nv+nu+nt,size)]

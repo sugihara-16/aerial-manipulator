@@ -9,7 +9,8 @@ original_init=PlantModel.__init__
 def precise_init(self,*args,**kwargs):
     original_init(self,*args,**kwargs)
     self.mj.opt.ccd_tolerance=1e-9;self.mj.opt.ccd_iterations=100
-    doc=ET.fromstring(self.xml);doc.find('option').set('ccd_tolerance','1e-9');doc.find('option').set('ccd_iterations','100')
-    self.xml=ET.tostring(doc,encoding='unicode')
+    doc=ET.fromstring(self.xml);option=doc.find('option')
+    if option.get('ccd_tolerance')!='1e-9' or option.get('ccd_iterations')!='100':
+        option.set('ccd_tolerance','1e-9');option.set('ccd_iterations','100')
+        self.xml=ET.tostring(doc,encoding='unicode')
 PlantModel.__init__=precise_init
-

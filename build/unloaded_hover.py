@@ -9,6 +9,19 @@ import proxsuite
 from amsrr_det.linear_program import linprog
 
 
+def _closest_input(A,rhs,lo,hi,target):
+    n=len(target);solver=proxsuite.proxqp.dense.QP(n,len(rhs),n)
+    solver.settings.eps_abs=solver.settings.eps_rel=1e-9
+    solver.init(np.eye(n),-target,A,rhs,np.eye(n),lo,hi)
+    for tolerance in [1e-9,1e-12]:
+        solver.settings.eps_abs=solver.settings.eps_rel=tolerance
+        solver.solve();x=solver.results.x
+        residual=max(float(abs(A@x-rhs).max()),float(np.max(lo-x)),float(np.max(x-hi)))
+        if str(solver.results.info.status).endswith('PROXQP_SOLVED') and residual<=1e-7:
+            return x.copy(),residual
+    raise ValueError(f'unloaded gravity allocation unresolved: {residual:g}')
+
+
 def command(local,q,previous,acceleration=None):
     local.at(q)
     M,B,bias=local.matrices();m=local.m;n=B.shape[1]
@@ -33,13 +46,7 @@ def command(local,q,previous,acceleration=None):
     if not reserve.success:raise ValueError('no unloaded gravity allocation inside motor bounds')
     fraction=1-.95*(1-reserve.x[-1])
     lo=np.maximum(lo,-fraction);hi=np.minimum(hi,fraction)
-    solver=proxsuite.proxqp.dense.QP(n,len(rhs),n)
-    solver.settings.eps_abs=solver.settings.eps_rel=1e-9
-    solver.init(np.eye(n),-(previous-offset)/scale,A,rhs,np.eye(n),lo,hi)
-    solver.solve();x=solver.results.x
-    residual=max(float(abs(A@x-rhs).max()),float(np.max(lo-x)),float(np.max(x-hi)))
-    if not str(solver.results.info.status).endswith('PROXQP_SOLVED') or residual>1e-7:
-        raise ValueError(f'unloaded gravity allocation unresolved: {residual:g}')
+    x,residual=_closest_input(A,rhs,lo,hi,(previous-offset)/scale)
     return offset+scale*x,dict(equilibrium_residual=residual,
         maximum_normalized_static_motor=float(abs(x).max()),
         minimum_common_motor_fraction=float(reserve.x[-1]),retained_motor_bound=float(fraction))

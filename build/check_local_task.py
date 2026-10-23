@@ -25,17 +25,17 @@ from amsrr_det.fast_task_audit import FastTaskAudit
 from amsrr_det.numerics import quintic_reference
 from amsrr_det.evidence import save_plan,save_sources
 from build.background_plan import BackgroundPlan
-from build.generated_grasp_stage import generate as generate_grasp_stage
+from build.generated_grasp_stage import generate as generate_grasp_stage,entry_error
 
 SOURCE_NAMES=['check_local_task.py','algebraic_release.py','unloaded_flight.py','unloaded_hover.py','mit_drive.py',
     'contact_step_control.py','sticking_design.py','local_translation.py','refine_captured_equilibrium.py',
     'preload_endpoint.py','linear_preload.py','held_input_solver.py','material_travel.py','check_local_pickup.py','support_contacts.py','contact_condensed_solver.py','local_contact_mpc.py','touchdown_translation.py','staged_approach.py','planned_withdrawal.py','hybrid_withdrawal.py','interval_tracking_control.py','response_contact_control.py','cached_response.py','finite_difference_response.py','short_contact_response.py','native_contact_rollout.py','contact_rollout.cc','contact_tangent.py','direct_response_step.py']
 SOURCE_NAMES.extend(['full_state_feedback.py','background_plan.py','generated_grasp_stage.py','momentum_feedback.py','separation_rate_constraints.py','background_withdrawal.py','finite_slip_preload.py'])
 SOURCE_NAMES.extend(['constrained_momentum_feedback.py','actuation_wrench_audit.py','background_withdrawal_hold.py'])
-SOURCE_NAMES.append('finite_load_transfer.py')
-SOURCE_NAMES.append('contact_friction_modes.py')
+SOURCE_NAMES.extend(['finite_load_transfer.py','contact_unload.py'])
+SOURCE_NAMES.extend(['contact_friction_modes.py','contact_allocation.py','contact_allocation_qp.py','contact_active_solver.py'])
 SOURCE_NAMES.extend(['allocation_optimality.py','scaled_correction.py'])
-SOURCE_NAMES.append('process_plan.py')
+SOURCE_NAMES.extend(['process_plan.py','supported_recovery.py'])
 SOURCE_NAMES.append('planned_pad_loads.py')
 SOURCE_NAMES.append('minimum_input_lp.py')
 SOURCE_NAMES.extend(['select_structure.py','frozen_structure_trial.py'])
@@ -46,6 +46,7 @@ _ROOT=Path(__file__).resolve().parents[1]
 _DEPENDENCIES={str(Path(module.__file__).resolve().relative_to(_ROOT)):Path(module.__file__).read_bytes()
     for module in list(sys.modules.values())if getattr(module,'__file__',None)
     and Path(module.__file__).resolve().is_relative_to(_ROOT/'build')and Path(module.__file__).is_file()}
+_DEPENDENCIES[str(Path(__file__).resolve().relative_to(_ROOT))]=Path(__file__).read_bytes()
 _DEPENDENCIES.update({'build/'+name:raw for name,raw in LOADED_SOURCES.items()})
 for _name in ['build/prediction_native_avx_fixed/libdrive_interval.so','build/native_bvls/bvls.so',
               'build/body_bounds/python/mujoco/libmujoco.so.3.16.0']:
@@ -56,6 +57,7 @@ _contact_source=(_ROOT/'build/contact_rollout.cc').read_bytes()
 _contact_digest=hashlib.sha256(_contact_source+mujoco.mj_versionString().encode()).hexdigest()[:16]
 _contact_binary=_ROOT/('build/contact_rollout_'+_contact_digest+'.so')
 if _contact_binary.exists():_DEPENDENCIES[str(_contact_binary.relative_to(_ROOT))]=_contact_binary.read_bytes()
+
 
 
 def main():
@@ -77,12 +79,17 @@ def main():
     parser.add_argument('--minimize-input',action='store_true',help='minimize the finite-contact reference thrust burden while retaining its existing reserve')
     parser.add_argument('--global-structure-search',action='store_true',help='compare 1-8 modules using physical bounds and fixed independent trial evidence')
     parser.add_argument('--structure-workers',type=int,default=8)
+    parser.add_argument('--structure-generator',choices=['legacy','task','mixed'],default='task')
     parser.add_argument('--structure-seed',type=int,help='replay a recorded trial series; omitted means fresh independent series')
     parser.add_argument('--governed-motion',action='store_true',help='require task-direction authority and govern consistent path acceleration')
     parser.add_argument('--bounded-allocation',action='store_true')
     parser.add_argument('--hold-withdrawal-pose',action='store_true')
     parser.add_argument('--supported-load-transfer',action='store_true')
     parser.add_argument('--preload-floor',action='store_true',help='retain the generated preload reserve during acquisition refinement')
+    parser.add_argument('--observed-handoff',action='store_true',help='refresh the finite holding reference at the settled acquisition observation')
+    parser.add_argument('--contact-coupled',action='store_true')
+    parser.add_argument('--nearby-handoff',action='store_true')
+    parser.add_argument('--inertial-input-updates',action='store_true',help='regularize acquisition input jumps by their free-dynamics velocity effect')
     parser.add_argument('--planned-preload-floor',action='store_true',help='diagnostic: acquire the individual pad loads of the generated finite-slip reference')
     parser.add_argument('--finite-acquisition-support',action='store_true',help='use the finite support law in the existing acquisition solve')
     parser.add_argument('--process-withdrawal',action='store_true',help='isolate background withdrawal planning from the control interpreter')
@@ -95,7 +102,9 @@ def main():
     parser.add_argument('--background-withdrawal',action='store_true',help='continue unloaded control while preparing the ordinary withdrawal path')
     parser.add_argument('--distance-closing',action='store_true')
     parser.add_argument('--contact-counts',nargs='+',type=int,default=[2,3,4])
-    args=parser.parse_args();out=args.output;out.mkdir(exist_ok=False);started=time.perf_counter()
+    args=parser.parse_args()
+    if args.steps<2 or args.steps%2:parser.error('physics steps must be a positive even number for 5 ms contact updates')
+    out=args.output;out.mkdir(exist_ok=False);started=time.perf_counter()
     if args.rigid_object_feedback and not args.generated_feedback:raise ValueError('object-only comparison requires generated feedback')
     if args.momentum_feedback and (not args.generated_feedback or args.rigid_object_feedback):raise ValueError('momentum comparison requires generated feedback and excludes projected full-state gains')
     if args.finite_slip_preload and not args.momentum_feedback:raise ValueError('finite-slip preload requires momentum feedback')
@@ -106,6 +115,7 @@ def main():
     if args.hold_withdrawal_pose and not args.background_withdrawal:raise ValueError('held withdrawal pose requires background withdrawal')
     if args.supported_load_transfer and not args.finite_slip_preload:raise ValueError('supported transfer requires finite-slip preload')
     if args.preload_floor and not args.finite_slip_preload:raise ValueError('preload floor requires finite-slip preload')
+    if args.observed_handoff and not args.finite_slip_preload:raise ValueError('observed handoff requires finite-slip preload')
     if args.planned_preload_floor and not args.preload_floor:raise ValueError('planned pad loads require preload floor')
     if args.process_withdrawal and not args.background_withdrawal:raise ValueError('process withdrawal requires background withdrawal')
     if args.normal_tracking and not args.bounded_allocation:raise ValueError('normal tracking requires bounded allocation')
@@ -122,13 +132,14 @@ def main():
         target=out/'source_snapshot'/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
         hashes[name]=hashlib.sha256(raw).hexdigest()
     (out/'source_snapshot'/'manifest.json').write_text(json.dumps(hashes,indent=2))
-    settings=dict(predictive_motion=args.predictive_motion,condensed_solve=args.condensed_solve,fast_solve=args.fast_solve,minimize_input=args.minimize_input,
-                  global_structure_search=args.global_structure_search,structure_workers=args.structure_workers,governed_motion=args.governed_motion,
+    settings=dict(supported_recovery=True,aggregate_preload_domain=True,recovery_update_period_s=.005,contact_update_period_s=.0025,relative_acquisition=True,inertial_increment_model='one_period_contact',nominal_wrench_compensation=True,predictive_motion=args.predictive_motion,condensed_solve=args.condensed_solve,fast_solve=args.fast_solve,minimize_input=args.minimize_input,
+                  global_structure_search=args.global_structure_search,structure_workers=args.structure_workers,structure_generator=args.structure_generator,governed_motion=args.governed_motion,
                   distance_closing=args.distance_closing,steps=args.steps,contact_counts=None if args.global_structure_search else args.contact_counts,
-                  structure_contact_scope='all nonempty free-pad subsets, 1..2N+2' if args.global_structure_search else 'legacy seed and branch search',
+                  structure_contact_scope=('task contact roles; movable opposed pair; variable-count task auxiliary' if args.structure_generator=='task'
+                                           else 'all nonempty free-pad subsets, 1..2N+2') if args.global_structure_search else 'legacy seed and branch search',
                   duration=args.duration,generated_feedback=args.generated_feedback,rigid_object_feedback=args.rigid_object_feedback,momentum_feedback=args.momentum_feedback,finite_slip_preload=args.finite_slip_preload,bounded_allocation=args.bounded_allocation,hold_withdrawal_pose=args.hold_withdrawal_pose,preload_floor=args.preload_floor,
                   contact_geometry_tolerance=1e-12 if args.generated_feedback else 1e-9,contact_geometry_iterations=1000 if args.generated_feedback else 100,
-                  supported_load_transfer=args.supported_load_transfer,
+                  supported_load_transfer=args.supported_load_transfer,observed_handoff=args.observed_handoff,inertial_input_updates=args.inertial_input_updates,nearby_handoff=args.nearby_handoff,contact_coupled=args.contact_coupled,
                   constrained_load=args.constrained_load,interval_motion=args.interval_motion,interval_acquisition=args.interval_acquisition,constrained_motion=args.constrained_motion,staged_approach=args.staged_approach,planned_withdrawal=args.planned_withdrawal,hybrid_withdrawal=args.hybrid_withdrawal,background_withdrawal=args.background_withdrawal,
                   finite_acquisition_support=args.finite_acquisition_support,process_withdrawal=args.process_withdrawal,normal_tracking=args.normal_tracking,internal_tracking=args.internal_tracking,planned_preload_floor=args.planned_preload_floor)
     evidence=dict(scope='fresh_generation_spawn_task'if args.request else'saved_development_structure',method_scope=__doc__,
@@ -143,12 +154,12 @@ def main():
         request=json.loads(Path(args.request).read_text())
         (out/'request.json').write_text(json.dumps(request,indent=2))
         try:
-            plan,selected_prepared,selection=select_structure(request,workers=args.structure_workers,seed=args.structure_seed,task_wrench=args.governed_motion)
+            plan,selected_prepared,selection=select_structure(request,workers=args.structure_workers,seed=args.structure_seed,task_wrench=args.governed_motion,generator=args.structure_generator)
         except ValueError as error:
-            (out/'selection.json').write_text(json.dumps(getattr(error,'evidence',{}),indent=2))
+            (out/'selection.json').write_text(json.dumps(getattr(error,'evidence',{}),separators=(',',':')))
             (out/'result.json').write_text(json.dumps(dict(**evidence,task_success=False,reason=str(error),initial_planning_s=time.perf_counter()-started)))
             return
-        (out/'selection.json').write_text(json.dumps(selection,indent=2));candidates=[plan]
+        (out/'selection.json').write_text(json.dumps(selection,separators=(',',':')));candidates=[plan]
     elif args.plan:
         plan,request=load_saved_plan(args.plan);candidates=[plan]
     else:
@@ -211,25 +222,29 @@ def main():
             return
     np.savez(out/'endpoint.npz',q=goal,normal_targets=normal_targets)
     flight=coupled.CoupledFlightController(plan.plant.pin,plan.plant.meta,plan.open_q,track_vectoring=True,planned_input_reference=True)
-    control=ContactStepControl(plant,links,regularized_friction=True,finite_support=args.finite_acquisition_support,fast_solve=args.fast_solve,distance_closing=args.distance_closing,condensed_solve=args.condensed_solve,clearance_model=full.mj if args.momentum_feedback else None)
+    control=ContactStepControl(plant,links,period=.0025,regularized_friction=True,finite_support=args.finite_acquisition_support,fast_solve=args.fast_solve,distance_closing=args.distance_closing,condensed_solve=args.condensed_solve,clearance_model=full.mj if args.momentum_feedback else None,inertial_updates=args.inertial_input_updates)
     d=mujoco.MjData(m);d.qpos[:]=plant.configuration(plan.open_q);mujoco.mj_forward(m,d)
     audit=FastTaskAudit(plant,links,plan.shape.size,plan.support_top,shape=plan.shape,clearance_model=full.mj)
     from build.actuation_wrench_audit import ActuationWrenchAudit
     actuation_audit=ActuationWrenchAudit(plant)if args.bounded_allocation else None
     material=MaterialTravel(plant,links);phase='APPROACH';ready=0.;entry=0.;reason=None;full_feedback=None
     grasp_job=None;generated_stage=None;preload_ready_time=0.;refinement_contact_time=0.;target_preload=0.
+    handoff_job=None;handoff_checked=not args.observed_handoff;handoff_attempts=[]
     air_job=None;load_transfer=None;last_air_attempt=-np.inf;air_attempts=[];basis_observation_time=None
     trace=[];times=[];phase_times={};planning=[];prediction_errors=dict(samples=0,object_position_m=0.,joint_position_rad=0.,object_linear_velocity_m_s=0.,joint_velocity_rad_s=0.,pad_normal_force_n=0.);delta=np.zeros(m.nv);start=time.perf_counter();previous_phase=None
     oi=int(m.jnt_qposadr[m.joint('object').id]);ov=int(m.jnt_dofadr[m.joint('object').id])
     groups=control.groups;governors={};descent_probe_start=None
-    for step in range(round(args.duration/.01)):
+    recovery=None;recovery_events=[]
+    for step in range(round(args.duration/.0025)):
+        if d.time>=args.duration:break
+        period=.005 if phase=='RECOVER' else (.0025 if phase in ['ACQUIRE','REFINE','LOAD','LIFT','CARRY','DESCEND'] else .01)
         before=time.perf_counter();prediction=None;query.qpos[:]=d.qpos;query.qvel[:]=d.qvel;mujoco.mj_fwdPosition(m,query)
         gaps,J=pad_gap_jacobians(m,query,links,groups)
         if phase not in ['UNLOAD','RETREAT']:material.update(d.qpos.copy())
         try:
             if phase=='APPROACH' and (min(gaps+.01*(J@d.qvel))<=0 or
                     (approach is not None and approach.ready(d.qpos,d.qvel,float(d.time)))):
-                phase='ACQUIRE';anchor=d.ctrl.copy()
+                phase='ACQUIRE';anchor=d.ctrl.copy();period=.0025
             if phase=='APPROACH':
                 target,tv,ta,r=quintic_reference(plan.plant.pin,plan.plant.meta,plan.open_q,qgoal,d.time,4.)
                 q,v=plant.observation(d)
@@ -247,11 +262,11 @@ def main():
                     # preload already exists. All pads must have made contact;
                     # the physical preload test remains at the LOAD handoff.
                     design_contact_ready=design_entry_ready if args.finite_slip_preload else preload_in_physical_domain(m,query,links)
-                    preload_ready_time=preload_ready_time+.01 if (design_contact_ready and observed_tangent_speed(m,query,links)<1e-4)else 0.
+                    preload_ready_time=preload_ready_time+period if (design_contact_ready and observed_tangent_speed(m,query,links)<1e-4)else 0.
                     design_entry_ready=design_entry_ready and preload_ready_time>=.3
                 if args.generated_feedback and grasp_job is None and full_feedback is None and design_entry_ready:
                     np.savez(out/'grasp_design_observation.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
-                    grasp_job=BackgroundPlan(d.time,partial(generate_grasp_stage,momentum_feedback=args.momentum_feedback,finite_slip_preload=args.finite_slip_preload,bounded_allocation=args.bounded_allocation,normal_tracking=args.normal_tracking,internal_tracking=args.internal_tracking,minimize_input=args.minimize_input,governed_motion=args.governed_motion),plant,full.mj,d.qpos.copy(),links,plan)
+                    grasp_job=BackgroundPlan(d.time,partial(generate_grasp_stage,contact_coupled=args.contact_coupled,momentum_feedback=args.momentum_feedback,finite_slip_preload=args.finite_slip_preload,bounded_allocation=args.bounded_allocation,normal_tracking=args.normal_tracking,internal_tracking=args.internal_tracking,minimize_input=args.minimize_input,governed_motion=args.governed_motion,planned_reference=goal.copy()),plant,full.mj,d.qpos.copy(),links,plan)
                 if grasp_job is not None and grasp_job.ready(d.time):
                     basis_observation_time=grasp_job.started_sim
                     generated_stage,wait=grasp_job.result(d.time);grasp_job=None
@@ -281,23 +296,30 @@ def main():
                     from build.interval_tracking_control import IntervalTrackingControl
                     control=IntervalTrackingControl(plant,links,clearance_model=full.mj,distance_closing=args.distance_closing)
                     control.previous=d.ctrl.copy()
+                control.previous_input=d.ctrl.copy()
                 if full_feedback is not None:
                     from build.full_state_feedback import observed_tangent_speed
                     if args.finite_slip_preload:
                         if args.preload_floor:
                             all_settled=max(gaps)<=0. and observed_tangent_speed(m,query,links)<1e-4
-                            refinement_contact_time=refinement_contact_time+.01 if all_settled else 0.
+                            refinement_contact_time=refinement_contact_time+period if all_settled else 0.
                             # Do not demand an immediate positive force from a
                             # pad that lost contact while the basis was built.
                             control.minimum_normal_load=target_preload if refinement_contact_time>=.3 else 0.
+                        from build.separation_rate_constraints import PreloadDomain
+                        if not isinstance(control.separation,PreloadDomain):
+                            control.separation=PreloadDomain(control.separation,m,links,period)
                         command=control.update(d.qpos.copy(),d.qvel.copy(),goal,input_reference=full_feedback.u,normal_targets=normal_targets)
                     else:command=full_feedback.update(d.qpos.copy(),d.qvel.copy(),goal)
-                else:command=control.update(d.qpos.copy(),d.qvel.copy(),goal,input_reference=anchor,normal_targets=normal_targets)
+                else:
+                    from build.generated_grasp_stage import align_reference_to_object
+                    acquisition_reference=align_reference_to_object(m,goal,d.qpos)
+                    command=control.update(d.qpos.copy(),d.qvel.copy(),acquisition_reference,input_reference=anchor,normal_targets=normal_targets)
                 # Readiness means the achieved compression remains in its
                 # tolerance band under the next held input. An independent
                 # absolute normal-velocity cutoff can prevent transition even
                 # when every observed and predicted compression stays inside.
-                next_gaps=gaps if full_feedback is not None else (control.predicted_gaps if hasattr(control,'predictor') else gaps+.01*(J@np.asarray(control.diagnostics['predicted_velocity'])))
+                next_gaps=gaps if full_feedback is not None else (control.predicted_gaps if hasattr(control,'predictor') else gaps+period*(J@np.asarray(control.diagnostics['predicted_velocity'])))
                 compression_error=np.maximum(abs(gaps+normal_targets),abs(next_gaps+normal_targets))
                 # Acquiring the desired compression permits a one-time
                 # static refinement at the observed grasp. Settled contact is
@@ -311,8 +333,36 @@ def main():
                         # The ordinary settled interval starts only once the
                         # acquisition solve is issuing the planned pad loads.
                         preload_ready=preload_ready and refinement_contact_time>=.3
-                ready=ready+.01 if (preload_ready and settled)else 0.
-                if ready>=.3 and (not args.generated_feedback or full_feedback is not None) and not args.supported_load_transfer:
+                ready=ready+period if (preload_ready and settled)else 0.
+                if ready>=.3 and full_feedback is not None and not handoff_checked and handoff_job is None:
+                    # Refresh only the input/reference at the achieved geometry.
+                    # Acquisition keeps running during the measured planning delay;
+                    # the evaluator state and persistent material anchors stay intact.
+                    operation=partial(generate_grasp_stage,contact_coupled=args.contact_coupled,momentum_feedback=True,finite_slip_preload=True,
+                        bounded_allocation=args.bounded_allocation,minimize_input=args.minimize_input,
+                        normal_tracking=args.normal_tracking,internal_tracking=args.internal_tracking,
+                        governed_motion=args.governed_motion,fixed_observation=True,nearby_observation=args.nearby_handoff,
+                        material_travel_used=float(material.peak.max(initial=0.)))
+                    handoff_job=BackgroundPlan(d.time,operation,plant,full.mj,d.qpos.copy(),links,plan)
+                if handoff_job is not None and handoff_job.ready(d.time):
+                    candidate,wait=handoff_job.result(d.time);handoff_job=None
+                    handoff_checked=True
+                    planning.append(dict(phase='OBSERVED_HANDOFF',background=True,**wait))
+                    handoff_attempts.append(dict(time_s=float(d.time),available=candidate['available'],
+                        retained_previous_reference=not candidate['available'],
+                        refinement=candidate['refinement'],**wait))
+                    (out/'observed_handoff.json').write_text(json.dumps(handoff_attempts,indent=2))
+                    if candidate['available']:
+                        generated_stage=candidate;full_feedback=candidate['feedback'];qair=candidate['qair']
+                        goal=candidate['goal'];normal_targets=candidate['normal_targets']
+                        if args.nearby_handoff:ready=0.
+                        (out/'refinement.json').write_text(json.dumps(candidate['refinement'],indent=2))
+                        (out/'feedback_design.json').write_text(json.dumps(full_feedback.info,indent=2))
+                        np.savez(out/'feedback_design.npz',q=qair,u=full_feedback.u,K=full_feedback.K)
+                    # If the fixed-pose approximation is unresolved, retain the
+                    # already constructed reference. This optional update is
+                    # not a new necessary condition for a physical transition.
+                if ready>=.3 and handoff_checked and (not args.generated_feedback or full_feedback is not None) and not args.supported_load_transfer and (not args.governed_motion or full_feedback is None or entry_error(full_feedback,d.qpos,d.qvel,goal)<=1.):
                     began=time.perf_counter();ready=0.;qair=d.qpos.copy()
                     for j in free:qair[m.jnt_qposadr[j]+2]+=.15
                     if phase=='ACQUIRE':
@@ -361,7 +411,7 @@ def main():
                 command=load_transfer.update(d.qpos.copy(),d.qvel.copy(),d.time)
                 if air_job is None and load_transfer.ready and d.time-last_air_attempt>=.1:
                     last_air_attempt=float(d.time)
-                    operation=partial(generate_grasp_stage,momentum_feedback=True,finite_slip_preload=True,
+                    operation=partial(generate_grasp_stage,contact_coupled=args.contact_coupled,momentum_feedback=True,finite_slip_preload=True,
                         bounded_allocation=args.bounded_allocation,normal_tracking=args.normal_tracking,internal_tracking=args.internal_tracking,airborne_observation=True,minimize_input=args.minimize_input,
                         material_travel_used=float(material.peak.max(initial=0.)),governed_motion=args.governed_motion)
                     air_job=BackgroundPlan(d.time,operation,plant,full.mj,d.qpos.copy(),links,plan)
@@ -380,6 +430,16 @@ def main():
                         np.savez(out/'feedback_design.npz',q=qair,u=full_feedback.u,K=full_feedback.K)
                         planning.append(dict(phase='AIR_HANDOFF',background=True,observation_s=observed_at,**wait))
                         phase='LOAD';entry=float(d.time);handoff=command.copy()
+            elif phase=='RECOVER':
+                command=recovery.update(d.qpos.copy(),d.qvel.copy(),d.ctrl.copy(),float(d.time),float(material.peak.max(initial=0.)))
+                if recovery.stage is not None:
+                    generated_stage=recovery.stage;full_feedback=generated_stage['feedback']
+                    goal=generated_stage['goal'];qair=generated_stage['qair'];normal_targets=generated_stage['normal_targets']
+                    ground,supported,support_info,lift,carry,lower,upper=generated_stage['transfer']
+                    basis_observation_time=recovery.info['observation_s']
+                    recovery_events[-1].update(completed_s=float(d.time),details=recovery.info)
+                    recovery.close();recovery=None
+                    phase='LOAD';entry=float(d.time);handoff=command.copy();governors={}
             elif phase in ['LOAD','LIFT','CARRY']:
                 t=float(d.time)-entry
                 if t<3.:
@@ -399,9 +459,20 @@ def main():
                         if phase not in governors:
                             if phase=='CARRY' and not governors['LIFT'].finished:raise ValueError('governed lift exceeded stage budget')
                             motion=lift if phase=='LIFT'else carry
-                            governors[phase]=TranslationGovernor(m,motion.q,motion.delta,motion.duration)
-                        options['path']=governors[phase]
-                    command=full_feedback.update(d.qpos.copy(),d.qvel.copy(),reference,velocity,input_reference=nominal,**options)
+                            governors[phase]=TranslationGovernor(m,motion.q,motion.delta,motion.duration,period=.0025)
+                        if governors[phase].finished:
+                            reference,velocity=governors[phase].reference()
+                        else:options['path']=governors[phase]
+                    try:
+                        command=full_feedback.update(d.qpos.copy(),d.qvel.copy(),reference,velocity,input_reference=nominal,**options)
+                    except ValueError as error:
+                        if not args.contact_coupled or phase!='LOAD' or str(error) not in ['constant constraint infeasible','contact allocation nonlinear force check unresolved','contact allocation PrimalInfeasible']:
+                            raise
+                        from build.supported_recovery import SupportedRecovery
+                        recovery=SupportedRecovery(plant,full.mj,plan,links,goal,normal_targets)
+                        command=recovery.update(d.qpos.copy(),d.qvel.copy(),d.ctrl.copy(),float(d.time),float(material.peak.max(initial=0.)))
+                        recovery_events.append(dict(started_s=float(d.time),reason=str(error),entry=recovery.info.copy()))
+                        phase='RECOVER'
                 elif not args.interval_motion:
                     feedback=lift.feedback if t<8. else carry.feedback
                     N,K=feedback['N'],feedback['K']
@@ -441,7 +512,10 @@ def main():
                 obj=m.geom('object').id
                 supported_now=any(obj in c.geom and any(m.geom(int(g)).name in ['support','destination_support','floor']for g in c.geom)and c.dist<=0 for c in query.contact)
                 if supported_now:
-                    if args.hybrid_withdrawal:
+                    if args.contact_coupled and args.hold_withdrawal_pose:
+                        from build.contact_unload import ContactUnload
+                        release=ContactUnload(plan,plant,d.qpos.copy(),parallel_process=args.process_withdrawal)
+                    elif args.hybrid_withdrawal:
                         from build.hybrid_withdrawal import HybridWithdrawal
                         if args.background_withdrawal:
                             from build.background_withdrawal import BackgroundHybridWithdrawal
@@ -463,7 +537,7 @@ def main():
                         options={}
                         if args.governed_motion:
                             from build.translation_governor import TranslationGovernor
-                            if phase not in governors:governors[phase]=TranslationGovernor(m,descent.q,descent.delta,descent.duration)
+                            if phase not in governors:governors[phase]=TranslationGovernor(m,descent.q,descent.delta,descent.duration,period=.0025)
                             path=governors[phase]
                             if not path.finished:options['path']=path
                             else:
@@ -497,13 +571,13 @@ def main():
             elapsed=time.perf_counter()-before;times.append(elapsed);phase_times.setdefault(phase,[]).append(elapsed)
         if phase!=previous_phase:
             previous_phase=phase;print(json.dumps(dict(phase=phase,t=float(d.time))),flush=True)
-            np.savez(out/f'entry_{phase}.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
+            np.savez(out/f'entry_{phase}.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl,actuator_biasprm=m.actuator_biasprm)
         d.ctrl[:]=command
         if actuation_audit is not None:
             if phase in ['LOAD','LIFT','CARRY','DESCEND'] and hasattr(full_feedback,'requested_world_wrench'):
                 actuation_audit.issue(d.qpos,command,full_feedback.requested_world_wrench)
             else:actuation_audit.request=None
-        for _ in range(args.steps):
+        for _ in range(round(period/m.opt.timestep)):
             try:
                 mujoco.mj_step(m,d);audit.update(d,carried=phase=='CARRY');reason=violation(audit)
                 if actuation_audit is not None:actuation_audit.after_step(d)
@@ -521,11 +595,13 @@ def main():
                 object_linear_velocity_m_s=np.linalg.norm(velocity_error[ov:ov+3]),joint_velocity_rad_s=max(abs(velocity_error[control.vi])),
                 pad_normal_force_n=max(abs(audit.last_normal_loads-prediction.predicted_loads))).items():
                 prediction_errors[key]=max(prediction_errors[key],float(value))
-        if step%100==0:
+        if step%200==0:
             trace.append(dict(time_s=float(d.time),phase=phase,gaps=gaps.tolist(),loads=audit.last_normal_loads.tolist()))
             print(json.dumps(trace[-1]),flush=True)
         if reason:break
+    if recovery is not None:recovery.close()
     if grasp_job is not None:grasp_job.close()
+    if handoff_job is not None:handoff_job.close()
     if air_job is not None:air_job.close()
     if 'release' in locals() and hasattr(release,'close'):release.close()
     stats=audit.result();stats['maximum_servo_reference_error_rad']=None
@@ -541,6 +617,7 @@ def main():
         prediction_errors=prediction_errors,motion_methods=motion_methods,phase_control_time_s={p:dict(mean=float(np.mean(t)),p95=float(np.quantile(t,.95)),maximum=max(t))for p,t in phase_times.items()},
         contacts=len(links),modules=plant.meta['modules'],release=release.info if phase in ['UNLOAD','RETREAT']else None,
         control_timing_includes_failed_calls=True)
+    result['supported_recovery']=recovery_events
     result['finite_basis_observation_s']=basis_observation_time
     if load_transfer is not None:result['support_load_transfer']=dict(final=load_transfer.info,airborne_attempts=air_attempts)
     if args.interval_acquisition and hasattr(control,'predictor'):
