@@ -1,0 +1,2091 @@
+{
+  "role": "comparison_replay",
+  "overall": {
+    "successes": 105,
+    "total": 120,
+    "fraction": 0.875,
+    "reaches_threshold": true,
+    "failures": {
+      "contact solve PrimalInfeasible": 4,
+      "contact_load_limit": 1,
+      "constant constraint infeasible": 5,
+      "no attainable path acceleration": 1,
+      "supported recovery requires source support contact": 3,
+      "task_timeout": 1
+    }
+  },
+  "strata": {
+    "family": {
+      "box": {
+        "successes": 15,
+        "total": 20,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "contact solve PrimalInfeasible": 2,
+          "no attainable path acceleration": 1,
+          "constant constraint infeasible": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "elongated_box": {
+        "successes": 20,
+        "total": 20,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder": {
+        "successes": 17,
+        "total": 20,
+        "fraction": 0.85,
+        "reaches_threshold": true,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 2
+        }
+      },
+      "ellipsoid": {
+        "successes": 14,
+        "total": 20,
+        "fraction": 0.7,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 3,
+          "supported recovery requires source support contact": 2,
+          "task_timeout": 1
+        }
+      },
+      "triangular_prism": {
+        "successes": 20,
+        "total": 20,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box": {
+        "successes": 19,
+        "total": 20,
+        "fraction": 0.95,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1
+        }
+      }
+    },
+    "yaw_bin": {
+      "0": {
+        "successes": 27,
+        "total": 30,
+        "fraction": 0.9,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "supported recovery requires source support contact": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "2": {
+        "successes": 23,
+        "total": 30,
+        "fraction": 0.7666666666666667,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 2,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 1,
+          "contact solve PrimalInfeasible": 1,
+          "task_timeout": 1
+        }
+      },
+      "1": {
+        "successes": 27,
+        "total": 30,
+        "fraction": 0.9,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "constant constraint infeasible": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "3": {
+        "successes": 28,
+        "total": 30,
+        "fraction": 0.9333333333333333,
+        "reaches_threshold": true,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 1
+        }
+      }
+    },
+    "family_x_yaw_bin": {
+      "box:0": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "elongated_box:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "ellipsoid:0": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "supported recovery requires source support contact": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "triangular_prism:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "box:2": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "elongated_box:2": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:2": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "ellipsoid:2": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "task_timeout": 1
+        }
+      },
+      "triangular_prism:2": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1
+        }
+      },
+      "box:1": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "cylinder:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "ellipsoid:1": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "elongated_box:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "triangular_prism:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "box:3": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "constant constraint infeasible": 1
+        }
+      },
+      "cylinder:3": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "ellipsoid:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "triangular_prism:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      }
+    },
+    "resting_orientation": {
+      "large_face": {
+        "successes": 24,
+        "total": 28,
+        "fraction": 0.8571428571428571,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "contact_load_limit": 1,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "standing": {
+        "successes": 11,
+        "total": 12,
+        "fraction": 0.9166666666666666,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "curved_stable": {
+        "successes": 14,
+        "total": 20,
+        "fraction": 0.7,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 3,
+          "supported recovery requires source support contact": 2,
+          "task_timeout": 1
+        }
+      },
+      "small_or_sloped_face": {
+        "successes": 50,
+        "total": 52,
+        "fraction": 0.9615384615384616,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "lying": {
+        "successes": 6,
+        "total": 8,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 1
+        }
+      }
+    },
+    "position_bin": {
+      "0:1": {
+        "successes": 29,
+        "total": 32,
+        "fraction": 0.90625,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "no attainable path acceleration": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "1:0": {
+        "successes": 22,
+        "total": 26,
+        "fraction": 0.8461538461538461,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "constant constraint infeasible": 2,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "1:1": {
+        "successes": 26,
+        "total": 29,
+        "fraction": 0.896551724137931,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 2
+        }
+      },
+      "0:0": {
+        "successes": 28,
+        "total": 33,
+        "fraction": 0.8484848484848485,
+        "reaches_threshold": true,
+        "failures": {
+          "supported recovery requires source support contact": 2,
+          "contact solve PrimalInfeasible": 2,
+          "task_timeout": 1
+        }
+      }
+    },
+    "size_bin": {
+      "large": {
+        "successes": 100,
+        "total": 114,
+        "fraction": 0.8771929824561403,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 4,
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 5,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 2,
+          "task_timeout": 1
+        }
+      },
+      "small": {
+        "successes": 5,
+        "total": 6,
+        "fraction": 0.8333333333333334,
+        "reaches_threshold": true,
+        "failures": {
+          "supported recovery requires source support contact": 1
+        }
+      }
+    },
+    "mass_bin": {
+      "light": {
+        "successes": 25,
+        "total": 33,
+        "fraction": 0.7575757575757576,
+        "reaches_threshold": false,
+        "failures": {
+          "contact solve PrimalInfeasible": 3,
+          "constant constraint infeasible": 3,
+          "task_timeout": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "heavy": {
+        "successes": 80,
+        "total": 87,
+        "fraction": 0.9195402298850575,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 2,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 2,
+          "contact solve PrimalInfeasible": 1
+        }
+      }
+    }
+  },
+  "missing": 0,
+  "runtime_source_changes": {},
+  "all_results_same_runtime_sources": true,
+  "execution_setting_changes": {},
+  "all_results_same_execution_settings": true,
+  "scope_counts": {
+    "fresh_generation_spawn_task": 120
+  },
+  "reaches_all_rate_thresholds": false,
+  "failure_concentration": {
+    "method": "one-sided Fisher exact; Holm across all predeclared group comparisons",
+    "alpha": 0.05,
+    "clear_concentration": false,
+    "equal_failure_rates_certified": false,
+    "mechanical_cause_review_required": true,
+    "comparisons": [
+      {
+        "axis": "family",
+        "group": "box",
+        "total": 20,
+        "failures": 5,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.1,
+        "p_value": 0.07584073539760301,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "elongated_box",
+        "total": 20,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.15,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "cylinder",
+        "total": 20,
+        "failures": 3,
+        "failure_fraction": 0.15,
+        "other_failure_fraction": 0.12,
+        "p_value": 0.47403694739982233,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "ellipsoid",
+        "total": 20,
+        "failures": 6,
+        "failure_fraction": 0.3,
+        "other_failure_fraction": 0.09,
+        "p_value": 0.019107256049477307,
+        "adjusted_p_value": 0.8980410343254335,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "triangular_prism",
+        "total": 20,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.15,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "tapered_box",
+        "total": 20,
+        "failures": 1,
+        "failure_fraction": 0.05,
+        "other_failure_fraction": 0.14,
+        "p_value": 0.946445992766194,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "0",
+        "total": 30,
+        "failures": 3,
+        "failure_fraction": 0.1,
+        "other_failure_fraction": 0.13333333333333333,
+        "p_value": 0.7818788963910345,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "2",
+        "total": 30,
+        "failures": 7,
+        "failure_fraction": 0.23333333333333334,
+        "other_failure_fraction": 0.08888888888888889,
+        "p_value": 0.044797166587333064,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "1",
+        "total": 30,
+        "failures": 3,
+        "failure_fraction": 0.1,
+        "other_failure_fraction": 0.13333333333333333,
+        "p_value": 0.7818788963910345,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "3",
+        "total": 30,
+        "failures": 2,
+        "failure_fraction": 0.06666666666666667,
+        "other_failure_fraction": 0.14444444444444443,
+        "p_value": 0.9329980513123023,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:0",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:2",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:2",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:2",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:2",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:2",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:1",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:1",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:3",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:3",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "large_face",
+        "total": 28,
+        "failures": 4,
+        "failure_fraction": 0.14285714285714285,
+        "other_failure_fraction": 0.11956521739130435,
+        "p_value": 0.4818939982256945,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "standing",
+        "total": 12,
+        "failures": 1,
+        "failure_fraction": 0.08333333333333333,
+        "other_failure_fraction": 0.12962962962962962,
+        "p_value": 0.8148849538442486,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "curved_stable",
+        "total": 20,
+        "failures": 6,
+        "failure_fraction": 0.3,
+        "other_failure_fraction": 0.09,
+        "p_value": 0.019107256049477307,
+        "adjusted_p_value": 0.8980410343254335,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "small_or_sloped_face",
+        "total": 52,
+        "failures": 2,
+        "failure_fraction": 0.038461538461538464,
+        "other_failure_fraction": 0.19117647058823528,
+        "p_value": 0.9985515712050784,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "lying",
+        "total": 8,
+        "failures": 2,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.11607142857142858,
+        "p_value": 0.2618614354534384,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:1",
+        "total": 32,
+        "failures": 3,
+        "failure_fraction": 0.09375,
+        "other_failure_fraction": 0.13636363636363635,
+        "p_value": 0.8238948226101364,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:0",
+        "total": 26,
+        "failures": 4,
+        "failure_fraction": 0.15384615384615385,
+        "other_failure_fraction": 0.11702127659574468,
+        "p_value": 0.41515109564692776,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:1",
+        "total": 29,
+        "failures": 3,
+        "failure_fraction": 0.10344827586206896,
+        "other_failure_fraction": 0.13186813186813187,
+        "p_value": 0.7583714722921706,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:0",
+        "total": 33,
+        "failures": 5,
+        "failure_fraction": 0.15151515151515152,
+        "other_failure_fraction": 0.11494252873563218,
+        "p_value": 0.39567292294014406,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "large",
+        "total": 114,
+        "failures": 14,
+        "failure_fraction": 0.12280701754385964,
+        "other_failure_fraction": 0.16666666666666666,
+        "p_value": 0.8371111054642171,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "small",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.12280701754385964,
+        "p_value": 0.5594152076504121,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "light",
+        "total": 33,
+        "failures": 8,
+        "failure_fraction": 0.24242424242424243,
+        "other_failure_fraction": 0.08045977011494253,
+        "p_value": 0.022089833304423236,
+        "adjusted_p_value": 0.9940424986990456,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "heavy",
+        "total": 87,
+        "failures": 7,
+        "failure_fraction": 0.08045977011494253,
+        "other_failure_fraction": 0.24242424242424243,
+        "p_value": 0.995060503557741,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      }
+    ]
+  },
+  "all_cases_cover_required_sequence": true,
+  "assembly_required": false,
+  "ready_for_completion_review": false,
+  "rows": [
+    {
+      "case": "box_y0_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact solve PrimalInfeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y0_0/result.json"
+    },
+    {
+      "case": "elongated_box_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y0_0/result.json"
+    },
+    {
+      "case": "cylinder_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y0_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y0_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y0_0/result.json"
+    },
+    {
+      "case": "tapered_box_y0_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y0_0/result.json"
+    },
+    {
+      "case": "box_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y2_0/result.json"
+    },
+    {
+      "case": "elongated_box_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y2_0/result.json"
+    },
+    {
+      "case": "cylinder_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y2_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y2_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y2_0/result.json"
+    },
+    {
+      "case": "tapered_box_y2_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact_load_limit",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y2_0/result.json"
+    },
+    {
+      "case": "box_y1_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact solve PrimalInfeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y1_0/result.json"
+    },
+    {
+      "case": "cylinder_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y1_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_0",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "constant constraint infeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y1_0/result.json"
+    },
+    {
+      "case": "elongated_box_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y1_0/result.json"
+    },
+    {
+      "case": "tapered_box_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y1_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y1_0/result.json"
+    },
+    {
+      "case": "box_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y3_0/result.json"
+    },
+    {
+      "case": "cylinder_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y3_0/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y3_0/result.json"
+    },
+    {
+      "case": "elongated_box_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y3_0/result.json"
+    },
+    {
+      "case": "tapered_box_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y3_0/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_0",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y3_0/result.json"
+    },
+    {
+      "case": "box_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y0_1/result.json"
+    },
+    {
+      "case": "cylinder_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y0_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y0_1/result.json"
+    },
+    {
+      "case": "elongated_box_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y0_1/result.json"
+    },
+    {
+      "case": "tapered_box_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y0_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y0_1/result.json"
+    },
+    {
+      "case": "box_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y1_1/result.json"
+    },
+    {
+      "case": "cylinder_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y1_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y1_1/result.json"
+    },
+    {
+      "case": "elongated_box_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y1_1/result.json"
+    },
+    {
+      "case": "tapered_box_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y1_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y1_1/result.json"
+    },
+    {
+      "case": "box_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y2_1/result.json"
+    },
+    {
+      "case": "cylinder_y2_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "constant constraint infeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y2_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_1",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "constant constraint infeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y2_1/result.json"
+    },
+    {
+      "case": "elongated_box_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y2_1/result.json"
+    },
+    {
+      "case": "tapered_box_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y2_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y2_1/result.json"
+    },
+    {
+      "case": "box_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y3_1/result.json"
+    },
+    {
+      "case": "cylinder_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y3_1/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y3_1/result.json"
+    },
+    {
+      "case": "elongated_box_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y3_1/result.json"
+    },
+    {
+      "case": "tapered_box_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y3_1/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_1",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y3_1/result.json"
+    },
+    {
+      "case": "box_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y0_2/result.json"
+    },
+    {
+      "case": "cylinder_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y0_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y0_2/result.json"
+    },
+    {
+      "case": "elongated_box_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y0_2/result.json"
+    },
+    {
+      "case": "tapered_box_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y0_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y0_2/result.json"
+    },
+    {
+      "case": "box_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y1_2/result.json"
+    },
+    {
+      "case": "cylinder_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y1_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y1_2/result.json"
+    },
+    {
+      "case": "elongated_box_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y1_2/result.json"
+    },
+    {
+      "case": "tapered_box_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y1_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y1_2/result.json"
+    },
+    {
+      "case": "box_y2_2",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "no attainable path acceleration",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y2_2/result.json"
+    },
+    {
+      "case": "cylinder_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y2_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y2_2/result.json"
+    },
+    {
+      "case": "elongated_box_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y2_2/result.json"
+    },
+    {
+      "case": "tapered_box_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y2_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y2_2/result.json"
+    },
+    {
+      "case": "box_y3_2",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "constant constraint infeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y3_2/result.json"
+    },
+    {
+      "case": "cylinder_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y3_2/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y3_2/result.json"
+    },
+    {
+      "case": "elongated_box_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y3_2/result.json"
+    },
+    {
+      "case": "tapered_box_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y3_2/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_2",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y3_2/result.json"
+    },
+    {
+      "case": "box_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y0_3/result.json"
+    },
+    {
+      "case": "cylinder_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y0_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "supported recovery requires source support contact",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y0_3/result.json"
+    },
+    {
+      "case": "elongated_box_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y0_3/result.json"
+    },
+    {
+      "case": "tapered_box_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y0_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y0_3/result.json"
+    },
+    {
+      "case": "box_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y1_3/result.json"
+    },
+    {
+      "case": "cylinder_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y1_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y1_3/result.json"
+    },
+    {
+      "case": "elongated_box_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y1_3/result.json"
+    },
+    {
+      "case": "tapered_box_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y1_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y1_3/result.json"
+    },
+    {
+      "case": "box_y2_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "supported recovery requires source support contact",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y2_3/result.json"
+    },
+    {
+      "case": "cylinder_y2_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact solve PrimalInfeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y2_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_3",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "task_timeout",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y2_3/result.json"
+    },
+    {
+      "case": "elongated_box_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y2_3/result.json"
+    },
+    {
+      "case": "tapered_box_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y2_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y2_3/result.json"
+    },
+    {
+      "case": "box_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y3_3/result.json"
+    },
+    {
+      "case": "cylinder_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y3_3/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y3_3/result.json"
+    },
+    {
+      "case": "elongated_box_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y3_3/result.json"
+    },
+    {
+      "case": "tapered_box_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y3_3/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_3",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y3_3/result.json"
+    },
+    {
+      "case": "box_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y0_4/result.json"
+    },
+    {
+      "case": "cylinder_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y0_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y0_4",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "constant constraint infeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y0_4/result.json"
+    },
+    {
+      "case": "elongated_box_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y0_4/result.json"
+    },
+    {
+      "case": "tapered_box_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y0_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y0_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y0_4/result.json"
+    },
+    {
+      "case": "box_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y1_4/result.json"
+    },
+    {
+      "case": "cylinder_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y1_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y1_4",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "supported recovery requires source support contact",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y1_4/result.json"
+    },
+    {
+      "case": "elongated_box_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y1_4/result.json"
+    },
+    {
+      "case": "tapered_box_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y1_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y1_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y1_4/result.json"
+    },
+    {
+      "case": "box_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y2_4/result.json"
+    },
+    {
+      "case": "cylinder_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y2_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y2_4/result.json"
+    },
+    {
+      "case": "elongated_box_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y2_4/result.json"
+    },
+    {
+      "case": "tapered_box_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y2_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y2_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y2_4/result.json"
+    },
+    {
+      "case": "box_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/box_y3_4/result.json"
+    },
+    {
+      "case": "cylinder_y3_4",
+      "success": false,
+      "reported_task_success": false,
+      "reason": "contact solve PrimalInfeasible",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/cylinder_y3_4/result.json"
+    },
+    {
+      "case": "ellipsoid_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/ellipsoid_y3_4/result.json"
+    },
+    {
+      "case": "elongated_box_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/elongated_box_y3_4/result.json"
+    },
+    {
+      "case": "tapered_box_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/tapered_box_y3_4/result.json"
+    },
+    {
+      "case": "triangular_prism_y3_4",
+      "success": true,
+      "reported_task_success": true,
+      "reason": "task_completed",
+      "scope": "fresh_generation_spawn_task",
+      "execution_entrypoint": "fresh_task_input",
+      "result_path": "artifacts/runs/task_pose120_v7_20261023/triangular_prism_y3_4/result.json"
+    }
+  ]
+}

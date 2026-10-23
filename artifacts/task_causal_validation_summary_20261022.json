@@ -1,0 +1,394 @@
+{
+  "scope": "four development/regression cases plus two additional predeclared shapes; not a population success-rate estimate",
+  "successes": 6,
+  "cases": 6,
+  "missing": [],
+  "same_source": true,
+  "all_sources_current": true,
+  "rows": [
+    {
+      "case": "box",
+      "run": "task_causal_final_box_20261022",
+      "task_success": true,
+      "reason": "task_completed",
+      "modules": 2,
+      "initial_planning_s": 8.569316579028964,
+      "wall_s": 34.17862270120531,
+      "simulation_s": 48.110000000138704,
+      "object_position_error_m": 7.308695058869264e-06,
+      "object_orientation_error_rad": 1.5510777318266522e-05,
+      "selected_burden": 101.66534172800638,
+      "initial_burden": 180.1732801428603,
+      "cancelled_auxiliary_initial": false,
+      "selection_evidence_complete": true,
+      "source_mismatches": [],
+      "selected_methods": [
+        "contact_directed_growth"
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        }
+      ],
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          1,
+          "yaw2"
+        ]
+      ],
+      "structure_signature": [
+        [
+          "yaw2"
+        ],
+        [
+          [
+            "pitch2",
+            "yaw1",
+            [
+              [
+                "yaw2"
+              ],
+              []
+            ]
+          ]
+        ]
+      ],
+      "observed_refinement_method": "task_reference_warm_start"
+    },
+    {
+      "case": "elongated_box",
+      "run": "task_causal_final_elongated_box_20261022",
+      "task_success": true,
+      "reason": "task_completed",
+      "modules": 2,
+      "initial_planning_s": 8.224661961197853,
+      "wall_s": 36.44864511303604,
+      "simulation_s": 48.89000000014243,
+      "object_position_error_m": 8.226602099339458e-05,
+      "object_orientation_error_rad": 0.0002002851334655462,
+      "selected_burden": 147.43804316644218,
+      "initial_burden": 230.9570160054917,
+      "cancelled_auxiliary_initial": false,
+      "selection_evidence_complete": true,
+      "source_mismatches": [],
+      "selected_methods": [
+        "contact_directed_growth"
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        }
+      ],
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          1,
+          "yaw2"
+        ]
+      ],
+      "structure_signature": [
+        [
+          "yaw2"
+        ],
+        [
+          [
+            "pitch2",
+            "yaw1",
+            [
+              [
+                "yaw2"
+              ],
+              []
+            ]
+          ]
+        ]
+      ],
+      "observed_refinement_method": "task_reference_warm_start"
+    },
+    {
+      "case": "cylinder",
+      "run": "task_causal_full_cylinder_repaired_20261022",
+      "task_success": true,
+      "reason": "task_completed",
+      "modules": 3,
+      "initial_planning_s": 10.99497855314985,
+      "wall_s": 49.547358334064484,
+      "simulation_s": 47.040000000133595,
+      "object_position_error_m": 0.0002414228537524817,
+      "object_orientation_error_rad": 1.9120069418563644e-05,
+      "selected_burden": 179.1737232046395,
+      "initial_burden": null,
+      "cancelled_auxiliary_initial": true,
+      "selection_evidence_complete": true,
+      "source_mismatches": [],
+      "selected_methods": [
+        "contact_directed_growth"
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw1"
+        }
+      ],
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          2,
+          "pitch1"
+        ]
+      ],
+      "structure_signature": [
+        [],
+        [
+          [
+            "pitch1",
+            "yaw1",
+            [
+              [
+                "pitch1"
+              ],
+              []
+            ]
+          ],
+          [
+            "yaw2",
+            "pitch1",
+            [
+              [
+                "yaw1"
+              ],
+              []
+            ]
+          ]
+        ]
+      ],
+      "observed_refinement_method": "task_reference_warm_start"
+    },
+    {
+      "case": "ellipsoid",
+      "run": "task_causal_final_ellipsoid_20261022",
+      "task_success": true,
+      "reason": "task_completed",
+      "modules": 3,
+      "initial_planning_s": 10.620709483046085,
+      "wall_s": 42.73945803428069,
+      "simulation_s": 49.69000000014625,
+      "object_position_error_m": 0.0005035560033224134,
+      "object_orientation_error_rad": 0.03680243262203347,
+      "selected_burden": 157.24794027287032,
+      "initial_burden": 284.5394886955817,
+      "cancelled_auxiliary_initial": false,
+      "selection_evidence_complete": true,
+      "source_mismatches": [],
+      "selected_methods": [
+        "contact_directed_growth"
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        }
+      ],
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          1,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ]
+      ],
+      "structure_signature": [
+        [
+          "yaw1"
+        ],
+        [
+          [
+            "pitch1",
+            "yaw2",
+            [
+              [
+                "yaw1"
+              ],
+              []
+            ]
+          ],
+          [
+            "yaw2",
+            "pitch1",
+            [
+              [
+                "yaw1"
+              ],
+              []
+            ]
+          ]
+        ]
+      ],
+      "observed_refinement_method": "task_reference_warm_start"
+    },
+    {
+      "case": "triangular_prism",
+      "run": "task_causal_final_triangular_prism_20261022",
+      "task_success": true,
+      "reason": "task_completed",
+      "modules": 2,
+      "initial_planning_s": 6.134523529093713,
+      "wall_s": 35.68937790999189,
+      "simulation_s": 47.91000000013775,
+      "object_position_error_m": 2.614138591243693e-05,
+      "object_orientation_error_rad": 4.052420003681588e-05,
+      "selected_burden": 139.45119510648968,
+      "initial_burden": null,
+      "cancelled_auxiliary_initial": true,
+      "selection_evidence_complete": true,
+      "source_mismatches": [],
+      "selected_methods": [
+        "contact_directed_growth"
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        }
+      ],
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          1,
+          "yaw2"
+        ]
+      ],
+      "structure_signature": [
+        [
+          "yaw2"
+        ],
+        [
+          [
+            "pitch2",
+            "yaw1",
+            [
+              [
+                "yaw2"
+              ],
+              []
+            ]
+          ]
+        ]
+      ],
+      "observed_refinement_method": "task_reference_warm_start"
+    },
+    {
+      "case": "tapered_box",
+      "run": "task_causal_final_tapered_box_20261022",
+      "task_success": true,
+      "reason": "task_completed",
+      "modules": 3,
+      "initial_planning_s": 12.10243438417092,
+      "wall_s": 43.96026806905866,
+      "simulation_s": 46.7900000001324,
+      "object_position_error_m": 7.878159815936531e-06,
+      "object_orientation_error_rad": 1.7151462695593618e-06,
+      "selected_burden": 180.92530921515427,
+      "initial_burden": 180.92530921515427,
+      "cancelled_auxiliary_initial": false,
+      "selection_evidence_complete": true,
+      "source_mismatches": [],
+      "selected_methods": [
+        "auxiliary_initial"
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 2,
+          "port_b": "yaw2"
+        }
+      ],
+      "surfaces": [
+        [
+          1,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw1"
+        ]
+      ],
+      "structure_signature": [
+        [],
+        [
+          [
+            "pitch1",
+            "yaw1",
+            [
+              [
+                "yaw2"
+              ],
+              []
+            ]
+          ],
+          [
+            "pitch2",
+            "yaw2",
+            [
+              [
+                "yaw1"
+              ],
+              []
+            ]
+          ]
+        ]
+      ],
+      "observed_refinement_method": "task_reference_warm_start"
+    }
+  ]
+}

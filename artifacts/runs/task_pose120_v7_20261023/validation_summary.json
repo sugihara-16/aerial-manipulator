@@ -1,0 +1,1391 @@
+{
+  "scope": "One implementation on all 120 specified inputs; these inputs have been used in development, not an unseen holdout",
+  "panel_sha256": "5a2680b3685559d99056930d278ff34c2faade6f0b03e4b2356fbf62f8eda6f1",
+  "overall": {
+    "successes": 105,
+    "total": 120,
+    "fraction": 0.875,
+    "reaches_threshold": true,
+    "failures": {
+      "contact solve PrimalInfeasible": 4,
+      "contact_load_limit": 1,
+      "constant constraint infeasible": 5,
+      "no attainable path acceleration": 1,
+      "supported recovery requires source support contact": 3,
+      "task_timeout": 1
+    }
+  },
+  "missing": 0,
+  "same_runtime_sources": true,
+  "same_execution_settings": true,
+  "all_cases_cover_required_sequence": true,
+  "strata": {
+    "family": {
+      "box": {
+        "successes": 15,
+        "total": 20,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "contact solve PrimalInfeasible": 2,
+          "no attainable path acceleration": 1,
+          "constant constraint infeasible": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "elongated_box": {
+        "successes": 20,
+        "total": 20,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder": {
+        "successes": 17,
+        "total": 20,
+        "fraction": 0.85,
+        "reaches_threshold": true,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 2
+        }
+      },
+      "ellipsoid": {
+        "successes": 14,
+        "total": 20,
+        "fraction": 0.7,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 3,
+          "supported recovery requires source support contact": 2,
+          "task_timeout": 1
+        }
+      },
+      "triangular_prism": {
+        "successes": 20,
+        "total": 20,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box": {
+        "successes": 19,
+        "total": 20,
+        "fraction": 0.95,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1
+        }
+      }
+    },
+    "yaw_bin": {
+      "0": {
+        "successes": 27,
+        "total": 30,
+        "fraction": 0.9,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "supported recovery requires source support contact": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "2": {
+        "successes": 23,
+        "total": 30,
+        "fraction": 0.7666666666666667,
+        "reaches_threshold": false,
+        "failures": {
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 2,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 1,
+          "contact solve PrimalInfeasible": 1,
+          "task_timeout": 1
+        }
+      },
+      "1": {
+        "successes": 27,
+        "total": 30,
+        "fraction": 0.9,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "constant constraint infeasible": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "3": {
+        "successes": 28,
+        "total": 30,
+        "fraction": 0.9333333333333333,
+        "reaches_threshold": true,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 1
+        }
+      }
+    },
+    "family_x_yaw_bin": {
+      "box:0": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "elongated_box:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "ellipsoid:0": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "supported recovery requires source support contact": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "triangular_prism:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:0": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "box:2": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "elongated_box:2": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:2": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "ellipsoid:2": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "task_timeout": 1
+        }
+      },
+      "triangular_prism:2": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:2": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1
+        }
+      },
+      "box:1": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "cylinder:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "ellipsoid:1": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "elongated_box:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "triangular_prism:1": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "box:3": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "constant constraint infeasible": 1
+        }
+      },
+      "cylinder:3": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "ellipsoid:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "triangular_prism:3": {
+        "successes": 5,
+        "total": 5,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      }
+    },
+    "resting_orientation": {
+      "large_face": {
+        "successes": 24,
+        "total": 28,
+        "fraction": 0.8571428571428571,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "contact_load_limit": 1,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "standing": {
+        "successes": 11,
+        "total": 12,
+        "fraction": 0.9166666666666666,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1
+        }
+      },
+      "curved_stable": {
+        "successes": 14,
+        "total": 20,
+        "fraction": 0.7,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 3,
+          "supported recovery requires source support contact": 2,
+          "task_timeout": 1
+        }
+      },
+      "small_or_sloped_face": {
+        "successes": 50,
+        "total": 52,
+        "fraction": 0.9615384615384616,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "lying": {
+        "successes": 6,
+        "total": 8,
+        "fraction": 0.75,
+        "reaches_threshold": false,
+        "failures": {
+          "constant constraint infeasible": 1,
+          "contact solve PrimalInfeasible": 1
+        }
+      }
+    },
+    "position_bin": {
+      "0:1": {
+        "successes": 29,
+        "total": 32,
+        "fraction": 0.90625,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "no attainable path acceleration": 1,
+          "constant constraint infeasible": 1
+        }
+      },
+      "1:0": {
+        "successes": 22,
+        "total": 26,
+        "fraction": 0.8461538461538461,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 1,
+          "constant constraint infeasible": 2,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "1:1": {
+        "successes": 26,
+        "total": 29,
+        "fraction": 0.896551724137931,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 2
+        }
+      },
+      "0:0": {
+        "successes": 28,
+        "total": 33,
+        "fraction": 0.8484848484848485,
+        "reaches_threshold": true,
+        "failures": {
+          "supported recovery requires source support contact": 2,
+          "contact solve PrimalInfeasible": 2,
+          "task_timeout": 1
+        }
+      }
+    },
+    "size_bin": {
+      "large": {
+        "successes": 100,
+        "total": 114,
+        "fraction": 0.8771929824561403,
+        "reaches_threshold": true,
+        "failures": {
+          "contact solve PrimalInfeasible": 4,
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 5,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 2,
+          "task_timeout": 1
+        }
+      },
+      "small": {
+        "successes": 5,
+        "total": 6,
+        "fraction": 0.8333333333333334,
+        "reaches_threshold": true,
+        "failures": {
+          "supported recovery requires source support contact": 1
+        }
+      }
+    },
+    "mass_bin": {
+      "light": {
+        "successes": 25,
+        "total": 33,
+        "fraction": 0.7575757575757576,
+        "reaches_threshold": false,
+        "failures": {
+          "contact solve PrimalInfeasible": 3,
+          "constant constraint infeasible": 3,
+          "task_timeout": 1,
+          "supported recovery requires source support contact": 1
+        }
+      },
+      "heavy": {
+        "successes": 80,
+        "total": 87,
+        "fraction": 0.9195402298850575,
+        "reaches_threshold": true,
+        "failures": {
+          "contact_load_limit": 1,
+          "constant constraint infeasible": 2,
+          "no attainable path acceleration": 1,
+          "supported recovery requires source support contact": 2,
+          "contact solve PrimalInfeasible": 1
+        }
+      }
+    }
+  },
+  "failure_concentration": {
+    "method": "one-sided Fisher exact; Holm across all predeclared group comparisons",
+    "alpha": 0.05,
+    "clear_concentration": false,
+    "equal_failure_rates_certified": false,
+    "mechanical_cause_review_required": true,
+    "comparisons": [
+      {
+        "axis": "family",
+        "group": "box",
+        "total": 20,
+        "failures": 5,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.1,
+        "p_value": 0.07584073539760301,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "elongated_box",
+        "total": 20,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.15,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "cylinder",
+        "total": 20,
+        "failures": 3,
+        "failure_fraction": 0.15,
+        "other_failure_fraction": 0.12,
+        "p_value": 0.47403694739982233,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "ellipsoid",
+        "total": 20,
+        "failures": 6,
+        "failure_fraction": 0.3,
+        "other_failure_fraction": 0.09,
+        "p_value": 0.019107256049477307,
+        "adjusted_p_value": 0.8980410343254335,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "triangular_prism",
+        "total": 20,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.15,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "tapered_box",
+        "total": 20,
+        "failures": 1,
+        "failure_fraction": 0.05,
+        "other_failure_fraction": 0.14,
+        "p_value": 0.946445992766194,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "0",
+        "total": 30,
+        "failures": 3,
+        "failure_fraction": 0.1,
+        "other_failure_fraction": 0.13333333333333333,
+        "p_value": 0.7818788963910345,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "2",
+        "total": 30,
+        "failures": 7,
+        "failure_fraction": 0.23333333333333334,
+        "other_failure_fraction": 0.08888888888888889,
+        "p_value": 0.044797166587333064,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "1",
+        "total": 30,
+        "failures": 3,
+        "failure_fraction": 0.1,
+        "other_failure_fraction": 0.13333333333333333,
+        "p_value": 0.7818788963910345,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "3",
+        "total": 30,
+        "failures": 2,
+        "failure_fraction": 0.06666666666666667,
+        "other_failure_fraction": 0.14444444444444443,
+        "p_value": 0.9329980513123023,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:0",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:0",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:2",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:2",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:2",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:2",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:2",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:2",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:1",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:1",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.11304347826086956,
+        "p_value": 0.11708552503409313,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:1",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:3",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:3",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.12173913043478261,
+        "p_value": 0.49332748879797383,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:3",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.13043478260869565,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "large_face",
+        "total": 28,
+        "failures": 4,
+        "failure_fraction": 0.14285714285714285,
+        "other_failure_fraction": 0.11956521739130435,
+        "p_value": 0.4818939982256945,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "standing",
+        "total": 12,
+        "failures": 1,
+        "failure_fraction": 0.08333333333333333,
+        "other_failure_fraction": 0.12962962962962962,
+        "p_value": 0.8148849538442486,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "curved_stable",
+        "total": 20,
+        "failures": 6,
+        "failure_fraction": 0.3,
+        "other_failure_fraction": 0.09,
+        "p_value": 0.019107256049477307,
+        "adjusted_p_value": 0.8980410343254335,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "small_or_sloped_face",
+        "total": 52,
+        "failures": 2,
+        "failure_fraction": 0.038461538461538464,
+        "other_failure_fraction": 0.19117647058823528,
+        "p_value": 0.9985515712050784,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "lying",
+        "total": 8,
+        "failures": 2,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.11607142857142858,
+        "p_value": 0.2618614354534384,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:1",
+        "total": 32,
+        "failures": 3,
+        "failure_fraction": 0.09375,
+        "other_failure_fraction": 0.13636363636363635,
+        "p_value": 0.8238948226101364,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:0",
+        "total": 26,
+        "failures": 4,
+        "failure_fraction": 0.15384615384615385,
+        "other_failure_fraction": 0.11702127659574468,
+        "p_value": 0.41515109564692776,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:1",
+        "total": 29,
+        "failures": 3,
+        "failure_fraction": 0.10344827586206896,
+        "other_failure_fraction": 0.13186813186813187,
+        "p_value": 0.7583714722921706,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:0",
+        "total": 33,
+        "failures": 5,
+        "failure_fraction": 0.15151515151515152,
+        "other_failure_fraction": 0.11494252873563218,
+        "p_value": 0.39567292294014406,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "large",
+        "total": 114,
+        "failures": 14,
+        "failure_fraction": 0.12280701754385964,
+        "other_failure_fraction": 0.16666666666666666,
+        "p_value": 0.8371111054642171,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "small",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.12280701754385964,
+        "p_value": 0.5594152076504121,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "light",
+        "total": 33,
+        "failures": 8,
+        "failure_fraction": 0.24242424242424243,
+        "other_failure_fraction": 0.08045977011494253,
+        "p_value": 0.022089833304423236,
+        "adjusted_p_value": 0.9940424986990456,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "heavy",
+        "total": 87,
+        "failures": 7,
+        "failure_fraction": 0.08045977011494253,
+        "other_failure_fraction": 0.24242424242424243,
+        "p_value": 0.995060503557741,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      }
+    ]
+  },
+  "failure_phases": [
+    {
+      "phase": "ACQUIRE",
+      "reason": "contact solve PrimalInfeasible",
+      "count": 4
+    },
+    {
+      "phase": "UNLOAD",
+      "reason": "contact_load_limit",
+      "count": 1
+    },
+    {
+      "phase": "CARRY",
+      "reason": "constant constraint infeasible",
+      "count": 2
+    },
+    {
+      "phase": "LIFT",
+      "reason": "constant constraint infeasible",
+      "count": 2
+    },
+    {
+      "phase": "CARRY",
+      "reason": "no attainable path acceleration",
+      "count": 1
+    },
+    {
+      "phase": "LOAD",
+      "reason": "supported recovery requires source support contact",
+      "count": 2
+    },
+    {
+      "phase": "RECOVER",
+      "reason": "supported recovery requires source support contact",
+      "count": 1
+    },
+    {
+      "phase": "RETREAT",
+      "reason": "task_timeout",
+      "count": 1
+    },
+    {
+      "phase": "DESCEND",
+      "reason": "constant constraint infeasible",
+      "count": 1
+    }
+  ],
+  "planning_s": {
+    "count": 120,
+    "minimum": 3.912081141024828,
+    "median": 7.794668689370155,
+    "p95": 12.787642206437884,
+    "maximum": 14.483031389769167
+  },
+  "planning_over_15s": 0,
+  "planning_successful_s": {
+    "count": 105,
+    "minimum": 3.912081141024828,
+    "median": 7.9660952049307525,
+    "p95": 13.377732016053049,
+    "maximum": 14.483031389769167
+  },
+  "control_timing_scope": "Distribution across cases of each case mean/p95/maximum; not pooled cycle percentiles",
+  "control_s": {
+    "APPROACH": {
+      "mean": {
+        "count": 120,
+        "minimum": 0.003546379468469691,
+        "median": 0.004689458389039009,
+        "p95": 0.0065790586591064305,
+        "maximum": 0.008249296927824617
+      },
+      "p95": {
+        "count": 120,
+        "minimum": 0.004285904904827475,
+        "median": 0.005902317829895765,
+        "p95": 0.010266911233775313,
+        "maximum": 0.015276838256977496
+      },
+      "maximum": {
+        "count": 120,
+        "minimum": 0.004397266078740358,
+        "median": 0.006808997131884098,
+        "p95": 0.02320832519326359,
+        "maximum": 0.04593758191913366
+      }
+    },
+    "ACQUIRE": {
+      "mean": {
+        "count": 120,
+        "minimum": 0.00416700564147461,
+        "median": 0.00574670776534004,
+        "p95": 0.007597152764216566,
+        "maximum": 0.012779793645277983
+      },
+      "p95": {
+        "count": 120,
+        "minimum": 0.004417092399671673,
+        "median": 0.006427726487163454,
+        "p95": 0.013323142426088449,
+        "maximum": 0.015304677048698067
+      },
+      "maximum": {
+        "count": 120,
+        "minimum": 0.014043624978512526,
+        "median": 0.02194657875224948,
+        "p95": 0.037020385824143874,
+        "maximum": 0.20378699712455273
+      }
+    },
+    "REFINE": {
+      "mean": {
+        "count": 116,
+        "minimum": 0.004676932829522317,
+        "median": 0.007176061928009566,
+        "p95": 0.012689885177116883,
+        "maximum": 0.015415495770724914
+      },
+      "p95": {
+        "count": 116,
+        "minimum": 0.004732680227607489,
+        "median": 0.0081339125870727,
+        "p95": 0.016155120381154117,
+        "maximum": 0.02187233278527856
+      },
+      "maximum": {
+        "count": 116,
+        "minimum": 0.011819441802799702,
+        "median": 0.026150059886276722,
+        "p95": 0.044984718202613294,
+        "maximum": 0.30002647498622537
+      }
+    },
+    "LOAD": {
+      "mean": {
+        "count": 116,
+        "minimum": 0.0035411101831899334,
+        "median": 0.00457533268413196,
+        "p95": 0.006371780554860986,
+        "maximum": 0.007806395071481044
+      },
+      "p95": {
+        "count": 116,
+        "minimum": 0.0036405198741704227,
+        "median": 0.004984221456106752,
+        "p95": 0.009732880006777122,
+        "maximum": 0.01412124598864466
+      },
+      "maximum": {
+        "count": 116,
+        "minimum": 0.00477999821305275,
+        "median": 0.008198017720133066,
+        "p95": 0.021903966669924557,
+        "maximum": 0.04561225976794958
+      }
+    },
+    "LIFT": {
+      "mean": {
+        "count": 113,
+        "minimum": 0.004182751838350669,
+        "median": 0.005415698073105887,
+        "p95": 0.006790293692750852,
+        "maximum": 0.00821611654246226
+      },
+      "p95": {
+        "count": 113,
+        "minimum": 0.004735781368799508,
+        "median": 0.006186169688589871,
+        "p95": 0.011787134748883543,
+        "maximum": 0.017597369127906857
+      },
+      "maximum": {
+        "count": 113,
+        "minimum": 0.00543482368811965,
+        "median": 0.008849296253174543,
+        "p95": 0.023677088227123007,
+        "maximum": 0.03037080727517605
+      }
+    },
+    "CARRY": {
+      "mean": {
+        "count": 111,
+        "minimum": 0.003490213304758072,
+        "median": 0.005346393555082613,
+        "p95": 0.006750662236008793,
+        "maximum": 0.007913919738202822
+      },
+      "p95": {
+        "count": 111,
+        "minimum": 0.003490213304758072,
+        "median": 0.006239118962548673,
+        "p95": 0.011127479828428476,
+        "maximum": 0.01327598444186151
+      },
+      "maximum": {
+        "count": 111,
+        "minimum": 0.003490213304758072,
+        "median": 0.009642237331718206,
+        "p95": 0.028958301059901714,
+        "maximum": 0.03268245095387101
+      }
+    },
+    "DESCEND": {
+      "mean": {
+        "count": 108,
+        "minimum": 0.004823306231007798,
+        "median": 0.005945767216710368,
+        "p95": 0.00776095920307001,
+        "maximum": 0.009376674949569438
+      },
+      "p95": {
+        "count": 108,
+        "minimum": 0.004979271162301302,
+        "median": 0.006243845261633395,
+        "p95": 0.011914640708127987,
+        "maximum": 0.015526228956878186
+      },
+      "maximum": {
+        "count": 108,
+        "minimum": 0.005410522688180208,
+        "median": 0.008202163968235254,
+        "p95": 0.022168670152314007,
+        "maximum": 0.04005542676895857
+      }
+    },
+    "UNLOAD": {
+      "mean": {
+        "count": 107,
+        "minimum": 0.005011737667268417,
+        "median": 0.00677617339382845,
+        "p95": 0.008732800029416614,
+        "maximum": 0.010834154606941447
+      },
+      "p95": {
+        "count": 107,
+        "minimum": 0.0051714356523007154,
+        "median": 0.0072735858149826525,
+        "p95": 0.012699228997807933,
+        "maximum": 0.016500803967937832
+      },
+      "maximum": {
+        "count": 107,
+        "minimum": 0.01567562110722065,
+        "median": 0.02317749010398984,
+        "p95": 0.03053725697100162,
+        "maximum": 0.07597189163789153
+      }
+    },
+    "RETREAT": {
+      "mean": {
+        "count": 106,
+        "minimum": 0.002379355776371406,
+        "median": 0.0032142073210915715,
+        "p95": 0.004120779270140898,
+        "maximum": 0.00513807639788654
+      },
+      "p95": {
+        "count": 106,
+        "minimum": 0.0024970761965960263,
+        "median": 0.0035500723170116544,
+        "p95": 0.007038987573469054,
+        "maximum": 0.00947501352056861
+      },
+      "maximum": {
+        "count": 106,
+        "minimum": 0.008782082237303257,
+        "median": 0.01120723644271493,
+        "p95": 0.042998827528208494,
+        "maximum": 0.0546283395960927
+      }
+    },
+    "RECOVER": {
+      "mean": {
+        "count": 6,
+        "minimum": 0.007059027811598632,
+        "median": 0.008631683368997684,
+        "p95": 0.009359639889693686,
+        "maximum": 0.009475076943635941
+      },
+      "p95": {
+        "count": 6,
+        "minimum": 0.008446616982109845,
+        "median": 0.009347471455112099,
+        "p95": 0.011621590831782654,
+        "maximum": 0.01191783919930458
+      },
+      "maximum": {
+        "count": 6,
+        "minimum": 0.03314008703455329,
+        "median": 0.054834175389260054,
+        "p95": 0.07117354113142937,
+        "maximum": 0.07295730523765087
+      }
+    }
+  },
+  "task_wall_to_simulation_ratio": {
+    "count": 120,
+    "minimum": 1.1110620261754802,
+    "median": 2.3643705699498683,
+    "p95": 3.4607921147784477,
+    "maximum": 4.5652625937891
+  },
+  "benchmark_wall_s": 8408.896952410694,
+  "benchmark_workers": 2,
+  "structure": {
+    "scope": "finite completed panel; sampled counts are not uniform coverage or physical success probabilities",
+    "cases": 120,
+    "all_selection_evidence_complete": true,
+    "fresh_seed_cases": 0,
+    "unique_seeds": 120,
+    "improved_initial_seed_cases": 23,
+    "sampled_starts_by_count": {
+      "1": 47520,
+      "2": 47520,
+      "3": 47520,
+      "4": 30888,
+      "5": 7984,
+      "6": 1056,
+      "7": 396,
+      "8": 396
+    },
+    "accepted_starts_by_count": {
+      "3": 1063,
+      "4": 1069,
+      "5": 91,
+      "6": 8,
+      "2": 21
+    },
+    "sampled_contact_counts": {
+      "1": 96462,
+      "2": 49417,
+      "3": 25388,
+      "4": 9623,
+      "5": 1953,
+      "6": 296,
+      "7": 103,
+      "8": 38
+    },
+    "accepted_contact_counts": {
+      "3": 1607,
+      "4": 225,
+      "2": 419,
+      "5": 1
+    },
+    "sampled_skeleton_groups": [
+      "task_growth"
+    ],
+    "selected": {
+      "3 modules / 3 contacts": 48,
+      "3 modules / 2 contacts": 26,
+      "6 modules / 3 contacts": 1,
+      "4 modules / 2 contacts": 5,
+      "4 modules / 3 contacts": 29,
+      "4 modules / 4 contacts": 8,
+      "2 modules / 2 contacts": 1,
+      "5 modules / 4 contacts": 1,
+      "5 modules / 3 contacts": 1
+    },
+    "executed": {
+      "3 modules / 3 contacts": 48,
+      "3 modules / 2 contacts": 26,
+      "6 modules / 3 contacts": 1,
+      "4 modules / 2 contacts": 5,
+      "4 modules / 3 contacts": 29,
+      "4 modules / 4 contacts": 8,
+      "2 modules / 2 contacts": 1,
+      "5 modules / 4 contacts": 1,
+      "5 modules / 3 contacts": 1
+    },
+    "successful": {
+      "3 modules / 2 contacts": 25,
+      "6 modules / 3 contacts": 1,
+      "4 modules / 2 contacts": 5,
+      "3 modules / 3 contacts": 38,
+      "4 modules / 3 contacts": 27,
+      "2 modules / 2 contacts": 1,
+      "4 modules / 4 contacts": 6,
+      "5 modules / 4 contacts": 1,
+      "5 modules / 3 contacts": 1
+    },
+    "selected_unlabeled_skeletons": 5,
+    "selected_port_contact_structures": 40,
+    "selected_pad_types": {
+      "yaw": 304,
+      "pitch": 33
+    },
+    "selected_branched_cases": 0
+  },
+  "runtime_platform": "PC; no VIM4 or physical robot measurement"
+}
