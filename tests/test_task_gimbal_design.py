@@ -22,3 +22,29 @@ def test_geometric_wrench_matches_generalized_inputs_and_independent_derivative(
         ap,bp,_,_=design.geometry(angles+shift);am,bm,_,_=design.geometry(angles-shift)
         np.testing.assert_allclose(da[i],(ap-am)/2e-6,atol=5e-9)
         np.testing.assert_allclose(db[i],(bp-bm)/2e-6,atol=5e-8)
+
+
+def test_symbolic_solver_runs_through_production_entry_and_rechecks_wrench():
+    plant=dock_mit_model(make_plant(2,payload={'shape':'box','size':[.3,.2,.2],'mass':.7},mesh_cache=CONTACT_CACHE),kp=200.)
+    q=plant.configuration(pin.neutral(plant.pin));local=LocalGrasp(plant,q,[])
+    design=GimbalWrenchDesign(local,q,[0.,0.,0.],np.zeros((1,6)))
+    thrust=np.full(len(local.sites),plant.mj.body_mass.sum()*9.80665/len(local.sites))
+    pose,info=design.solve(np.r_[local.kp*q[local.qi],thrust])
+    assert info['accepted']
+    assert info['external_wrench_residual']<1e-6
+    np.testing.assert_allclose(pose,q,atol=1e-8)
+
+
+def test_cached_program_reuses_equations_but_not_previous_physics():
+    from build.task_gimbal_design import _gimbal_solver
+    _gimbal_solver.cache_clear()
+    for mass,displacement in [(.4,[.2,0,0]),(1.2,[-.1,.3,0])]:
+        plant=dock_mit_model(make_plant(2,payload={'shape':'box','size':[.3,.2,.2],'mass':mass},mesh_cache=CONTACT_CACHE),kp=200.)
+        q=plant.configuration(pin.neutral(plant.pin));local=LocalGrasp(plant,q,[])
+        corrections=np.zeros((2,6));corrections[1,2]=mass*.2
+        design=GimbalWrenchDesign(local,q,displacement,corrections)
+        thrust=np.full(len(local.sites),plant.mj.body_mass.sum()*9.80665/len(local.sites))
+        _,info=design.solve(np.r_[local.kp*q[local.qi],thrust])
+        assert info['accepted']
+        assert info['external_wrench_residual']<1e-6
+    assert _gimbal_solver.cache_info().hits==1

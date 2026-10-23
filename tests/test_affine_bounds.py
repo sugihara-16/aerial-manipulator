@@ -26,3 +26,19 @@ def test_cross_polytope_radius_covers_convex_combinations_not_a_box():
     # Simultaneous positive endpoints lie outside the same diamond.
     impossible=linprog(np.zeros(2),A_eq=A,b_eq=np.full(2,rho),bounds=[(-1.,1.)]*2)
     assert not impossible.success
+
+
+def test_reused_bounds_match_independent_solves_across_directions_and_origins():
+    from amsrr_det.affine_bounds import ScalarBounds,scalar_bound
+    rng=np.random.default_rng(94)
+    for n in (8,12,16):
+        matrix=rng.normal(size=(6,n));lower=-rng.random(n);upper=rng.random(n)
+        problem=ScalarBounds(matrix,lower,upper)
+        for _ in range(16):
+            base=matrix@rng.uniform(lower,upper);direction=rng.normal(size=6)
+            expected=scalar_bound(matrix,base,direction,lower,upper,nonnegative=True)
+            actual=problem.bound(base,direction)
+            assert actual is not None and expected is not None
+            np.testing.assert_allclose(actual,expected,rtol=1e-8,atol=1e-8)
+        # Reusing a successful basis must not hide an infeasible slice.
+        assert problem.bound(np.full(6,1e6),np.zeros(6)) is None

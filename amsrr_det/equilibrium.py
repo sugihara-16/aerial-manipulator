@@ -161,10 +161,32 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
         peak_bound=max(.8,float(x[-1])+.02) if peak_slack is None else min(1.,float(x[-1])+peak_slack)
         result['secondary_peak_bound']=peak_bound
         upper=np.array([np.inf if b is None else b for a,b in bounds]+[peak_bound])
-        refined=minimize(cost,x,jac=gradient,method='SLSQP',bounds=Bounds(lower,upper),
-            constraints=[LinearConstraint(E[independent],gravity[unactuated][independent],gravity[unactuated][independent]),
-                         LinearConstraint(np.array(A),-np.inf,np.array(b))],
-            options=dict(maxiter=150,ftol=1e-9))
+        import clarabel
+        import scipy.sparse as sp
+        from types import SimpleNamespace
+        H=np.zeros((nx,nx));H[:-1,:-1]=20*Qj.T@Qj
+        H[np.arange(nr),np.arange(nr)]+=.04
+        ids=np.arange(nr,nx-1);H[ids,ids]+=.002
+        g=np.zeros(nx);g[:-1]=-20*Qj.T@gj;g[:nr]-=.04*f0
+        unit=np.eye(nx);upper_ids=np.isfinite(upper);lower_ids=np.isfinite(lower)
+        eq=E[independent];rhs=gravity[unactuated][independent]
+        con=np.vstack([eq,np.asarray(A),unit[upper_ids],-unit[lower_ids]])
+        rhs=np.r_[rhs,b,upper[upper_ids],-lower[lower_ids]]
+        scale=np.maximum(np.linalg.norm(con,axis=1),1.)
+        settings=clarabel.DefaultSettings();settings.verbose=False;settings.max_threads=1
+        settings.tol_feas=settings.tol_gap_abs=settings.tol_gap_rel=1e-10
+        solved=clarabel.DefaultSolver(sp.csc_matrix(np.triu(H)),g,sp.csc_matrix(con/scale[:,None]),rhs/scale,
+            [clarabel.ZeroConeT(len(eq)),clarabel.NonnegativeConeT(len(con)-len(eq))],settings).solve()
+        candidate=np.asarray(solved.x)
+        residual=max(float(abs(E@candidate-gravity[unactuated]).max()),float((np.asarray(A)@candidate-np.asarray(b)).max()),
+                     float((lower-candidate).max()),float((candidate-upper).max()))
+        accepted=str(solved.status) in ['Solved','AlmostSolved'] and residual<1e-7 and cost(candidate)<=cost(x)+1e-8
+        refined=SimpleNamespace(success=accepted,x=candidate)
+        if not accepted:
+            refined=minimize(cost,x,jac=gradient,method='SLSQP',bounds=Bounds(lower,upper),
+                constraints=[LinearConstraint(E[independent],gravity[unactuated][independent],gravity[unactuated][independent]),
+                             LinearConstraint(np.array(A),-np.inf,np.array(b))],
+                options=dict(maxiter=150,ftol=1e-9))
         if refined.success and refined.x[-1]<=peak_bound+1e-8:x=refined.x
         result['balanced_refinement_success']=bool(refined.success)
     torque=gravity-B@x[:-1]

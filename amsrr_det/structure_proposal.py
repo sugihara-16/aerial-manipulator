@@ -11,12 +11,22 @@ from .model import build_model
 from .structure_groups import sample_assignment
 from .morphology import align_seed
 from .grasp_geometry import fit_contacts
+from .planning_memo import evaluate as memoized
 
 
 def proposal(group,shape,source,obstacles,rng, *, contact_count=None,guided=False,fixed_targets=False):
     started=time.perf_counter()
     edges,surfaces=sample_assignment(group,rng,contact_count=contact_count)
-    m,meta=build_model(group['modules'],edges,shape.payload())
+    answer=fit_assignment(group['modules'],edges,surfaces,shape,source,obstacles,rng,
+                          guided=guided,fixed_targets=fixed_targets)
+    answer.update(group=group['id'],wall_s=time.perf_counter()-started)
+    return answer
+
+
+def fit_assignment(modules,edges,surfaces,shape,source,obstacles,rng,*,guided=True,fixed_targets=False,opposed_pair=False):
+    """Common initializer for the discrete-only causal comparison."""
+    started=time.perf_counter()
+    m,meta=build_model(modules,edges,shape.payload())
     q=pin.neutral(m);q[meta['object']['q']:]=source
     folded=not guided or rng.random()<.25
     for a in meta['actuators']:
@@ -27,6 +37,7 @@ def proposal(group,shape,source,obstacles,rng, *, contact_count=None,guided=Fals
         # All surface counts and arbitrary directions retain positive support.
         axis=np.eye(3)[int(rng.integers(3))]
         directions[:2]=np.array([axis,-axis])
+    if opposed_pair:directions[1]=-directions[0]
     samples=[shape.ray_surface(direction) for direction in directions]
     points=np.array([item[0] for item in samples]);normals=-np.array([item[1] for item in samples])
     R=pin.Quaternion(source[3:]).matrix();world=points@R.T+source[:3];wn=normals@R.T
@@ -38,10 +49,14 @@ def proposal(group,shape,source,obstacles,rng, *, contact_count=None,guided=Fals
         center=world[0]+.001*wn[0]
         aligned[:3]=center+turn@(aligned[:3]-center)
         aligned[3:7]=pin.Quaternion(turn@pin.Quaternion(aligned[3:7]).matrix()).coeffs()
-    closed,fit=fit_contacts(m,meta,aligned,surfaces,world+.001*wn,wn,object_shape=None if fixed_targets else shape,
-                           floor_clearance=.03,base_rotation=True,obstacles=obstacles,max_evaluations=45)
+    inputs=dict(operation='fit_assignment',modules=modules,edges=edges,surfaces=surfaces,
+                shape=shape.payload(),aligned=aligned.tolist(),points=(world+.001*wn).tolist(),
+                normals=wn.tolist(),obstacles=np.asarray(obstacles).tolist(),
+                fixed_targets=fixed_targets,opposed_pair=opposed_pair)
+    closed,fit=memoized(inputs,lambda:fit_contacts(m,meta,aligned,surfaces,world+.001*wn,wn,
+        object_shape=None if fixed_targets else shape,floor_clearance=.03,base_rotation=True,
+        obstacles=obstacles,max_evaluations=45,opposed_friction=4.5 if opposed_pair else None))
     if fixed_targets:fit.update(object_points=points.tolist(),inward_normals=normals.tolist())
-    return dict(group=group['id'],modules=group['modules'],edges=edges,surfaces=surfaces,
+    if opposed_pair:fit['initial_object_points']=points.tolist()
+    return dict(group='external_assignment',modules=modules,edges=edges,surfaces=surfaces,
                 q=closed.tolist(),fit=fit,wall_s=time.perf_counter()-started)
-
-

@@ -9,7 +9,7 @@ from pathlib import Path
 import time
 import xml.etree.ElementTree as ET
 import numpy as np
-from .clearance import ContactClassifier
+from .clearance import ContactClassifier,forward_collision
 import pinocchio as pin
 import mujoco
 from .model import build_model,ROOT
@@ -21,6 +21,7 @@ from .flight import FlightController
 from .objects import ObjectShape
 from .clearance import proximity_model, classify_contacts
 from .numerics import advance_world_orientation
+from .planning_memo import evaluate as memoized
 
 
 def smooth(value):
@@ -229,7 +230,7 @@ def support_obstacles(shape,source,destination,support_top):
     return [(np.array(center),np.r_[half,support_top/2]) for center in sorted(centers)]
 
 
-def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, base_rotation=True,obstacles=()):
+def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, base_rotation=True,obstacles=(),open_posture=True):
     from .contact_geometry import material_triangles,close_material
     R=pin.Quaternion(source[3:]).matrix();world=points@R.T+source[:3];world_normals=normals@R.T
     pd=p.pin.createData();samples=[surface_points(p.pin,p.meta,closed,s) for s in surfaces]
@@ -285,7 +286,17 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
         error=ValueError('material contact fit failed')
         error.evidence=dict(fit=fit,q=closed.tolist(),surfaces=surfaces,points=points.tolist(),normals=normals.tolist(),material_gap=gap.tolist(),tangent_error=tangent.tolist())
         raise error
-    points[:]=actual_points;normals[:]=actual_normals;world_normals=normals@R.T
+    points[:]=actual_points;normals[:]=actual_normals
+    opened=open_material_posture(p,shape,source,closed,surfaces,normals,fit,
+        base_rotation=base_rotation,obstacles=obstacles) if open_posture else None
+    return opened,closed,fit
+
+
+def open_material_posture(p,shape,source,closed,surfaces,normals,fit, *, base_rotation=True,obstacles=()):
+    """Construct the unchanged open posture after closed-contact screening."""
+    from .contact_geometry import material_triangles,close_material
+    world_normals=normals@pin.Quaternion(source[3:]).matrix().T
+    pd=p.pin.createData();samples=[surface_points(p.pin,p.meta,closed,s) for s in surfaces]
     pin.framesForwardKinematics(p.pin,pd,closed)
     centers=np.array([pd.oMf[frame].translation for frame,_ in samples])
     opened,openfit=fit_contacts(p.pin,p.meta,closed,surfaces,centers-.045*world_normals,world_normals,
@@ -307,7 +318,7 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
                 opened=trial;open_gaps=trial_gaps;fit['opening_method']='separating_translation'
     fit['open_material_gap_m']=list(map(float,open_gaps))
     if min(open_gaps)<.025:raise ValueError('material contact opening failed')
-    return opened,closed,fit
+    return opened
 
 
 def material_force_contacts(p,shape,closed,surfaces):
@@ -353,11 +364,17 @@ def prepare_static_trims(p,shape,opened,closed,surfaces,points,normals, *, loade
             for a in gimbals:
                 angle=np.clip(aimed[a['q']]+rng.normal(0,.15),a['lower']+.02,a['upper']-.02)
                 closed[a['q']]=opened[a['q']]=angle
-        candidate=[static_balance(p.pin,p.meta,opened,payload_fraction=0.),
-                   static_balance(p.pin,p.meta,closed,payload_fraction=0.),
-                   static_balance(p.pin,p.meta,closed,contacts,minimum_pad_normal_force_n=.5) if loaded_trim is None else loaded_trim]
+        # All three screens are required. Test the loaded state first: an
+        # unresolved loaded trim already rejects this posture, so evaluating
+        # its two empty trims cannot change the decision or the next draw.
+        loaded=static_balance(p.pin,p.meta,closed,contacts,minimum_pad_normal_force_n=.5) if loaded_trim is None else loaded_trim
+        candidate=[None,None,loaded]
+        if loaded['status'] in ['static_screen_pass','coupled_point_pass']:
+            candidate[0]=static_balance(p.pin,p.meta,opened,payload_fraction=0.)
+            if candidate[0]['status']=='static_screen_pass':
+                candidate[1]=static_balance(p.pin,p.meta,closed,payload_fraction=0.)
         screen_attempts.append(candidate)
-        if all(t['status']=='static_screen_pass' for t in candidate[:2]) and candidate[2]['status'] in ['static_screen_pass','coupled_point_pass']:
+        if all(t is not None and t['status']=='static_screen_pass' for t in candidate[:2]) and loaded['status'] in ['static_screen_pass','coupled_point_pass']:
             # Preserve the minimum worst-joint burden before smoothing the
             # rotor distribution; the second objective may add at most .02.
             trims=[static_balance(p.pin,p.meta,opened,payload_fraction=0.,balance_thrust=True,peak_slack=.02),
@@ -378,20 +395,21 @@ def finish_plan(p,shape,source,destination,support_top,opened,closed,surfaces,po
     # Support footprint is generated from the object dimensions, with clearance.
     half_xy=(abs(R)@(shape.size/2))[:2]+.04
     if shape.vertices is not None:half_xy=np.max(abs(shape.vertices@R.T),axis=0)[:2]+.04
-    doc=ET.fromstring(p.xml);option=doc.find('option');option.set('integrator','discrete');option.set('impratio','100')
-    w=doc.find('worldbody')
-    # Rigid supports use a 2 ms numerical contact time constant. At the
-    # execution step of 0.25 ms this resolves support compliance without
-    # changing the authored coating on the grasp pads.
-    for name,pose in [('support',source),('destination_support',destination)]:
-        ET.SubElement(w,'geom',name=name,type='box',pos=numbers([*pose[:2],support_top/2]),
-                      size=numbers([*half_xy,support_top/2]),rgba='.4 .4 .4 1',
-                      priority='1',solref='.002 1')
     links=[f'm{m}/'+('yaw_dock_mech' if port.startswith('yaw') else 'pitch_dock_mech')+port[-1] for m,port in surfaces]
-    # Only world-fixed supports and numerical options were added above;
-    # the existing compiled model already contains the required inertias.
-    xml=coat_grippers(ET.tostring(doc,encoding='unicode'),links,reference_model=p.mj)
-    p.xml=xml;p.mj=mujoco.MjModel.from_xml_string(xml)
+    def supported_model():
+        doc=ET.fromstring(p.xml);option=doc.find('option');option.set('integrator','discrete');option.set('impratio','100')
+        w=doc.find('worldbody')
+        # Rigid supports use a 2 ms contact time constant; coating is unchanged.
+        for name,pose in [('support',source),('destination_support',destination)]:
+            ET.SubElement(w,'geom',name=name,type='box',pos=numbers([*pose[:2],support_top/2]),
+                          size=numbers([*half_xy,support_top/2]),rgba='.4 .4 .4 1',
+                          priority='1',solref='.002 1')
+        xml=coat_grippers(ET.tostring(doc,encoding='unicode'),links,reference_model=p.mj)
+        return xml,mujoco.MjModel.from_xml_string(xml)
+    p.xml,p.mj=memoized(dict(operation='supported_contact_model',xml=p.xml,links=links,
+        source_xy=source[:2].tolist(),destination_xy=destination[:2].tolist(),
+        half_xy=half_xy.tolist(),support_top=support_top,
+        body_invweight0=p.mj.body_invweight0.tolist()),supported_model)
     from .contact_geometry import material_triangles,close_material
     for _,port in surfaces:material_triangles(port,p.meta.get('material_mesh_cache'))
     # Reject unintended overlap before spending time on force allocation.
@@ -399,7 +417,7 @@ def finish_plan(p,shape,source,destination,support_top,opened,closed,surfaces,po
     names=[p.mj.geom(i).name for i in range(p.mj.ngeom)]
     classifiers={True:ContactClassifier(cm,names,links),False:ContactClassifier(cm,names,[])}
     for check_q in [opened,closed]:
-        md.qpos[:]=p.configuration(check_q);mujoco.mj_fwdPosition(cm,md)
+        md.qpos[:]=p.configuration(check_q);forward_collision(cm,md)
         intended,limits=classifiers[True](md)
         bad=np.flatnonzero(~intended & (np.asarray(md.contact.dist)<limits-1e-6))
         if len(bad):
@@ -441,7 +459,7 @@ def finish_plan(p,shape,source,destination,support_top,opened,closed,surfaces,po
     for segment,(first,last) in enumerate(zip(checkpoints,checkpoints[1:])):
         for t in np.linspace(0,1,9):
             check_q=pin.interpolate(p.pin,first,last,float(t))
-            md.qpos[:]=p.configuration(check_q);mujoco.mj_fwdPosition(cm,md)
+            md.qpos[:]=p.configuration(check_q);forward_collision(cm,md)
             intended,limits=classifiers[segment>=2](md)
             bad=np.flatnonzero(~intended & (np.asarray(md.contact.dist)<limits-1e-6));checked+=1
             if len(bad):

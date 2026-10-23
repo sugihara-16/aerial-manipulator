@@ -17,9 +17,9 @@ def check(initial_delay, initial_cost, trial_cost, slow_last=False):
         return dict(modules=n,trial=index,rows=[],burden=cost,
             plan='trial'if cost<float('inf')else None,
             prepared=dict(burden=cost)if cost<float('inf')else None,wall_s=0.)
-    selector.initial_candidate=initial;selector.trial=trial
+    selector.task_initial_candidate=initial;selector.trial=trial
     class Pool:
-        def __init__(self,processes):self.available=[0.]*processes
+        def __init__(self,processes,initializer=None,initargs=()):self.available=[0.]*processes
         def apply_async(self,fn,args,kwds=None):
             duration=initial_delay if fn is initial else (.3 if args[1]!=1 or(slow_last and args[2]==98)else .00001)
             slot=min(range(len(self.available)),key=lambda i:self.available[i])
@@ -39,20 +39,25 @@ def check(initial_delay, initial_cost, trial_cost, slow_last=False):
     assert report['selection_evidence']['complete']
     necessary=report['selection_evidence']['groups'][0]
     assert necessary['completed_prefix_trials']==99
-    assert report['selected_burden']==min(initial_cost,trial_cost)
-    return dict(clock_s=clock.now,cancelled=report['cancelled_excluded_trials'],cost=report['selected_burden'])
+    expected=trial_cost if report['cancelled_auxiliary_initial'] else min(initial_cost,trial_cost)
+    assert report['selected_burden']==expected
+    return dict(clock_s=clock.now,cancelled=report['cancelled_excluded_trials'],cost=report['selected_burden'],
+                cancelled_auxiliary=report['cancelled_auxiliary_initial'])
 
 
 
 def test_only_physically_excluded_unfinished_work_is_cancelled(monkeypatch):
     with monkeypatch.context() as context:
         # The fixture replaces scheduler inputs for this test only.
-        previous={key:getattr(selector,key) for key in ['time','build_model','count_lower_bounds','initial_candidate','trial','planning_context']}
+        previous={key:getattr(selector,key) for key in ['time','build_model','count_lower_bounds','task_initial_candidate','trial','planning_context','TrialPool']}
         try:
+            selector.TrialPool=lambda context,**kwargs:context.Pool(**kwargs)
             first=check(.2,75.,float('inf'))
             assert first['clock_s']<.3 and first['cancelled']
             late=check(.2,60.,75.)
-            assert late['clock_s']>=.2 and late['cost']==60.
+            # The auxiliary is not a required independent observation. A late
+            # improvement may be forgone only after all count evidence exists.
+            assert late['clock_s']<.2 and late['cost']==75. and late['cancelled_auxiliary']
             necessary=check(.005,75.,float('inf'),True)
             assert necessary['clock_s']>=.3
         finally:

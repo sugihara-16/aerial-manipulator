@@ -5,20 +5,50 @@ Its fixed-geometry, constant-rate bounds are not a trajectory certificate.
 The evaluator's forces and completed simulation outcomes are never inputs.
 """
 import numpy as np
+import scipy.linalg as la
+import quadprog
 import scipy.sparse as sp
 from scipy.optimize import minimize,LinearConstraint
 from amsrr_det.linear_program import linprog
 import clarabel, mujoco
 from build.momentum_feedback import rigid_motion_map
+from build.contact_tangent import constraint_jacobian
 
 
-def constraint_jacobian(m, d):
-    """Read the same contact geometry in either native storage layout."""
-    if not mujoco.mj_isSparse(m):
-        return d.efc_J.reshape(d.nefc, m.nv)
-    matrix = np.empty((d.nefc, m.nv))
-    mujoco.mju_sparse2dense(matrix, d.efc_J, d.efc_J_rownnz, d.efc_J_rowadr, d.efc_J_colind)
-    return matrix
+def _dense_pose(H,g,A,b):
+    try:
+        return _whitened_pose(H,g,A,b)
+    except (ValueError,np.linalg.LinAlgError):
+        # Whitening can magnify nearly dependent constraint rows. Solve the
+        # identical positive-definite QP in its original coordinates before
+        # falling back to the slower general optimizer.
+        x,_,_,_,dual,_=quadprog.solve_qp(H,-g,-A.T,-b)
+        dual=np.maximum(dual,0.)
+        gradient=H@x+g+A.T@dual
+        gap=.5*gradient@np.linalg.solve(H,gradient)+dual@np.maximum(b-A@x,0.)
+        # The reduced objective omits a large constant at the feasible origin.
+        # Include relative roundoff in that shifted objective, while preserving
+        # the original constraint tolerance and downstream physical recheck.
+        tolerance=1e-9+1e-12*(abs(x@(H@x))+abs(g@x))
+        if not np.isfinite(x).all() or np.max(A@x-b,initial=0.)>1e-8 or gap>tolerance:
+            raise ValueError('dense QP physical residual or objective error')
+        return x
+
+
+def _whitened_pose(H,g,A,b):
+    factor=la.cholesky(H,lower=True,check_finite=False)
+    transform=la.solve_triangular(factor,np.eye(len(g)),lower=True,check_finite=False).T
+    linear=transform.T@g;matrix=A@transform
+    row=np.maximum(np.linalg.norm(matrix,axis=1),1e-12)
+    C=matrix/row[:,None];limit=b/row
+    answer,_,_,_,dual,_=quadprog.solve_qp(np.eye(len(g)),-linear,-C.T,-limit,factorized=True)
+    dual=np.maximum(dual,0.)
+    stationarity=answer+linear+C.T@dual
+    gap=.5*stationarity@stationarity+dual@np.maximum(limit-C@answer,0.)
+    z=transform@answer
+    if not np.isfinite(z).all() or np.max(A@z-b,initial=0.)>1e-8 or gap>1e-9:
+        raise ValueError('dense QP physical residual or objective error')
+    return z
 
 
 def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.03,minimize_input=False):
@@ -140,56 +170,73 @@ def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.0
         bounds=list(zip(lo/scale,hi/scale)),options=dict(primal_feasibility_tolerance=1e-9,dual_feasibility_tolerance=1e-9))
     if not first.success:return None,dict(feasible=False,message=first.message)
     lo[-1]=.95*first.x[-1]
-    fixed=lo==hi;free=~fixed;origin=np.where(fixed,lo/scale,0.)
-    reduced_eq=eq[:,free];reduced_rhs=rhs-eq@origin
-    reduced_eq=reduced_eq/norm[:,None];reduced_rhs=reduced_rhs/norm
-    U,s,V=np.linalg.svd(reduced_eq,full_matrices=True);rank=np.count_nonzero(s>s[0]*1e-14)
-    # Optimize only directions that preserve force/momentum balance. Keeping
-    # these stiff equalities inside the secondary QP allowed an approximate
-    # solver exit to violate the original physical residual on valid LPs.
-    origin[free]=first.x[free]+V[:rank].T@((U[:,:rank].T@reduced_rhs)/s[:rank]-V[:rank]@first.x[free])
-    null=V[rank:].T
-    identity=np.eye(np.count_nonzero(free));upper_ids=np.isfinite(hi[free]);lower_ids=np.isfinite(lo[free])
-    matrix=np.vstack([A[:,free],identity[upper_ids],-identity[lower_ids]])
-    bound=np.r_[b-A@origin,(hi/scale)[free][upper_ids]-origin[free][upper_ids],
-                 -(lo/scale)[free][lower_ids]+origin[free][lower_ids]]
-    weights=np.r_[np.ones(nv),np.full(nu,1e-4),np.ones(nv),1e-8]
-    settings=clarabel.DefaultSettings();settings.verbose=False;settings.max_threads=1
-    settings.tol_feas=settings.tol_gap_abs=settings.tol_gap_rel=1e-11
-    normalized=origin.copy()
-    if null.shape[1]:
-        objective=null.T@(weights[free,None]*null);linear=null.T@(weights[free]*origin[free])
-        constraints=matrix@null;solution=None
-        if move_pose:
-            # The LP origin is feasible. A dense active-set solve avoids the
-            # large sparse factorization of these dense null-space rows.
-            row_scale=np.maximum(np.linalg.norm(constraints,axis=1),1.)
-            result=minimize(lambda z:(.5*z@objective@z+linear@z,objective@z+linear),
-                np.zeros(null.shape[1]),jac=True,method='SLSQP',
-                constraints=[LinearConstraint(constraints/row_scale[:,None],-np.inf,bound/row_scale)],
-                options=dict(maxiter=100,ftol=1e-11))
-            if result.success and np.max(constraints@result.x-bound)<1e-8:
-                solution=result.x
-        if solution is None:
-            result=clarabel.DefaultSolver(sp.csc_matrix(np.triu(objective)),linear,sp.csc_matrix(constraints),bound,
-                [clarabel.NonnegativeConeT(len(bound))],settings).solve()
-            if str(result.status) not in ['Solved','AlmostSolved']:return None,dict(feasible=False,message=str(result.status))
-            solution=np.asarray(result.x)
-        normalized[free]+=null@solution
+    def secondary():
+        fixed=lo==hi;free=~fixed;origin=np.where(fixed,lo/scale,0.)
+        reduced_eq=eq[:,free];reduced_rhs=rhs-eq@origin
+        reduced_eq=reduced_eq/norm[:,None];reduced_rhs=reduced_rhs/norm
+        U,s,V=np.linalg.svd(reduced_eq,full_matrices=True);rank=np.count_nonzero(s>s[0]*1e-14)
+        # Optimize only directions that preserve force/momentum balance. Keeping
+        # these stiff equalities inside the secondary QP allowed an approximate
+        # solver exit to violate the original physical residual on valid LPs.
+        origin[free]=first.x[free]+V[:rank].T@((U[:,:rank].T@reduced_rhs)/s[:rank]-V[:rank]@first.x[free])
+        null=V[rank:].T
+        identity=np.eye(np.count_nonzero(free));upper_ids=np.isfinite(hi[free]);lower_ids=np.isfinite(lo[free])
+        matrix=np.vstack([A[:,free],identity[upper_ids],-identity[lower_ids]])
+        bound=np.r_[b-A@origin,(hi/scale)[free][upper_ids]-origin[free][upper_ids],
+                     -(lo/scale)[free][lower_ids]+origin[free][lower_ids]]
+        weights=np.r_[np.ones(nv),np.full(nu,1e-4),np.ones(nv),1e-8]
+        settings=clarabel.DefaultSettings();settings.verbose=False;settings.max_threads=1
+        settings.tol_feas=settings.tol_gap_abs=settings.tol_gap_rel=1e-11
+        normalized=origin.copy()
+        if null.shape[1]:
+            objective=null.T@(weights[free,None]*null);linear=null.T@(weights[free]*origin[free])
+            constraints=matrix@null;solution=None
+            if move_pose:
+                try:solution=_dense_pose(objective,linear,constraints,bound)
+                except (ValueError,np.linalg.LinAlgError):pass
+            if move_pose and solution is None:
+                # The LP origin is feasible. A dense active-set solve avoids the
+                # large sparse factorization of these dense null-space rows.
+                row_scale=np.maximum(np.linalg.norm(constraints,axis=1),1.)
+                result=minimize(lambda z:(.5*z@objective@z+linear@z,objective@z+linear),
+                    np.zeros(null.shape[1]),jac=True,method='SLSQP',
+                    constraints=[LinearConstraint(constraints/row_scale[:,None],-np.inf,bound/row_scale)],
+                    options=dict(maxiter=100,ftol=1e-11))
+                if result.success and np.max(constraints@result.x-bound)<1e-8:
+                    solution=result.x
+            if solution is None:
+                result=clarabel.DefaultSolver(sp.csc_matrix(np.triu(objective)),linear,sp.csc_matrix(constraints),bound,
+                    [clarabel.NonnegativeConeT(len(bound))],settings).solve()
+                if str(result.status) not in ['Solved','AlmostSolved']:raise ValueError(str(result.status))
+                solution=np.asarray(result.x)
+            normalized[free]+=null@solution
+        return normalized
+    try:
+        normalized=first.x.copy() if minimize_input and not move_pose else secondary()
+    except ValueError as error:return None,dict(feasible=False,message=str(error))
     input_refinement=None
     if minimize_input and not move_pose:
         from build.minimum_input_lp import minimum_input
         indices=np.arange(nv+nj,nv+nu)
         problem=dict(A_ub=A,b_ub=b,A_eq=eq/norm[:,None],b_eq=rhs/norm,
                      bounds=list(zip(lo/scale,hi/scale)))
-        refined,input_refinement=minimum_input(problem,normalized,indices,local.rotor_max,lo[-1])
-        # Keep the original physical-unit check, beyond the normalized solve.
-        candidate=refined*scale
-        physical_residual=max(float(abs(E@candidate-rhs).max()),float((A@refined-b).max()),
-                              float((lo-candidate).max()),float((candidate-hi).max()))
-        input_refinement['physical_residual']=physical_residual
-        input_refinement['used']=bool(input_refinement['accepted'] and physical_residual<1e-6)
-        if input_refinement['used']:normalized=refined
+        # The power-cone formulation solves the same convex thrust objective
+        # directly, avoiding a piecewise LP followed by dense SLSQP iterations.
+        # Try the final thrust objective directly from the feasible reserve LP.
+        # The intermediate quadratic objective is only a numerical fallback.
+        for attempt in range(2):
+            refined,input_refinement=minimum_input(problem,normalized,indices,local.rotor_max,lo[-1],method='conic')
+            # Keep the original physical-unit check, beyond the normalized solve.
+            candidate=refined*scale
+            physical_residual=max(float(abs(E@candidate-rhs).max()),float((A@refined-b).max()),
+                                  float((lo-candidate).max()),float((candidate-hi).max()))
+            input_refinement['physical_residual']=physical_residual
+            input_refinement['used']=bool(input_refinement['accepted'] and physical_residual<1e-6)
+            if input_refinement['used']:
+                normalized=refined;break
+            if attempt==0:
+                try:normalized=secondary()
+                except ValueError as error:return None,dict(feasible=False,message=str(error))
     x=normalized*scale
     residual=max(float(abs(E@x-rhs).max()),float((A@(x/scale)-b).max()),float((lo-x).max()),float((x-hi).max()))
     updated=q.copy();mujoco.mj_integratePos(m,updated,x[:nv],1.)
@@ -203,23 +250,23 @@ def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.0
     return (updated,u,v),info
 
 
-def construct_finite_slip(plant,full_model,q,links,duration, *, minimize_input=False):
+def construct_finite_slip(plant,full_model,q,links,duration, *, minimize_input=False,travel_budget=.03,clearance=None):
     """Refine geometry, then solve the same law again at the actual pose."""
     from build.sticking_design import LocalGrasp
     from amsrr_det.clearance import MotionBoundedClearance
-    clearance=MotionBoundedClearance(full_model,links);records=[]
-    fixed,check=finite_slip_preload(LocalGrasp(plant,q,links),q,duration,move_pose=False,minimize_input=minimize_input)
+    clearance=clearance or MotionBoundedClearance(full_model,links);records=[]
+    fixed,check=finite_slip_preload(LocalGrasp(plant,q,links),q,duration,move_pose=False,minimize_input=minimize_input,travel_budget=travel_budget)
     if fixed is not None and check['feasible']:
         if clearance.check(q,True)[0]:raise ValueError('finite-slip initial pose clearance')
         return fixed,dict(scope=__doc__,initial_fixed=check,iterations=records)
     for iteration in range(12):
         local=LocalGrasp(plant,q,links)
-        answer,step=finite_slip_preload(local,q,duration,move_pose=True)
+        answer,step=finite_slip_preload(local,q,duration,move_pose=True,travel_budget=travel_budget)
         if answer is None or not step['feasible']:raise ValueError('finite-slip pose '+str(step))
         q=answer[0]
         if clearance.check(q,True)[0]:raise ValueError('finite-slip pose clearance')
         local=LocalGrasp(plant,q,links)
-        fixed,check=finite_slip_preload(local,q,duration,move_pose=False,minimize_input=minimize_input)
+        fixed,check=finite_slip_preload(local,q,duration,move_pose=False,minimize_input=minimize_input,travel_budget=travel_budget)
         records.append(dict(iteration=iteration,pose=step,recheck=check))
         if fixed is not None and check['feasible']:
             return fixed,dict(scope=__doc__,iterations=records)

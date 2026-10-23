@@ -5,13 +5,45 @@ pass the existing finite-contact, drive and clearance checks before adoption.
 No trajectory is simulated to choose the angles.
 """
 import time
+from functools import lru_cache
 import numpy as np
 import mujoco
-from scipy.optimize import minimize,Bounds
+
+
+
+@lru_cache(maxsize=32)
+def _gimbal_solver(influenced,ns):
+    import casadi as ca
+    ng=len(influenced);nr=sum(map(len,influenced));width=ng+ns*nr
+    x=ca.SX.sym('x',width);parameters=[]
+    def parameter(name,r,c=1):
+        p=ca.SX.sym(name,r,c);parameters.append(ca.vec(p));return p
+    angles=parameter('angles',ng);axes=parameter('axes',3,ng)
+    anchors=parameter('anchors',3,ng);forces=parameter('forces',3,nr);arms=parameter('arms',3,nr)
+    moving_mass=parameter('moving_mass',3,ng);mass_arm=parameter('mass_arm',3)
+    specific=parameter('specific',3,ns);corrections=parameter('corrections',6,ns)
+    mass=parameter('mass',1);fmax=parameter('fmax',nr);scale=parameter('scale',6);initial=parameter('initial',width)
+    columns=[None]*nr
+    for j,ids in enumerate(influenced):
+        axis=axes[:,j];skew=ca.skew(axis);angle=x[j]-angles[j]
+        R=ca.DM.eye(3)+ca.sin(angle)*skew+(1-ca.cos(angle))*(skew@skew)
+        for i in ids:
+            force=R@forces[:,i];arm=anchors[:,j]+R@(arms[:,i]-anchors[:,j])
+            columns[i]=ca.vertcat(force,ca.cross(arm,force))
+        mass_arm=mass_arm+(R-ca.DM.eye(3))@moving_mass[:,j]
+    A=ca.horzcat(*columns);con=[]
+    for k in range(ns):
+        target=ca.vertcat(mass*specific[:,k],ca.cross(mass_arm,specific[:,k]))+corrections[:,k]
+        con.append((A@(x[ng+k*nr:ng+(k+1)*nr]*fmax)-target)/scale)
+    weights=np.r_[np.ones(ng),np.full(ns*nr,1e-8)]
+    obj=.5*ca.dot(weights*(x-initial),x-initial)
+    return ca.nlpsol('repair','ipopt',dict(x=x,p=ca.vertcat(*parameters),f=obj,g=ca.vertcat(*con)),
+        {'print_time':False,'ipopt.print_level':0,'ipopt.sb':'yes','ipopt.max_iter':80,
+         'ipopt.tol':1e-10,'ipopt.constr_viol_tol':1e-10,'ipopt.bound_relax_factor':0.})
 
 
 class GimbalWrenchDesign:
-    def __init__(self,local,q,displacement):
+    def __init__(self,local,q,displacement,corrections=None):
         self.local,self.q=local,q.copy();self.m=local.m;self.d=mujoco.MjData(self.m)
         self.gimbals=np.flatnonzero(~local.dock)
         self.joints=local.joint_ids[self.gimbals];self.qi=local.qi[self.gimbals]
@@ -20,6 +52,8 @@ class GimbalWrenchDesign:
         lift=np.array([0.,0.,.15])*10/np.sqrt(3)/4.**2
         carry=np.asarray(displacement)*10/np.sqrt(3)/6.**2
         self.accelerations=np.array([np.zeros(3),lift,-lift,carry,-carry])
+        self.corrections=corrections
+        if corrections is not None:self.accelerations=np.zeros((len(corrections),3))
         self.influenced=[]
         for joint in self.joints:
             body=int(self.m.jnt_bodyid[joint]);indices=[]
@@ -39,6 +73,7 @@ class GimbalWrenchDesign:
         mass_arm=np.sum(m.body_mass[:,None]*(d.xipos-origin),axis=0)
         specific=self.accelerations-m.opt.gravity
         targets=np.c_[self.mass*specific,np.cross(mass_arm,specific)]
+        if self.corrections is not None:targets+=self.corrections
         derivative=np.zeros((self.ng,6,self.nr));target_derivative=np.zeros((self.ng,len(targets),6))
         for j,(joint,indices) in enumerate(zip(self.joints,self.influenced)):
             axis=d.xaxis[joint];anchor=d.xanchor[joint];ids=np.array(indices,dtype=int)
@@ -55,31 +90,25 @@ class GimbalWrenchDesign:
         angles=self.q[self.qi];fmax=self.local.rotor_max
         low=np.r_[self.m.jnt_range[self.joints,0],np.tile(self.local.rotor_min/fmax+reserve,ns)]
         high=np.r_[self.m.jnt_range[self.joints,1],np.full(ns*nr,1-reserve)]
-        initial=np.r_[angles,np.tile(u[self.local.nj:]/fmax,ns)]
-        initial=np.clip(initial,low,high)
-        self.geometry(angles)
-        span=max(float(np.linalg.norm(self.d.site_xpos[self.local.sites]-self.q[self.oi:self.oi+3],axis=1).max()),.01)
+        initial=np.clip(np.r_[angles,np.tile(u[self.local.nj:]/fmax,ns)],low,high)
+        A0,_,_,_=self.geometry(angles);origin=self.q[self.oi:self.oi+3]
+        span=max(float(np.linalg.norm(self.d.site_xpos[self.local.sites]-origin,axis=1).max()),.01)
         scale=np.r_[np.full(3,self.mass*9.80665),np.full(3,self.mass*9.80665*span)]
-        def constraints(x):
-            A,b,da,db=self.geometry(x[:ng]);forces=x[ng:].reshape(ns,nr)*fmax
-            values=(forces@A.T-b)/scale
-            jac=np.zeros((ns,6,len(x)))
-            jac[:,:,:ng]=(np.einsum('jki,si->skj',da,forces)-db.transpose(1,2,0))/scale[None,:,None]
-            for s in range(ns):jac[s,:,ng+s*nr:ng+(s+1)*nr]=A*fmax/scale[:,None]
-            return values.ravel(),jac.reshape(-1,len(x))
-        def objective(x):
-            # Repair the current feasible contact posture with the least angle
-            # change. The later finite-input solve and structure comparison use
-            # the actual thrust burden; this is not a global angle optimum.
-            weights=np.r_[np.ones(ng),np.full(ns*nr,1e-8)]
-            delta=x-initial
-            return .5*float(np.sum(weights*delta**2)),weights*delta
-        answer=minimize(objective,initial,jac=True,method='SLSQP',bounds=Bounds(low,high),
-            constraints=[dict(type='eq',fun=lambda x:constraints(x)[0],jac=lambda x:constraints(x)[1])],
-            options=dict(maxiter=80,ftol=1e-10))
-        A,b,_,_=self.geometry(answer.x[:ng]);forces=answer.x[ng:].reshape(ns,nr)*fmax
-        residual=float(abs(forces@A.T-b).max());pose=self.q.copy();pose[self.qi]=answer.x[:ng]
-        accepted=bool(np.isfinite(residual) and residual<1e-6 and np.all(answer.x>=low-1e-9) and np.all(answer.x<=high+1e-9))
-        return pose,dict(scope=__doc__,accepted=accepted,solver_status=str(answer.message),iterations=answer.nit,
-            external_wrench_residual=residual,retained_rotor_fraction=reserve,
-            maximum_angle_change_rad=float(abs(answer.x[:ng]-angles).max()),wall_s=time.perf_counter()-began)
+        covered=[i for ids in self.influenced for i in ids]
+        if sorted(covered)!=list(range(nr)):raise ValueError('symbolic design requires independent rotor hinges')
+        axes=self.d.xaxis[self.joints].T;anchors=(self.d.xanchor[self.joints]-origin).T
+        bodies=self.m.jnt_bodyid[self.joints]
+        moving_mass=(self.m.body_subtreemass[bodies,None]*(self.d.subtree_com[bodies]-self.d.xanchor[self.joints])).T
+        values=[angles,axes,anchors,A0[:3],(self.d.site_xpos[self.local.sites]-origin).T,
+            moving_mass,np.sum(self.m.body_mass[:,None]*(self.d.xipos-origin),axis=0),
+            (self.accelerations-self.m.opt.gravity).T,
+            np.zeros((6,ns)) if self.corrections is None else self.corrections.T,
+            np.array([self.mass]),fmax,scale,initial]
+        parameters=np.concatenate([np.asarray(v).ravel(order='F') for v in values])
+        solver=_gimbal_solver(tuple(tuple(ids) for ids in self.influenced),ns)
+        answer=solver(x0=initial,p=parameters,lbx=low,ubx=high,lbg=0,ubg=0);result=np.asarray(answer['x']).ravel()
+        A,b,_,_=self.geometry(result[:ng]);forces=result[ng:].reshape(ns,nr)*fmax
+        residual=float(abs(forces@A.T-b).max());pose=self.q.copy();pose[self.qi]=result[:ng]
+        accepted=bool(np.isfinite(residual)and residual<1e-6 and np.all(result>=low-1e-9)and np.all(result<=high+1e-9))
+        return pose,dict(scope=__doc__,accepted=accepted,solver_status=solver.stats()['return_status'],iterations=solver.stats()['iter_count'],
+            external_wrench_residual=residual,retained_rotor_fraction=reserve,maximum_angle_change_rad=float(abs(result[:ng]-angles).max()),wall_s=time.perf_counter()-began)
