@@ -1,0 +1,307 @@
+{
+  "protocol": {
+    "request": {
+      "id": "large_triangular_prism_075cm",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          0.586683112262562,
+          0.75,
+          0.7248764065823455
+        ],
+        "mass": 1.5466940686363229,
+        "inertia": [
+          [
+            0.1160595154535952,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.08990730802241441,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.07051617185858935
+          ]
+        ],
+        "vertices": [
+          [
+            -0.293341556131281,
+            -0.24999999999999997,
+            -0.36243820329117277
+          ],
+          [
+            0.293341556131281,
+            -0.24999999999999997,
+            -0.36243820329117277
+          ],
+          [
+            0.0,
+            0.5,
+            -0.36243820329117277
+          ],
+          [
+            -0.293341556131281,
+            -0.24999999999999997,
+            0.36243820329117277
+          ],
+          [
+            0.293341556131281,
+            -0.24999999999999997,
+            0.36243820329117277
+          ],
+          [
+            0.0,
+            0.5,
+            0.36243820329117277
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.1108586358614877,
+        0.30312816345656246,
+        0.5586738849003781,
+        0.0,
+        0.0,
+        0.9925869603296932,
+        0.1215365220148248
+      ],
+      "destination": [
+        -0.015647249954395454,
+        0.12933058380677454,
+        0.5586738849003781,
+        0.0,
+        0.0,
+        0.9925869603296932,
+        0.1215365220148248
+      ],
+      "support_top": 0.19623568160920526,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "triangular_prism:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "075cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 2.8979171861595656
+        }
+      },
+      "size_extension": {
+        "original_case": "triangular_prism_y1_2",
+        "linear_scale": 1.2538480258910034,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.4679060780477411,
+          0.5981586161265745,
+          0.5781214242988
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    "starts": 4,
+    "criterion": "sum actual rotor thrust**1.5",
+    "probability": 0.05,
+    "total_error": 0.05,
+    "groups": 8,
+    "trials_per_group": 99,
+    "task_wrench": true,
+    "generator": "task",
+    "task_generation_probability": 1.0,
+    "auxiliary_initial_enabled": true,
+    "auxiliary_generator": "task_growth_variable_count",
+    "calculation_reuse": "exact-input memo within this planning call; draws and per-trial budgets unchanged",
+    "input_direction_refinement": "one power-directed gimbal step, backtracking 1/0.5/0.25; original finite-contact and task margins rechecked",
+    "scheduling": "generate each trial in draw order; distribute its screens; collect only all completed starts",
+    "generation_scope": "task contact roles; one role per module; variable-count auxiliary uses same task grammar",
+    "task_contact_count_law": "uniform 1..N per start, independent of nominal force feasibility",
+    "task_contact_selection": "normalized task-wrench residual, then force-boundary distance with 0.5 N normal floor",
+    "task_pose_initialization": "retain generated root, joints and contact targets for continuous surface fitting",
+    "probability_scope": "one more trial of this fixed generator; not existence of a better structure"
+  },
+  "protocol_id": "ced2ebfa9ef6d1ab0f23b37ee978650a14a4ed65800acfdab4ff65d588a06a0b",
+  "seed": 3771150874,
+  "seed_source": "explicit_replay",
+  "workers": 32,
+  "worker_start_method": "fork",
+  "cancelled_excluded_trials": [],
+  "cancelled_auxiliary_initial": false,
+  "wall_s": 13.427279490046203,
+  "initial": {
+    "wall_s": 5.524328869301826,
+    "status": "completed_no_candidate",
+    "method": "task_growth_variable_count",
+    "collected_s": 5.987339052837342,
+    "burden": null
+  },
+  "selection_evidence": {
+    "protocol_id": "ced2ebfa9ef6d1ab0f23b37ee978650a14a4ed65800acfdab4ff65d588a06a0b",
+    "complete": true,
+    "scope": "one additional independent run of the same frozen generator per module count",
+    "undiscovered_structure_existence_probability_claimed": false,
+    "improvement_probability_target": 0.05,
+    "simultaneous_error_probability": 0.05,
+    "groups": [
+      {
+        "modules": 1,
+        "lower_bound": 96.83632200261114,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 162.1979060402876,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 2,
+        "lower_bound": 131.73719452391202,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 127.29703351898672,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 3,
+        "lower_bound": 169.38239956432093,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 89.65182847857781,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 4,
+        "lower_bound": 207.76501190833395,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 51.2692161345648,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 18,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 5,
+        "lower_bound": 246.45238315040356,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 12.581844892495184,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 3,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 6,
+        "lower_bound": 285.29508980344303,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      },
+      {
+        "modules": 7,
+        "lower_bound": 324.2277009610315,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      },
+      {
+        "modules": 8,
+        "lower_bound": 363.2170189632069,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      }
+    ]
+  },
+  "selected_burden": 259.03422804289875,
+  "protocol_sources_file": "../selection_sources/cad2be9d3090af00d23a78fca36def818663675ed741dc10682890e4982453b9.json",
+  "archive": {
+    "source_file": "selection.json",
+    "source_sha256": "81b5a5824101e9801286c26353ed2d6b2c354383207405eb7a7cbe6b16bd224b",
+    "omitted_trial_rows": 495,
+    "scope": "Selection protocol and stopping evidence; detailed candidate rows remain in the local raw output."
+  }
+}

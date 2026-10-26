@@ -1,0 +1,3522 @@
+{
+  "role": "size_extension",
+  "seed": 20261024,
+  "configuration": {
+    "version": 1,
+    "assembly_required": false,
+    "seed_development": 194,
+    "seed_holdout": 168149098760072440378451429400527385150,
+    "holdout_cases": 30,
+    "families": [
+      "box",
+      "elongated_box",
+      "cylinder",
+      "ellipsoid",
+      "triangular_prism",
+      "tapered_box"
+    ],
+    "yaw_bins_rad": [
+      [
+        0.0,
+        1.5707963267948966
+      ],
+      [
+        1.5707963267948966,
+        3.141592653589793
+      ],
+      [
+        3.141592653589793,
+        4.71238898038469
+      ],
+      [
+        4.71238898038469,
+        6.283185307179586
+      ]
+    ],
+    "cases_per_family_yaw": 5,
+    "resting_orientations": [
+      "large_face",
+      "small_face"
+    ],
+    "object_dimensions_m": [
+      0.25269206985174125,
+      1.2
+    ],
+    "object_mass_kg": [
+      0.4,
+      1.6
+    ],
+    "source_xy_m": [
+      -0.5,
+      0.5
+    ],
+    "support_height_m": [
+      0.15,
+      0.35
+    ],
+    "transport_distance_m": [
+      0.2,
+      0.5
+    ],
+    "minimum_lift_clearance_m": 0.1,
+    "part_clearance_m": 0.001,
+    "environment_clearance_m": 0.03,
+    "placement_position_tolerance_m": 0.03,
+    "placement_orientation_tolerance_rad": 0.2,
+    "placement_angular_speed_tolerance_rad_s": 0.1,
+    "placement_speed_tolerance_m_s": 0.02,
+    "post_release_dwell_s": 2.0,
+    "module_limit": 8,
+    "object_friction": 0.6,
+    "floor_friction": 0.8,
+    "selected_gripper_friction": 4.5,
+    "contact_force_limit_n": 30.0,
+    "contact_moment_limit_nm": 5.0,
+    "penetration_limit_m": 0.002,
+    "contact_slip_displacement_limit_m": 0.03,
+    "contact_slip_metric": "contact_material_displacement_m",
+    "minimum_success_fraction": 0.8,
+    "required_strata": [
+      "family",
+      "yaw_bin",
+      "family_x_yaw_bin",
+      "resting_orientation",
+      "position_bin",
+      "size_bin",
+      "mass_bin"
+    ],
+    "planning_target_s": 15.0,
+    "control_period_s": 0.01,
+    "size_extension_max_dimensions_m": [
+      0.65,
+      0.75,
+      0.85,
+      1.0,
+      1.2
+    ]
+  },
+  "cases": [
+    {
+      "id": "large_box_065cm",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.5255521587030902,
+          0.65,
+          0.5409130252864949
+        ],
+        "mass": 0.5697240202247882,
+        "inertia": [
+          [
+            0.03395018200040344,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.027004537434273414,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.03317242185803215
+          ]
+        ]
+      },
+      "source": [
+        -0.25031035152878367,
+        0.3104075973877075,
+        0.48761446745835557,
+        0.0,
+        0.0,
+        0.4664423758637133,
+        0.8845515869629167
+      ],
+      "destination": [
+        -0.350100258921907,
+        0.6134611817709683,
+        0.48761446745835557,
+        0.0,
+        0.0,
+        0.4664423758637133,
+        0.8845515869629167
+      ],
+      "support_top": 0.21715795481510813,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "box:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "065cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 0.9705290818533513
+        }
+      },
+      "size_extension": {
+        "original_case": "box_y0_4",
+        "linear_scale": 1.5128930387559663,
+        "target_max_dimension_m": 0.65,
+        "original_size_m": [
+          0.34738223075918534,
+          0.4296404196125373,
+          0.3575355371661179
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_elongated_box_065cm",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          0.65,
+          0.28707826342526804,
+          0.25269206985174125
+        ],
+        "mass": 1.5200426443561028,
+        "inertia": [
+          [
+            0.018527699912236257,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0616064774262343,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0639575586927442
+          ]
+        ]
+      },
+      "source": [
+        0.4742472042322029,
+        0.36737675335447395,
+        0.33447366074381446,
+        0.7052277907394058,
+        0.051514688864604134,
+        0.05151468886460414,
+        0.7052277907394058
+      ],
+      "destination": [
+        0.9047147314398932,
+        0.18577110646830708,
+        0.33447366074381446,
+        0.7052277907394058,
+        0.051514688864604134,
+        0.05151468886460414,
+        0.7052277907394058
+      ],
+      "support_top": 0.19093452903118036,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "elongated_box:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "065cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 0.1458347414559334
+        }
+      },
+      "size_extension": {
+        "original_case": "elongated_box_y0_3",
+        "linear_scale": 1.3149224771645476,
+        "target_max_dimension_m": 0.65,
+        "original_size_m": [
+          0.49432571979576856,
+          0.21832333723909983,
+          0.19217259894791477
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_cylinder_065cm",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          0.6373438209987293,
+          0.6373438209987293,
+          0.65
+        ],
+        "mass": 0.6203227663419852,
+        "inertia": [
+          [
+            0.037589252020193906,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.037589252020193906,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.03149744257713968
+          ]
+        ]
+      },
+      "source": [
+        0.23844220654224502,
+        0.49436090681035627,
+        0.5051618676351577,
+        0.0,
+        0.0,
+        0.13241671543252004,
+        0.9911941351087904
+      ],
+      "destination": [
+        0.12223718803388628,
+        0.964362309453918,
+        0.5051618676351577,
+        0.0,
+        0.0,
+        0.13241671543252004,
+        0.9911941351087904
+      ],
+      "support_top": 0.18016186763515774,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "cylinder:0",
+        "resting_orientation": "standing",
+        "position_bin": "1:1",
+        "size_bin": "065cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 0.26561354184907043
+        }
+      },
+      "size_extension": {
+        "original_case": "cylinder_y0_0",
+        "linear_scale": 1.6512218763834123,
+        "target_max_dimension_m": 0.65,
+        "original_size_m": [
+          0.38598314988090593,
+          0.38598314988090593,
+          0.39364788542146867
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_ellipsoid_065cm",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.3599049974231601,
+          0.65,
+          0.4246613303494808
+        ],
+        "mass": 0.6787638770103712,
+        "inertia": [
+          [
+            0.020459207297894497,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.01051638918996068,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.018734955695754372
+          ]
+        ]
+      },
+      "source": [
+        0.28678046965905457,
+        0.019500801264912937,
+        0.371218957883346,
+        -0.005087002460980227,
+        0.7070878996812935,
+        0.005087010849762104,
+        0.7070890657129937
+      ],
+      "destination": [
+        -0.03720377285445231,
+        0.2372812172012893,
+        0.371218957883346,
+        -0.005087002460980227,
+        0.7070878996812935,
+        0.005087010849762104,
+        0.7070890657129937
+      ],
+      "support_top": 0.1912664591716698,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "ellipsoid:0",
+        "resting_orientation": "curved_stable",
+        "position_bin": "1:1",
+        "size_bin": "065cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 466,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 0.014388351721820755
+        }
+      },
+      "size_extension": {
+        "original_case": "ellipsoid_y0_2",
+        "linear_scale": 1.1829376452343294,
+        "target_max_dimension_m": 0.65,
+        "original_size_m": [
+          0.3042468036021173,
+          0.5494795119748183,
+          0.3589887700846304
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_triangular_prism_065cm",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          0.4415864539495714,
+          0.5806901322929764,
+          0.65
+        ],
+        "mass": 0.6462328735103554,
+        "inertia": [
+          [
+            0.03485891522157177,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.028003386722553442,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.017356737101104365
+          ]
+        ],
+        "vertices": [
+          [
+            -0.2207932269747857,
+            -0.19356337743099217,
+            -0.325
+          ],
+          [
+            0.2207932269747857,
+            -0.19356337743099217,
+            -0.325
+          ],
+          [
+            0.0,
+            0.3871267548619842,
+            -0.325
+          ],
+          [
+            -0.2207932269747857,
+            -0.19356337743099217,
+            0.325
+          ],
+          [
+            0.2207932269747857,
+            -0.19356337743099217,
+            0.325
+          ],
+          [
+            0.0,
+            0.3871267548619842,
+            0.325
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.09801946888721857,
+        0.272292057914738,
+        0.6387359762236471,
+        0.0,
+        0.0,
+        0.30773920387527465,
+        0.9514707470007747
+      ],
+      "destination": [
+        -0.3290076949548406,
+        0.48765226674060247,
+        0.6387359762236471,
+        0.0,
+        0.0,
+        0.30773920387527465,
+        0.9514707470007747
+      ],
+      "support_top": 0.31373597622364713,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "triangular_prism:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "065cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 0.6256320192924585
+        }
+      },
+      "size_extension": {
+        "original_case": "triangular_prism_y0_2",
+        "linear_scale": 1.5287143999274542,
+        "target_max_dimension_m": 0.65,
+        "original_size_m": [
+          0.28886131639142476,
+          0.3798552118829608,
+          0.4251938753444372
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_tapered_box_065cm",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.5925066957674168,
+          0.65,
+          0.4931558415716008
+        ],
+        "mass": 1.447643981950156,
+        "inertia": [
+          [
+            0.06344589331646239,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.05736348358300918,
+            1.3578858107037023e-19
+          ],
+          [
+            -0.0,
+            1.3578858107037023e-19,
+            0.06586520073192222
+          ]
+        ],
+        "vertices": [
+          [
+            -0.2962533478837084,
+            -0.325,
+            -0.20632030106566973
+          ],
+          [
+            0.2962533478837084,
+            -0.325,
+            -0.20632030106566973
+          ],
+          [
+            0.2962533478837084,
+            0.325,
+            -0.20632030106566973
+          ],
+          [
+            -0.2962533478837084,
+            0.325,
+            -0.20632030106566973
+          ],
+          [
+            -0.17775200873022504,
+            -0.195,
+            0.2868355405059311
+          ],
+          [
+            0.17775200873022504,
+            -0.195,
+            0.2868355405059311
+          ],
+          [
+            0.17775200873022504,
+            0.195,
+            0.2868355405059311
+          ],
+          [
+            -0.17775200873022504,
+            0.195,
+            0.2868355405059311
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        -0.3546213935891086,
+        0.0027565141541150417,
+        0.4685057665649047,
+        0.7530421722653804,
+        0.24571899073078882,
+        0.18933945953686188,
+        0.5802587642133192
+      ],
+      "destination": [
+        0.012891598189139097,
+        0.1338093146380229,
+        0.4685057665649047,
+        0.7530421722653804,
+        0.24571899073078882,
+        0.18933945953686188,
+        0.5802587642133192
+      ],
+      "support_top": 0.2068325824957629,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "tapered_box:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "065cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 274,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 0.6308177021145518
+        }
+      },
+      "size_extension": {
+        "original_case": "tapered_box_y0_1",
+        "linear_scale": 1.5101842522301372,
+        "target_max_dimension_m": 0.65,
+        "original_size_m": [
+          0.39234066630773246,
+          0.43041105682311565,
+          0.32655342607588567
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_box_075cm",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.4342879178777946,
+          0.5846932830937599,
+          0.75
+        ],
+        "mass": 0.6934601324050691,
+        "inertia": [
+          [
+            0.05226182743919305,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.04340517193076355,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.030655111956981375
+          ]
+        ]
+      },
+      "source": [
+        0.24061668303921369,
+        -0.25117223804096156,
+        0.6004472244598864,
+        0.0,
+        0.0,
+        0.9613937692167548,
+        0.27517634438883254
+      ],
+      "destination": [
+        0.44637663005425965,
+        -0.36044515482077566,
+        0.6004472244598864,
+        0.0,
+        0.0,
+        0.9613937692167548,
+        0.27517634438883254
+      ],
+      "support_top": 0.22544722445988646,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "box:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:0",
+        "size_bin": "075cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 2.584046406901427
+        }
+      },
+      "size_extension": {
+        "original_case": "box_y1_0",
+        "linear_scale": 1.6780574040912946,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.25880396988741344,
+          0.3484346135407592,
+          0.4469453775367963
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_elongated_box_075cm",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          0.75,
+          0.334992813344973,
+          0.3101288225790956
+        ],
+        "mass": 0.6566629906982884,
+        "inertia": [
+          [
+            0.011404051189175564,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.036044225353651656,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.03692198121348844
+          ]
+        ]
+      },
+      "source": [
+        -0.07622834133797296,
+        -0.07580117723180957,
+        0.42071809342366834,
+        0.031061445106793664,
+        0.7064242256802052,
+        0.7064242256802054,
+        0.031061445106793668
+      ],
+      "destination": [
+        -0.1988198538299838,
+        0.14278296602309415,
+        0.42071809342366834,
+        0.031061445106793664,
+        0.7064242256802052,
+        0.7064242256802054,
+        0.031061445106793668
+      ],
+      "support_top": 0.25322168675118184,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "elongated_box:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:0",
+        "size_bin": "075cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 3.053709340582861
+        }
+      },
+      "size_extension": {
+        "original_case": "elongated_box_y1_3",
+        "linear_scale": 1.675286917375742,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.4476845083795196,
+          0.19996145727068856,
+          0.18511982596085555
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_cylinder_075cm",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          0.36583978561899483,
+          0.36583978561899483,
+          0.7500000000000001
+        ],
+        "mass": 0.6268395527545234,
+        "inertia": [
+          [
+            0.03462656787302485,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.03462656787302485,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.010486927675313113
+          ]
+        ]
+      },
+      "source": [
+        -0.4922296771459084,
+        0.13551348598983826,
+        0.4474897066678986,
+        0.267364796711449,
+        0.6546113850823596,
+        0.6546113850823598,
+        0.2673647967114491
+      ],
+      "destination": [
+        -0.060746086622785356,
+        0.24188167556572232,
+        0.4474897066678986,
+        0.267364796711449,
+        0.6546113850823596,
+        0.6546113850823598,
+        0.2673647967114491
+      ],
+      "support_top": 0.26456981385840106,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "cylinder:1",
+        "resting_orientation": "lying",
+        "position_bin": "0:1",
+        "size_bin": "075cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 2.3660829049256384
+        }
+      },
+      "size_extension": {
+        "original_case": "cylinder_y1_3",
+        "linear_scale": 1.335558837318758,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.2739226272901969,
+          0.2739226272901969,
+          0.5615626800131738
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_ellipsoid_075cm",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.37346316059396717,
+          0.75,
+          0.5088897293904721
+        ],
+        "mass": 1.556925215994836,
+        "inertia": [
+          [
+            0.06394827107128147,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.03101733575864863,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.054646108087076685
+          ]
+        ]
+      },
+      "source": [
+        -0.34030983232797085,
+        0.4397325297376069,
+        0.4919219816679386,
+        -0.38161167885993563,
+        0.5952924118498496,
+        0.3816115199177958,
+        0.5952916250189656
+      ],
+      "destination": [
+        -0.6011897560396413,
+        0.2113630975016478,
+        0.4919219816679386,
+        -0.38161167885993563,
+        0.5952924118498496,
+        0.3816115199177958,
+        0.5952916250189656
+      ],
+      "support_top": 0.30519040137081743,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "ellipsoid:1",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:1",
+        "size_bin": "075cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 506,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 2.7109109632182324
+        }
+      },
+      "size_extension": {
+        "original_case": "ellipsoid_y1_3",
+        "linear_scale": 1.6836705294538497,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.22181487058225782,
+          0.44545532328304493,
+          0.30225018522807195
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_triangular_prism_075cm",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          0.586683112262562,
+          0.75,
+          0.7248764065823455
+        ],
+        "mass": 1.5466940686363229,
+        "inertia": [
+          [
+            0.1160595154535952,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.08990730802241441,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.07051617185858935
+          ]
+        ],
+        "vertices": [
+          [
+            -0.293341556131281,
+            -0.24999999999999997,
+            -0.36243820329117277
+          ],
+          [
+            0.293341556131281,
+            -0.24999999999999997,
+            -0.36243820329117277
+          ],
+          [
+            0.0,
+            0.5,
+            -0.36243820329117277
+          ],
+          [
+            -0.293341556131281,
+            -0.24999999999999997,
+            0.36243820329117277
+          ],
+          [
+            0.293341556131281,
+            -0.24999999999999997,
+            0.36243820329117277
+          ],
+          [
+            0.0,
+            0.5,
+            0.36243820329117277
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.1108586358614877,
+        0.30312816345656246,
+        0.5586738849003781,
+        0.0,
+        0.0,
+        0.9925869603296932,
+        0.1215365220148248
+      ],
+      "destination": [
+        -0.015647249954395454,
+        0.12933058380677454,
+        0.5586738849003781,
+        0.0,
+        0.0,
+        0.9925869603296932,
+        0.1215365220148248
+      ],
+      "support_top": 0.19623568160920526,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "triangular_prism:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "075cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 2.8979171861595656
+        }
+      },
+      "size_extension": {
+        "original_case": "triangular_prism_y1_2",
+        "linear_scale": 1.2538480258910034,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.4679060780477411,
+          0.5981586161265745,
+          0.5781214242988
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_tapered_box_075cm",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.5585305858862087,
+          0.7439220356680321,
+          0.75
+        ],
+        "mass": 1.1061101085505824,
+        "inertia": [
+          [
+            0.0845532679390665,
+            -0.0,
+            -3.1414988032076843e-19
+          ],
+          [
+            -0.0,
+            0.06884429134374136,
+            3.1414988032076843e-19
+          ],
+          [
+            -3.1414988032076843e-19,
+            3.1414988032076843e-19,
+            0.05629908158952568
+          ]
+        ],
+        "vertices": [
+          [
+            -0.27926529294310437,
+            -0.37196101783401603,
+            -0.3137755102040816
+          ],
+          [
+            0.27926529294310437,
+            -0.37196101783401603,
+            -0.3137755102040816
+          ],
+          [
+            0.27926529294310437,
+            0.37196101783401603,
+            -0.3137755102040816
+          ],
+          [
+            -0.27926529294310437,
+            0.37196101783401603,
+            -0.3137755102040816
+          ],
+          [
+            -0.16755917576586263,
+            -0.22317661070040962,
+            0.4362244897959184
+          ],
+          [
+            0.16755917576586263,
+            -0.22317661070040962,
+            0.4362244897959184
+          ],
+          [
+            0.16755917576586263,
+            0.22317661070040962,
+            0.4362244897959184
+          ],
+          [
+            -0.16755917576586263,
+            0.22317661070040962,
+            0.4362244897959184
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        -0.32086877630393196,
+        -0.07373354494310291,
+        0.5612847834373523,
+        0.0,
+        0.0,
+        0.8442506280350676,
+        0.5359485768825161
+      ],
+      "destination": [
+        -0.4330296819220204,
+        0.20424084216478738,
+        0.5612847834373523,
+        0.0,
+        0.0,
+        0.8442506280350676,
+        0.5359485768825161
+      ],
+      "support_top": 0.24750927323327068,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "tapered_box:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:0",
+        "size_bin": "075cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 2.0103308144645937
+        }
+      },
+      "size_extension": {
+        "original_case": "tapered_box_y1_0",
+        "linear_scale": 1.4037404238166427,
+        "target_max_dimension_m": 0.75,
+        "original_size_m": [
+          0.3978873703498649,
+          0.5299569799702538,
+          0.5342868149089973
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_box_085cm",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.7599096510189125,
+          0.3777205701518771,
+          0.85
+        ],
+        "mass": 0.5685768953089828,
+        "inertia": [
+          [
+            0.04099310675703202,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.061594061942571825,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.03412103422281384
+          ]
+        ]
+      },
+      "source": [
+        0.2158015382618761,
+        -0.27513789821064205,
+        0.629280840594993,
+        0.0,
+        0.0,
+        0.988933907746957,
+        -0.14835675282349986
+      ],
+      "destination": [
+        0.28268103259076194,
+        0.08922773583672211,
+        0.629280840594993,
+        0.0,
+        0.0,
+        0.988933907746957,
+        -0.14835675282349986
+      ],
+      "support_top": 0.204280840594993,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "box:2",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:0",
+        "size_bin": "085cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 3.4394055133435795
+        }
+      },
+      "size_extension": {
+        "original_case": "box_y2_0",
+        "linear_scale": 2.2172903214430737,
+        "target_max_dimension_m": 0.85,
+        "original_size_m": [
+          0.3427199603362461,
+          0.17035232892102561,
+          0.3833507916305685
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_elongated_box_085cm",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          0.85,
+          0.35450171819507,
+          0.3575857013238843
+        ],
+        "mass": 1.0297316870748967,
+        "inertia": [
+          [
+            0.021756428688594547,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.07297086626705238,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.07278241974014431
+          ]
+        ]
+      },
+      "source": [
+        -0.331831625356129,
+        -0.21816094687392118,
+        0.3729640766381247,
+        -0.3674906614185776,
+        0.6041114249624288,
+        0.6041114249624289,
+        -0.3674906614185777
+      ],
+      "destination": [
+        0.01773223700897819,
+        0.08890912434341725,
+        0.3729640766381247,
+        -0.3674906614185776,
+        0.6041114249624288,
+        0.6041114249624289,
+        -0.3674906614185777
+      ],
+      "support_top": 0.19571321754058965,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "elongated_box:2",
+        "resting_orientation": "large_face",
+        "position_bin": "0:0",
+        "size_bin": "085cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 4.234616249857507
+        }
+      },
+      "size_extension": {
+        "original_case": "elongated_box_y2_3",
+        "linear_scale": 1.7537768425743614,
+        "target_max_dimension_m": 0.85,
+        "original_size_m": [
+          0.4846682766960754,
+          0.20213616099223802,
+          0.20389464191977003
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_cylinder_085cm",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          0.5668000118170885,
+          0.5668000118170885,
+          0.85
+        ],
+        "mass": 0.6510237129432574,
+        "inertia": [
+          [
+            0.052268886781434765,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.052268886781434765,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.026143668129285622
+          ]
+        ]
+      },
+      "source": [
+        0.37568127318402766,
+        -0.08001811811394499,
+        0.6297248382413909,
+        -0.32648529325077386,
+        0.6272219330436046,
+        0.6272219330436049,
+        -0.3264852932507739
+      ],
+      "destination": [
+        0.12815234253475222,
+        -0.22107977982581845,
+        0.6297248382413909,
+        -0.32648529325077386,
+        0.6272219330436046,
+        0.6272219330436049,
+        -0.3264852932507739
+      ],
+      "support_top": 0.3463248323328465,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "cylinder:2",
+        "resting_orientation": "lying",
+        "position_bin": "1:0",
+        "size_bin": "085cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 4.101459067975398
+        }
+      },
+      "size_extension": {
+        "original_case": "cylinder_y2_1",
+        "linear_scale": 1.567561214716568,
+        "target_max_dimension_m": 0.85,
+        "original_size_m": [
+          0.3615807832548167,
+          0.3615807832548167,
+          0.5422435768504831
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_ellipsoid_085cm",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.5355832504411019,
+          0.5785633837264824,
+          0.85
+        ],
+        "mass": 1.2983692321932696,
+        "inertia": [
+          [
+            0.06863410799615474,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.06552541145310534,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.04035234242329636
+          ]
+        ]
+      },
+      "source": [
+        0.23226010435822664,
+        0.31251860457008296,
+        0.44940943462965977,
+        -0.6948442141554312,
+        0.1311164293851942,
+        0.6948444303734126,
+        0.1311152835448553
+      ],
+      "destination": [
+        0.4334363981114481,
+        -0.11335577693773091,
+        0.44940943462965977,
+        -0.6948442141554312,
+        0.1311164293851942,
+        0.6948444303734126,
+        0.1311152835448553
+      ],
+      "support_top": 0.18161780940904768,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "ellipsoid:2",
+        "resting_orientation": "curved_stable",
+        "position_bin": "1:1",
+        "size_bin": "085cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 466,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 4.33937861657565
+        }
+      },
+      "size_extension": {
+        "original_case": "ellipsoid_y2_1",
+        "linear_scale": 1.5342731559770697,
+        "target_max_dimension_m": 0.85,
+        "original_size_m": [
+          0.34907946368912834,
+          0.37709281523473986,
+          0.5540082590174077
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_triangular_prism_085cm",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          0.5368278621351451,
+          0.8499999999999999,
+          0.8258961937124215
+        ],
+        "mass": 0.6392860763511456,
+        "inertia": [
+          [
+            0.06199855978978375,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.044014665202864844,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.03333657098682582
+          ]
+        ],
+        "vertices": [
+          [
+            -0.26841393106757255,
+            -0.28333333333333327,
+            -0.41294809685621076
+          ],
+          [
+            0.26841393106757255,
+            -0.28333333333333327,
+            -0.41294809685621076
+          ],
+          [
+            0.0,
+            0.5666666666666667,
+            -0.41294809685621076
+          ],
+          [
+            -0.26841393106757255,
+            -0.28333333333333327,
+            0.41294809685621076
+          ],
+          [
+            0.26841393106757255,
+            -0.28333333333333327,
+            0.41294809685621076
+          ],
+          [
+            0.0,
+            0.5666666666666667,
+            0.41294809685621076
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        -0.1216563143175714,
+        0.28143776928409026,
+        0.46221400669848395,
+        -0.22177403482156124,
+        0.6714285349007479,
+        0.671428534900748,
+        -0.22177403482156127
+      ],
+      "destination": [
+        -0.22255600115012744,
+        0.5188097196341943,
+        0.46221400669848395,
+        -0.22177403482156124,
+        0.6714285349007479,
+        0.671428534900748,
+        -0.22177403482156127
+      ],
+      "support_top": 0.17888067336515068,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "triangular_prism:2",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "085cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 3.7796319981723996
+        }
+      },
+      "size_extension": {
+        "original_case": "triangular_prism_y2_3",
+        "linear_scale": 2.0736766344426587,
+        "target_max_dimension_m": 0.85,
+        "original_size_m": [
+          0.2588773260105851,
+          0.40989997470288037,
+          0.39827626930579624
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_tapered_box_085cm",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.5123061641240232,
+          0.85,
+          0.541481715817992
+        ],
+        "mass": 1.5303243412579635,
+        "inertia": [
+          [
+            0.1000424736381852,
+            1.7232433921392458e-18,
+            -2.8720723202320757e-19
+          ],
+          [
+            1.7232433921392458e-18,
+            0.05863495198814406,
+            4.412097958148911e-19
+          ],
+          [
+            -2.8720723202320757e-19,
+            4.412097958148911e-19,
+            0.08865411949129307
+          ]
+        ],
+        "vertices": [
+          [
+            -0.2561530820620116,
+            -0.425,
+            -0.22653826886262932
+          ],
+          [
+            0.2561530820620116,
+            -0.425,
+            -0.22653826886262932
+          ],
+          [
+            0.2561530820620116,
+            0.425,
+            -0.22653826886262932
+          ],
+          [
+            -0.2561530820620116,
+            0.425,
+            -0.22653826886262932
+          ],
+          [
+            -0.15369184923720694,
+            -0.255,
+            0.3149434469553627
+          ],
+          [
+            0.15369184923720694,
+            -0.255,
+            0.3149434469553627
+          ],
+          [
+            0.15369184923720694,
+            0.255,
+            0.3149434469553627
+          ],
+          [
+            -0.15369184923720694,
+            0.255,
+            0.3149434469553627
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        -0.28755421101818823,
+        0.09231706025765507,
+        0.6708707181926881,
+        -0.01958231389319038,
+        0.8058446057197926,
+        0.591628525712985,
+        -0.014376786065756219
+      ],
+      "destination": [
+        -0.20371552589163577,
+        0.5251819243781604,
+        0.6708707181926881,
+        -0.01958231389319038,
+        0.8058446057197926,
+        0.591628525712985,
+        -0.014376786065756219
+      ],
+      "support_top": 0.33324167550508915,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "tapered_box:2",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "085cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 266,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 3.190183810292509
+        }
+      },
+      "size_extension": {
+        "original_case": "tapered_box_y2_1",
+        "linear_scale": 1.8671320836668448,
+        "target_max_dimension_m": 0.85,
+        "original_size_m": [
+          0.2743813191394095,
+          0.4552436367172762,
+          0.29000718297046274
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_box_100cm",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.4767001091124501,
+          0.47997280263742725,
+          1.0
+        ],
+        "mass": 0.9436431359153761,
+        "inertia": [
+          [
+            0.09675282309233015,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.09650661895121575,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.035985586057649885
+          ]
+        ]
+      },
+      "source": [
+        -0.3561873894651889,
+        -0.3880325623863665,
+        0.6716900270986719,
+        0.0,
+        0.0,
+        -0.6124318678748358,
+        0.7905233754996367
+      ],
+      "destination": [
+        -0.745626929338173,
+        -0.43081808350232365,
+        0.6716900270986719,
+        0.0,
+        0.0,
+        -0.6124318678748358,
+        0.7905233754996367
+      ],
+      "support_top": 0.17169002709867193,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "box:3",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:0",
+        "size_bin": "100cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 4.964918878307081
+        }
+      },
+      "size_extension": {
+        "original_case": "box_y3_4",
+        "linear_scale": 1.8883722978343318,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.2524396855742645,
+          0.25417276200666633,
+          0.5295565928110912
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_elongated_box_100cm",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.0,
+          0.4461305475958436,
+          0.43451403841581154
+        ],
+        "mass": 1.473284392663968,
+        "inertia": [
+          [
+            0.04761592727628618,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.14595367457729355,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.14720965147632062
+          ]
+        ]
+      },
+      "source": [
+        -0.4667299143986119,
+        -0.21796281212729618,
+        0.4302519656251035,
+        0.0,
+        0.0,
+        -0.41746483133150547,
+        0.9086930805290407
+      ],
+      "destination": [
+        -0.8516940250085472,
+        -0.23945344042714067,
+        0.4302519656251035,
+        0.0,
+        0.0,
+        -0.41746483133150547,
+        0.9086930805290407
+      ],
+      "support_top": 0.21299494641719774,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "elongated_box:3",
+        "resting_orientation": "large_face",
+        "position_bin": "0:0",
+        "size_bin": "100cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 5.4218780676222496
+        }
+      },
+      "size_extension": {
+        "original_case": "elongated_box_y3_2",
+        "linear_scale": 2.0399173219456532,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.49021594612776254,
+          0.21870030848619326,
+          0.21300571044780203
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_cylinder_100cm",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          1.0,
+          1.0,
+          0.4902776363173274
+        ],
+        "mass": 0.651647744896388,
+        "inertia": [
+          [
+            0.053781148759221846,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.053781148759221846,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0814559681120485
+          ]
+        ]
+      },
+      "source": [
+        -0.16128081068982014,
+        -0.3407569587087165,
+        0.4208099714685525,
+        0.0,
+        0.0,
+        -0.45349176401015723,
+        0.8912604669651605
+      ],
+      "destination": [
+        0.1994375518496575,
+        -0.2738638343072688,
+        0.4208099714685525,
+        0.0,
+        0.0,
+        -0.45349176401015723,
+        0.8912604669651605
+      ],
+      "support_top": 0.1756711533098888,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "cylinder:3",
+        "resting_orientation": "standing",
+        "position_bin": "0:0",
+        "size_bin": "100cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 5.3418268399548285
+        }
+      },
+      "size_extension": {
+        "original_case": "cylinder_y3_4",
+        "linear_scale": 2.838959936487249,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.35224167384247673,
+          0.35224167384247673,
+          0.17269621526394846
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_ellipsoid_100cm",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.8327093743642581,
+          0.7309549607604977,
+          1.0
+        ],
+        "mass": 1.0965714651387835,
+        "inertia": [
+          [
+            0.0841232142850635,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.09284697473141676,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.06731304250260191
+          ]
+        ]
+      },
+      "source": [
+        -0.4423878860138326,
+        -0.1596084723205753,
+        0.633966067350849,
+        0.6386582484650973,
+        -0.30350524875311485,
+        -0.30350604934515046,
+        0.6386581900028401
+      ],
+      "destination": [
+        -0.5429668008131872,
+        -0.5655555951777769,
+        0.633966067350849,
+        0.6386582484650973,
+        -0.30350524875311485,
+        -0.30350604934515046,
+        0.6386581900028401
+      ],
+      "support_top": 0.26848858697051203,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "ellipsoid:3",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:0",
+        "size_bin": "100cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 506,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 5.3959232919831805
+        }
+      },
+      "size_extension": {
+        "original_case": "ellipsoid_y3_4",
+        "linear_scale": 1.7890804756142038,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.4654398646200547,
+          0.40856460663657723,
+          0.558946349049331
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_triangular_prism_100cm",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          1.0,
+          0.8376993833378688,
+          0.33586284742816713
+        ],
+        "mass": 0.8856691789643384,
+        "inertia": [
+          [
+            0.04285389222102668,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.04522845705977294,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.07143120007494862
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5,
+            -0.27923312777928955,
+            -0.16793142371408357
+          ],
+          [
+            0.5,
+            -0.27923312777928955,
+            -0.16793142371408357
+          ],
+          [
+            0.0,
+            0.5584662555585792,
+            -0.16793142371408357
+          ],
+          [
+            -0.5,
+            -0.27923312777928955,
+            0.16793142371408357
+          ],
+          [
+            0.5,
+            -0.27923312777928955,
+            0.16793142371408357
+          ],
+          [
+            0.0,
+            0.5584662555585792,
+            0.16793142371408357
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        -0.21510857835266162,
+        0.43874864088043086,
+        0.36215264969097,
+        0.0,
+        0.0,
+        -0.2798047033606354,
+        0.9600569399662016
+      ],
+      "destination": [
+        0.2470160960407256,
+        0.49972067803594905,
+        0.36215264969097,
+        0.0,
+        0.0,
+        -0.2798047033606354,
+        0.9600569399662016
+      ],
+      "support_top": 0.19422122597688643,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "triangular_prism:3",
+        "resting_orientation": "large_face",
+        "position_bin": "0:1",
+        "size_bin": "100cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 5.71600394469439
+        }
+      },
+      "size_extension": {
+        "original_case": "triangular_prism_y3_0",
+        "linear_scale": 1.8416543942673211,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.5429900436872345,
+          0.45486242475539873,
+          0.18237018219793943
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_tapered_box_100cm",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.9839587231307046,
+          0.6465380780871323,
+          1.0
+        ],
+        "mass": 1.1504092785337199,
+        "inertia": [
+          [
+            0.11805026920141311,
+            -1.9205995297509136e-18,
+            -0.0
+          ],
+          [
+            -1.9205995297509136e-18,
+            0.15527588362770336,
+            -3.2009992162515224e-19
+          ],
+          [
+            -0.0,
+            -3.2009992162515224e-19,
+            0.09379330956939765
+          ]
+        ],
+        "vertices": [
+          [
+            -0.4919793615653523,
+            -0.32326903904356613,
+            -0.4183673469387755
+          ],
+          [
+            0.4919793615653523,
+            -0.32326903904356613,
+            -0.4183673469387755
+          ],
+          [
+            0.4919793615653523,
+            0.32326903904356613,
+            -0.4183673469387755
+          ],
+          [
+            -0.4919793615653523,
+            0.32326903904356613,
+            -0.4183673469387755
+          ],
+          [
+            -0.29518761693921136,
+            -0.19396142342613967,
+            0.5816326530612245
+          ],
+          [
+            0.29518761693921136,
+            -0.19396142342613967,
+            0.5816326530612245
+          ],
+          [
+            0.29518761693921136,
+            0.19396142342613967,
+            0.5816326530612245
+          ],
+          [
+            -0.29518761693921136,
+            0.19396142342613967,
+            0.5816326530612245
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        0.4848209656670046,
+        0.30266297633135775,
+        0.6406731642848196,
+        0.0,
+        0.0,
+        -0.3523230221072496,
+        0.935878457970486
+      ],
+      "destination": [
+        0.3798181968770583,
+        0.4949629661715355,
+        0.6406731642848196,
+        0.0,
+        0.0,
+        -0.3523230221072496,
+        0.935878457970486
+      ],
+      "support_top": 0.22230581734604413,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "tapered_box:3",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "100cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 5.563081045022421
+        }
+      },
+      "size_extension": {
+        "original_case": "tapered_box_y3_2",
+        "linear_scale": 2.2341177649988473,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.44042383913061645,
+          0.28939301598878153,
+          0.4476039784771668
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_box_120cm",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.9702501391441665,
+          1.2,
+          0.9986086620673751
+        ],
+        "mass": 0.5697240202247882,
+        "inertia": [
+          [
+            0.11571186291261762,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.09203913350379576,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.1130610354451273
+          ]
+        ]
+      },
+      "source": [
+        -0.25031035152878367,
+        0.3104075973877075,
+        0.7164622858487957,
+        0.0,
+        0.0,
+        0.4664423758637133,
+        0.8845515869629167
+      ],
+      "destination": [
+        -0.350100258921907,
+        0.6134611817709683,
+        0.7164622858487957,
+        0.0,
+        0.0,
+        0.4664423758637133,
+        0.8845515869629167
+      ],
+      "support_top": 0.21715795481510813,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "box:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "120cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 0.9705290818533513
+        }
+      },
+      "size_extension": {
+        "original_case": "box_y0_4",
+        "linear_scale": 2.793033302318707,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.34738223075918534,
+          0.4296404196125373,
+          0.3575355371661179
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_elongated_box_120cm",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.2,
+          0.5976599766217447,
+          0.5803160144015869
+        ],
+        "mass": 0.8027653610003967,
+        "inertia": [
+          [
+            0.04642419672549734,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.11886056187757899,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.12022732148801354
+          ]
+        ]
+      },
+      "source": [
+        0.19578949599888607,
+        -0.4249108891333643,
+        0.6208722847405437,
+        0.0,
+        0.0,
+        0.5952692331043494,
+        0.8035263157603239
+      ],
+      "destination": [
+        -0.21959089973297757,
+        -0.44172439942663827,
+        0.6208722847405437,
+        0.0,
+        0.0,
+        0.5952692331043494,
+        0.8035263157603239
+      ],
+      "support_top": 0.3307142775397502,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "elongated_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:0",
+        "size_bin": "120cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 1.2752013431663713
+        }
+      },
+      "size_extension": {
+        "original_case": "elongated_box_y0_0",
+        "linear_scale": 2.751572124578858,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.43611431780428656,
+          0.2172067274860984,
+          0.21090343560970884
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_cylinder_120cm",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          1.2,
+          1.2,
+          1.197199042901231
+        ],
+        "mass": 0.5158091762380911,
+        "inertia": [
+          [
+            0.10803131236099228,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.10803131236099228,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.09284565172285639
+          ]
+        ]
+      },
+      "source": [
+        0.39478202919398386,
+        -0.2232090363903666,
+        0.8689936519253212,
+        0.0,
+        0.0,
+        0.2660044932398109,
+        0.9639717887864931
+      ],
+      "destination": [
+        0.3842765361124966,
+        0.18349629360145514,
+        0.8689936519253212,
+        0.0,
+        0.0,
+        0.2660044932398109,
+        0.9639717887864931
+      ],
+      "support_top": 0.2703941304747057,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "cylinder:0",
+        "resting_orientation": "standing",
+        "position_bin": "1:0",
+        "size_bin": "120cm",
+        "mass_bin": "light"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 0.5384916173301306
+        }
+      },
+      "size_extension": {
+        "original_case": "cylinder_y0_4",
+        "linear_scale": 2.898683263913138,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.4139810702808677,
+          0.4139810702808677,
+          0.41301478426623506
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_ellipsoid_120cm",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.7388084825144835,
+          0.7675879050309755,
+          1.2
+        ],
+        "mass": 1.4479165469527993,
+        "inertia": [
+          [
+            0.1469049751877525,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.14376638309417145,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.08217137552072085
+          ]
+        ]
+      },
+      "source": [
+        -0.3011278947271405,
+        -0.2953896308615819,
+        0.6710188002664496,
+        0.25330067247401494,
+        0.6601808610708231,
+        -0.2532995837954768,
+        0.6601812787780628
+      ],
+      "destination": [
+        -0.26211244572336145,
+        0.1359370828183521,
+        0.6710188002664496,
+        0.25330067247401494,
+        0.6601808610708231,
+        -0.2532995837954768,
+        0.6601812787780628
+      ],
+      "support_top": 0.3016145590091673,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "ellipsoid:0",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:0",
+        "size_bin": "120cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 466,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 0.8380739612823269
+        }
+      },
+      "size_extension": {
+        "original_case": "ellipsoid_y0_1",
+        "linear_scale": 2.218714227505263,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.332989473522782,
+          0.34596068998667595,
+          0.5408537905078871
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_triangular_prism_120cm",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          1.0994173450746565,
+          1.2,
+          0.8881971180051401
+        ],
+        "mass": 0.7098763197237599,
+        "inertia": [
+          [
+            0.10345821014993685,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.08241979788055293,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.09254179888641767
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5497086725373282,
+            -0.3999999999999999,
+            -0.44409855900257006
+          ],
+          [
+            0.5497086725373282,
+            -0.3999999999999999,
+            -0.44409855900257006
+          ],
+          [
+            0.0,
+            0.8,
+            -0.44409855900257006
+          ],
+          [
+            -0.5497086725373282,
+            -0.3999999999999999,
+            0.44409855900257006
+          ],
+          [
+            0.5497086725373282,
+            -0.3999999999999999,
+            0.44409855900257006
+          ],
+          [
+            0.0,
+            0.8,
+            0.44409855900257006
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.3090046245275436,
+        0.32380858126943823,
+        0.6438796720933933,
+        0.6910993507757544,
+        0.1496051047168201,
+        0.14960510471682012,
+        0.6910993507757546
+      ],
+      "destination": [
+        0.6474538062086894,
+        0.07276524026742826,
+        0.6438796720933933,
+        0.6910993507757544,
+        0.1496051047168201,
+        0.14960510471682012,
+        0.6910993507757546
+      ],
+      "support_top": 0.24387967209339312,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "triangular_prism:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "120cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.7071067811865475,
+            0.0,
+            0.0,
+            0.7071067811865476
+          ],
+          "applied_world_yaw_rad": 0.4263693909708991
+        }
+      },
+      "size_extension": {
+        "original_case": "triangular_prism_y0_1",
+        "linear_scale": 3.105023695156098,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.35407695818546264,
+          0.3864704806832956,
+          0.2860516392808036
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    {
+      "id": "large_tapered_box_120cm",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.8507469963170187,
+          1.2,
+          0.665245653804589
+        ],
+        "mass": 1.484511666305298,
+        "inertia": [
+          [
+            0.1769950898280285,
+            -1.5476903331921604e-18,
+            -0.0
+          ],
+          [
+            -1.5476903331921604e-18,
+            0.1144585647617799,
+            -1.1940877247966763e-18
+          ],
+          [
+            -0.0,
+            -1.1940877247966763e-18,
+            0.18892642089702863
+          ]
+        ],
+        "vertices": [
+          [
+            -0.42537349815850933,
+            -0.6,
+            -0.278317059244777
+          ],
+          [
+            0.42537349815850933,
+            -0.6,
+            -0.278317059244777
+          ],
+          [
+            0.42537349815850933,
+            0.6,
+            -0.278317059244777
+          ],
+          [
+            -0.42537349815850933,
+            0.6,
+            -0.278317059244777
+          ],
+          [
+            -0.2552240988951056,
+            -0.36,
+            0.386928594559812
+          ],
+          [
+            0.2552240988951056,
+            -0.36,
+            0.386928594559812
+          ],
+          [
+            0.2552240988951056,
+            0.36,
+            0.386928594559812
+          ],
+          [
+            -0.2552240988951056,
+            0.36,
+            0.386928594559812
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        0.2690417876854071,
+        -0.3351512479437816,
+        0.4573922091192447,
+        0.0,
+        0.0,
+        0.5296866168838418,
+        0.8481934259908822
+      ],
+      "destination": [
+        0.20312605695360864,
+        -0.10831341475411393,
+        0.4573922091192447,
+        0.0,
+        0.0,
+        0.5296866168838418,
+        0.8481934259908822
+      ],
+      "support_top": 0.17907514987446768,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "tapered_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:0",
+        "size_bin": "120cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 1.1164621028281918
+        }
+      },
+      "size_extension": {
+        "original_case": "tapered_box_y0_2",
+        "linear_scale": 2.1548317009632236,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.39480902194669276,
+          0.5568880388494342,
+          0.30872278958362265
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    }
+  ],
+  "scope": "30 new enlarged inputs; unchanged masses and task success criteria; no previous outcomes used",
+  "provenance": {
+    "source": "artifacts/runs/resumed_holdout120_inputs_20261022.json",
+    "sha256": "2ecf2fff085675abb32b549c2621235a75be2d25b148e59c79a6223a3a5e990e",
+    "previously_evaluated": true
+  },
+  "execution_order_note": "Balanced six-shape checks first; physical inputs, identities and success rules unchanged. These inputs have already been used during development.",
+  "original_physical_panel_sha256": "2d22d3a5988ca9e35686018bf1f3ca627a93402ca4bd35ecea4a7ed9f4cefadb",
+  "physical_input_source": {
+    "path": "artifacts/runs/task_unified120_v5_inputs_20261023.json",
+    "sha256": "272182f12da6ac62977404a72e9584ae461113312e233c6ba9fb907c3267d039"
+  }
+}

@@ -1,0 +1,338 @@
+{
+  "protocol": {
+    "request": {
+      "id": "large_tapered_box_120cm",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.8507469963170187,
+          1.2,
+          0.665245653804589
+        ],
+        "mass": 1.484511666305298,
+        "inertia": [
+          [
+            0.1769950898280285,
+            -1.5476903331921604e-18,
+            -0.0
+          ],
+          [
+            -1.5476903331921604e-18,
+            0.1144585647617799,
+            -1.1940877247966763e-18
+          ],
+          [
+            -0.0,
+            -1.1940877247966763e-18,
+            0.18892642089702863
+          ]
+        ],
+        "vertices": [
+          [
+            -0.42537349815850933,
+            -0.6,
+            -0.278317059244777
+          ],
+          [
+            0.42537349815850933,
+            -0.6,
+            -0.278317059244777
+          ],
+          [
+            0.42537349815850933,
+            0.6,
+            -0.278317059244777
+          ],
+          [
+            -0.42537349815850933,
+            0.6,
+            -0.278317059244777
+          ],
+          [
+            -0.2552240988951056,
+            -0.36,
+            0.386928594559812
+          ],
+          [
+            0.2552240988951056,
+            -0.36,
+            0.386928594559812
+          ],
+          [
+            0.2552240988951056,
+            0.36,
+            0.386928594559812
+          ],
+          [
+            -0.2552240988951056,
+            0.36,
+            0.386928594559812
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        0.2690417876854071,
+        -0.3351512479437816,
+        0.4573922091192447,
+        0.0,
+        0.0,
+        0.5296866168838418,
+        0.8481934259908822
+      ],
+      "destination": [
+        0.20312605695360864,
+        -0.10831341475411393,
+        0.4573922091192447,
+        0.0,
+        0.0,
+        0.5296866168838418,
+        0.8481934259908822
+      ],
+      "support_top": 0.17907514987446768,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "tapered_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:0",
+        "size_bin": "120cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 154,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 1.1164621028281918
+        }
+      },
+      "size_extension": {
+        "original_case": "tapered_box_y0_2",
+        "linear_scale": 2.1548317009632236,
+        "target_max_dimension_m": 1.2,
+        "original_size_m": [
+          0.39480902194669276,
+          0.5568880388494342,
+          0.30872278958362265
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    "starts": 4,
+    "criterion": "sum actual rotor thrust**1.5",
+    "probability": 0.05,
+    "total_error": 0.05,
+    "groups": 8,
+    "trials_per_group": 99,
+    "task_wrench": true,
+    "generator": "task",
+    "task_generation_probability": 1.0,
+    "auxiliary_initial_enabled": true,
+    "auxiliary_generator": "task_growth_variable_count",
+    "calculation_reuse": "exact-input memo within this planning call; draws and per-trial budgets unchanged",
+    "input_direction_refinement": "one power-directed gimbal step, backtracking 1/0.5/0.25; original finite-contact and task margins rechecked",
+    "scheduling": "generate each trial in draw order; distribute its screens; collect only all completed starts",
+    "generation_scope": "task contact roles; one role per module; variable-count auxiliary uses same task grammar",
+    "task_contact_count_law": "uniform 1..N per start, independent of nominal force feasibility",
+    "task_contact_selection": "normalized task-wrench residual, then force-boundary distance with 0.5 N normal floor",
+    "task_pose_initialization": "retain generated root, joints and contact targets for continuous surface fitting",
+    "probability_scope": "one more trial of this fixed generator; not existence of a better structure"
+  },
+  "protocol_id": "2b4200c38532b163e5169633488423973afa07c2070eb257abceb1c86f708deb",
+  "seed": 747372496,
+  "seed_source": "explicit_replay",
+  "workers": 32,
+  "worker_start_method": "fork",
+  "cancelled_excluded_trials": [],
+  "cancelled_auxiliary_initial": false,
+  "wall_s": 12.435372451785952,
+  "initial": {
+    "wall_s": 5.639948410913348,
+    "status": "completed_no_candidate",
+    "method": "task_growth_variable_count",
+    "collected_s": 6.103656060062349,
+    "burden": null
+  },
+  "selection_evidence": {
+    "protocol_id": "2b4200c38532b163e5169633488423973afa07c2070eb257abceb1c86f708deb",
+    "complete": true,
+    "scope": "one additional independent run of the same frozen generator per module count",
+    "undiscovered_structure_existence_probability_claimed": false,
+    "improvement_probability_target": 0.05,
+    "simultaneous_error_probability": 0.05,
+    "groups": [
+      {
+        "modules": 1,
+        "lower_bound": 94.20231420870942,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 205.38151428024213,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 2,
+        "lower_bound": 129.4169387329208,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 170.16688975603074,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 3,
+        "lower_bound": 167.176623694157,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 132.40720479479455,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 4,
+        "lower_bound": 205.61876484470045,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 93.9650636442511,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 1,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 5,
+        "lower_bound": 244.34265954593027,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 55.24116894302128,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 11,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 6,
+        "lower_bound": 283.2100706144513,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 16.373757874500257,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 9,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 7,
+        "lower_bound": 322.16050855127156,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      },
+      {
+        "modules": 8,
+        "lower_bound": 361.16329819539175,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      }
+    ]
+  },
+  "selected_burden": 299.58382848895155,
+  "protocol_sources_file": "../selection_sources/cad2be9d3090af00d23a78fca36def818663675ed741dc10682890e4982453b9.json",
+  "archive": {
+    "source_file": "selection.json",
+    "source_sha256": "b5f7634b087a1664177bdab65ce7ad61df9baed10de993fb3e1a0df73ec7db8f",
+    "omitted_trial_rows": 594,
+    "scope": "Selection protocol and stopping evidence; detailed candidate rows remain in the local raw output."
+  }
+}

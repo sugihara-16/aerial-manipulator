@@ -1,0 +1,2618 @@
+{
+  "scope": "Fresh generation and full execution of the fixed 30 development cases, task-priority control",
+  "overall": {
+    "successes": 23,
+    "total": 30,
+    "fraction": 0.7666666666666667,
+    "reaches_threshold": false,
+    "failures": {
+      "task_timeout": 1,
+      "governed motion exceeded finite-reference horizon": 1,
+      "no attainable path acceleration": 2,
+      "structure selection did not complete": 1,
+      "geometric_collision": 2
+    }
+  },
+  "all_30_results": true,
+  "all_results_same_runtime_sources": true,
+  "all_results_same_execution_settings": true,
+  "input_unchanged": true,
+  "seeds_unchanged": true,
+  "original_input_sha256": "1044f08f5cda20f49cd2eb55dbd7a4204e7ff31be4a1f74934691dfc876654ab",
+  "planning_seconds": {
+    "min": 5.2944307452999055,
+    "median": 9.178396343020722,
+    "p95": 14.409098480758256,
+    "max": 14.714826580137014
+  },
+  "module_counts": {
+    "5": 10,
+    "4": 2,
+    "6": 9,
+    "7": 7,
+    "8": 1,
+    "null": 1
+  },
+  "success_module_counts": {
+    "5": 9,
+    "4": 1,
+    "6": 6,
+    "7": 6,
+    "8": 1
+  },
+  "complete_selection_evidence": 29,
+  "secondary_safety_violation_case_counts": {
+    "contact_force": 11,
+    "contact_moment": 7,
+    "penetration": 0,
+    "clearance": 2,
+    "contact_gap": 5,
+    "material_slip": 0
+  },
+  "completion_audit": {
+    "scope": "Recheck of saved task/drive maxima and final state; auxiliary safety values are recorded separately",
+    "successful_results_checked": 23,
+    "issues": [],
+    "checked_cases": [
+      "span_load_box_030",
+      "span_load_elongated_box_030",
+      "span_load_cylinder_030",
+      "span_load_triangular_prism_030",
+      "span_load_tapered_box_030",
+      "span_load_box_035",
+      "span_load_elongated_box_035",
+      "span_load_cylinder_035",
+      "span_load_triangular_prism_035",
+      "span_load_box_040",
+      "span_load_elongated_box_040",
+      "span_load_cylinder_040",
+      "span_load_ellipsoid_040",
+      "span_load_triangular_prism_040",
+      "span_load_tapered_box_040",
+      "span_load_box_045",
+      "span_load_elongated_box_045",
+      "span_load_cylinder_045",
+      "span_load_triangular_prism_045",
+      "span_load_tapered_box_045",
+      "span_load_box_050",
+      "span_load_elongated_box_050",
+      "span_load_tapered_box_050"
+    ]
+  },
+  "timing": {
+    "wall_s": 2256.269750488922,
+    "workers": 3,
+    "serialized_planning": false,
+    "rows": [
+      {
+        "case": "span_load_box_030",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 292.5699626398273,
+        "process_wall_s": 152.6942508891225,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 3,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 8.326035448350012
+      },
+      {
+        "case": "span_load_elongated_box_030",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 283.8126042969525,
+        "process_wall_s": 116.59253300540149,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 3,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 8.132865971885622
+      },
+      {
+        "case": "span_load_cylinder_030",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 273.85511240689084,
+        "process_wall_s": 157.11414853204042,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 3,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 9.365092615131289
+      },
+      {
+        "case": "span_load_ellipsoid_030",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 371.89023350039497,
+        "process_wall_s": 184.0401635603048,
+        "task_success": false,
+        "reason": "task_timeout",
+        "contacts": 4,
+        "modules": 4,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 9.213561379816383
+      },
+      {
+        "case": "span_load_triangular_prism_030",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 399.65866968082264,
+        "process_wall_s": 181.16952916514128,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 7.642919455189258
+      },
+      {
+        "case": "span_load_tapered_box_030",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 394.7315540788695,
+        "process_wall_s": 362.4372792150825,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 5,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 7.729103638790548
+      },
+      {
+        "case": "span_load_box_035",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 520.8086166395806,
+        "process_wall_s": 132.7681951802224,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 3,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 8.261036169249564
+      },
+      {
+        "case": "span_load_elongated_box_035",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 548.1221642433666,
+        "process_wall_s": 96.6589646153152,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 2,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 6.810324969235808
+      },
+      {
+        "case": "span_load_cylinder_035",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 622.3177204648964,
+        "process_wall_s": 186.29060277715325,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 4,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 14.448675695806742
+      },
+      {
+        "case": "span_load_ellipsoid_035",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 612.8521141270176,
+        "process_wall_s": 153.43633219832554,
+        "task_success": false,
+        "reason": "governed motion exceeded finite-reference horizon",
+        "contacts": 5,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 8.917550479061902
+      },
+      {
+        "case": "span_load_triangular_prism_035",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 700.0630679060705,
+        "process_wall_s": 87.83736360771582,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 2,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 7.478964387904853
+      },
+      {
+        "case": "span_load_tapered_box_035",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 740.2243479909375,
+        "process_wall_s": 95.30881643714383,
+        "task_success": false,
+        "reason": "no attainable path acceleration",
+        "contacts": 5,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference"
+        },
+        "initial_planning_s": 7.935587750282139
+      },
+      {
+        "case": "span_load_box_040",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 753.8170797089115,
+        "process_wall_s": 139.56197689287364,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 13.139207700733095
+      },
+      {
+        "case": "span_load_elongated_box_040",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 751.7833467000164,
+        "process_wall_s": 148.69446944724768,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 5.302564085926861
+      },
+      {
+        "case": "span_load_cylinder_040",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 796.3465357683599,
+        "process_wall_s": 192.94695537071675,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 5,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 10.56482759816572
+      },
+      {
+        "case": "span_load_ellipsoid_040",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 852.8753428636119,
+        "process_wall_s": 231.06348257837817,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 5,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 9.24656018614769
+      },
+      {
+        "case": "span_load_triangular_prism_040",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 861.3926587570459,
+        "process_wall_s": 224.70049166399986,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 5,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 11.726466031745076
+      },
+      {
+        "case": "span_load_tapered_box_040",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 949.0946887480095,
+        "process_wall_s": 307.6596680129878,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 5,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 6.419286400079727
+      },
+      {
+        "case": "span_load_box_045",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1047.0664292410947,
+        "process_wall_s": 138.6613498069346,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 7.232136074919254
+      },
+      {
+        "case": "span_load_elongated_box_045",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1053.1703018518165,
+        "process_wall_s": 131.05606273701414,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 5.2944307452999055
+      },
+      {
+        "case": "span_load_cylinder_045",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1160.790986458771,
+        "process_wall_s": 350.5969765740447,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 7,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 10.69411160517484
+      },
+      {
+        "case": "span_load_ellipsoid_045",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1157.2893294021487,
+        "process_wall_s": 90.64412816008553,
+        "task_success": false,
+        "reason": "no attainable path acceleration",
+        "contacts": 6,
+        "modules": 6,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference"
+        },
+        "initial_planning_s": 9.22745436988771
+      },
+      {
+        "case": "span_load_triangular_prism_045",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1199.7291786838323,
+        "process_wall_s": 317.96691596182063,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 5,
+        "modules": 8,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 14.714826580137014
+      },
+      {
+        "case": "span_load_tapered_box_045",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1213.1260347035713,
+        "process_wall_s": 474.21142346411943,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 6,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 9.143231306225061
+      },
+      {
+        "case": "span_load_box_050",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1458.319810678251,
+        "process_wall_s": 233.04002632573247,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 5,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 6.4384931600652635
+      },
+      {
+        "case": "span_load_elongated_box_050",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1471.4557601781562,
+        "process_wall_s": 177.48754738690332,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 4,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 13.655327887274325
+      },
+      {
+        "case": "span_load_cylinder_050",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1619.659961993806,
+        "process_wall_s": 15.043174819555134,
+        "task_success": false,
+        "reason": "structure selection did not complete",
+        "contacts": null,
+        "modules": null,
+        "motion_methods": null,
+        "initial_planning_s": 14.360726329032332
+      },
+      {
+        "case": "span_load_ellipsoid_050",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1609.6058807750233,
+        "process_wall_s": 55.709970095194876,
+        "task_success": false,
+        "reason": "geometric_collision",
+        "contacts": 6,
+        "modules": 6,
+        "motion_methods": {},
+        "initial_planning_s": 9.459938954096287
+      },
+      {
+        "case": "span_load_triangular_prism_050",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1618.764919210691,
+        "process_wall_s": 108.162862226367,
+        "task_success": false,
+        "reason": "geometric_collision",
+        "contacts": 6,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference"
+        },
+        "initial_planning_s": 11.986199554987252
+      },
+      {
+        "case": "span_load_tapered_box_050",
+        "returncode": 0,
+        "benchmark_queue_wait_s": 1620.6217327690683,
+        "process_wall_s": 346.0535324267112,
+        "task_success": true,
+        "reason": "task_completed",
+        "contacts": 6,
+        "modules": 7,
+        "motion_methods": {
+          "lift": "finite_slip_reference",
+          "carry": "finite_slip_reference",
+          "descent": "finite_slip_reference"
+        },
+        "initial_planning_s": 11.31327202077955
+      }
+    ]
+  },
+  "rows": [
+    {
+      "case": "span_load_box_030",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.326035448350012,
+      "execution_wall_s": 143.57301634922624,
+      "simulation_s": 72.1699999991574,
+      "control_time_s": {
+        "mean": 0.005740935051280579,
+        "p95": 0.010240126866847271,
+        "maximum": 0.04306453000754118
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005844113167665266,
+          "p95": 0.007191677158698439,
+          "maximum": 0.028927934356033802
+        },
+        "ACQUIRE": {
+          "mean": 0.014704501626136549,
+          "p95": 0.023115228558890522,
+          "maximum": 0.04306453000754118
+        },
+        "REFINE": {
+          "mean": 0.009564686883744357,
+          "p95": 0.012815515580587094,
+          "maximum": 0.03682033205404878
+        },
+        "LOAD": {
+          "mean": 0.0035951598128303886,
+          "p95": 0.004161485703662038,
+          "maximum": 0.009735006839036942
+        },
+        "LIFT": {
+          "mean": 0.004382383725605905,
+          "p95": 0.0051231334218755364,
+          "maximum": 0.005379513371735811
+        },
+        "CARRY": {
+          "mean": 0.004323738040402532,
+          "p95": 0.005090764723718166,
+          "maximum": 0.005477625876665115
+        },
+        "DESCEND": {
+          "mean": 0.005116117827128619,
+          "p95": 0.005397323844954371,
+          "maximum": 0.005476641934365034
+        },
+        "UNLOAD": {
+          "mean": 0.007142753984779119,
+          "p95": 0.00822305642068386,
+          "maximum": 0.030061132740229368
+        },
+        "RETREAT": {
+          "mean": 0.004644032330038941,
+          "p95": 0.005418334994465112,
+          "maximum": 0.015397715847939253
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0001079682261,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_elongated_box_030",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.132865971885622,
+      "execution_wall_s": 107.55429663090035,
+      "simulation_s": 67.96999999925671,
+      "control_time_s": {
+        "mean": 0.005186205053955172,
+        "p95": 0.008859808067791164,
+        "maximum": 0.04738594777882099
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0058743846880468294,
+          "p95": 0.007192423101514578,
+          "maximum": 0.007399315945804119
+        },
+        "ACQUIRE": {
+          "mean": 0.012469086364813685,
+          "p95": 0.02233962807804346,
+          "maximum": 0.04738594777882099
+        },
+        "REFINE": {
+          "mean": 0.0103602375294585,
+          "p95": 0.02547647804021835,
+          "maximum": 0.03004324808716774
+        },
+        "LOAD": {
+          "mean": 0.0033155921753495934,
+          "p95": 0.0035691028693690895,
+          "maximum": 0.009316111914813519
+        },
+        "LIFT": {
+          "mean": 0.0041128211552277204,
+          "p95": 0.004887167643755673,
+          "maximum": 0.009592466987669468
+        },
+        "CARRY": {
+          "mean": 0.003939584689796902,
+          "p95": 0.0048232536995783445,
+          "maximum": 0.005272956099361181
+        },
+        "DESCEND": {
+          "mean": 0.004572020797466224,
+          "p95": 0.004808465577661991,
+          "maximum": 0.004883012268692255
+        },
+        "UNLOAD": {
+          "mean": 0.006805147365051901,
+          "p95": 0.007852426962926984,
+          "maximum": 0.029054295737296343
+        },
+        "RETREAT": {
+          "mean": 0.004321791183496755,
+          "p95": 0.00454335194081068,
+          "maximum": 0.014499729964882135
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 395.5560832056217,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_cylinder_030",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.365092615131289,
+      "execution_wall_s": 146.92701308475807,
+      "simulation_s": 73.41999999912784,
+      "control_time_s": {
+        "mean": 0.005594108116295659,
+        "p95": 0.009701450727879977,
+        "maximum": 0.03485774714499712
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0061665322205104005,
+          "p95": 0.007570439064875245,
+          "maximum": 0.03485774714499712
+        },
+        "ACQUIRE": {
+          "mean": 0.014895710964935175,
+          "p95": 0.024340979382395746,
+          "maximum": 0.027468509040772915
+        },
+        "REFINE": {
+          "mean": 0.012303749057464302,
+          "p95": 0.028602435952052474,
+          "maximum": 0.02995979506522417
+        },
+        "LOAD": {
+          "mean": 0.004191323464425902,
+          "p95": 0.004450237541459501,
+          "maximum": 0.010600912850350142
+        },
+        "LIFT": {
+          "mean": 0.0049187619322910905,
+          "p95": 0.005553968413732946,
+          "maximum": 0.008591628167778254
+        },
+        "CARRY": {
+          "mean": 0.004820539025240577,
+          "p95": 0.00555026785004884,
+          "maximum": 0.010346948634833097
+        },
+        "DESCEND": {
+          "mean": 0.005555241317271666,
+          "p95": 0.005914790066890417,
+          "maximum": 0.008203617762774229
+        },
+        "UNLOAD": {
+          "mean": 0.007009470232258566,
+          "p95": 0.008078272431157529,
+          "maximum": 0.02917025936767459
+        },
+        "RETREAT": {
+          "mean": 0.004435980964415729,
+          "p95": 0.0047377391718328,
+          "maximum": 0.01559286005795002
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 468.458907824941,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_ellipsoid_030",
+      "modules": 4,
+      "success": false,
+      "reason": "task_timeout",
+      "phase": "RETREAT",
+      "planning_s": 9.213561379816383,
+      "execution_wall_s": 174.01218013372272,
+      "simulation_s": 110.0099999982626,
+      "control_time_s": {
+        "mean": 0.004405403876347498,
+        "p95": 0.006911667063832283,
+        "maximum": 0.03287045191973448
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.006744658928999508,
+          "p95": 0.0076674029231071465,
+          "maximum": 0.011586383916437626
+        },
+        "ACQUIRE": {
+          "mean": 0.009372708996614585,
+          "p95": 0.019509662059135735,
+          "maximum": 0.03287045191973448
+        },
+        "REFINE": {
+          "mean": 0.007096911191611606,
+          "p95": 0.008493268862366676,
+          "maximum": 0.020452294033020735
+        },
+        "LOAD": {
+          "mean": 0.003583095404319465,
+          "p95": 0.003739448613487184,
+          "maximum": 0.007126686163246632
+        },
+        "LIFT": {
+          "mean": 0.004386634308844805,
+          "p95": 0.0050242910860106346,
+          "maximum": 0.0061012739315629005
+        },
+        "CARRY": {
+          "mean": 0.004344876428949647,
+          "p95": 0.005055751069448888,
+          "maximum": 0.005793679039925337
+        },
+        "DESCEND": {
+          "mean": 0.004985981764853259,
+          "p95": 0.00530175631865859,
+          "maximum": 0.00555178290233016
+        },
+        "UNLOAD": {
+          "mean": 0.006454416558206562,
+          "p95": 0.007321627577766776,
+          "maximum": 0.025182825978845358
+        },
+        "RETREAT": {
+          "mean": 0.0038601453218073366,
+          "p95": 0.004155104234814644,
+          "maximum": 0.027234680950641632
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": true,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.000128515996,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_triangular_prism_030",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 7.642919455189258,
+      "execution_wall_s": 172.757720337715,
+      "simulation_s": 74.9399999990919,
+      "control_time_s": {
+        "mean": 0.005990873902335296,
+        "p95": 0.022927024448290464,
+        "maximum": 0.030989237129688263
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.00670008879158777,
+          "p95": 0.008745532482862473,
+          "maximum": 0.030989237129688263
+        },
+        "ACQUIRE": {
+          "mean": 0.018414263505208896,
+          "p95": 0.02454655582550913,
+          "maximum": 0.02794059319421649
+        },
+        "REFINE": {
+          "mean": 0.012162872878391118,
+          "p95": 0.028163212025538086,
+          "maximum": 0.029896761756390333
+        },
+        "LOAD": {
+          "mean": 0.004043572102673352,
+          "p95": 0.004261487675830722,
+          "maximum": 0.011018530931323767
+        },
+        "LIFT": {
+          "mean": 0.004627543153241277,
+          "p95": 0.00528935061302036,
+          "maximum": 0.00577669870108366
+        },
+        "CARRY": {
+          "mean": 0.0046029860159615054,
+          "p95": 0.005473088566213846,
+          "maximum": 0.005752654746174812
+        },
+        "DESCEND": {
+          "mean": 0.005239021346629786,
+          "p95": 0.005618533585220575,
+          "maximum": 0.00572161003947258
+        },
+        "UNLOAD": {
+          "mean": 0.00771234801190125,
+          "p95": 0.008728056238032878,
+          "maximum": 0.028376129921525717
+        },
+        "RETREAT": {
+          "mean": 0.004653246369896203,
+          "p95": 0.004928514268249274,
+          "maximum": 0.01539200497791171
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 534.7413965542801,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_tapered_box_030",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 7.729103638790548,
+      "execution_wall_s": 353.91634628223255,
+      "simulation_s": 68.68999999923969,
+      "control_time_s": {
+        "mean": 0.0069094277874958395,
+        "p95": 0.009340015845373272,
+        "maximum": 0.044475789181888103
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0074491324939299376,
+          "p95": 0.007923660310916602,
+          "maximum": 0.008145747240632772
+        },
+        "ACQUIRE": {
+          "mean": 0.010591200875575867,
+          "p95": 0.02463312190957367,
+          "maximum": 0.033096475061029196
+        },
+        "REFINE": {
+          "mean": 0.019075426558453228,
+          "p95": 0.02269995622336864,
+          "maximum": 0.044475789181888103
+        },
+        "LOAD": {
+          "mean": 0.008126340859259168,
+          "p95": 0.009771883022040129,
+          "maximum": 0.017161841969937086
+        },
+        "LIFT": {
+          "mean": 0.008204649583436549,
+          "p95": 0.008884956361725926,
+          "maximum": 0.011169519275426865
+        },
+        "CARRY": {
+          "mean": 0.008049069296102971,
+          "p95": 0.008733488386496902,
+          "maximum": 0.009345982689410448
+        },
+        "DESCEND": {
+          "mean": 0.008893462163477875,
+          "p95": 0.009086218033917248,
+          "maximum": 0.009380440227687359
+        },
+        "UNLOAD": {
+          "mean": 0.00914403458149467,
+          "p95": 0.009850030182860792,
+          "maximum": 0.03436760092154145
+        },
+        "RETREAT": {
+          "mean": 0.005065281420031013,
+          "p95": 0.005788648035377264,
+          "maximum": 0.016464811749756336
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0000963080674,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_box_035",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.261036169249564,
+      "execution_wall_s": 123.69743050076067,
+      "simulation_s": 80.86999999895167,
+      "control_time_s": {
+        "mean": 0.005249814418525436,
+        "p95": 0.008909061877056956,
+        "maximum": 0.0420030876994133
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005855461838562412,
+          "p95": 0.007086038356646895,
+          "maximum": 0.00809457479044795
+        },
+        "ACQUIRE": {
+          "mean": 0.015532946432517333,
+          "p95": 0.022303164075128733,
+          "maximum": 0.03631276823580265
+        },
+        "REFINE": {
+          "mean": 0.01028526605577352,
+          "p95": 0.013633317127823803,
+          "maximum": 0.0420030876994133
+        },
+        "LOAD": {
+          "mean": 0.0031720649000878134,
+          "p95": 0.003409418906085193,
+          "maximum": 0.008652315009385347
+        },
+        "LIFT": {
+          "mean": 0.004009742950089276,
+          "p95": 0.00466149968560785,
+          "maximum": 0.026431696955114603
+        },
+        "CARRY": {
+          "mean": 0.003945225361385383,
+          "p95": 0.004801255278289318,
+          "maximum": 0.005130578298121691
+        },
+        "DESCEND": {
+          "mean": 0.0045769334358024705,
+          "p95": 0.0047997341491281985,
+          "maximum": 0.005166474264115095
+        },
+        "UNLOAD": {
+          "mean": 0.006848960265978775,
+          "p95": 0.007879810873419046,
+          "maximum": 0.02839092118665576
+        },
+        "RETREAT": {
+          "mean": 0.004407899634664283,
+          "p95": 0.00480461297556758,
+          "maximum": 0.014778382144868374
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 389.815904668998,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_elongated_box_035",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 6.810324969235808,
+      "execution_wall_s": 88.97584261186421,
+      "simulation_s": 62.11999999939504,
+      "control_time_s": {
+        "mean": 0.0045020679018236715,
+        "p95": 0.007417350076138971,
+        "maximum": 0.029456505086272955
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0053341384623523235,
+          "p95": 0.005496669840067625,
+          "maximum": 0.006375281140208244
+        },
+        "ACQUIRE": {
+          "mean": 0.007299857405786197,
+          "p95": 0.021248560212552548,
+          "maximum": 0.029456505086272955
+        },
+        "REFINE": {
+          "mean": 0.008982875164992247,
+          "p95": 0.01498256037011742,
+          "maximum": 0.02663980796933174
+        },
+        "LOAD": {
+          "mean": 0.0027635303263862927,
+          "p95": 0.0029096588492393493,
+          "maximum": 0.00945573067292571
+        },
+        "LIFT": {
+          "mean": 0.003509021310135722,
+          "p95": 0.0041504022898152465,
+          "maximum": 0.0046950760297477245
+        },
+        "CARRY": {
+          "mean": 0.003493815026595257,
+          "p95": 0.004315021261572838,
+          "maximum": 0.006205080077052116
+        },
+        "DESCEND": {
+          "mean": 0.0041010846383869645,
+          "p95": 0.0043524136301130055,
+          "maximum": 0.004455558955669403
+        },
+        "UNLOAD": {
+          "mean": 0.006677940199595122,
+          "p95": 0.007726472243666649,
+          "maximum": 0.02906878385692835
+        },
+        "RETREAT": {
+          "mean": 0.004146095761748159,
+          "p95": 0.004308350360952317,
+          "maximum": 0.014418232254683971
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 320.51017294218764,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_cylinder_035",
+      "modules": 4,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 14.448675695806742,
+      "execution_wall_s": 171.07666741404682,
+      "simulation_s": 66.54999999929029,
+      "control_time_s": {
+        "mean": 0.005144067761718291,
+        "p95": 0.008377996739000082,
+        "maximum": 0.026888852007687092
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005981722910821242,
+          "p95": 0.008493455778807401,
+          "maximum": 0.009125967044383287
+        },
+        "ACQUIRE": {
+          "mean": 0.010586780929898327,
+          "p95": 0.02233483204618096,
+          "maximum": 0.025750746950507164
+        },
+        "REFINE": {
+          "mean": 0.009832909964911995,
+          "p95": 0.011572331748902796,
+          "maximum": 0.026888852007687092
+        },
+        "LOAD": {
+          "mean": 0.0043880435374254985,
+          "p95": 0.004702650732360781,
+          "maximum": 0.011092416942119598
+        },
+        "LIFT": {
+          "mean": 0.004972736980766058,
+          "p95": 0.005602135322988033,
+          "maximum": 0.00614159693941474
+        },
+        "CARRY": {
+          "mean": 0.004954900919692591,
+          "p95": 0.005640772054903209,
+          "maximum": 0.00592242693528533
+        },
+        "DESCEND": {
+          "mean": 0.005593385881755154,
+          "p95": 0.0057509506819769735,
+          "maximum": 0.005998480133712292
+        },
+        "UNLOAD": {
+          "mean": 0.006623013179719917,
+          "p95": 0.007475446071475744,
+          "maximum": 0.026105435099452734
+        },
+        "RETREAT": {
+          "mean": 0.004040783009731715,
+          "p95": 0.004406316834501922,
+          "maximum": 0.026824402157217264
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 536.3533673211932,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_ellipsoid_035",
+      "modules": 5,
+      "success": false,
+      "reason": "governed motion exceeded finite-reference horizon",
+      "phase": "DESCEND",
+      "planning_s": 8.917550479061902,
+      "execution_wall_s": 143.71401898516342,
+      "simulation_s": 33.60000000006945,
+      "control_time_s": {
+        "mean": 0.00696497220946135,
+        "p95": 0.01048142509534955,
+        "maximum": 0.040808848105371
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.006991747581302053,
+          "p95": 0.010475697740912436,
+          "maximum": 0.03582586906850338
+        },
+        "ACQUIRE": {
+          "mean": 0.011662206647408366,
+          "p95": 0.024820191529579462,
+          "maximum": 0.040808848105371
+        },
+        "REFINE": {
+          "mean": 0.009517048108332518,
+          "p95": 0.01121820705011486,
+          "maximum": 0.02686119033023715
+        },
+        "LOAD": {
+          "mean": 0.004636742817237974,
+          "p95": 0.004778563347645104,
+          "maximum": 0.009533454198390245
+        },
+        "LIFT": {
+          "mean": 0.005629787305369973,
+          "p95": 0.0062925901496782895,
+          "maximum": 0.006839870009571314
+        },
+        "CARRY": {
+          "mean": 0.005692254124442115,
+          "p95": 0.006440844014286995,
+          "maximum": 0.010993997100740671
+        },
+        "DESCEND": {
+          "mean": 0.006483274578421075,
+          "p95": 0.0068500530906021595,
+          "maximum": 0.007044696249067783
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "governed motion exceeded finite-reference horizon",
+      "old_execution_wall_s": 439.08628046279773,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_triangular_prism_035",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 7.478964387904853,
+      "execution_wall_s": 79.54462343407795,
+      "simulation_s": 60.58999999943122,
+      "control_time_s": {
+        "mean": 0.004316988709711596,
+        "p95": 0.0055478453170508145,
+        "maximum": 0.031005033757537603
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005331586584215984,
+          "p95": 0.0056420817039906975,
+          "maximum": 0.006254064850509167
+        },
+        "ACQUIRE": {
+          "mean": 0.006983931428527574,
+          "p95": 0.022294938820414244,
+          "maximum": 0.031005033757537603
+        },
+        "REFINE": {
+          "mean": 0.007188415997190757,
+          "p95": 0.009299551416188474,
+          "maximum": 0.022452689707279205
+        },
+        "LOAD": {
+          "mean": 0.002659090617671609,
+          "p95": 0.0027142763836309316,
+          "maximum": 0.006791885010898113
+        },
+        "LIFT": {
+          "mean": 0.0035782110821455716,
+          "p95": 0.004401608812622726,
+          "maximum": 0.00451803719624877
+        },
+        "CARRY": {
+          "mean": 0.0035327504453016444,
+          "p95": 0.004436872340738774,
+          "maximum": 0.00457118870690465
+        },
+        "DESCEND": {
+          "mean": 0.00414797788496714,
+          "p95": 0.004452235577628016,
+          "maximum": 0.004716332070529461
+        },
+        "UNLOAD": {
+          "mean": 0.006558475536831583,
+          "p95": 0.007706754794344306,
+          "maximum": 0.02848920878022909
+        },
+        "RETREAT": {
+          "mean": 0.004040899623151519,
+          "p95": 0.004178151208907366,
+          "maximum": 0.015269112773239613
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 300.2541770529933,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_tapered_box_035",
+      "modules": 6,
+      "success": false,
+      "reason": "no attainable path acceleration",
+      "phase": "LIFT",
+      "planning_s": 7.935587750282139,
+      "execution_wall_s": 86.57227042596787,
+      "simulation_s": 17.310000000037146,
+      "control_time_s": {
+        "mean": 0.012779763045851959,
+        "p95": 0.028545464226044714,
+        "maximum": 0.05418551806360483
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.008548665364521365,
+          "p95": 0.011487266048789024,
+          "maximum": 0.034021925181150436
+        },
+        "ACQUIRE": {
+          "mean": 0.022106065915513236,
+          "p95": 0.02877195200417191,
+          "maximum": 0.03244808595627546
+        },
+        "REFINE": {
+          "mean": 0.015305580959880147,
+          "p95": 0.016187772434204814,
+          "maximum": 0.05418551806360483
+        },
+        "LOAD": {
+          "mean": 0.005244170154134433,
+          "p95": 0.005472437385469675,
+          "maximum": 0.015192994847893715
+        },
+        "LIFT": {
+          "mean": 0.006409613151564119,
+          "p95": 0.006663276511244476,
+          "maximum": 0.007105991244316101
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0001362180337,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_box_040",
+      "modules": 6,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 13.139207700733095,
+      "execution_wall_s": 125.58886525640264,
+      "simulation_s": 63.21999999936903,
+      "control_time_s": {
+        "mean": 0.006620605057304265,
+        "p95": 0.011949089542031287,
+        "maximum": 0.041775458957999945
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0070673253106021145,
+          "p95": 0.009107266971841454,
+          "maximum": 0.009464368224143982
+        },
+        "ACQUIRE": {
+          "mean": 0.016912318227491275,
+          "p95": 0.026431835489347577,
+          "maximum": 0.038084885105490685
+        },
+        "REFINE": {
+          "mean": 0.012484099291678931,
+          "p95": 0.01759313591755925,
+          "maximum": 0.03169155307114124
+        },
+        "LOAD": {
+          "mean": 0.004046278673534592,
+          "p95": 0.004305244935676455,
+          "maximum": 0.01170622929930687
+        },
+        "LIFT": {
+          "mean": 0.004973563130013645,
+          "p95": 0.005864995205774903,
+          "maximum": 0.006096152123063803
+        },
+        "CARRY": {
+          "mean": 0.004791414946084842,
+          "p95": 0.005591367231681943,
+          "maximum": 0.006059220992028713
+        },
+        "DESCEND": {
+          "mean": 0.005583231732227475,
+          "p95": 0.005925125651992857,
+          "maximum": 0.006735999137163162
+        },
+        "UNLOAD": {
+          "mean": 0.008631723731234196,
+          "p95": 0.009714035224169493,
+          "maximum": 0.034858507104218006
+        },
+        "RETREAT": {
+          "mean": 0.005496429869524652,
+          "p95": 0.005740564316511154,
+          "maximum": 0.041775458957999945
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 439.6813941639848,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_elongated_box_040",
+      "modules": 6,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 5.302564085926861,
+      "execution_wall_s": 142.57758938800544,
+      "simulation_s": 78.93999999899731,
+      "control_time_s": {
+        "mean": 0.006224449123937148,
+        "p95": 0.009094726061448448,
+        "maximum": 0.04539062734693289
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0072996023845635066,
+          "p95": 0.009053456829860806,
+          "maximum": 0.009688613004982471
+        },
+        "ACQUIRE": {
+          "mean": 0.0133389299923056,
+          "p95": 0.02633026405237615,
+          "maximum": 0.03246434032917023
+        },
+        "REFINE": {
+          "mean": 0.013020250191912055,
+          "p95": 0.01428126399405298,
+          "maximum": 0.04539062734693289
+        },
+        "LOAD": {
+          "mean": 0.0038731629867106675,
+          "p95": 0.0042336017591878775,
+          "maximum": 0.013185275252908468
+        },
+        "LIFT": {
+          "mean": 0.004707460715435445,
+          "p95": 0.005541679705493152,
+          "maximum": 0.005887043662369251
+        },
+        "CARRY": {
+          "mean": 0.0045899422036018225,
+          "p95": 0.005355460057035089,
+          "maximum": 0.005753885023295879
+        },
+        "DESCEND": {
+          "mean": 0.005380159697419596,
+          "p95": 0.005721747269853949,
+          "maximum": 0.00731814606115222
+        },
+        "UNLOAD": {
+          "mean": 0.008407232124185147,
+          "p95": 0.009597871173173188,
+          "maximum": 0.03474296489730477
+        },
+        "RETREAT": {
+          "mean": 0.005722620023930118,
+          "p95": 0.006978903128765523,
+          "maximum": 0.019665919244289398
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 457.4232601132244,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_cylinder_040",
+      "modules": 7,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.56482759816572,
+      "execution_wall_s": 181.54769803909585,
+      "simulation_s": 73.9799999991146,
+      "control_time_s": {
+        "mean": 0.008130037708688542,
+        "p95": 0.029924678942188615,
+        "maximum": 0.04340313607826829
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.009056135773832021,
+          "p95": 0.011879407800734043,
+          "maximum": 0.013425923883914948
+        },
+        "ACQUIRE": {
+          "mean": 0.024281485972850462,
+          "p95": 0.032500929990783335,
+          "maximum": 0.04340313607826829
+        },
+        "REFINE": {
+          "mean": 0.014744390346141173,
+          "p95": 0.03634872604161501,
+          "maximum": 0.041827083099633455
+        },
+        "LOAD": {
+          "mean": 0.004510872946120799,
+          "p95": 0.004686790402047336,
+          "maximum": 0.013109713792800903
+        },
+        "LIFT": {
+          "mean": 0.005239734990522265,
+          "p95": 0.005940835177898407,
+          "maximum": 0.0068422588519752026
+        },
+        "CARRY": {
+          "mean": 0.005252200187533163,
+          "p95": 0.006106581026688218,
+          "maximum": 0.007049606181681156
+        },
+        "DESCEND": {
+          "mean": 0.00599352715602308,
+          "p95": 0.006352486019022763,
+          "maximum": 0.00646740198135376
+        },
+        "UNLOAD": {
+          "mean": 0.010785384889309987,
+          "p95": 0.012015568744391202,
+          "maximum": 0.04208626691251993
+        },
+        "RETREAT": {
+          "mean": 0.006805707408766735,
+          "p95": 0.0071368023287504915,
+          "maximum": 0.024722398724406958
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]",
+      "old_execution_wall_s": 131.5298120751977,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_ellipsoid_040",
+      "modules": 6,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.24656018614769,
+      "execution_wall_s": 221.00177419139072,
+      "simulation_s": 76.06999999906517,
+      "control_time_s": {
+        "mean": 0.006931682435803499,
+        "p95": 0.010804239357821642,
+        "maximum": 0.061162585858255625
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007953299100155485,
+          "p95": 0.011425070371478795,
+          "maximum": 0.030135282315313816
+        },
+        "ACQUIRE": {
+          "mean": 0.016281812612841902,
+          "p95": 0.02916372464969754,
+          "maximum": 0.061162585858255625
+        },
+        "REFINE": {
+          "mean": 0.012023482146824515,
+          "p95": 0.016806150600314127,
+          "maximum": 0.032283601351082325
+        },
+        "LOAD": {
+          "mean": 0.005039161375413339,
+          "p95": 0.005136571382172406,
+          "maximum": 0.011429164092987776
+        },
+        "LIFT": {
+          "mean": 0.005889535363763571,
+          "p95": 0.006509650428779423,
+          "maximum": 0.007838414050638676
+        },
+        "CARRY": {
+          "mean": 0.005839393413043581,
+          "p95": 0.006602221680805087,
+          "maximum": 0.007083473727107048
+        },
+        "DESCEND": {
+          "mean": 0.006557762262147631,
+          "p95": 0.006937010213732719,
+          "maximum": 0.007302816957235336
+        },
+        "UNLOAD": {
+          "mean": 0.0093080688149054,
+          "p95": 0.01049674628302455,
+          "maximum": 0.03723668307065964
+        },
+        "RETREAT": {
+          "mean": 0.005890957313771944,
+          "p95": 0.007083740551024675,
+          "maximum": 0.02122929599136114
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0002094679512,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_triangular_prism_040",
+      "modules": 5,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 11.726466031745076,
+      "execution_wall_s": 212.17929638316855,
+      "simulation_s": 82.45999999891407,
+      "control_time_s": {
+        "mean": 0.00592982299409954,
+        "p95": 0.00867871786467731,
+        "maximum": 0.03051631385460496
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0067564042016344875,
+          "p95": 0.0069804498692974445,
+          "maximum": 0.01396062271669507
+        },
+        "ACQUIRE": {
+          "mean": 0.014905495606663247,
+          "p95": 0.025118704768829048,
+          "maximum": 0.029841003008186817
+        },
+        "REFINE": {
+          "mean": 0.012185031030741002,
+          "p95": 0.015046143904328324,
+          "maximum": 0.03051631385460496
+        },
+        "LOAD": {
+          "mean": 0.004386733172771831,
+          "p95": 0.004498462239280343,
+          "maximum": 0.01229437394067645
+        },
+        "LIFT": {
+          "mean": 0.005183404153212905,
+          "p95": 0.005837089801207185,
+          "maximum": 0.006410027854144573
+        },
+        "CARRY": {
+          "mean": 0.005182471541920677,
+          "p95": 0.005981133296154439,
+          "maximum": 0.011398436035960913
+        },
+        "DESCEND": {
+          "mean": 0.005797164226846862,
+          "p95": 0.006172253796830772,
+          "maximum": 0.006482405122369528
+        },
+        "UNLOAD": {
+          "mean": 0.007735802046954632,
+          "p95": 0.008781612385064363,
+          "maximum": 0.028858701698482037
+        },
+        "RETREAT": {
+          "mean": 0.004974506626441482,
+          "p95": 0.006026050727814436,
+          "maximum": 0.016513739246875048
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0002333419397,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_tapered_box_040",
+      "modules": 6,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 6.419286400079727,
+      "execution_wall_s": 300.408793438226,
+      "simulation_s": 69.64999999921699,
+      "control_time_s": {
+        "mean": 0.007120688532768157,
+        "p95": 0.010652565280906856,
+        "maximum": 0.03623311081901193
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.00837064342573285,
+          "p95": 0.00870812030043453,
+          "maximum": 0.009829584043473005
+        },
+        "ACQUIRE": {
+          "mean": 0.011702896275934424,
+          "p95": 0.0278882822021842,
+          "maximum": 0.03343987790867686
+        },
+        "REFINE": {
+          "mean": 0.01612554414086784,
+          "p95": 0.017258328152820468,
+          "maximum": 0.03505929512903094
+        },
+        "LOAD": {
+          "mean": 0.00612143227364868,
+          "p95": 0.0062857990385964515,
+          "maximum": 0.016666319221258163
+        },
+        "LIFT": {
+          "mean": 0.006906514913775027,
+          "p95": 0.007488356647081673,
+          "maximum": 0.029502056073397398
+        },
+        "CARRY": {
+          "mean": 0.00678414894035086,
+          "p95": 0.007594838342629373,
+          "maximum": 0.007947493344545364
+        },
+        "DESCEND": {
+          "mean": 0.00753931833166607,
+          "p95": 0.007745420327410102,
+          "maximum": 0.007912523113191128
+        },
+        "UNLOAD": {
+          "mean": 0.010146778400825418,
+          "p95": 0.01110593406483531,
+          "maximum": 0.03623311081901193
+        },
+        "RETREAT": {
+          "mean": 0.005901455367097004,
+          "p95": 0.00640521477907896,
+          "maximum": 0.020791977643966675
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0002155038528,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_box_045",
+      "modules": 6,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 7.232136074919254,
+      "execution_wall_s": 130.60445483541116,
+      "simulation_s": 71.02999999918435,
+      "control_time_s": {
+        "mean": 0.00648404503229907,
+        "p95": 0.013285421603359231,
+        "maximum": 0.036360747180879116
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007432857304603361,
+          "p95": 0.009067476727068424,
+          "maximum": 0.031915420200675726
+        },
+        "ACQUIRE": {
+          "mean": 0.018614397036730963,
+          "p95": 0.02617717960383743,
+          "maximum": 0.036360747180879116
+        },
+        "REFINE": {
+          "mean": 0.013613152102118841,
+          "p95": 0.03073884106706827,
+          "maximum": 0.033872743137180805
+        },
+        "LOAD": {
+          "mean": 0.003767616899373631,
+          "p95": 0.004033747874200344,
+          "maximum": 0.012103245593607426
+        },
+        "LIFT": {
+          "mean": 0.004475978570990264,
+          "p95": 0.005166615778580308,
+          "maximum": 0.005679128225892782
+        },
+        "CARRY": {
+          "mean": 0.004325667595257983,
+          "p95": 0.005025217682123184,
+          "maximum": 0.005318868905305862
+        },
+        "DESCEND": {
+          "mean": 0.005082948168750569,
+          "p95": 0.005397584266029298,
+          "maximum": 0.005548517219722271
+        },
+        "UNLOAD": {
+          "mean": 0.008629912457295826,
+          "p95": 0.010052942717447876,
+          "maximum": 0.034462789073586464
+        },
+        "RETREAT": {
+          "mean": 0.005441551999236192,
+          "p95": 0.005681085120886564,
+          "maximum": 0.019207158125936985
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 414.2159040919505,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_elongated_box_045",
+      "modules": 6,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 5.2944307452999055,
+      "execution_wall_s": 124.9283585860394,
+      "simulation_s": 66.76999999928509,
+      "control_time_s": {
+        "mean": 0.006529565543682722,
+        "p95": 0.012354264990426599,
+        "maximum": 0.03556891065090895
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007279333608722923,
+          "p95": 0.009141403343528509,
+          "maximum": 0.031474593095481396
+        },
+        "ACQUIRE": {
+          "mean": 0.017419587606297117,
+          "p95": 0.027849665423855186,
+          "maximum": 0.03063325909897685
+        },
+        "REFINE": {
+          "mean": 0.013936016138414947,
+          "p95": 0.032846563728526235,
+          "maximum": 0.03556891065090895
+        },
+        "LOAD": {
+          "mean": 0.0039036438862482706,
+          "p95": 0.004041709098964929,
+          "maximum": 0.012483462691307068
+        },
+        "LIFT": {
+          "mean": 0.004631522006355226,
+          "p95": 0.00525601003319025,
+          "maximum": 0.005610836204141378
+        },
+        "CARRY": {
+          "mean": 0.004571640096255578,
+          "p95": 0.005252518807537854,
+          "maximum": 0.005478668957948685
+        },
+        "DESCEND": {
+          "mean": 0.005364242335236822,
+          "p95": 0.0056478447746485475,
+          "maximum": 0.005790638737380505
+        },
+        "UNLOAD": {
+          "mean": 0.008873087297650468,
+          "p95": 0.010133393947035075,
+          "maximum": 0.035406963899731636
+        },
+        "RETREAT": {
+          "mean": 0.0054039508285520805,
+          "p95": 0.0057172380620613686,
+          "maximum": 0.02059367811307311
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": true,
+      "old_reason": "task_completed",
+      "old_execution_wall_s": 432.7000285652466,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_cylinder_045",
+      "modules": 7,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.69411160517484,
+      "execution_wall_s": 339.0108774662949,
+      "simulation_s": 78.93999999899731,
+      "control_time_s": {
+        "mean": 0.009038525561320208,
+        "p95": 0.013526018429547534,
+        "maximum": 0.05069442931562662
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.010016703172653066,
+          "p95": 0.01563798896968359,
+          "maximum": 0.016906414180994034
+        },
+        "ACQUIRE": {
+          "mean": 0.018646508219678757,
+          "p95": 0.040331903286278246,
+          "maximum": 0.05069442931562662
+        },
+        "REFINE": {
+          "mean": 0.02187535439443309,
+          "p95": 0.022183532756753267,
+          "maximum": 0.0500052091665566
+        },
+        "LOAD": {
+          "mean": 0.007234510856991013,
+          "p95": 0.007439001160673797,
+          "maximum": 0.021619795821607113
+        },
+        "LIFT": {
+          "mean": 0.008109629047103226,
+          "p95": 0.00872483446728438,
+          "maximum": 0.014493683353066444
+        },
+        "CARRY": {
+          "mean": 0.007908506268868222,
+          "p95": 0.008645591349340976,
+          "maximum": 0.00899842381477356
+        },
+        "DESCEND": {
+          "mean": 0.008867722874065872,
+          "p95": 0.009333619731478393,
+          "maximum": 0.009473039768636227
+        },
+        "UNLOAD": {
+          "mean": 0.011994161645381762,
+          "p95": 0.013318386301398278,
+          "maximum": 0.04254515469074249
+        },
+        "RETREAT": {
+          "mean": 0.0075615826883236245,
+          "p95": 0.008032405050471425,
+          "maximum": 0.0268324320204556
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0001038373448,
+      "same_connection_and_pad_structure": false
+    },
+    {
+      "case": "span_load_ellipsoid_045",
+      "modules": 6,
+      "success": false,
+      "reason": "no attainable path acceleration",
+      "phase": "LIFT",
+      "planning_s": 9.22745436988771,
+      "execution_wall_s": 80.61825058981776,
+      "simulation_s": 18.05000000004068,
+      "control_time_s": {
+        "mean": 0.011341649446696257,
+        "p95": 0.028960046009160578,
+        "maximum": 0.0394554128870368
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007759014490293339,
+          "p95": 0.0082124536158517,
+          "maximum": 0.016361774876713753
+        },
+        "ACQUIRE": {
+          "mean": 0.017677759553324533,
+          "p95": 0.02934749056585133,
+          "maximum": 0.035541503224521875
+        },
+        "REFINE": {
+          "mean": 0.012516585770378211,
+          "p95": 0.019518565991893395,
+          "maximum": 0.0394554128870368
+        },
+        "LOAD": {
+          "mean": 0.0053079328003029025,
+          "p95": 0.005554334376938641,
+          "maximum": 0.012821030803024769
+        },
+        "LIFT": {
+          "mean": 0.007019881665473804,
+          "p95": 0.007275892770849167,
+          "maximum": 0.009186448995023966
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0001781508327,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_triangular_prism_045",
+      "modules": 8,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 14.714826580137014,
+      "execution_wall_s": 302.34997005201876,
+      "simulation_s": 77.03999999904224,
+      "control_time_s": {
+        "mean": 0.009848502368498824,
+        "p95": 0.01888389242812991,
+        "maximum": 0.08013360807672143
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.011441709004451059,
+          "p95": 0.014537504455074667,
+          "maximum": 0.01485328795388341
+        },
+        "ACQUIRE": {
+          "mean": 0.02530128411720989,
+          "p95": 0.03742480017244816,
+          "maximum": 0.046287694945931435
+        },
+        "REFINE": {
+          "mean": 0.019534570422134738,
+          "p95": 0.019855120684951544,
+          "maximum": 0.08013360807672143
+        },
+        "LOAD": {
+          "mean": 0.00580065184738487,
+          "p95": 0.005904550408013165,
+          "maximum": 0.01920841494575143
+        },
+        "LIFT": {
+          "mean": 0.006605526789091528,
+          "p95": 0.007307719532400369,
+          "maximum": 0.007580223027616739
+        },
+        "CARRY": {
+          "mean": 0.00659154957102146,
+          "p95": 0.007412582566030323,
+          "maximum": 0.007722728885710239
+        },
+        "DESCEND": {
+          "mean": 0.007326886985103434,
+          "p95": 0.007527760555967688,
+          "maximum": 0.007850305177271366
+        },
+        "UNLOAD": {
+          "mean": 0.013018045910861361,
+          "p95": 0.014781529735773801,
+          "maximum": 0.049973346292972565
+        },
+        "RETREAT": {
+          "mean": 0.00838305865707781,
+          "p95": 0.008915251633152366,
+          "maximum": 0.04362894641235471
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": true,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0000878199935,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_tapered_box_045",
+      "modules": 7,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.143231306225061,
+      "execution_wall_s": 464.2184935170226,
+      "simulation_s": 96.09999999859153,
+      "control_time_s": {
+        "mean": 0.008719573774380932,
+        "p95": 0.013167202938348055,
+        "maximum": 0.05460576107725501
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.009974673535907641,
+          "p95": 0.010245554894208909,
+          "maximum": 0.031478211749345064
+        },
+        "ACQUIRE": {
+          "mean": 0.013176481035670142,
+          "p95": 0.035761129646562036,
+          "maximum": 0.05460576107725501
+        },
+        "REFINE": {
+          "mean": 0.021489359067240053,
+          "p95": 0.023700016574002836,
+          "maximum": 0.04694291390478611
+        },
+        "LOAD": {
+          "mean": 0.00680268784519285,
+          "p95": 0.0070722955511882905,
+          "maximum": 0.022511260118335485
+        },
+        "LIFT": {
+          "mean": 0.007545972623862326,
+          "p95": 0.008194643608294427,
+          "maximum": 0.008551584091037512
+        },
+        "CARRY": {
+          "mean": 0.00750092551112175,
+          "p95": 0.008293063403107226,
+          "maximum": 0.008808315731585026
+        },
+        "DESCEND": {
+          "mean": 0.008387381883083089,
+          "p95": 0.008601552573964,
+          "maximum": 0.008981165941804647
+        },
+        "UNLOAD": {
+          "mean": 0.012789171252307701,
+          "p95": 0.01379176559858024,
+          "maximum": 0.04580829385668039
+        },
+        "RETREAT": {
+          "mean": 0.007309296422653335,
+          "p95": 0.007712289411574601,
+          "maximum": 0.02720464114099741
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": true,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.00007831119,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_box_050",
+      "modules": 7,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 6.4384931600652635,
+      "execution_wall_s": 225.7719824812375,
+      "simulation_s": 93.23999999865916,
+      "control_time_s": {
+        "mean": 0.008572917727069385,
+        "p95": 0.016486357804387796,
+        "maximum": 0.060024220030754805
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.009862594602906454,
+          "p95": 0.011773484060540795,
+          "maximum": 0.030062966980040073
+        },
+        "ACQUIRE": {
+          "mean": 0.024616886422929845,
+          "p95": 0.03175326047930867,
+          "maximum": 0.060024220030754805
+        },
+        "REFINE": {
+          "mean": 0.01946640927256144,
+          "p95": 0.03946686629205942,
+          "maximum": 0.045100152026861906
+        },
+        "LOAD": {
+          "mean": 0.004213351119930545,
+          "p95": 0.004481124691665173,
+          "maximum": 0.014453268144279718
+        },
+        "LIFT": {
+          "mean": 0.005025039550848306,
+          "p95": 0.00574151782784611,
+          "maximum": 0.005910833831876516
+        },
+        "CARRY": {
+          "mean": 0.004857639400870539,
+          "p95": 0.005724982707761228,
+          "maximum": 0.009080052841454744
+        },
+        "DESCEND": {
+          "mean": 0.005619445315680321,
+          "p95": 0.005971632013097404,
+          "maximum": 0.006638805847615004
+        },
+        "UNLOAD": {
+          "mean": 0.010591279770596883,
+          "p95": 0.012234924058429898,
+          "maximum": 0.04126170231029391
+        },
+        "RETREAT": {
+          "mean": 0.007496062443856678,
+          "p95": 0.008994480222463607,
+          "maximum": 0.026486065238714218
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": true,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.000216870103,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_elongated_box_050",
+      "modules": 7,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 13.655327887274325,
+      "execution_wall_s": 162.9927637442015,
+      "simulation_s": 75.4599999990796,
+      "control_time_s": {
+        "mean": 0.007571304993926334,
+        "p95": 0.01318274098448454,
+        "maximum": 0.058419641107320786
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007784684136277064,
+          "p95": 0.008112672204151749,
+          "maximum": 0.0087947859428823
+        },
+        "ACQUIRE": {
+          "mean": 0.020862554545614184,
+          "p95": 0.032397823943756524,
+          "maximum": 0.058419641107320786
+        },
+        "REFINE": {
+          "mean": 0.01659613327226705,
+          "p95": 0.03921671193093061,
+          "maximum": 0.04011939512565732
+        },
+        "LOAD": {
+          "mean": 0.004051922145299614,
+          "p95": 0.0043859753990545865,
+          "maximum": 0.015831209253519773
+        },
+        "LIFT": {
+          "mean": 0.004829329171217978,
+          "p95": 0.005737788206897676,
+          "maximum": 0.006402027793228626
+        },
+        "CARRY": {
+          "mean": 0.004696721117361449,
+          "p95": 0.005502196401357651,
+          "maximum": 0.006649044808000326
+        },
+        "DESCEND": {
+          "mean": 0.005439017064736752,
+          "p95": 0.005702117644250393,
+          "maximum": 0.005942996125668287
+        },
+        "UNLOAD": {
+          "mean": 0.010672574933037986,
+          "p95": 0.012072610529139638,
+          "maximum": 0.04108465416356921
+        },
+        "RETREAT": {
+          "mean": 0.006603843957643389,
+          "p95": 0.007492952863685787,
+          "maximum": 0.041715319734066725
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0001351782121,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_cylinder_050",
+      "modules": null,
+      "success": false,
+      "reason": "structure selection did not complete",
+      "phase": null,
+      "planning_s": 14.360726329032332,
+      "execution_wall_s": null,
+      "simulation_s": null,
+      "control_time_s": null,
+      "phase_control_time_s": null,
+      "secondary_safety_violations": null,
+      "old_success": false,
+      "old_reason": "structure selection did not complete",
+      "old_execution_wall_s": null,
+      "same_connection_and_pad_structure": null
+    },
+    {
+      "case": "span_load_ellipsoid_050",
+      "modules": 6,
+      "success": false,
+      "reason": "geometric_collision",
+      "phase": "ACQUIRE",
+      "planning_s": 9.459938954096287,
+      "execution_wall_s": 45.405554111581296,
+      "simulation_s": 7.229624999994488,
+      "control_time_s": {
+        "mean": 0.011458675349375972,
+        "p95": 0.03169011641293764,
+        "maximum": 0.03532782103866339
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007898664495801155,
+          "p95": 0.008228942519053817,
+          "maximum": 0.012971285730600357
+        },
+        "ACQUIRE": {
+          "mean": 0.01591700669871266,
+          "p95": 0.0320046073757112,
+          "maximum": 0.03532782103866339
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": true,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]",
+      "old_execution_wall_s": 171.28213968267664,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_triangular_prism_050",
+      "modules": 7,
+      "success": false,
+      "reason": "geometric_collision",
+      "phase": "LIFT",
+      "planning_s": 11.986199554987252,
+      "execution_wall_s": 95.40376673778519,
+      "simulation_s": 16.6305000000339,
+      "control_time_s": {
+        "mean": 0.013941402137648905,
+        "p95": 0.03411963547114283,
+        "maximum": 0.04391260119155049
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.010221621728743668,
+          "p95": 0.014152642898261547,
+          "maximum": 0.01489435974508524
+        },
+        "ACQUIRE": {
+          "mean": 0.022222419827180432,
+          "p95": 0.034362591337412596,
+          "maximum": 0.040187564212828875
+        },
+        "REFINE": {
+          "mean": 0.018237528886151065,
+          "p95": 0.020255993166938425,
+          "maximum": 0.04391260119155049
+        },
+        "LOAD": {
+          "mean": 0.00586414440224568,
+          "p95": 0.006165245128795504,
+          "maximum": 0.018846225924789906
+        },
+        "LIFT": {
+          "mean": 0.007624583236467676,
+          "p95": 0.009784755343571278,
+          "maximum": 0.011610010638833046
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": true,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]",
+      "old_execution_wall_s": 591.3132669189945,
+      "same_connection_and_pad_structure": true
+    },
+    {
+      "case": "span_load_tapered_box_050",
+      "modules": 7,
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 11.31327202077955,
+      "execution_wall_s": 333.91117801796645,
+      "simulation_s": 71.15999999918128,
+      "control_time_s": {
+        "mean": 0.009229169787847692,
+        "p95": 0.026412953343242212,
+        "maximum": 0.07531698420643806
+      },
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.010378256994086543,
+          "p95": 0.015179940406233073,
+          "maximum": 0.015563379041850567
+        },
+        "ACQUIRE": {
+          "mean": 0.024479688415073465,
+          "p95": 0.03461220895405859,
+          "maximum": 0.06704310793429613
+        },
+        "REFINE": {
+          "mean": 0.02093110535212833,
+          "p95": 0.0432830992853269,
+          "maximum": 0.07531698420643806
+        },
+        "LOAD": {
+          "mean": 0.006857150279295941,
+          "p95": 0.007055593887344003,
+          "maximum": 0.01993093779310584
+        },
+        "LIFT": {
+          "mean": 0.0074018861623480914,
+          "p95": 0.008077318384312093,
+          "maximum": 0.00903393980115652
+        },
+        "CARRY": {
+          "mean": 0.007382295741117559,
+          "p95": 0.008128814352676272,
+          "maximum": 0.008389557711780071
+        },
+        "DESCEND": {
+          "mean": 0.008102681905240614,
+          "p95": 0.00830233229789883,
+          "maximum": 0.012582877185195684
+        },
+        "UNLOAD": {
+          "mean": 0.012956658597641554,
+          "p95": 0.01997428701724857,
+          "maximum": 0.049086698330938816
+        },
+        "RETREAT": {
+          "mean": 0.007111021273152144,
+          "p95": 0.007799833244644105,
+          "maximum": 0.026011016219854355
+        }
+      },
+      "secondary_safety_violations": {
+        "contact_force": true,
+        "contact_moment": true,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": true,
+        "material_slip": false
+      },
+      "old_success": false,
+      "old_reason": "execution_wall_time_limit",
+      "old_execution_wall_s": 600.0001014592126,
+      "same_connection_and_pad_structure": true
+    }
+  ]
+}

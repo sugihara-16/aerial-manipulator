@@ -1,0 +1,3515 @@
+{
+  "overall": {
+    "successes": 11,
+    "total": 30,
+    "fraction": 0.36666666666666664,
+    "reaches_threshold": false,
+    "failures": {
+      "execution_wall_time_limit": 14,
+      "governed motion exceeded finite-reference horizon": 1,
+      "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+      "structure selection did not complete": 1,
+      "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1,
+      "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+    }
+  },
+  "complete_results": 30,
+  "input_role": "span_load_extension",
+  "untouched_holdout": false,
+  "module_counts": {
+    "5": 10,
+    "4": 2,
+    "6": 10,
+    "7": 6,
+    "8": 1,
+    "null": 1
+  },
+  "success_module_counts": {
+    "5": 6,
+    "4": 1,
+    "6": 4
+  },
+  "planning_seconds": {
+    "min": 5.060501962900162,
+    "median": 9.004239462548867,
+    "p95": 13.939200185262598,
+    "max": 14.301263822708279
+  },
+  "execution_wall_over_simulation": {
+    "min": 4.707068824176164,
+    "median": 12.378793232344112,
+    "p95": 38.78989401614335,
+    "max": 43.13444312267741
+  },
+  "skeleton_types": 7,
+  "port_and_pad_types": 29,
+  "complete_selection_evidence": 29,
+  "all_results_same_runtime_sources": true,
+  "all_results_same_execution_settings": true,
+  "failure_concentration": {
+    "method": "one-sided Fisher exact; Holm across all predeclared group comparisons",
+    "alpha": 0.05,
+    "clear_concentration": false,
+    "equal_failure_rates_certified": false,
+    "mechanical_cause_review_required": true,
+    "comparisons": [
+      {
+        "axis": "family",
+        "group": "box",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.68,
+        "p_value": 0.9527598837943666,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "elongated_box",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.72,
+        "p_value": 0.9967580312407899,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "cylinder",
+        "total": 5,
+        "failures": 3,
+        "failure_fraction": 0.6,
+        "other_failure_fraction": 0.64,
+        "p_value": 0.7547682202854618,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "ellipsoid",
+        "total": 5,
+        "failures": 5,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.56,
+        "p_value": 0.08159656435518503,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "triangular_prism",
+        "total": 5,
+        "failures": 3,
+        "failure_fraction": 0.6,
+        "other_failure_fraction": 0.64,
+        "p_value": 0.7547682202854618,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "tapered_box",
+        "total": 5,
+        "failures": 5,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.56,
+        "p_value": 0.08159656435518503,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "0",
+        "total": 12,
+        "failures": 9,
+        "failure_fraction": 0.75,
+        "other_failure_fraction": 0.5555555555555556,
+        "p_value": 0.2451631327193546,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "1",
+        "total": 6,
+        "failures": 2,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.7083333333333334,
+        "p_value": 0.9844385499557914,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "2",
+        "total": 6,
+        "failures": 4,
+        "failure_fraction": 0.6666666666666666,
+        "other_failure_fraction": 0.625,
+        "p_value": 0.6201338890994064,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "3",
+        "total": 6,
+        "failures": 4,
+        "failure_fraction": 0.6666666666666666,
+        "other_failure_fraction": 0.625,
+        "p_value": 0.6201338890994064,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:0",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6071428571428571,
+        "p_value": 0.3931034482758621,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:0",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.6428571428571429,
+        "p_value": 0.8735632183908046,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:0",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.6428571428571429,
+        "p_value": 0.8735632183908046,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:0",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6071428571428571,
+        "p_value": 0.3931034482758621,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:0",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.6428571428571429,
+        "p_value": 0.8735632183908046,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:0",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6071428571428571,
+        "p_value": 0.3931034482758621,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:1",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:1",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:2",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:2",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:2",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:2",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.6551724137931034,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:3",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:3",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:3",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:3",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6206896551724138,
+        "p_value": 0.6333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "large_face",
+        "total": 10,
+        "failures": 5,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.7,
+        "p_value": 0.9287817629646715,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "standing",
+        "total": 3,
+        "failures": 1,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.6666666666666666,
+        "p_value": 0.9593596059113301,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "curved_stable",
+        "total": 5,
+        "failures": 5,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.56,
+        "p_value": 0.08159656435518503,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "small_or_sloped_face",
+        "total": 10,
+        "failures": 6,
+        "failure_fraction": 0.6,
+        "other_failure_fraction": 0.65,
+        "p_value": 0.7499788567254835,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "lying",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.6071428571428571,
+        "p_value": 0.3931034482758621,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:1",
+        "total": 7,
+        "failures": 5,
+        "failure_fraction": 0.7142857142857143,
+        "other_failure_fraction": 0.6086956521739131,
+        "p_value": 0.4854995579133509,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:0",
+        "total": 9,
+        "failures": 4,
+        "failure_fraction": 0.4444444444444444,
+        "other_failure_fraction": 0.7142857142857143,
+        "p_value": 0.9645423442125092,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:1",
+        "total": 9,
+        "failures": 7,
+        "failure_fraction": 0.7777777777777778,
+        "other_failure_fraction": 0.5714285714285714,
+        "p_value": 0.2582708645677161,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:0",
+        "total": 5,
+        "failures": 3,
+        "failure_fraction": 0.6,
+        "other_failure_fraction": 0.64,
+        "p_value": 0.7547682202854618,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "up_to_115cm",
+        "total": 18,
+        "failures": 11,
+        "failure_fraction": 0.6111111111111112,
+        "other_failure_fraction": 0.6666666666666666,
+        "p_value": 0.7548368672806454,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "over_115cm",
+        "total": 12,
+        "failures": 8,
+        "failure_fraction": 0.6666666666666666,
+        "other_failure_fraction": 0.6111111111111112,
+        "p_value": 0.5335332333833084,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "3kg",
+        "total": 6,
+        "failures": 3,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.6666666666666666,
+        "p_value": 0.889402551471517,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "3.5kg",
+        "total": 6,
+        "failures": 2,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.7083333333333334,
+        "p_value": 0.9844385499557914,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "4kg",
+        "total": 6,
+        "failures": 4,
+        "failure_fraction": 0.6666666666666666,
+        "other_failure_fraction": 0.625,
+        "p_value": 0.6201338890994064,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "4.5kg",
+        "total": 6,
+        "failures": 4,
+        "failure_fraction": 0.6666666666666666,
+        "other_failure_fraction": 0.625,
+        "p_value": 0.6201338890994064,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "5kg",
+        "total": 6,
+        "failures": 6,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5416666666666666,
+        "p_value": 0.04569407603890362,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      }
+    ]
+  },
+  "strata": {
+    "family": {
+      "box": {
+        "successes": 3,
+        "total": 5,
+        "fraction": 0.6,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 2
+        }
+      },
+      "elongated_box": {
+        "successes": 4,
+        "total": 5,
+        "fraction": 0.8,
+        "reaches_threshold": true,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "cylinder": {
+        "successes": 2,
+        "total": 5,
+        "fraction": 0.4,
+        "reaches_threshold": false,
+        "failures": {
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+          "execution_wall_time_limit": 1,
+          "structure selection did not complete": 1
+        }
+      },
+      "ellipsoid": {
+        "successes": 0,
+        "total": 5,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 3,
+          "governed motion exceeded finite-reference horizon": 1,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1
+        }
+      },
+      "triangular_prism": {
+        "successes": 2,
+        "total": 5,
+        "fraction": 0.4,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 2,
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "tapered_box": {
+        "successes": 0,
+        "total": 5,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 5
+        }
+      }
+    },
+    "yaw_bin": {
+      "0": {
+        "successes": 3,
+        "total": 12,
+        "fraction": 0.25,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 6,
+          "structure selection did not complete": 1,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1,
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "1": {
+        "successes": 4,
+        "total": 6,
+        "fraction": 0.6666666666666666,
+        "reaches_threshold": false,
+        "failures": {
+          "governed motion exceeded finite-reference horizon": 1,
+          "execution_wall_time_limit": 1
+        }
+      },
+      "2": {
+        "successes": 2,
+        "total": 6,
+        "fraction": 0.3333333333333333,
+        "reaches_threshold": false,
+        "failures": {
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+          "execution_wall_time_limit": 3
+        }
+      },
+      "3": {
+        "successes": 2,
+        "total": 6,
+        "fraction": 0.3333333333333333,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 4
+        }
+      }
+    },
+    "family_x_yaw_bin": {
+      "box:0": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 2
+        }
+      },
+      "elongated_box:0": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "cylinder:0": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5,
+        "reaches_threshold": false,
+        "failures": {
+          "structure selection did not complete": 1
+        }
+      },
+      "ellipsoid:0": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1
+        }
+      },
+      "triangular_prism:0": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5,
+        "reaches_threshold": false,
+        "failures": {
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "tapered_box:0": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 2
+        }
+      },
+      "box:1": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:1": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:1": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "ellipsoid:1": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "governed motion exceeded finite-reference horizon": 1
+        }
+      },
+      "triangular_prism:1": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "tapered_box:1": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "box:2": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:2": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:2": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1
+        }
+      },
+      "ellipsoid:2": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "triangular_prism:2": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "tapered_box:2": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "box:3": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "elongated_box:3": {
+        "successes": 1,
+        "total": 1,
+        "fraction": 1.0,
+        "reaches_threshold": true,
+        "failures": {}
+      },
+      "cylinder:3": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "ellipsoid:3": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "triangular_prism:3": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "tapered_box:3": {
+        "successes": 0,
+        "total": 1,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      }
+    },
+    "resting_orientation": {
+      "large_face": {
+        "successes": 5,
+        "total": 10,
+        "fraction": 0.5,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 5
+        }
+      },
+      "standing": {
+        "successes": 2,
+        "total": 3,
+        "fraction": 0.6666666666666666,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 1
+        }
+      },
+      "curved_stable": {
+        "successes": 0,
+        "total": 5,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 3,
+          "governed motion exceeded finite-reference horizon": 1,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1
+        }
+      },
+      "small_or_sloped_face": {
+        "successes": 4,
+        "total": 10,
+        "fraction": 0.4,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 5,
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "lying": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+          "structure selection did not complete": 1
+        }
+      }
+    },
+    "position_bin": {
+      "0:1": {
+        "successes": 2,
+        "total": 7,
+        "fraction": 0.2857142857142857,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 5
+        }
+      },
+      "1:0": {
+        "successes": 5,
+        "total": 9,
+        "fraction": 0.5555555555555556,
+        "reaches_threshold": false,
+        "failures": {
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+          "execution_wall_time_limit": 2,
+          "structure selection did not complete": 1
+        }
+      },
+      "1:1": {
+        "successes": 2,
+        "total": 9,
+        "fraction": 0.2222222222222222,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 5,
+          "governed motion exceeded finite-reference horizon": 1,
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      },
+      "0:0": {
+        "successes": 2,
+        "total": 5,
+        "fraction": 0.4,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 2,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1
+        }
+      }
+    },
+    "size_bin": {
+      "up_to_115cm": {
+        "successes": 7,
+        "total": 18,
+        "fraction": 0.3888888888888889,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 8,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+          "structure selection did not complete": 1,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1
+        }
+      },
+      "over_115cm": {
+        "successes": 4,
+        "total": 12,
+        "fraction": 0.3333333333333333,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 6,
+          "governed motion exceeded finite-reference horizon": 1,
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      }
+    },
+    "mass_bin": {
+      "3kg": {
+        "successes": 3,
+        "total": 6,
+        "fraction": 0.5,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 3
+        }
+      },
+      "3.5kg": {
+        "successes": 4,
+        "total": 6,
+        "fraction": 0.6666666666666666,
+        "reaches_threshold": false,
+        "failures": {
+          "governed motion exceeded finite-reference horizon": 1,
+          "execution_wall_time_limit": 1
+        }
+      },
+      "4kg": {
+        "successes": 2,
+        "total": 6,
+        "fraction": 0.3333333333333333,
+        "reaches_threshold": false,
+        "failures": {
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]": 1,
+          "execution_wall_time_limit": 3
+        }
+      },
+      "4.5kg": {
+        "successes": 2,
+        "total": 6,
+        "fraction": 0.3333333333333333,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 4
+        }
+      },
+      "5kg": {
+        "successes": 0,
+        "total": 6,
+        "fraction": 0.0,
+        "reaches_threshold": false,
+        "failures": {
+          "execution_wall_time_limit": 3,
+          "structure selection did not complete": 1,
+          "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]": 1,
+          "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]": 1
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "case": "span_load_box_030",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 5,
+      "planning_s": 7.4599136472679675,
+      "wall_s": 600.0001079682261,
+      "simulation_s": 48.46999999971782,
+      "evidence_complete": true,
+      "selected_burden": 477.64294714228225,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          3,
+          "pitch1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_elongated_box_030",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 5,
+      "planning_s": 8.202067820820957,
+      "wall_s": 395.5560832056217,
+      "simulation_s": 70.8249999991892,
+      "evidence_complete": true,
+      "selected_burden": 371.1927950468122,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005880463772099724,
+          "p95": 0.007161299232393503,
+          "maximum": 0.008272233884781599
+        },
+        "ACQUIRE": {
+          "mean": 0.026834748556604712,
+          "p95": 0.029769125021994105,
+          "maximum": 0.07169647188857198
+        },
+        "REFINE": {
+          "mean": 0.03406062883944088,
+          "p95": 0.037139500374905765,
+          "maximum": 0.06777891842648387
+        },
+        "LOAD": {
+          "mean": 0.012500513683771714,
+          "p95": 0.024586717667989432,
+          "maximum": 0.06661397684365511
+        },
+        "LIFT": {
+          "mean": 0.011626143090194092,
+          "p95": 0.022318522445857525,
+          "maximum": 0.02571255201473832
+        },
+        "CARRY": {
+          "mean": 0.012094680861919187,
+          "p95": 0.02629395024850964,
+          "maximum": 0.055639166850596666
+        },
+        "DESCEND": {
+          "mean": 0.012213931181055801,
+          "p95": 0.022839870583266017,
+          "maximum": 0.029918667394667864
+        },
+        "UNLOAD": {
+          "mean": 0.09281641462407375,
+          "p95": 0.21868098275735973,
+          "maximum": 1.7810636409558356
+        },
+        "RETREAT": {
+          "mean": 0.011348516559856931,
+          "p95": 0.014127430971711874,
+          "maximum": 0.03216043533757329
+        }
+      }
+    },
+    {
+      "case": "span_load_cylinder_030",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 5,
+      "planning_s": 9.631915758829564,
+      "wall_s": 468.458907824941,
+      "simulation_s": 75.56749999907706,
+      "evidence_complete": true,
+      "selected_burden": 384.58582053632074,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.006196365862318845,
+          "p95": 0.007604098692536354,
+          "maximum": 0.029563718009740114
+        },
+        "ACQUIRE": {
+          "mean": 0.029997353670865687,
+          "p95": 0.036063760379329325,
+          "maximum": 0.06589767290279269
+        },
+        "REFINE": {
+          "mean": 0.040228901374520676,
+          "p95": 0.043347604502923784,
+          "maximum": 0.07406467897817492
+        },
+        "LOAD": {
+          "mean": 0.018321967349620535,
+          "p95": 0.03811341014225036,
+          "maximum": 0.08527587307617068
+        },
+        "LIFT": {
+          "mean": 0.015916582700796426,
+          "p95": 0.030842637084424494,
+          "maximum": 0.03404992679134011
+        },
+        "CARRY": {
+          "mean": 0.016435898572526638,
+          "p95": 0.035116899735294284,
+          "maximum": 0.06493851076811552
+        },
+        "DESCEND": {
+          "mean": 0.016901380774165514,
+          "p95": 0.03111663635354489,
+          "maximum": 0.03508376982063055
+        },
+        "UNLOAD": {
+          "mean": 0.09977203628568838,
+          "p95": 0.3106914712116122,
+          "maximum": 1.6207708287984133
+        },
+        "RETREAT": {
+          "mean": 0.01224947395018803,
+          "p95": 0.015893378341570494,
+          "maximum": 0.028735986445099115
+        }
+      }
+    },
+    {
+      "case": "span_load_ellipsoid_030",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 4,
+      "planning_s": 9.567224306054413,
+      "wall_s": 600.000128515996,
+      "simulation_s": 19.802500000049047,
+      "evidence_complete": true,
+      "selected_burden": 339.17193617455644,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          1,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 2,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch2",
+          "b": 3,
+          "port_b": "yaw1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_triangular_prism_030",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 5,
+      "planning_s": 7.317651249002665,
+      "wall_s": 534.7413965542801,
+      "simulation_s": 76.79999999904791,
+      "evidence_complete": true,
+      "selected_burden": 422.73582150630546,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 4,
+          "port_b": "yaw1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.006981184839137963,
+          "p95": 0.00898725693114102,
+          "maximum": 0.031331149861216545
+        },
+        "ACQUIRE": {
+          "mean": 0.03182904051665827,
+          "p95": 0.034168252255767584,
+          "maximum": 0.09199217101559043
+        },
+        "REFINE": {
+          "mean": 0.038192186743381304,
+          "p95": 0.04422676865942776,
+          "maximum": 0.07470830297097564
+        },
+        "LOAD": {
+          "mean": 0.017011942712124438,
+          "p95": 0.03552488917484879,
+          "maximum": 0.07569060893729329
+        },
+        "LIFT": {
+          "mean": 0.01694261081586592,
+          "p95": 0.03439198445994407,
+          "maximum": 0.039868302177637815
+        },
+        "CARRY": {
+          "mean": 0.017706780741282274,
+          "p95": 0.03978160384576768,
+          "maximum": 0.0601544757373631
+        },
+        "DESCEND": {
+          "mean": 0.01843538392661479,
+          "p95": 0.03640551022253931,
+          "maximum": 0.04008990619331598
+        },
+        "UNLOAD": {
+          "mean": 0.0989576736563963,
+          "p95": 0.24601198721211398,
+          "maximum": 3.455551532097161
+        },
+        "RETREAT": {
+          "mean": 0.01744216445454467,
+          "p95": 0.03636554693803191,
+          "maximum": 0.04779717233031988
+        }
+      }
+    },
+    {
+      "case": "span_load_tapered_box_030",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 5,
+      "planning_s": 7.659463663119823,
+      "wall_s": 600.0000963080674,
+      "simulation_s": 26.50250000008104,
+      "evidence_complete": true,
+      "selected_burden": 456.80577782569685,
+      "surfaces": [
+        [
+          0,
+          "pitch1"
+        ],
+        [
+          1,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_box_035",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 5,
+      "planning_s": 7.950885720085353,
+      "wall_s": 389.815904668998,
+      "simulation_s": 82.81499999890568,
+      "evidence_complete": true,
+      "selected_burden": 436.8237114768809,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005860178799097579,
+          "p95": 0.007121059531345964,
+          "maximum": 0.007496818900108337
+        },
+        "ACQUIRE": {
+          "mean": 0.026870248839469472,
+          "p95": 0.02899813703261316,
+          "maximum": 0.0672541749663651
+        },
+        "REFINE": {
+          "mean": 0.03351362611112349,
+          "p95": 0.036560054519213736,
+          "maximum": 0.06701219780370593
+        },
+        "LOAD": {
+          "mean": 0.011866758538720509,
+          "p95": 0.025221643270924687,
+          "maximum": 0.06551636103540659
+        },
+        "LIFT": {
+          "mean": 0.011968226982746273,
+          "p95": 0.02326971364673227,
+          "maximum": 0.03866645693778992
+        },
+        "CARRY": {
+          "mean": 0.011923003078991315,
+          "p95": 0.023098478140309454,
+          "maximum": 0.028019525110721588
+        },
+        "DESCEND": {
+          "mean": 0.012949949981123645,
+          "p95": 0.024130964186042544,
+          "maximum": 0.05072908382862806
+        },
+        "UNLOAD": {
+          "mean": 0.08342056339091578,
+          "p95": 0.27814661886077374,
+          "maximum": 2.1056327908299863
+        },
+        "RETREAT": {
+          "mean": 0.011473429140027717,
+          "p95": 0.013778390269726515,
+          "maximum": 0.0314209870994091
+        }
+      }
+    },
+    {
+      "case": "span_load_elongated_box_035",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 5,
+      "planning_s": 6.785788086242974,
+      "wall_s": 320.51017294218764,
+      "simulation_s": 63.77999999935579,
+      "evidence_complete": true,
+      "selected_burden": 439.159313869087,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005268523700664712,
+          "p95": 0.005587020562961697,
+          "maximum": 0.006599403917789459
+        },
+        "ACQUIRE": {
+          "mean": 0.025299781515248025,
+          "p95": 0.027510241139680147,
+          "maximum": 0.06128928903490305
+        },
+        "REFINE": {
+          "mean": 0.030353734805711255,
+          "p95": 0.03222329677082598,
+          "maximum": 0.06784564489498734
+        },
+        "LOAD": {
+          "mean": 0.01013133825811868,
+          "p95": 0.021190509898588058,
+          "maximum": 0.06681090220808983
+        },
+        "LIFT": {
+          "mean": 0.0101548256627284,
+          "p95": 0.020356727368198334,
+          "maximum": 0.039970653131604195
+        },
+        "CARRY": {
+          "mean": 0.010103238107694779,
+          "p95": 0.021251984522677955,
+          "maximum": 0.024156914092600346
+        },
+        "DESCEND": {
+          "mean": 0.011195342785508473,
+          "p95": 0.021373743773438036,
+          "maximum": 0.02499670395627618
+        },
+        "UNLOAD": {
+          "mean": 0.07165519932673622,
+          "p95": 0.16256319358944873,
+          "maximum": 4.060267277061939
+        },
+        "RETREAT": {
+          "mean": 0.011020633825396151,
+          "p95": 0.013534294720739127,
+          "maximum": 0.030906105879694223
+        }
+      }
+    },
+    {
+      "case": "span_load_cylinder_035",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 4,
+      "planning_s": 13.710513258818537,
+      "wall_s": 536.3533673211932,
+      "simulation_s": 68.2074999992511,
+      "evidence_complete": true,
+      "selected_burden": 364.32081059526956,
+      "surfaces": [
+        [
+          0,
+          "pitch1"
+        ],
+        [
+          1,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0058616185153241495,
+          "p95": 0.00824725879356265,
+          "maximum": 0.008957955986261368
+        },
+        "ACQUIRE": {
+          "mean": 0.027819088787156904,
+          "p95": 0.03112723766826093,
+          "maximum": 0.05980972619727254
+        },
+        "REFINE": {
+          "mean": 0.03600018561558157,
+          "p95": 0.039701438322663304,
+          "maximum": 0.20439015701413155
+        },
+        "LOAD": {
+          "mean": 0.02163686228178752,
+          "p95": 0.042554172780364746,
+          "maximum": 0.08733270782977343
+        },
+        "LIFT": {
+          "mean": 0.021487821829970926,
+          "p95": 0.0430890875402838,
+          "maximum": 0.047734903171658516
+        },
+        "CARRY": {
+          "mean": 0.02120704729692079,
+          "p95": 0.04289707555435598,
+          "maximum": 0.04641689220443368
+        },
+        "DESCEND": {
+          "mean": 0.02222961325938572,
+          "p95": 0.04310919251292944,
+          "maximum": 0.046939522959291935
+        },
+        "UNLOAD": {
+          "mean": 0.1048322775487737,
+          "p95": 0.3171799262985587,
+          "maximum": 0.48688333900645375
+        },
+        "RETREAT": {
+          "mean": 0.014472182262093262,
+          "p95": 0.021051115728914733,
+          "maximum": 0.02935119904577732
+        }
+      }
+    },
+    {
+      "case": "span_load_ellipsoid_035",
+      "success": false,
+      "reason": "governed motion exceeded finite-reference horizon",
+      "modules": 5,
+      "planning_s": 8.803274967707694,
+      "wall_s": 439.08628046279773,
+      "simulation_s": 33.7500000000659,
+      "evidence_complete": true,
+      "selected_burden": 467.2631215906795,
+      "surfaces": [
+        [
+          0,
+          "pitch1"
+        ],
+        [
+          1,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 3,
+          "port_a": "pitch1",
+          "b": 4,
+          "port_b": "yaw2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0067793861525320765,
+          "p95": 0.010014194902032614,
+          "maximum": 0.032996990252286196
+        },
+        "ACQUIRE": {
+          "mean": 0.03160319649312576,
+          "p95": 0.034473188570700586,
+          "maximum": 0.06982592307031155
+        },
+        "REFINE": {
+          "mean": 0.04133092938652474,
+          "p95": 0.03929903511889279,
+          "maximum": 0.3037160369567573
+        },
+        "LOAD": {
+          "mean": 0.02271794304717332,
+          "p95": 0.04526419199537486,
+          "maximum": 0.08785681705921888
+        },
+        "LIFT": {
+          "mean": 0.024853094226215035,
+          "p95": 0.05103261764161288,
+          "maximum": 0.05579262599349022
+        },
+        "CARRY": {
+          "mean": 0.025277976769430097,
+          "p95": 0.05416633530985563,
+          "maximum": 0.06622374523431063
+        },
+        "DESCEND": {
+          "mean": 0.025543141050443124,
+          "p95": 0.05061818193644285,
+          "maximum": 0.08147133002057672
+        }
+      }
+    },
+    {
+      "case": "span_load_triangular_prism_035",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 5,
+      "planning_s": 7.9308415511623025,
+      "wall_s": 300.2541770529933,
+      "simulation_s": 63.08499999937222,
+      "evidence_complete": true,
+      "selected_burden": 441.9347448598565,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.005150147669482976,
+          "p95": 0.005249715270474553,
+          "maximum": 0.0062719653360545635
+        },
+        "ACQUIRE": {
+          "mean": 0.02635107820320928,
+          "p95": 0.028594121593050657,
+          "maximum": 0.06284093810245395
+        },
+        "REFINE": {
+          "mean": 0.030246783089672175,
+          "p95": 0.030856250505894422,
+          "maximum": 0.06400588294491172
+        },
+        "LOAD": {
+          "mean": 0.008975956562984114,
+          "p95": 0.015297687333077192,
+          "maximum": 0.05916689522564411
+        },
+        "LIFT": {
+          "mean": 0.009484832125948741,
+          "p95": 0.018366631073877215,
+          "maximum": 0.020450870972126722
+        },
+        "CARRY": {
+          "mean": 0.009543053965753643,
+          "p95": 0.01845626230351627,
+          "maximum": 0.042458300944417715
+        },
+        "DESCEND": {
+          "mean": 0.010257522606510612,
+          "p95": 0.018661109637469052,
+          "maximum": 0.023755642119795084
+        },
+        "UNLOAD": {
+          "mean": 0.07539691908302013,
+          "p95": 0.25557264080271125,
+          "maximum": 1.0141626289114356
+        },
+        "RETREAT": {
+          "mean": 0.00982294338649721,
+          "p95": 0.012823569122701883,
+          "maximum": 0.01949331210926175
+        }
+      }
+    },
+    {
+      "case": "span_load_tapered_box_035",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 6,
+      "planning_s": 7.882048522587866,
+      "wall_s": 600.0001362180337,
+      "simulation_s": 19.410000000047173,
+      "evidence_complete": true,
+      "selected_burden": 482.15106604988586,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 3,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "pitch2",
+          "b": 5,
+          "port_b": "yaw1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_box_040",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 6,
+      "planning_s": 13.881584980990738,
+      "wall_s": 439.6813941639848,
+      "simulation_s": 65.17249999932287,
+      "evidence_complete": true,
+      "selected_burden": 603.1031852312017,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch2",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 3,
+          "port_a": "pitch1",
+          "b": 4,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 4,
+          "port_a": "pitch1",
+          "b": 5,
+          "port_b": "yaw2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007015697200377761,
+          "p95": 0.009088024357333779,
+          "maximum": 0.009284122847020626
+        },
+        "ACQUIRE": {
+          "mean": 0.031517134619768565,
+          "p95": 0.03417675516102463,
+          "maximum": 0.07645630463957787
+        },
+        "REFINE": {
+          "mean": 0.039485100918611134,
+          "p95": 0.04060060167685151,
+          "maximum": 0.08156294794753194
+        },
+        "LOAD": {
+          "mean": 0.013526653360653047,
+          "p95": 0.024710436235181987,
+          "maximum": 0.07822644570842385
+        },
+        "LIFT": {
+          "mean": 0.014320103588979692,
+          "p95": 0.027927086665295066,
+          "maximum": 0.034754808992147446
+        },
+        "CARRY": {
+          "mean": 0.016141014008317144,
+          "p95": 0.03521450401749462,
+          "maximum": 0.07441001990810037
+        },
+        "DESCEND": {
+          "mean": 0.015680996347861045,
+          "p95": 0.02875245795585215,
+          "maximum": 0.03556591086089611
+        },
+        "UNLOAD": {
+          "mean": 0.10386621010628058,
+          "p95": 0.2929885872174053,
+          "maximum": 2.1581107298843563
+        },
+        "RETREAT": {
+          "mean": 0.014155177702384012,
+          "p95": 0.0192634368315339,
+          "maximum": 0.052352499682456255
+        }
+      }
+    },
+    {
+      "case": "span_load_elongated_box_040",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 6,
+      "planning_s": 5.060501962900162,
+      "wall_s": 457.4232601132244,
+      "simulation_s": 81.29249999894168,
+      "evidence_complete": true,
+      "selected_burden": 544.9261417397472,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007300976785657884,
+          "p95": 0.009076196583919227,
+          "maximum": 0.010532813146710396
+        },
+        "ACQUIRE": {
+          "mean": 0.031439463012256065,
+          "p95": 0.03493563004303723,
+          "maximum": 0.07438717223703861
+        },
+        "REFINE": {
+          "mean": 0.039691397950145195,
+          "p95": 0.039979325514286755,
+          "maximum": 0.08866060525178909
+        },
+        "LOAD": {
+          "mean": 0.01311327167126971,
+          "p95": 0.023597504035569726,
+          "maximum": 0.0734033272601664
+        },
+        "LIFT": {
+          "mean": 0.014622232490684837,
+          "p95": 0.030224060523323715,
+          "maximum": 0.046996667981147766
+        },
+        "CARRY": {
+          "mean": 0.015404781792603899,
+          "p95": 0.032724515348672864,
+          "maximum": 0.07230266695842147
+        },
+        "DESCEND": {
+          "mean": 0.016128130692901685,
+          "p95": 0.029753302922472358,
+          "maximum": 0.04646788910031319
+        },
+        "UNLOAD": {
+          "mean": 0.09658389826462943,
+          "p95": 0.29932780489325517,
+          "maximum": 3.245874424930662
+        },
+        "RETREAT": {
+          "mean": 0.013596118888906113,
+          "p95": 0.020257008448243137,
+          "maximum": 0.04497943678870797
+        }
+      }
+    },
+    {
+      "case": "span_load_cylinder_040",
+      "success": false,
+      "reason": "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 7.530214543635534, 'violation': 0.6319388509021333}]",
+      "modules": 7,
+      "planning_s": 11.335022219922394,
+      "wall_s": 131.5298120751977,
+      "simulation_s": 10.780000000005966,
+      "evidence_complete": true,
+      "selected_burden": 587.7362975252526,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw1"
+        ],
+        [
+          6,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch2",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 3,
+          "port_a": "pitch1",
+          "b": 4,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 4,
+          "port_a": "pitch1",
+          "b": 5,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 5,
+          "port_a": "pitch1",
+          "b": 6,
+          "port_b": "yaw2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.009100899413451841,
+          "p95": 0.011656133807264268,
+          "maximum": 0.017705873120576143
+        },
+        "ACQUIRE": {
+          "mean": 0.04855440178552287,
+          "p95": 0.04374609384685755,
+          "maximum": 4.123604374006391
+        }
+      }
+    },
+    {
+      "case": "span_load_ellipsoid_040",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 6,
+      "planning_s": 9.13404567912221,
+      "wall_s": 600.0002094679512,
+      "simulation_s": 31.825000000106453,
+      "evidence_complete": true,
+      "selected_burden": 485.8886232691596,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch2",
+          "b": 2,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch2"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_triangular_prism_040",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 5,
+      "planning_s": 11.98940115282312,
+      "wall_s": 600.0002333419397,
+      "simulation_s": 71.31249999917767,
+      "evidence_complete": true,
+      "selected_burden": 607.437527694021,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_tapered_box_040",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 6,
+      "planning_s": 6.282788490876555,
+      "wall_s": 600.0002155038528,
+      "simulation_s": 31.002500000102525,
+      "evidence_complete": true,
+      "selected_burden": 504.1732421876292,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw2",
+          "b": 5,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_box_045",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 6,
+      "planning_s": 6.884474935941398,
+      "wall_s": 414.2159040919505,
+      "simulation_s": 72.567499999148,
+      "evidence_complete": true,
+      "selected_burden": 544.5853804872057,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007566560606092381,
+          "p95": 0.009118708875030279,
+          "maximum": 0.03141815820708871
+        },
+        "ACQUIRE": {
+          "mean": 0.030880512138020285,
+          "p95": 0.033007764839567244,
+          "maximum": 0.07315853424370289
+        },
+        "REFINE": {
+          "mean": 0.03938613179158054,
+          "p95": 0.041592819965444505,
+          "maximum": 0.08199740387499332
+        },
+        "LOAD": {
+          "mean": 0.012951504031661898,
+          "p95": 0.024061357835307714,
+          "maximum": 0.07817779993638396
+        },
+        "LIFT": {
+          "mean": 0.014050533558009193,
+          "p95": 0.027409580163657667,
+          "maximum": 0.06320272572338581
+        },
+        "CARRY": {
+          "mean": 0.013790507952944609,
+          "p95": 0.027722954563796514,
+          "maximum": 0.03148062573745847
+        },
+        "DESCEND": {
+          "mean": 0.014251001544509772,
+          "p95": 0.02645561252720654,
+          "maximum": 0.02988164173439145
+        },
+        "UNLOAD": {
+          "mean": 0.08687252453979646,
+          "p95": 0.22492611098568885,
+          "maximum": 1.320721962954849
+        },
+        "RETREAT": {
+          "mean": 0.013596884358419385,
+          "p95": 0.019315318856388326,
+          "maximum": 0.03765677800402045
+        }
+      }
+    },
+    {
+      "case": "span_load_elongated_box_045",
+      "success": true,
+      "reason": "task_completed",
+      "modules": 6,
+      "planning_s": 5.445842660963535,
+      "wall_s": 432.7000285652466,
+      "simulation_s": 68.56749999924259,
+      "evidence_complete": true,
+      "selected_burden": 579.3508260855008,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.0073608784973252525,
+          "p95": 0.00913507454097271,
+          "maximum": 0.0314889713190496
+        },
+        "ACQUIRE": {
+          "mean": 0.03309393427295698,
+          "p95": 0.03647268419153988,
+          "maximum": 0.10797971487045288
+        },
+        "REFINE": {
+          "mean": 0.04371260118148861,
+          "p95": 0.046185898943804204,
+          "maximum": 0.07739320583641529
+        },
+        "LOAD": {
+          "mean": 0.015346734282793477,
+          "p95": 0.030872480082325637,
+          "maximum": 0.08217498008161783
+        },
+        "LIFT": {
+          "mean": 0.014062264919048176,
+          "p95": 0.027120106876827775,
+          "maximum": 0.04979549115523696
+        },
+        "CARRY": {
+          "mean": 0.014116037279600278,
+          "p95": 0.02721935713198036,
+          "maximum": 0.06379356188699603
+        },
+        "DESCEND": {
+          "mean": 0.015002884001099255,
+          "p95": 0.027352815400809048,
+          "maximum": 0.0585516132414341
+        },
+        "UNLOAD": {
+          "mean": 0.10091649611567216,
+          "p95": 0.36214862708002316,
+          "maximum": 2.0497148730792105
+        },
+        "RETREAT": {
+          "mean": 0.012749362062153855,
+          "p95": 0.015976488892920297,
+          "maximum": 0.027618924155831337
+        }
+      }
+    },
+    {
+      "case": "span_load_cylinder_045",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 6,
+      "planning_s": 12.376033825799823,
+      "wall_s": 600.0001038373448,
+      "simulation_s": 13.910000000020911,
+      "evidence_complete": true,
+      "selected_burden": 655.6154383408314,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "pitch1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "pitch1",
+          "b": 5,
+          "port_b": "yaw2"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_ellipsoid_045",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 6,
+      "planning_s": 8.874433245975524,
+      "wall_s": 600.0001781508327,
+      "simulation_s": 17.002500000035678,
+      "evidence_complete": true,
+      "selected_burden": 568.1160245422275,
+      "surfaces": [
+        [
+          0,
+          "pitch2"
+        ],
+        [
+          1,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch2",
+          "b": 2,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch2",
+          "b": 4,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 4,
+          "port_a": "pitch2",
+          "b": 5,
+          "port_b": "yaw1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_triangular_prism_045",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 8,
+      "planning_s": 13.986339897848666,
+      "wall_s": 600.0000878199935,
+      "simulation_s": 19.365000000046958,
+      "evidence_complete": true,
+      "selected_burden": 744.2934423982399,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw2"
+        ],
+        [
+          6,
+          "yaw1"
+        ],
+        [
+          7,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 3,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 5,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw2",
+          "b": 6,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 6,
+          "port_a": "yaw2",
+          "b": 7,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_tapered_box_045",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 7,
+      "planning_s": 9.324736871756613,
+      "wall_s": 600.00007831119,
+      "simulation_s": 15.502500000028515,
+      "evidence_complete": true,
+      "selected_burden": 556.8332849144983,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ],
+        [
+          6,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 5,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 5,
+          "port_a": "pitch2",
+          "b": 6,
+          "port_b": "yaw1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_box_050",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 7,
+      "planning_s": 6.346991140861064,
+      "wall_s": 600.000216870103,
+      "simulation_s": 35.40500000002677,
+      "evidence_complete": true,
+      "selected_burden": 574.6642906401117,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw1"
+        ],
+        [
+          6,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw2",
+          "b": 5,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 6,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_elongated_box_050",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 7,
+      "planning_s": 13.318420137278736,
+      "wall_s": 600.0001351782121,
+      "simulation_s": 62.62749999938304,
+      "evidence_complete": true,
+      "selected_burden": 659.9533335578245,
+      "surfaces": [
+        [
+          0,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ],
+        [
+          6,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch2",
+          "b": 2,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 3,
+          "port_a": "pitch2",
+          "b": 4,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 4,
+          "port_a": "pitch2",
+          "b": 5,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 5,
+          "port_a": "pitch2",
+          "b": 6,
+          "port_b": "yaw1"
+        }
+      ],
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_cylinder_050",
+      "success": false,
+      "reason": "structure selection did not complete",
+      "modules": null,
+      "planning_s": 14.301263822708279,
+      "wall_s": null,
+      "simulation_s": null,
+      "evidence_complete": false,
+      "selected_burden": null,
+      "surfaces": null,
+      "edges": null,
+      "phase_control_time_s": null
+    },
+    {
+      "case": "span_load_ellipsoid_050",
+      "success": false,
+      "reason": "complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 5.371123500014042, 'violation': 2.8404300362235478e-05}]; source recovery unavailable: complete contact inverse found no feasible held input: [{'solver': 'PrimalInfeasible', 'cost': 8.823536336273347e-28, 'violation': 2.7944445496243718e-05}]",
+      "modules": 6,
+      "planning_s": 9.58730824990198,
+      "wall_s": 171.28213968267664,
+      "simulation_s": 10.807500000006097,
+      "evidence_complete": true,
+      "selected_burden": 607.5948903363304,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          1,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw2",
+          "b": 5,
+          "port_b": "pitch1"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.007758554767363181,
+          "p95": 0.008074576361104846,
+          "maximum": 0.012775878887623549
+        },
+        "ACQUIRE": {
+          "mean": 0.0402783853278895,
+          "p95": 0.04595626727677882,
+          "maximum": 0.08563931519165635
+        },
+        "REFINE": {
+          "mean": 0.053305397795573355,
+          "p95": 0.051689885859377685,
+          "maximum": 0.28069090470671654
+        },
+        "LOAD": {
+          "mean": 0.2369331930608799,
+          "p95": 1.457947799330577,
+          "maximum": 8.160831741988659
+        }
+      }
+    },
+    {
+      "case": "span_load_triangular_prism_050",
+      "success": false,
+      "reason": "contact friction branches unresolved: [{'modes': ((0,), (4,), (4,), (0,), (), (), (6, 7), (1, 2), (1, 2), (0, 1), (1, 2), (6, 7), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((0,), (), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (4,), (), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (4,), (), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (0,), (), (), (), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (6, 7), (), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (1, 2), (), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (1, 2), (), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (0, 1), (), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (1, 2), (), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (6, 7), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (), (), (), (), (), (), (), (), (), (), (), (1, 2)), 'reason': 'contact solve PrimalInfeasible'}]",
+      "modules": 7,
+      "planning_s": 10.585362093988806,
+      "wall_s": 591.3132669189945,
+      "simulation_s": 15.675000000029339,
+      "evidence_complete": true,
+      "selected_burden": 682.2271687849411,
+      "surfaces": [
+        [
+          0,
+          "pitch2"
+        ],
+        [
+          2,
+          "yaw2"
+        ],
+        [
+          3,
+          "yaw2"
+        ],
+        [
+          4,
+          "yaw2"
+        ],
+        [
+          5,
+          "yaw2"
+        ],
+        [
+          6,
+          "yaw2"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw1",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 5,
+          "port_a": "yaw1",
+          "b": 6,
+          "port_b": "pitch2"
+        }
+      ],
+      "phase_control_time_s": {
+        "APPROACH": {
+          "mean": 0.010361255004958452,
+          "p95": 0.014497334510087967,
+          "maximum": 0.014842110220342875
+        },
+        "ACQUIRE": {
+          "mean": 0.04520481427345264,
+          "p95": 0.05142577365040779,
+          "maximum": 0.09524662932381034
+        },
+        "REFINE": {
+          "mean": 0.056901356827102866,
+          "p95": 0.058459426974877715,
+          "maximum": 0.10076753282919526
+        },
+        "LOAD": {
+          "mean": 0.1984964147338178,
+          "p95": 1.716090326569974,
+          "maximum": 6.597366220783442
+        },
+        "LIFT": {
+          "mean": 0.7676512253605833,
+          "p95": 2.767434306535865,
+          "maximum": 14.30884812399745
+        },
+        "RECOVER": {
+          "mean": 4.408442879406114,
+          "p95": 6.277754535060375,
+          "maximum": 6.537339211907238
+        }
+      }
+    },
+    {
+      "case": "span_load_tapered_box_050",
+      "success": false,
+      "reason": "execution_wall_time_limit",
+      "modules": 7,
+      "planning_s": 11.835619705729187,
+      "wall_s": 600.0001014592126,
+      "simulation_s": 15.44500000002824,
+      "evidence_complete": true,
+      "selected_burden": 746.8731496134221,
+      "surfaces": [
+        [
+          0,
+          "yaw1"
+        ],
+        [
+          2,
+          "yaw1"
+        ],
+        [
+          3,
+          "yaw1"
+        ],
+        [
+          4,
+          "yaw1"
+        ],
+        [
+          5,
+          "yaw1"
+        ],
+        [
+          6,
+          "yaw1"
+        ]
+      ],
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 2,
+          "port_a": "pitch1",
+          "b": 5,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 5,
+          "port_a": "pitch1",
+          "b": 6,
+          "port_b": "yaw2"
+        }
+      ],
+      "phase_control_time_s": null
+    }
+  ]
+}

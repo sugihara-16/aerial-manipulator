@@ -1,0 +1,2769 @@
+{
+  "scope": "same fixed 30 inputs and seeds; fresh generation and independent full task execution; original120 not rerun",
+  "overall": {
+    "successes": 25,
+    "total": 30,
+    "fraction": 0.8333333333333334,
+    "reaches_threshold": true,
+    "failures": {
+      "supported recovery requires source support contact": 2,
+      "contact friction branches unresolved: [{'modes': ((5, 6), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((5, 6), ()), 'reason': 'contact solve PrimalInfeasible'}, {'modes': ((), (5, 6)), 'reason': 'contact solve PrimalInfeasible'}]": 1,
+      "governed motion exceeded finite-reference horizon": 1,
+      "initial_planning_deadline": 1
+    }
+  },
+  "same_sources": true,
+  "same_settings": true,
+  "rows": [
+    {
+      "case": "large_box_065cm",
+      "family": "box",
+      "size_cm": 65,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.244200507178903,
+      "simulation_s": 64.9849999993273,
+      "wall_s": 188.23600409878418,
+      "position_error_m": 4.993350605420501e-06,
+      "orientation_error_rad": 1.2165479455673758e-06,
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "family": "elongated_box",
+      "size_cm": 65,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 11.768929915968329,
+      "simulation_s": 53.067499999609105,
+      "wall_s": 168.17296602670103,
+      "position_error_m": 5.164395021478953e-05,
+      "orientation_error_rad": 0.0011623386382203628,
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "family": "cylinder",
+      "size_cm": 65,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.811342225875705,
+      "simulation_s": 67.13249999927652,
+      "wall_s": 310.5091407070868,
+      "position_error_m": 5.362969028484685e-05,
+      "orientation_error_rad": 6.119309404755702e-05,
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "family": "ellipsoid",
+      "size_cm": 65,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.54641936486587,
+      "simulation_s": 58.077499999490634,
+      "wall_s": 196.18356664665043,
+      "position_error_m": 0.00029540847740870864,
+      "orientation_error_rad": 0.005511619845698248,
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "family": "triangular_prism",
+      "size_cm": 65,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.825909943785518,
+      "simulation_s": 64.2874999993438,
+      "wall_s": 344.2948683286086,
+      "position_error_m": 3.4063819099382467e-05,
+      "orientation_error_rad": 7.466444048017535e-05,
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "family": "tapered_box",
+      "size_cm": 65,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.171466768719256,
+      "simulation_s": 57.654999999500625,
+      "wall_s": 350.7541342470795,
+      "position_error_m": 3.1704983250174856e-05,
+      "orientation_error_rad": 3.701378392600032e-06,
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_box_075cm",
+      "family": "box",
+      "size_cm": 75,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.589381680358201,
+      "simulation_s": 59.87749999944807,
+      "wall_s": 154.74918665923178,
+      "position_error_m": 3.5139117412109223e-06,
+      "orientation_error_rad": 2.1663183130945005e-05,
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "family": "elongated_box",
+      "size_cm": 75,
+      "success": false,
+      "baseline_success": false,
+      "reason": "supported recovery requires source support contact",
+      "phase": "LOAD",
+      "planning_s": 10.964180850889534,
+      "simulation_s": 17.472500000037922,
+      "wall_s": 73.30850861920044,
+      "position_error_m": 0.2505892410251606,
+      "orientation_error_rad": 1.3317953028018442e-05,
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "family": "cylinder",
+      "size_cm": 75,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 5.893816486001015,
+      "simulation_s": 51.684999999641796,
+      "wall_s": 186.6337122838013,
+      "position_error_m": 0.009012727657085863,
+      "orientation_error_rad": 0.0474851732364925,
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "family": "ellipsoid",
+      "size_cm": 75,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 11.218056926038116,
+      "simulation_s": 61.78499999940296,
+      "wall_s": 204.3545956290327,
+      "position_error_m": 0.00011637393387553438,
+      "orientation_error_rad": 0.0005145826710586998,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "family": "triangular_prism",
+      "size_cm": 75,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 13.6207937579602,
+      "simulation_s": 70.72999999919145,
+      "wall_s": 362.27826581476256,
+      "position_error_m": 2.233609549956732e-05,
+      "orientation_error_rad": 8.840953534279159e-06,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "family": "tapered_box",
+      "size_cm": 75,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 7.27798363706097,
+      "simulation_s": 58.95249999946994,
+      "wall_s": 194.09498307993636,
+      "position_error_m": 9.691233099221376e-07,
+      "orientation_error_rad": 3.055199145630353e-07,
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_box_085cm",
+      "family": "box",
+      "size_cm": 85,
+      "success": false,
+      "baseline_success": false,
+      "reason": "supported recovery requires source support contact",
+      "phase": "LOAD",
+      "planning_s": 9.175903405994177,
+      "simulation_s": 13.575000000019312,
+      "wall_s": 52.28584478190169,
+      "position_error_m": 0.3704584844604462,
+      "orientation_error_rad": 7.380245057283979e-06,
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "family": "elongated_box",
+      "size_cm": 85,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.52397667337209,
+      "simulation_s": 60.319999999437606,
+      "wall_s": 314.68596667796373,
+      "position_error_m": 7.55308972361841e-06,
+      "orientation_error_rad": 1.4587074734827784e-05,
+      "modules": 5,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "family": "cylinder",
+      "size_cm": 85,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.99250296363607,
+      "simulation_s": 83.64749999888599,
+      "wall_s": 520.2592379129492,
+      "position_error_m": 0.00458880493686706,
+      "orientation_error_rad": 0.01610216861713684,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "family": "ellipsoid",
+      "size_cm": 85,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.338946723379195,
+      "simulation_s": 71.35499999917667,
+      "wall_s": 244.1415489348583,
+      "position_error_m": 4.922099701165798e-05,
+      "orientation_error_rad": 0.00030176971636154253,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "family": "triangular_prism",
+      "size_cm": 85,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.734201302751899,
+      "simulation_s": 67.55749999926647,
+      "wall_s": 281.9166679359041,
+      "position_error_m": 0.00018497544027528377,
+      "orientation_error_rad": 0.0005327512933987474,
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_tapered_box_085cm",
+      "family": "tapered_box",
+      "size_cm": 85,
+      "success": false,
+      "baseline_success": false,
+      "reason": "contact friction branches unresolved",
+      "phase": "ACQUIRE",
+      "planning_s": 9.501724949106574,
+      "simulation_s": 11.08250000000741,
+      "wall_s": 33.99083122285083,
+      "position_error_m": 0.44000822620068336,
+      "orientation_error_rad": 0.0031693544720601944,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_box_100cm",
+      "family": "box",
+      "size_cm": 100,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.510670468676835,
+      "simulation_s": 62.83249999937819,
+      "wall_s": 169.99917528918013,
+      "position_error_m": 1.7543709229408322e-06,
+      "orientation_error_rad": 1.1055882784886844e-05,
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "family": "elongated_box",
+      "size_cm": 100,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.728665163740516,
+      "simulation_s": 66.44249999929283,
+      "wall_s": 238.4535172060132,
+      "position_error_m": 0.0015154615564729036,
+      "orientation_error_rad": 0.008913374140603295,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "family": "cylinder",
+      "size_cm": 100,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.936398318968713,
+      "simulation_s": 73.19249999913322,
+      "wall_s": 349.7058522272855,
+      "position_error_m": 1.072435372464826e-06,
+      "orientation_error_rad": 0.00016144948941331522,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "family": "ellipsoid",
+      "size_cm": 100,
+      "success": false,
+      "baseline_success": true,
+      "reason": "governed motion exceeded finite-reference horizon",
+      "phase": "DESCEND",
+      "planning_s": 9.61825349368155,
+      "simulation_s": 34.432500000049764,
+      "wall_s": 232.65879119420424,
+      "position_error_m": 0.00020578895447512607,
+      "orientation_error_rad": 0.0014765382336364703,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "family": "triangular_prism",
+      "size_cm": 100,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.817349890246987,
+      "simulation_s": 71.11749999918229,
+      "wall_s": 393.68962199706584,
+      "position_error_m": 1.787114024458478e-05,
+      "orientation_error_rad": 3.499996171047316e-06,
+      "modules": 5,
+      "contacts": 4
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "family": "tapered_box",
+      "size_cm": 100,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.612926434725523,
+      "simulation_s": 64.40249999934107,
+      "wall_s": 266.76965478714556,
+      "position_error_m": 3.055517184609058e-06,
+      "orientation_error_rad": 1.775445442344822e-05,
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_box_120cm",
+      "family": "box",
+      "size_cm": 120,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.66796079883352,
+      "simulation_s": 82.84499999890497,
+      "wall_s": 278.03416078630835,
+      "position_error_m": 8.102185148013515e-05,
+      "orientation_error_rad": 1.3353791262183304e-05,
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "family": "elongated_box",
+      "size_cm": 120,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.945944335777313,
+      "simulation_s": 88.78999999876439,
+      "wall_s": 462.13415247621015,
+      "position_error_m": 7.433373303195495e-05,
+      "orientation_error_rad": 1.8441331972618362e-05,
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "family": "cylinder",
+      "size_cm": 120,
+      "success": true,
+      "baseline_success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.024498785845935,
+      "simulation_s": 88.12499999878011,
+      "wall_s": 505.26731003727764,
+      "position_error_m": 0.00028750690207375893,
+      "orientation_error_rad": 9.883172832201124e-05,
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_ellipsoid_120cm",
+      "family": "ellipsoid",
+      "size_cm": 120,
+      "success": false,
+      "baseline_success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 20.20659391907975,
+      "simulation_s": null,
+      "wall_s": null,
+      "position_error_m": null,
+      "orientation_error_rad": null,
+      "modules": 5,
+      "contacts": 5
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "family": "triangular_prism",
+      "size_cm": 120,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.427668587304652,
+      "simulation_s": 76.78249999904833,
+      "wall_s": 466.1286628199741,
+      "position_error_m": 3.8810050625286635e-06,
+      "orientation_error_rad": 2.4093334881967114e-06,
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "family": "tapered_box",
+      "size_cm": 120,
+      "success": true,
+      "baseline_success": false,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.702484909910709,
+      "simulation_s": 68.12499999925305,
+      "wall_s": 515.807436933741,
+      "position_error_m": 0.0001435730984825323,
+      "orientation_error_rad": 0.00018779731086019532,
+      "modules": 5,
+      "contacts": 4
+    }
+  ],
+  "by_stratum": [
+    {
+      "field": "family",
+      "value": "box",
+      "successes": 4,
+      "total": 5
+    },
+    {
+      "field": "yaw_bin",
+      "value": "0",
+      "successes": 11,
+      "total": 12
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "box:0",
+      "successes": 2,
+      "total": 2
+    },
+    {
+      "field": "resting_orientation",
+      "value": "small_or_sloped_face",
+      "successes": 12,
+      "total": 15
+    },
+    {
+      "field": "position_bin",
+      "value": "0:1",
+      "successes": 7,
+      "total": 8
+    },
+    {
+      "field": "size_bin",
+      "value": "065cm",
+      "successes": 6,
+      "total": 6
+    },
+    {
+      "field": "mass_bin",
+      "value": "light",
+      "successes": 11,
+      "total": 13
+    },
+    {
+      "field": "family",
+      "value": "elongated_box",
+      "successes": 4,
+      "total": 5
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "elongated_box:0",
+      "successes": 2,
+      "total": 2
+    },
+    {
+      "field": "position_bin",
+      "value": "1:1",
+      "successes": 8,
+      "total": 8
+    },
+    {
+      "field": "mass_bin",
+      "value": "heavy",
+      "successes": 14,
+      "total": 17
+    },
+    {
+      "field": "family",
+      "value": "cylinder",
+      "successes": 5,
+      "total": 5
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "cylinder:0",
+      "successes": 2,
+      "total": 2
+    },
+    {
+      "field": "resting_orientation",
+      "value": "standing",
+      "successes": 3,
+      "total": 3
+    },
+    {
+      "field": "family",
+      "value": "ellipsoid",
+      "successes": 3,
+      "total": 5
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "ellipsoid:0",
+      "successes": 1,
+      "total": 2
+    },
+    {
+      "field": "resting_orientation",
+      "value": "curved_stable",
+      "successes": 3,
+      "total": 5
+    },
+    {
+      "field": "family",
+      "value": "triangular_prism",
+      "successes": 5,
+      "total": 5
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "triangular_prism:0",
+      "successes": 2,
+      "total": 2
+    },
+    {
+      "field": "family",
+      "value": "tapered_box",
+      "successes": 4,
+      "total": 5
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "tapered_box:0",
+      "successes": 2,
+      "total": 2
+    },
+    {
+      "field": "yaw_bin",
+      "value": "1",
+      "successes": 5,
+      "total": 6
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "box:1",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "position_bin",
+      "value": "1:0",
+      "successes": 5,
+      "total": 6
+    },
+    {
+      "field": "size_bin",
+      "value": "075cm",
+      "successes": 5,
+      "total": 6
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "elongated_box:1",
+      "successes": 0,
+      "total": 1
+    },
+    {
+      "field": "position_bin",
+      "value": "0:0",
+      "successes": 5,
+      "total": 8
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "cylinder:1",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "resting_orientation",
+      "value": "lying",
+      "successes": 2,
+      "total": 2
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "ellipsoid:1",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "triangular_prism:1",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "tapered_box:1",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "yaw_bin",
+      "value": "2",
+      "successes": 4,
+      "total": 6
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "box:2",
+      "successes": 0,
+      "total": 1
+    },
+    {
+      "field": "size_bin",
+      "value": "085cm",
+      "successes": 4,
+      "total": 6
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "elongated_box:2",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "resting_orientation",
+      "value": "large_face",
+      "successes": 5,
+      "total": 5
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "cylinder:2",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "ellipsoid:2",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "triangular_prism:2",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "tapered_box:2",
+      "successes": 0,
+      "total": 1
+    },
+    {
+      "field": "yaw_bin",
+      "value": "3",
+      "successes": 5,
+      "total": 6
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "box:3",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "size_bin",
+      "value": "100cm",
+      "successes": 5,
+      "total": 6
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "elongated_box:3",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "cylinder:3",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "ellipsoid:3",
+      "successes": 0,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "triangular_prism:3",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "family_x_yaw_bin",
+      "value": "tapered_box:3",
+      "successes": 1,
+      "total": 1
+    },
+    {
+      "field": "size_bin",
+      "value": "120cm",
+      "successes": 5,
+      "total": 6
+    }
+  ],
+  "selected_modules": {
+    "4": 17,
+    "3": 9,
+    "5": 4
+  },
+  "executed_modules": {
+    "4": 17,
+    "3": 9,
+    "5": 3
+  },
+  "successful_modules": {
+    "4": 15,
+    "3": 7,
+    "5": 3
+  },
+  "skeletons": 3,
+  "port_contact_structures": 27,
+  "planning_s": {
+    "minimum": 5.893816486001015,
+    "median": 10.174943308578804,
+    "p95": 13.3171115179779,
+    "maximum": 20.20659391907975,
+    "over15": 1
+  },
+  "improvements": [
+    "large_ellipsoid_065cm",
+    "large_tapered_box_065cm",
+    "large_triangular_prism_075cm",
+    "large_cylinder_085cm",
+    "large_elongated_box_100cm",
+    "large_cylinder_100cm",
+    "large_triangular_prism_100cm",
+    "large_elongated_box_120cm",
+    "large_triangular_prism_120cm",
+    "large_tapered_box_120cm"
+  ],
+  "regressions": [
+    "large_ellipsoid_100cm"
+  ],
+  "failure_concentration_screen": {
+    "scope": "exploratory one-sided Fisher exact comparisons, groups n>=3, Holm correction; lack of detection is not evidence of equal success probabilities",
+    "comparisons": [
+      {
+        "field": "position_bin",
+        "value": "0:0",
+        "successes": 5,
+        "total": 8,
+        "raw_one_sided_p": 0.10197465369879165,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "family",
+        "value": "ellipsoid",
+        "successes": 3,
+        "total": 5,
+        "raw_one_sided_p": 0.18333263160849367,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "resting_orientation",
+        "value": "curved_stable",
+        "successes": 3,
+        "total": 5,
+        "raw_one_sided_p": 0.18333263160849367,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "yaw_bin",
+        "value": "2",
+        "successes": 4,
+        "total": 6,
+        "raw_one_sided_p": 0.2543471853816682,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "size_bin",
+        "value": "085cm",
+        "successes": 4,
+        "total": 6,
+        "raw_one_sided_p": 0.2543471853816682,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "resting_orientation",
+        "value": "small_or_sloped_face",
+        "successes": 12,
+        "total": 15,
+        "raw_one_sided_p": 0.49999999999999994,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "family",
+        "value": "box",
+        "successes": 4,
+        "total": 5,
+        "raw_one_sided_p": 0.6271735926908341,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "family",
+        "value": "elongated_box",
+        "successes": 4,
+        "total": 5,
+        "raw_one_sided_p": 0.6271735926908341,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "family",
+        "value": "tapered_box",
+        "successes": 4,
+        "total": 5,
+        "raw_one_sided_p": 0.6271735926908341,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "mass_bin",
+        "value": "heavy",
+        "successes": 14,
+        "total": 17,
+        "raw_one_sided_p": 0.6327312534209086,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "yaw_bin",
+        "value": "1",
+        "successes": 5,
+        "total": 6,
+        "raw_one_sided_p": 0.7017388741526673,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "position_bin",
+        "value": "1:0",
+        "successes": 5,
+        "total": 6,
+        "raw_one_sided_p": 0.7017388741526673,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "size_bin",
+        "value": "075cm",
+        "successes": 5,
+        "total": 6,
+        "raw_one_sided_p": 0.7017388741526673,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "yaw_bin",
+        "value": "3",
+        "successes": 5,
+        "total": 6,
+        "raw_one_sided_p": 0.7017388741526673,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "size_bin",
+        "value": "100cm",
+        "successes": 5,
+        "total": 6,
+        "raw_one_sided_p": 0.7017388741526673,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "size_bin",
+        "value": "120cm",
+        "successes": 5,
+        "total": 6,
+        "raw_one_sided_p": 0.7017388741526673,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "mass_bin",
+        "value": "light",
+        "successes": 11,
+        "total": 13,
+        "raw_one_sided_p": 0.7394636015325671,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "position_bin",
+        "value": "0:1",
+        "successes": 7,
+        "total": 8,
+        "raw_one_sided_p": 0.8152077807250221,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "yaw_bin",
+        "value": "0",
+        "successes": 11,
+        "total": 12,
+        "raw_one_sided_p": 0.9398762157382847,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "size_bin",
+        "value": "065cm",
+        "successes": 6,
+        "total": 6,
+        "raw_one_sided_p": 1.0,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "position_bin",
+        "value": "1:1",
+        "successes": 8,
+        "total": 8,
+        "raw_one_sided_p": 1.0,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "family",
+        "value": "cylinder",
+        "successes": 5,
+        "total": 5,
+        "raw_one_sided_p": 1.0,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "resting_orientation",
+        "value": "standing",
+        "successes": 3,
+        "total": 3,
+        "raw_one_sided_p": 1.0,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "family",
+        "value": "triangular_prism",
+        "successes": 5,
+        "total": 5,
+        "raw_one_sided_p": 1.0,
+        "holm_adjusted_p": 1.0
+      },
+      {
+        "field": "resting_orientation",
+        "value": "large_face",
+        "successes": 5,
+        "total": 5,
+        "raw_one_sided_p": 1.0,
+        "holm_adjusted_p": 1.0
+      }
+    ]
+  },
+  "control_timings": [
+    {
+      "case": "large_box_065cm",
+      "phase": "APPROACH",
+      "mean": 0.007316113581424052,
+      "p95": 0.010836191801354289,
+      "maximum": 0.0257785408757627
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005047062182228044,
+      "p95": 0.0057023474946617785,
+      "maximum": 0.030828661751002073
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "REFINE",
+      "mean": 0.0060269799542817405,
+      "p95": 0.007375109940767288,
+      "maximum": 0.02366728289052844
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "LOAD",
+      "mean": 0.016193026991095393,
+      "p95": 0.10872140086721616,
+      "maximum": 0.1991700422950089
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "LIFT",
+      "mean": 0.007507675147149712,
+      "p95": 0.013982802582904696,
+      "maximum": 0.07661752589046955
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "CARRY",
+      "mean": 0.0071760240531875755,
+      "p95": 0.014100996451452375,
+      "maximum": 0.02742617018520832
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "DESCEND",
+      "mean": 0.0069264801486166195,
+      "p95": 0.009462934313341975,
+      "maximum": 0.01931807678192854
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "UNLOAD",
+      "mean": 0.023980717075688916,
+      "p95": 0.05036415222566572,
+      "maximum": 0.11571231205016375
+    },
+    {
+      "case": "large_box_065cm",
+      "phase": "RETREAT",
+      "mean": 0.004041816344424766,
+      "p95": 0.007951037399470805,
+      "maximum": 0.01950051123276353
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "APPROACH",
+      "mean": 0.005433529143963499,
+      "p95": 0.008057569060474635,
+      "maximum": 0.008477960247546434
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "ACQUIRE",
+      "mean": 0.006107193750610454,
+      "p95": 0.011468390352092683,
+      "maximum": 0.02932738419622183
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "REFINE",
+      "mean": 0.006825381455520471,
+      "p95": 0.007202035840600728,
+      "maximum": 0.02145183179527521
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "LOAD",
+      "mean": 0.01363896494382061,
+      "p95": 0.08592506218701598,
+      "maximum": 0.12063885619863868
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "LIFT",
+      "mean": 0.007766833374509588,
+      "p95": 0.014868172397837044,
+      "maximum": 0.0959625649265945
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "CARRY",
+      "mean": 0.007490659533359576,
+      "p95": 0.015405728830955921,
+      "maximum": 0.09112546918913722
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "DESCEND",
+      "mean": 0.008737296643858769,
+      "p95": 0.015808557393029332,
+      "maximum": 0.1660389988683164
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "UNLOAD",
+      "mean": 0.027500449292268817,
+      "p95": 0.052830729261040675,
+      "maximum": 0.09731088485568762
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "phase": "RETREAT",
+      "mean": 0.0035043938314860187,
+      "p95": 0.003609593631699681,
+      "maximum": 0.04307229304686189
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "APPROACH",
+      "mean": 0.0051654802963391625,
+      "p95": 0.006951213208958501,
+      "maximum": 0.01065269485116005
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "ACQUIRE",
+      "mean": 0.0062234982055057765,
+      "p95": 0.006640735501423478,
+      "maximum": 0.02403172990307212
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "REFINE",
+      "mean": 0.0074722992457157255,
+      "p95": 0.007668597251176834,
+      "maximum": 0.10386793036013842
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "LOAD",
+      "mean": 0.03240039170370437,
+      "p95": 0.18477259655483066,
+      "maximum": 0.2466247226111591
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "LIFT",
+      "mean": 0.013111466009402648,
+      "p95": 0.032071146718226376,
+      "maximum": 0.17349823517724872
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "CARRY",
+      "mean": 0.014210538302431814,
+      "p95": 0.032638646312989295,
+      "maximum": 0.2104613301344216
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "DESCEND",
+      "mean": 0.013366580580213987,
+      "p95": 0.03221869224216789,
+      "maximum": 0.1729145459830761
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "UNLOAD",
+      "mean": 0.026734970498956363,
+      "p95": 0.05763637097552418,
+      "maximum": 0.08117172634229064
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "phase": "RETREAT",
+      "mean": 0.003325030438156592,
+      "p95": 0.003667737077921629,
+      "maximum": 0.009994509629905224
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "APPROACH",
+      "mean": 0.0045299802072952654,
+      "p95": 0.00604777664411813,
+      "maximum": 0.0066221049055457115
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "ACQUIRE",
+      "mean": 0.006067417090924676,
+      "p95": 0.01125994827598334,
+      "maximum": 0.05192757397890091
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "REFINE",
+      "mean": 0.005542842955165135,
+      "p95": 0.007130383118055765,
+      "maximum": 0.031433620024472475
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "LOAD",
+      "mean": 0.014148136599299808,
+      "p95": 0.06040348161477577,
+      "maximum": 0.1523253507912159
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "LIFT",
+      "mean": 0.008922234508208931,
+      "p95": 0.0197659554425627,
+      "maximum": 0.02198605891317129
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "CARRY",
+      "mean": 0.009193860499945004,
+      "p95": 0.02068286775611341,
+      "maximum": 0.1058380170725286
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "DESCEND",
+      "mean": 0.009795051116771026,
+      "p95": 0.020945749897509813,
+      "maximum": 0.021926573012024164
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "UNLOAD",
+      "mean": 0.026235121549756893,
+      "p95": 0.05283784572966396,
+      "maximum": 0.16504060104489326
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "phase": "RETREAT",
+      "mean": 0.003160380278664745,
+      "p95": 0.0033501243451610208,
+      "maximum": 0.009193272329866886
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "APPROACH",
+      "mean": 0.005500707358564481,
+      "p95": 0.00714569678530097,
+      "maximum": 0.007372536696493626
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "ACQUIRE",
+      "mean": 0.0062226793440779875,
+      "p95": 0.00644871974363923,
+      "maximum": 0.02177003165706992
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "REFINE",
+      "mean": 0.007545355667927019,
+      "p95": 0.00838935754727572,
+      "maximum": 0.02226244378834963
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "LOAD",
+      "mean": 0.029426142126709843,
+      "p95": 0.20817644384223966,
+      "maximum": 0.29472326021641493
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "LIFT",
+      "mean": 0.01665283935633488,
+      "p95": 0.04852552753873169,
+      "maximum": 0.18760469229891896
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "CARRY",
+      "mean": 0.014904534383385909,
+      "p95": 0.036793441651388994,
+      "maximum": 0.1955002131871879
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "DESCEND",
+      "mean": 0.0148092591632992,
+      "p95": 0.03625013316050172,
+      "maximum": 0.0748873078264296
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "UNLOAD",
+      "mean": 0.0270615104618374,
+      "p95": 0.06848020828329023,
+      "maximum": 0.11366384103894234
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "phase": "RETREAT",
+      "mean": 0.0038431596855822126,
+      "p95": 0.00775532207917422,
+      "maximum": 0.01907550822943449
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "APPROACH",
+      "mean": 0.005881239999207141,
+      "p95": 0.00826814251486212,
+      "maximum": 0.008732637856155634
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "ACQUIRE",
+      "mean": 0.007009629133384553,
+      "p95": 0.008090776763856417,
+      "maximum": 0.044031742960214615
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "REFINE",
+      "mean": 0.014475876167326006,
+      "p95": 0.029424841608852146,
+      "maximum": 0.04609041474759579
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "LOAD",
+      "mean": 0.030927639536846144,
+      "p95": 0.21991173131391403,
+      "maximum": 0.48803211096674204
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "RECOVER",
+      "mean": 0.012398411640718292,
+      "p95": 0.012289224588312208,
+      "maximum": 0.04452893603593111
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "LIFT",
+      "mean": 0.014418842673068866,
+      "p95": 0.03401317449752241,
+      "maximum": 0.17898137168958783
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "CARRY",
+      "mean": 0.015955517033144132,
+      "p95": 0.03560257004573941,
+      "maximum": 0.20112739177420735
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "DESCEND",
+      "mean": 0.015486456300343641,
+      "p95": 0.035574092622846366,
+      "maximum": 0.08433341514319181
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "UNLOAD",
+      "mean": 0.025633724116950585,
+      "p95": 0.07594809001311656,
+      "maximum": 0.14678811095654964
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "phase": "RETREAT",
+      "mean": 0.004188399867581257,
+      "p95": 0.004400628246366977,
+      "maximum": 0.012319358065724373
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "APPROACH",
+      "mean": 0.004187061309358453,
+      "p95": 0.005026828404515982,
+      "maximum": 0.010410670191049576
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "ACQUIRE",
+      "mean": 0.004505634259998926,
+      "p95": 0.004714551288634538,
+      "maximum": 0.029517895076423883
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "REFINE",
+      "mean": 0.006469084477216443,
+      "p95": 0.0070628083543852,
+      "maximum": 0.02615238493308425
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "LOAD",
+      "mean": 0.017682408125838264,
+      "p95": 0.0961638552136719,
+      "maximum": 0.13042570091784
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "LIFT",
+      "mean": 0.00697190959029831,
+      "p95": 0.012631609896197915,
+      "maximum": 0.059266977943480015
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "CARRY",
+      "mean": 0.006797072411718546,
+      "p95": 0.012625424144789576,
+      "maximum": 0.021645912900567055
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "DESCEND",
+      "mean": 0.007546763811359314,
+      "p95": 0.012909072497859598,
+      "maximum": 0.11686394084244967
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "UNLOAD",
+      "mean": 0.020598610628623105,
+      "p95": 0.042912473878823215,
+      "maximum": 0.08269893890246749
+    },
+    {
+      "case": "large_box_075cm",
+      "phase": "RETREAT",
+      "mean": 0.0029031216759183164,
+      "p95": 0.0031036727130413053,
+      "maximum": 0.00912024499848485
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "phase": "APPROACH",
+      "mean": 0.006373440494308196,
+      "p95": 0.011356665822677314,
+      "maximum": 0.02399408584460616
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005362052348235884,
+      "p95": 0.006324106897227465,
+      "maximum": 0.024302632082253695
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "phase": "REFINE",
+      "mean": 0.008121505762184305,
+      "p95": 0.009161664173007011,
+      "maximum": 0.025868557393550873
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "phase": "LOAD",
+      "mean": 0.017237891213699764,
+      "p95": 0.10208440548740327,
+      "maximum": 0.21247804397717118
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "phase": "RECOVER",
+      "mean": 0.009020973028520406,
+      "p95": 0.01644818764179942,
+      "maximum": 0.032472056336700916
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "APPROACH",
+      "mean": 0.004752074219984389,
+      "p95": 0.005759343737736344,
+      "maximum": 0.006289168260991573
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005208585104510692,
+      "p95": 0.005650859139859675,
+      "maximum": 0.023349716793745756
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "REFINE",
+      "mean": 0.005677065092149651,
+      "p95": 0.006505677965469659,
+      "maximum": 0.051301775965839624
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "LOAD",
+      "mean": 0.016631605830043555,
+      "p95": 0.09713874442968518,
+      "maximum": 0.1262403531000018
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "LIFT",
+      "mean": 0.009174545319285243,
+      "p95": 0.02040942176245153,
+      "maximum": 0.08907888317480683
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "CARRY",
+      "mean": 0.008093180814030347,
+      "p95": 0.016778334323316813,
+      "maximum": 0.09319404698908329
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "DESCEND",
+      "mean": 0.010451692090172209,
+      "p95": 0.023165030078962437,
+      "maximum": 0.0861125378869474
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "UNLOAD",
+      "mean": 0.02596414174619082,
+      "p95": 0.05070709912106395,
+      "maximum": 0.09980791481211782
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "phase": "RETREAT",
+      "mean": 0.003130157971375069,
+      "p95": 0.0032981964759528637,
+      "maximum": 0.042588010895997286
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "APPROACH",
+      "mean": 0.0051871813516449795,
+      "p95": 0.00672601917758584,
+      "maximum": 0.007554111070930958
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "ACQUIRE",
+      "mean": 0.006583978579444594,
+      "p95": 0.006971672875806689,
+      "maximum": 0.024791516829282045
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "REFINE",
+      "mean": 0.006746084802876135,
+      "p95": 0.00748788206838071,
+      "maximum": 0.022819574922323227
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "LOAD",
+      "mean": 0.015418065193419655,
+      "p95": 0.112653604359366,
+      "maximum": 0.16311547765508294
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "LIFT",
+      "mean": 0.010242373688146471,
+      "p95": 0.019356842851266265,
+      "maximum": 0.12787487963214517
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "CARRY",
+      "mean": 0.009295202220382635,
+      "p95": 0.019276711484417317,
+      "maximum": 0.036423667799681425
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "DESCEND",
+      "mean": 0.009554504510437298,
+      "p95": 0.01898156201932579,
+      "maximum": 0.035403477028012276
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "UNLOAD",
+      "mean": 0.02914894183001241,
+      "p95": 0.04825858362019056,
+      "maximum": 0.23547531897202134
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "phase": "RETREAT",
+      "mean": 0.003715100637306567,
+      "p95": 0.003975964733399451,
+      "maximum": 0.013160028960555792
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "APPROACH",
+      "mean": 0.005975873379134818,
+      "p95": 0.007515355665236712,
+      "maximum": 0.007831376045942307
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "ACQUIRE",
+      "mean": 0.006538493122736162,
+      "p95": 0.006876369076780974,
+      "maximum": 0.026290010660886765
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "REFINE",
+      "mean": 0.011488730237304942,
+      "p95": 0.021656187484040856,
+      "maximum": 0.0640639946796
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "LOAD",
+      "mean": 0.035860322063478334,
+      "p95": 0.22656061521265655,
+      "maximum": 0.34456019615754485
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "LIFT",
+      "mean": 0.0176072926253546,
+      "p95": 0.04820627749431875,
+      "maximum": 0.25362027110531926
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "CARRY",
+      "mean": 0.014958318149874686,
+      "p95": 0.03565497689414769,
+      "maximum": 0.16901740012690425
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "DESCEND",
+      "mean": 0.016115819817512006,
+      "p95": 0.03523540128953754,
+      "maximum": 0.1424102489836514
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "UNLOAD",
+      "mean": 0.031270107911666595,
+      "p95": 0.0576123584061861,
+      "maximum": 0.11421538516879082
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "phase": "RETREAT",
+      "mean": 0.003991715472808929,
+      "p95": 0.004251406434923411,
+      "maximum": 0.04408044693991542
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "APPROACH",
+      "mean": 0.004469876324555386,
+      "p95": 0.0054877734743058685,
+      "maximum": 0.00844735698774457
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005036379885151678,
+      "p95": 0.005270873382687569,
+      "maximum": 0.02685875305905938
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "REFINE",
+      "mean": 0.006659693339426285,
+      "p95": 0.00728940675035119,
+      "maximum": 0.017046396620571613
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "LOAD",
+      "mean": 0.011984990313261126,
+      "p95": 0.04754218368325381,
+      "maximum": 0.190564326941967
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "LIFT",
+      "mean": 0.0076750154362525795,
+      "p95": 0.013747392129153014,
+      "maximum": 0.014619387220591307
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "CARRY",
+      "mean": 0.008251342642033706,
+      "p95": 0.014047072315588592,
+      "maximum": 0.21476378804072738
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "DESCEND",
+      "mean": 0.00812404807086806,
+      "p95": 0.013718926906585693,
+      "maximum": 0.04339176695793867
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "UNLOAD",
+      "mean": 0.02460721418398615,
+      "p95": 0.0439283155137673,
+      "maximum": 0.06776291225105524
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "phase": "RETREAT",
+      "mean": 0.0029881111685565467,
+      "p95": 0.003164558205753565,
+      "maximum": 0.009363136254251003
+    },
+    {
+      "case": "large_box_085cm",
+      "phase": "APPROACH",
+      "mean": 0.0043976385367918095,
+      "p95": 0.0058135554194450375,
+      "maximum": 0.005959529895335436
+    },
+    {
+      "case": "large_box_085cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005172960845132669,
+      "p95": 0.0052924201823770995,
+      "maximum": 0.02814944414421916
+    },
+    {
+      "case": "large_box_085cm",
+      "phase": "REFINE",
+      "mean": 0.007950313032809568,
+      "p95": 0.0084793615154922,
+      "maximum": 0.02637294912710786
+    },
+    {
+      "case": "large_box_085cm",
+      "phase": "LOAD",
+      "mean": 0.0210580345142218,
+      "p95": 0.1064245660090819,
+      "maximum": 0.24040037719532847
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "APPROACH",
+      "mean": 0.0061083573804383,
+      "p95": 0.007360347779467702,
+      "maximum": 0.0075782230123877525
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "ACQUIRE",
+      "mean": 0.00632101171283742,
+      "p95": 0.008104527322575448,
+      "maximum": 0.02874169172719121
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "REFINE",
+      "mean": 0.01586992111580283,
+      "p95": 0.035284263733774426,
+      "maximum": 0.07629205891862512
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "LOAD",
+      "mean": 0.05053529061493464,
+      "p95": 0.2778921107528731,
+      "maximum": 0.7809539111331105
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "LIFT",
+      "mean": 0.0136283015452791,
+      "p95": 0.02945007891394198,
+      "maximum": 0.19840516010299325
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "CARRY",
+      "mean": 0.013937784152221865,
+      "p95": 0.029753136401996016,
+      "maximum": 0.24618527805432677
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "DESCEND",
+      "mean": 0.014119029934094711,
+      "p95": 0.028183198417536914,
+      "maximum": 0.43127848394215107
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "UNLOAD",
+      "mean": 0.042151711956673374,
+      "p95": 0.09904009117744861,
+      "maximum": 0.38710920279845595
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "phase": "RETREAT",
+      "mean": 0.004516366853432288,
+      "p95": 0.004630453279241919,
+      "maximum": 0.014678031206130981
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "APPROACH",
+      "mean": 0.005437355853052291,
+      "p95": 0.006888869451358914,
+      "maximum": 0.007295654155313969
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005944306551083405,
+      "p95": 0.006304655130952596,
+      "maximum": 0.036403852980583906
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "REFINE",
+      "mean": 0.007846234997859743,
+      "p95": 0.008250098442658784,
+      "maximum": 0.0485039041377604
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "LOAD",
+      "mean": 0.027956145289354025,
+      "p95": 0.1883976705605164,
+      "maximum": 0.24363035801798105
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "LIFT",
+      "mean": 0.013635695779230446,
+      "p95": 0.031086121825501314,
+      "maximum": 0.19655678188428283
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "CARRY",
+      "mean": 0.011585991349129472,
+      "p95": 0.027744942251592873,
+      "maximum": 0.050417578779160976
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "DESCEND",
+      "mean": 0.012436184274724149,
+      "p95": 0.026850051991641522,
+      "maximum": 0.2738575111143291
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "UNLOAD",
+      "mean": 0.043832317333138325,
+      "p95": 0.11117923660203813,
+      "maximum": 0.3035282650962472
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "phase": "RETREAT",
+      "mean": 0.0038382075529229133,
+      "p95": 0.004106413410045207,
+      "maximum": 0.012366232927888632
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "APPROACH",
+      "mean": 0.0052528363487911,
+      "p95": 0.0057381879538297605,
+      "maximum": 0.010359369218349457
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005888962647346398,
+      "p95": 0.006253676163032651,
+      "maximum": 0.021248186007142067
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "REFINE",
+      "mean": 0.005800070394550196,
+      "p95": 0.00594029347412288,
+      "maximum": 0.023705270141363144
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "LOAD",
+      "mean": 0.015578171677188947,
+      "p95": 0.041056704218499364,
+      "maximum": 0.1811674041673541
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "LIFT",
+      "mean": 0.010490002181846649,
+      "p95": 0.02369563209358603,
+      "maximum": 0.122279928997159
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "CARRY",
+      "mean": 0.010357844067330006,
+      "p95": 0.023765825922600924,
+      "maximum": 0.03806626610457897
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "DESCEND",
+      "mean": 0.013450866254902445,
+      "p95": 0.03828080603852868,
+      "maximum": 0.16622791113331914
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "UNLOAD",
+      "mean": 0.027011927448098414,
+      "p95": 0.04175869091413915,
+      "maximum": 0.34740987280383706
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "phase": "RETREAT",
+      "mean": 0.0037913832003612803,
+      "p95": 0.004106647334992886,
+      "maximum": 0.012485592160373926
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "APPROACH",
+      "mean": 0.004594845282845199,
+      "p95": 0.0047038190066814424,
+      "maximum": 0.005449634976685047
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "ACQUIRE",
+      "mean": 0.0057051658902825516,
+      "p95": 0.01043229983188212,
+      "maximum": 0.03228347189724445
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "REFINE",
+      "mean": 0.013102154289448604,
+      "p95": 0.017062727012671506,
+      "maximum": 0.03824125183746219
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "LOAD",
+      "mean": 0.02382672903089163,
+      "p95": 0.1556499398313462,
+      "maximum": 0.233745947945863
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "LIFT",
+      "mean": 0.01311585087236017,
+      "p95": 0.023735897545702756,
+      "maximum": 0.10610511293634772
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "CARRY",
+      "mean": 0.013895081026130357,
+      "p95": 0.035930178361013525,
+      "maximum": 0.48119083512574434
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "DESCEND",
+      "mean": 0.010045759183704787,
+      "p95": 0.02412099903449416,
+      "maximum": 0.14792087022215128
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "UNLOAD",
+      "mean": 0.05618957070907499,
+      "p95": 0.1574364493135363,
+      "maximum": 4.234936628956348
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "phase": "RETREAT",
+      "mean": 0.003560996984236894,
+      "p95": 0.003789655980654061,
+      "maximum": 0.011648352723568678
+    },
+    {
+      "case": "large_tapered_box_085cm",
+      "phase": "APPROACH",
+      "mean": 0.005703612034316776,
+      "p95": 0.006954908207990229,
+      "maximum": 0.00879921205341816
+    },
+    {
+      "case": "large_tapered_box_085cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005844549214204382,
+      "p95": 0.0060031644999980925,
+      "maximum": 0.19192600389942527
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "APPROACH",
+      "mean": 0.0041436247288174355,
+      "p95": 0.005168191296979783,
+      "maximum": 0.0053605930879712105
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "ACQUIRE",
+      "mean": 0.004575711656329368,
+      "p95": 0.004853256046772003,
+      "maximum": 0.02776304306462407
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "REFINE",
+      "mean": 0.006477158802205368,
+      "p95": 0.007927444879896937,
+      "maximum": 0.03620782820507884
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "LOAD",
+      "mean": 0.015437383343620846,
+      "p95": 0.07959889895282685,
+      "maximum": 0.11386918602511287
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "LIFT",
+      "mean": 0.006988450748845935,
+      "p95": 0.012648722087033094,
+      "maximum": 0.05957862827926874
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "CARRY",
+      "mean": 0.009032565648667515,
+      "p95": 0.024752385984174903,
+      "maximum": 0.09656799025833607
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "DESCEND",
+      "mean": 0.010023988646130558,
+      "p95": 0.027318776794709263,
+      "maximum": 0.15148719120770693
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "UNLOAD",
+      "mean": 0.020043519919992467,
+      "p95": 0.04215679867193103,
+      "maximum": 0.0757215810008347
+    },
+    {
+      "case": "large_box_100cm",
+      "phase": "RETREAT",
+      "mean": 0.00339835810576387,
+      "p95": 0.005493382504209876,
+      "maximum": 0.015683434903621674
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "APPROACH",
+      "mean": 0.005596079358184247,
+      "p95": 0.006636423803865909,
+      "maximum": 0.04551603179425001
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005976496256324395,
+      "p95": 0.0064289380563423044,
+      "maximum": 0.02177099697291851
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "REFINE",
+      "mean": 0.007940133418297876,
+      "p95": 0.008718927763402462,
+      "maximum": 0.02598217176273465
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "LOAD",
+      "mean": 0.03132098988203021,
+      "p95": 0.16154930025804787,
+      "maximum": 0.6190152633935213
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "LIFT",
+      "mean": 0.009274354198481887,
+      "p95": 0.01922222478315234,
+      "maximum": 0.1515044318512082
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "CARRY",
+      "mean": 0.009618258857808542,
+      "p95": 0.021305633103474973,
+      "maximum": 0.03096720203757286
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "DESCEND",
+      "mean": 0.010233439778608461,
+      "p95": 0.020838742214255034,
+      "maximum": 0.029291810002177954
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "UNLOAD",
+      "mean": 0.034518844337879176,
+      "p95": 0.08619809176307171,
+      "maximum": 0.287826060783118
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "phase": "RETREAT",
+      "mean": 0.0037425287523279514,
+      "p95": 0.003904419089667499,
+      "maximum": 0.01171673508360982
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "APPROACH",
+      "mean": 0.005103256875531549,
+      "p95": 0.005399901326745749,
+      "maximum": 0.007278364151716232
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "ACQUIRE",
+      "mean": 0.007442096248269081,
+      "p95": 0.0135808463441208,
+      "maximum": 0.030170018784701824
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "REFINE",
+      "mean": 0.00993452471683537,
+      "p95": 0.010354554862715304,
+      "maximum": 0.04295593872666359
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "LOAD",
+      "mean": 0.04300359385708968,
+      "p95": 0.2530680860392749,
+      "maximum": 0.3086458621546626
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "LIFT",
+      "mean": 0.012743181028403341,
+      "p95": 0.029640934290364386,
+      "maximum": 0.1545048919506371
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "CARRY",
+      "mean": 0.016253503837942843,
+      "p95": 0.04385956786572933,
+      "maximum": 0.26002223789691925
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "DESCEND",
+      "mean": 0.01639266495529393,
+      "p95": 0.031339381751604375,
+      "maximum": 0.36213519098237157
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "UNLOAD",
+      "mean": 0.031233823751420555,
+      "p95": 0.06716166150290519,
+      "maximum": 0.6116018150933087
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "phase": "RETREAT",
+      "mean": 0.0038991318401577937,
+      "p95": 0.0041262408485636115,
+      "maximum": 0.04405600018799305
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "APPROACH",
+      "mean": 0.005594919755401992,
+      "p95": 0.0070736871100962155,
+      "maximum": 0.008568314369767904
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "ACQUIRE",
+      "mean": 0.0060565427982319005,
+      "p95": 0.006392247788608074,
+      "maximum": 0.02395760826766491
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "REFINE",
+      "mean": 0.007734314633787356,
+      "p95": 0.007296559610404073,
+      "maximum": 0.08307920722290874
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "LOAD",
+      "mean": 0.01807588563882746,
+      "p95": 0.05444243974052366,
+      "maximum": 0.23768739262595773
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "LIFT",
+      "mean": 0.013249625540804118,
+      "p95": 0.031803520233370366,
+      "maximum": 0.18958454672247171
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "CARRY",
+      "mean": 0.012808309708198067,
+      "p95": 0.03159833741374314,
+      "maximum": 0.047437023371458054
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "phase": "DESCEND",
+      "mean": 0.013739202746450475,
+      "p95": 0.03211600100621581,
+      "maximum": 0.13339355308562517
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "APPROACH",
+      "mean": 0.007122030043198417,
+      "p95": 0.009444885049015283,
+      "maximum": 0.013455732725560665
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "ACQUIRE",
+      "mean": 0.007526416864912019,
+      "p95": 0.008120446000248194,
+      "maximum": 0.028599251993000507
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "REFINE",
+      "mean": 0.011690498300350639,
+      "p95": 0.023511913022957742,
+      "maximum": 0.04961960623040795
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "LOAD",
+      "mean": 0.047421654443277665,
+      "p95": 0.2866629513911903,
+      "maximum": 0.44591361097991467
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "RECOVER",
+      "mean": 0.010848020614523973,
+      "p95": 0.011468027555383743,
+      "maximum": 0.08557547116652131
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "LIFT",
+      "mean": 0.015626657385844737,
+      "p95": 0.035635490878485145,
+      "maximum": 0.2412556679919362
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "CARRY",
+      "mean": 0.014799992169137112,
+      "p95": 0.03466243734583258,
+      "maximum": 0.26317128306254745
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "DESCEND",
+      "mean": 0.014989863084763537,
+      "p95": 0.03468725420534611,
+      "maximum": 0.08848980022594333
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "UNLOAD",
+      "mean": 0.03447226677499302,
+      "p95": 0.0654362142086029,
+      "maximum": 0.16551350988447666
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "phase": "RETREAT",
+      "mean": 0.0048687042520863194,
+      "p95": 0.005224993918091059,
+      "maximum": 0.015725456178188324
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "APPROACH",
+      "mean": 0.005015220761151231,
+      "p95": 0.005278203589841724,
+      "maximum": 0.0065041533671319485
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "ACQUIRE",
+      "mean": 0.005482991864230298,
+      "p95": 0.005845317686907947,
+      "maximum": 0.031045828945934772
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "REFINE",
+      "mean": 0.007131796420944113,
+      "p95": 0.007283746171742674,
+      "maximum": 0.024995386134833097
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "LOAD",
+      "mean": 0.03190093698833758,
+      "p95": 0.21383913280442357,
+      "maximum": 0.3093274338170886
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "LIFT",
+      "mean": 0.013162512421840801,
+      "p95": 0.03707939761225134,
+      "maximum": 0.41882446268573403
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "CARRY",
+      "mean": 0.010887407606642228,
+      "p95": 0.025483115785755215,
+      "maximum": 0.0400470900349319
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "DESCEND",
+      "mean": 0.011698740907648891,
+      "p95": 0.026375348959118125,
+      "maximum": 0.04640148999169469
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "UNLOAD",
+      "mean": 0.03025593808179277,
+      "p95": 0.05163569329306483,
+      "maximum": 1.5488065229728818
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "phase": "RETREAT",
+      "mean": 0.003584389074838754,
+      "p95": 0.0037922907620668404,
+      "maximum": 0.013292321003973484
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "APPROACH",
+      "mean": 0.005624132412575138,
+      "p95": 0.007929719518870115,
+      "maximum": 0.008123271632939577
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "ACQUIRE",
+      "mean": 0.0063599549764123955,
+      "p95": 0.006777570955455303,
+      "maximum": 0.031371214892715216
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "REFINE",
+      "mean": 0.011265664083353702,
+      "p95": 0.01343235857784748,
+      "maximum": 0.031810879707336426
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "LOAD",
+      "mean": 0.024372538637835534,
+      "p95": 0.17016857468988741,
+      "maximum": 0.2492242380976677
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "LIFT",
+      "mean": 0.011701557087944821,
+      "p95": 0.023641383880749343,
+      "maximum": 0.1433420111425221
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "CARRY",
+      "mean": 0.011205365100759082,
+      "p95": 0.023710386990569533,
+      "maximum": 0.028830999042838812
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "DESCEND",
+      "mean": 0.016220598139145594,
+      "p95": 0.03994385977275665,
+      "maximum": 0.4087882121093571
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "UNLOAD",
+      "mean": 0.03684704247289957,
+      "p95": 0.11755987475626162,
+      "maximum": 0.1946249259635806
+    },
+    {
+      "case": "large_box_120cm",
+      "phase": "RETREAT",
+      "mean": 0.004688345099442959,
+      "p95": 0.0070382562465965744,
+      "maximum": 0.018800866324454546
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "APPROACH",
+      "mean": 0.0055278142556978715,
+      "p95": 0.006638729013502598,
+      "maximum": 0.0068265232257544994
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "ACQUIRE",
+      "mean": 0.006140629948348166,
+      "p95": 0.007880863780155793,
+      "maximum": 0.032565240282565355
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "REFINE",
+      "mean": 0.021429335175044074,
+      "p95": 0.053748111985623834,
+      "maximum": 0.12022394128143787
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "LOAD",
+      "mean": 0.04538979892343493,
+      "p95": 0.25750964838080104,
+      "maximum": 1.2748977160081267
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "RECOVER",
+      "mean": 0.02398640111061758,
+      "p95": 0.043557576718740165,
+      "maximum": 0.10243929782882333
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "LIFT",
+      "mean": 0.017288824694231153,
+      "p95": 0.038967182277701795,
+      "maximum": 0.2587099028751254
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "CARRY",
+      "mean": 0.01707538766466314,
+      "p95": 0.03782172417268157,
+      "maximum": 0.24081384483724833
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "DESCEND",
+      "mean": 0.01694048673132474,
+      "p95": 0.03936972550582141,
+      "maximum": 0.1955483458004892
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "UNLOAD",
+      "mean": 0.06579084761398964,
+      "p95": 0.1932886594440788,
+      "maximum": 7.019795292057097
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "phase": "RETREAT",
+      "mean": 0.0038867789192485814,
+      "p95": 0.004271555109880865,
+      "maximum": 0.014657246880233288
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "APPROACH",
+      "mean": 0.00636548897435188,
+      "p95": 0.009028368163853884,
+      "maximum": 0.012353148777037859
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "ACQUIRE",
+      "mean": 0.009974254211971515,
+      "p95": 0.019184051896445453,
+      "maximum": 0.04720700904726982
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "REFINE",
+      "mean": 0.012672664003585962,
+      "p95": 0.024886619648896158,
+      "maximum": 0.05843089194968343
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "LOAD",
+      "mean": 0.058538350282469766,
+      "p95": 0.39329790046904234,
+      "maximum": 0.6079376451671124
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "LIFT",
+      "mean": 0.018890838938066735,
+      "p95": 0.04759714948013424,
+      "maximum": 0.330181572586298
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "CARRY",
+      "mean": 0.02030187807948096,
+      "p95": 0.06097201297525316,
+      "maximum": 0.34145650127902627
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "DESCEND",
+      "mean": 0.019368860538802657,
+      "p95": 0.04854929307475686,
+      "maximum": 0.4387511149980128
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "UNLOAD",
+      "mean": 0.04550511394302512,
+      "p95": 0.13129670885391526,
+      "maximum": 0.16509683011099696
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "phase": "RETREAT",
+      "mean": 0.004325025057010255,
+      "p95": 0.004612218588590622,
+      "maximum": 0.013306166045367718
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "APPROACH",
+      "mean": 0.006160293478751555,
+      "p95": 0.0063214779132977125,
+      "maximum": 0.012190867215394974
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "ACQUIRE",
+      "mean": 0.007552529166101433,
+      "p95": 0.008129650494083762,
+      "maximum": 0.05890174629166722
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "REFINE",
+      "mean": 0.012655292776793507,
+      "p95": 0.013122041104361413,
+      "maximum": 0.07334891613572836
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "LOAD",
+      "mean": 0.059089393721272546,
+      "p95": 0.34306292403489336,
+      "maximum": 0.47177416319027543
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "LIFT",
+      "mean": 0.018271441641030832,
+      "p95": 0.04643229520879686,
+      "maximum": 0.2805134393274784
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "CARRY",
+      "mean": 0.018933187378424917,
+      "p95": 0.048377002216875555,
+      "maximum": 0.27147905714809895
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "DESCEND",
+      "mean": 0.020370894424371386,
+      "p95": 0.04780086576938629,
+      "maximum": 0.4442694350145757
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "UNLOAD",
+      "mean": 0.04057373232505852,
+      "p95": 0.11194905363954602,
+      "maximum": 0.43654658924788237
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "phase": "RETREAT",
+      "mean": 0.004195510875751613,
+      "p95": 0.004509989102371037,
+      "maximum": 0.015421568881720304
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "APPROACH",
+      "mean": 0.007864861163280664,
+      "p95": 0.010460988734848797,
+      "maximum": 0.011117398273199797
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "ACQUIRE",
+      "mean": 0.008876610224825214,
+      "p95": 0.009384490479715167,
+      "maximum": 0.06582744512706995
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "REFINE",
+      "mean": 0.01200721474062865,
+      "p95": 0.0128768065944314,
+      "maximum": 0.03785751573741436
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "LOAD",
+      "mean": 0.06012287614983507,
+      "p95": 0.3932896320009604,
+      "maximum": 0.5104017131961882
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "LIFT",
+      "mean": 0.02100434439838864,
+      "p95": 0.05651358205359429,
+      "maximum": 0.3376736822538078
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "CARRY",
+      "mean": 0.02133965024331701,
+      "p95": 0.05769598211627454,
+      "maximum": 0.06137626385316253
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "DESCEND",
+      "mean": 0.022317711688036944,
+      "p95": 0.05775989918038249,
+      "maximum": 0.45890903612598777
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "UNLOAD",
+      "mean": 0.044959520546081884,
+      "p95": 0.152697353856638,
+      "maximum": 0.2572411857545376
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "phase": "RETREAT",
+      "mean": 0.004719572173815561,
+      "p95": 0.005382535140961408,
+      "maximum": 0.01641958300024271
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "scope": "Three previously successful saved structures; changed safety priority, no new structural search or unseen-case success rate",
+  "successes": 3,
+  "total": 3,
+  "issues": [],
+  "same_sources": true,
+  "same_configuration": true,
+  "timing_caveat": "Historical v10 used 6 concurrent tasks plus development jobs; current run uses 3. Wall ratios are historical comparisons, not isolated implementation speedups. Simulation waits for each control computation.",
+  "physics_timestep_s": 0.000125,
+  "control_period_s": 0.01,
+  "rows": [
+    {
+      "case": "box040",
+      "source": "artifacts/runs/span_load30_v10_20261026/span_load_box_040",
+      "modules": 6,
+      "success": true,
+      "old_wall_s": 455.54104334209114,
+      "new_wall_s": 126.83413466904312,
+      "wall_speedup": 3.5916281096627904,
+      "simulation_s": 63.4199999993643,
+      "control": {
+        "APPROACH": {
+          "mean": 0.007137596898371198,
+          "p95": 0.00909977126866579,
+          "maximum": 0.009689155034720898
+        },
+        "ACQUIRE": {
+          "mean": 0.016878785937860845,
+          "p95": 0.026442764978855848,
+          "maximum": 0.03067310294136405
+        },
+        "REFINE": {
+          "mean": 0.012470264054302658,
+          "p95": 0.01873813197016716,
+          "maximum": 0.036374949384480715
+        },
+        "LOAD": {
+          "mean": 0.004090432524681092,
+          "p95": 0.00421443183440715,
+          "maximum": 0.011800185777246952
+        },
+        "LIFT": {
+          "mean": 0.004915554391220212,
+          "p95": 0.00564017693977803,
+          "maximum": 0.006150820758193731
+        },
+        "CARRY": {
+          "mean": 0.004818072423804551,
+          "p95": 0.005607216339558363,
+          "maximum": 0.005998124834150076,
+          "old_mean_s": 0.01613856997442781
+        },
+        "DESCEND": {
+          "mean": 0.0056831440444217425,
+          "p95": 0.006143807549960911,
+          "maximum": 0.006329136900603771
+        },
+        "UNLOAD": {
+          "mean": 0.008621630694210177,
+          "p95": 0.009798101987689734,
+          "maximum": 0.03526077698916197,
+          "old_mean_s": 0.09056419360546127
+        },
+        "RETREAT": {
+          "mean": 0.005461123348350382,
+          "p95": 0.0057908883318305016,
+          "maximum": 0.025058535858988762
+        }
+      },
+      "peak_effort_ratio": 1.0,
+      "peak_joint_speed_rad_s": 0.05801501914502372,
+      "peak_force_n": 26.052373304856147,
+      "peak_moment_nm": 2.983675035818713,
+      "secondary_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "position_error_m": 7.709147936578652e-06,
+      "orientation_error_rad": 1.3520497843667943e-05,
+      "identical_saved_scene": true,
+      "scene_sha256": "2daed2e25608585163f85d208c2f42c1bf56626b2a2bd09c375c90dfca2f544d",
+      "issues": []
+    },
+    {
+      "case": "cylinder040",
+      "source": "artifacts/runs/span_load30_v10_20261026/span_load_cylinder_040",
+      "modules": 7,
+      "success": true,
+      "old_wall_s": 783.6973997317255,
+      "new_wall_s": 180.1613004077226,
+      "wall_speedup": 4.349976370941716,
+      "simulation_s": 74.12999999911105,
+      "control": {
+        "APPROACH": {
+          "mean": 0.0090204669584975,
+          "p95": 0.011588119552470744,
+          "maximum": 0.013438487891107798
+        },
+        "ACQUIRE": {
+          "mean": 0.02419874319031414,
+          "p95": 0.03242651419714093,
+          "maximum": 0.04007491795346141
+        },
+        "REFINE": {
+          "mean": 0.014848905915686907,
+          "p95": 0.036575614009052515,
+          "maximum": 0.042563599068671465
+        },
+        "LOAD": {
+          "mean": 0.004503118302673101,
+          "p95": 0.004721285216510296,
+          "maximum": 0.0132114770822227
+        },
+        "LIFT": {
+          "mean": 0.005253668589517474,
+          "p95": 0.006041569355875253,
+          "maximum": 0.006668264977633953
+        },
+        "CARRY": {
+          "mean": 0.0051951151603134346,
+          "p95": 0.006063927127979696,
+          "maximum": 0.0064023141749203205,
+          "old_mean_s": 0.019935393682535506
+        },
+        "DESCEND": {
+          "mean": 0.005964064311606494,
+          "p95": 0.006388268386945129,
+          "maximum": 0.006537843961268663
+        },
+        "UNLOAD": {
+          "mean": 0.010852387687639119,
+          "p95": 0.01213634565938264,
+          "maximum": 0.04144222754985094,
+          "old_mean_s": 0.22415264410603514
+        },
+        "RETREAT": {
+          "mean": 0.006758898859637161,
+          "p95": 0.007082190643996,
+          "maximum": 0.025313375983387232
+        }
+      },
+      "peak_effort_ratio": 1.0,
+      "peak_joint_speed_rad_s": 0.1370210741393612,
+      "peak_force_n": 18.591142808060845,
+      "peak_moment_nm": 2.085638072635038,
+      "secondary_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": false,
+        "material_slip": false
+      },
+      "position_error_m": 0.007350038018605911,
+      "orientation_error_rad": 0.020116720671218908,
+      "identical_saved_scene": true,
+      "scene_sha256": "29d758d8be45c35cedaa1c3ae822a7e86a7588b0a44d7753a34e993b44cd8742",
+      "issues": []
+    },
+    {
+      "case": "prism045",
+      "source": "artifacts/runs/span_load30_v10_20261026/span_load_triangular_prism_045",
+      "modules": 8,
+      "success": true,
+      "old_wall_s": 2288.261217856314,
+      "new_wall_s": 297.79993185726926,
+      "wall_speedup": 7.683887647607122,
+      "simulation_s": 76.8299999990472,
+      "control": {
+        "APPROACH": {
+          "mean": 0.011373252596127465,
+          "p95": 0.014363256422802806,
+          "maximum": 0.03024633415043354
+        },
+        "ACQUIRE": {
+          "mean": 0.025178865652929847,
+          "p95": 0.037507941108196975,
+          "maximum": 0.045563217252492905
+        },
+        "REFINE": {
+          "mean": 0.018928385933111535,
+          "p95": 0.01983396792784333,
+          "maximum": 0.04570346372202039
+        },
+        "LOAD": {
+          "mean": 0.005766290185662607,
+          "p95": 0.005957016092725098,
+          "maximum": 0.01860883506014943
+        },
+        "LIFT": {
+          "mean": 0.006650167252868414,
+          "p95": 0.007473584916442633,
+          "maximum": 0.009993089828640223
+        },
+        "CARRY": {
+          "mean": 0.006536292204982601,
+          "p95": 0.007274584984406829,
+          "maximum": 0.007588193751871586,
+          "old_mean_s": 0.0838942187684006
+        },
+        "DESCEND": {
+          "mean": 0.007347229531110632,
+          "p95": 0.007672386872582137,
+          "maximum": 0.007913567125797272
+        },
+        "UNLOAD": {
+          "mean": 0.013325579203414676,
+          "p95": 0.015065321885049342,
+          "maximum": 0.051319874823093414,
+          "old_mean_s": 0.22393819188368527
+        },
+        "RETREAT": {
+          "mean": 0.00828248086563189,
+          "p95": 0.008812669944018126,
+          "maximum": 0.033976541832089424
+        }
+      },
+      "peak_effort_ratio": 1.0,
+      "peak_joint_speed_rad_s": 0.1999536134117418,
+      "peak_force_n": 27.28912811330944,
+      "peak_moment_nm": 3.075931709980861,
+      "secondary_violations": {
+        "contact_force": false,
+        "contact_moment": false,
+        "penetration": false,
+        "clearance": false,
+        "contact_gap": true,
+        "material_slip": false
+      },
+      "position_error_m": 2.3325611584757275e-05,
+      "orientation_error_rad": 5.4883276683094775e-06,
+      "identical_saved_scene": true,
+      "scene_sha256": "4524f877aee839ff4441fb42a24c65ff7764e3b4797cacf658fab4120f7f6fa4",
+      "issues": []
+    }
+  ]
+}

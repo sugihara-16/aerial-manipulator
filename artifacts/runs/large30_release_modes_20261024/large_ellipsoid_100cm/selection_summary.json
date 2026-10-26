@@ -1,0 +1,248 @@
+{
+  "protocol": {
+    "request": {
+      "id": "large_ellipsoid_100cm",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.8327093743642581,
+          0.7309549607604977,
+          1.0
+        ],
+        "mass": 1.0965714651387835,
+        "inertia": [
+          [
+            0.0841232142850635,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.09284697473141676,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.06731304250260191
+          ]
+        ]
+      },
+      "source": [
+        -0.4423878860138326,
+        -0.1596084723205753,
+        0.633966067350849,
+        0.6386582484650973,
+        -0.30350524875311485,
+        -0.30350604934515046,
+        0.6386581900028401
+      ],
+      "destination": [
+        -0.5429668008131872,
+        -0.5655555951777769,
+        0.633966067350849,
+        0.6386582484650973,
+        -0.30350524875311485,
+        -0.30350604934515046,
+        0.6386581900028401
+      ],
+      "support_top": 0.26848858697051203,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "ellipsoid:3",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:0",
+        "size_bin": "100cm",
+        "mass_bin": "heavy"
+      },
+      "resting_pose_generation": {
+        "method": "uniform scaling of stable input pose",
+        "source": {
+          "method": "local_supported_COM_height_descent",
+          "evaluations": 506,
+          "final_tilt_step_rad": 9.5367431640625e-08,
+          "initial_rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "applied_world_yaw_rad": 5.3959232919831805
+        }
+      },
+      "size_extension": {
+        "original_case": "ellipsoid_y3_4",
+        "linear_scale": 1.7890804756142038,
+        "target_max_dimension_m": 1.0,
+        "original_size_m": [
+          0.4654398646200547,
+          0.40856460663657723,
+          0.558946349049331
+        ],
+        "mass_unchanged": true,
+        "orientation_preserved_by_uniform_scaling": true
+      }
+    },
+    "starts": 4,
+    "criterion": "sum actual rotor thrust**1.5",
+    "probability": 0.05,
+    "total_error": 0.05,
+    "groups": 8,
+    "trials_per_group": 99,
+    "task_wrench": true,
+    "generator": "task",
+    "task_generation_probability": 1.0,
+    "auxiliary_initial_enabled": true,
+    "auxiliary_generator": "task_growth_variable_count",
+    "calculation_reuse": "exact-input memo within this planning call; draws and per-trial budgets unchanged",
+    "input_direction_refinement": "one power-directed gimbal step, backtracking 1/0.5/0.25; original finite-contact and task margins rechecked",
+    "scheduling": "generate each trial in draw order; distribute its screens; collect only all completed starts",
+    "generation_scope": "task contact roles; one role per module; variable-count auxiliary uses same task grammar",
+    "task_contact_count_law": "uniform 1..N per start, independent of nominal force feasibility",
+    "task_contact_selection": "normalized task-wrench residual, then force-boundary distance with 0.5 N normal floor",
+    "task_pose_initialization": "retain generated root, joints and contact targets for continuous surface fitting",
+    "probability_scope": "one more trial of this fixed generator; not existence of a better structure"
+  },
+  "protocol_id": "ef8c772da672cad89814fb7ac65f5ed62832e9129182a8f9d91eb682f21c031d",
+  "seed": 2020070626,
+  "seed_source": "explicit_replay",
+  "workers": 32,
+  "worker_start_method": "fork",
+  "cancelled_excluded_trials": [
+    {
+      "modules": 5,
+      "trial": 3,
+      "status": "unfinished_physically_excluded"
+    },
+    {
+      "modules": 5,
+      "trial": 14,
+      "status": "unfinished_physically_excluded"
+    },
+    {
+      "modules": 5,
+      "trial": 16,
+      "status": "unfinished_physically_excluded"
+    }
+  ],
+  "cancelled_auxiliary_initial": false,
+  "wall_s": 9.438551173079759,
+  "initial": {
+    "wall_s": 8.151262545026839,
+    "status": "completed",
+    "method": "task_growth_variable_count",
+    "collected_s": 8.686619030777365,
+    "burden": 360.5782376359206
+  },
+  "selection_evidence": {
+    "protocol_id": "ef8c772da672cad89814fb7ac65f5ed62832e9129182a8f9d91eb682f21c031d",
+    "complete": true,
+    "scope": "one additional independent run of the same frozen generator per module count",
+    "undiscovered_structure_existence_probability_claimed": false,
+    "improvement_probability_target": 0.05,
+    "simultaneous_error_probability": 0.05,
+    "groups": [
+      {
+        "modules": 1,
+        "lower_bound": 78.3279856910761,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 130.93711164683657,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 2,
+        "lower_bound": 115.25603919393157,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 94.0090581439811,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 3,
+        "lower_bound": 153.63515644405575,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 55.62994089385691,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 4,
+        "lower_bound": 192.39794697414018,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 16.86715036377248,
+        "required_trials": 99,
+        "completed_prefix_trials": 99,
+        "successful_prefix_trials": 11,
+        "one_more_trial_improvement_probability_upper": 0.049972532808213385,
+        "allocated_error_probability": 0.00625
+      },
+      {
+        "modules": 5,
+        "lower_bound": 231.3180407578179,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 19,
+        "successful_prefix_trials": 2,
+        "one_more_trial_improvement_probability_upper": 0.0
+      },
+      {
+        "modules": 6,
+        "lower_bound": 270.3179196211074,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      },
+      {
+        "modules": 7,
+        "lower_bound": 309.3638220488699,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      },
+      {
+        "modules": 8,
+        "lower_bound": 348.43868300933246,
+        "force_balance_tolerance": 1e-06,
+        "status": "excluded_by_weight",
+        "maximum_improvement": 0.0,
+        "required_trials": 99,
+        "completed_prefix_trials": 0,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.0
+      }
+    ]
+  },
+  "selected_burden": 209.26509733791266,
+  "protocol_sources_file": "../selection_sources/cad2be9d3090af00d23a78fca36def818663675ed741dc10682890e4982453b9.json",
+  "archive": {
+    "source_file": "selection.json",
+    "source_sha256": "67eacf121f3b8f3633f03f5d1524894fd9dfd0b1cac9576fcf8e3b610191c5c6",
+    "omitted_trial_rows": 415,
+    "scope": "Selection protocol and stopping evidence; detailed candidate rows remain in the local raw output."
+  }
+}

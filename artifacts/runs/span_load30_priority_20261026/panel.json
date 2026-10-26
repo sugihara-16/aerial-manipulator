@@ -1,0 +1,3216 @@
+{
+  "role": "span_load_extension",
+  "seed": 2026102404,
+  "configuration": {
+    "version": 1,
+    "assembly_required": false,
+    "seed_development": 194,
+    "seed_holdout": 168149098760072440378451429400527385150,
+    "holdout_cases": 30,
+    "families": [
+      "box",
+      "elongated_box",
+      "cylinder",
+      "ellipsoid",
+      "triangular_prism",
+      "tapered_box"
+    ],
+    "yaw_bins_rad": [
+      [
+        0.0,
+        1.5707963267948966
+      ],
+      [
+        1.5707963267948966,
+        3.141592653589793
+      ],
+      [
+        3.141592653589793,
+        4.71238898038469
+      ],
+      [
+        4.71238898038469,
+        6.283185307179586
+      ]
+    ],
+    "cases_per_family_yaw": 5,
+    "resting_orientations": [
+      "large_face",
+      "small_face"
+    ],
+    "object_dimensions_m": [
+      0.3518188001036499,
+      1.3
+    ],
+    "object_mass_kg": [
+      3.0,
+      5.0
+    ],
+    "source_xy_m": [
+      -0.5,
+      0.5
+    ],
+    "support_height_m": [
+      0.15,
+      0.35
+    ],
+    "transport_distance_m": [
+      0.2,
+      0.5
+    ],
+    "minimum_lift_clearance_m": 0.1,
+    "part_clearance_m": 0.001,
+    "environment_clearance_m": 0.03,
+    "placement_position_tolerance_m": 0.03,
+    "placement_orientation_tolerance_rad": 0.2,
+    "placement_angular_speed_tolerance_rad_s": 0.1,
+    "placement_speed_tolerance_m_s": 0.02,
+    "post_release_dwell_s": 2.0,
+    "module_limit": 8,
+    "object_friction": 0.6,
+    "floor_friction": 0.8,
+    "selected_gripper_friction": 4.5,
+    "contact_force_limit_n": 30.0,
+    "contact_moment_limit_nm": 5.0,
+    "penetration_limit_m": 0.002,
+    "contact_slip_displacement_limit_m": 0.03,
+    "contact_slip_metric": "contact_material_displacement_m",
+    "minimum_success_fraction": 0.8,
+    "required_strata": [
+      "family",
+      "yaw_bin",
+      "family_x_yaw_bin",
+      "resting_orientation",
+      "position_bin",
+      "size_bin",
+      "mass_bin"
+    ],
+    "planning_target_s": 15.0,
+    "control_period_s": 0.01
+  },
+  "cases": [
+    {
+      "id": "span_load_box_030",
+      "payload": {
+        "shape": "box",
+        "size": [
+          1.0735101624065098,
+          1.112117872500444,
+          0.581890925749144
+        ],
+        "mass": 3.0,
+        "inertia": [
+          [
+            0.39385080295102737,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.3727552795648117,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.5973075577812411
+          ]
+        ]
+      },
+      "source": [
+        -0.36304943704184534,
+        0.3338877283147954,
+        0.5071076491671015,
+        0.0,
+        0.0,
+        0.3881679378081677,
+        0.9215886566455527
+      ],
+      "destination": [
+        -0.8328398382829068,
+        0.18068498914604486,
+        0.5071076491671015,
+        0.0,
+        0.0,
+        0.3881679378081677,
+        0.9215886566455527
+      ],
+      "support_top": 0.2161621862925295,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "0:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 0.7972856385192661
+      },
+      "span_load_extension": {
+        "original_case": "box_y0_0",
+        "target_max_dimension_m": 1.112117872500444,
+        "mass_kg": 3.0
+      }
+    },
+    {
+      "id": "span_load_elongated_box_030",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.2780886032592256,
+          0.6308713008450473,
+          0.5783390976813926
+        ],
+        "mass": 3.0,
+        "inertia": [
+          [
+            0.18311867753421238,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.4919966474220113,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.5078772690027601
+          ]
+        ]
+      },
+      "source": [
+        0.015643727264902596,
+        -0.001592257962109933,
+        0.49213491616447314,
+        0.0,
+        0.0,
+        0.6817791489239822,
+        0.731558057909617
+      ],
+      "destination": [
+        0.4957373048403995,
+        -0.049993775493605196,
+        0.49213491616447314,
+        0.0,
+        0.0,
+        0.6817791489239822,
+        0.731558057909617
+      ],
+      "support_top": 0.20296536732377682,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "elongated_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:0",
+        "size_bin": "over_115cm",
+        "mass_bin": "3kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 1.500383773641065
+      },
+      "span_load_extension": {
+        "original_case": "elongated_box_y0_2",
+        "target_max_dimension_m": 1.2780886032592256,
+        "mass_kg": 3.0
+      }
+    },
+    {
+      "id": "span_load_cylinder_030",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          1.0669171909529878,
+          1.0669171909529878,
+          1.0644268665531558
+        ],
+        "mass": 3.0,
+        "inertia": [
+          [
+            0.4966846933758575,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.4966846933758575,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.42686710963163027
+          ]
+        ]
+      },
+      "source": [
+        0.39478202919398386,
+        -0.2232090363903666,
+        0.8026075637512835,
+        0.0,
+        0.0,
+        0.2660044932398109,
+        0.9639717887864931
+      ],
+      "destination": [
+        0.3842765361124966,
+        0.18349629360145514,
+        0.8026075637512835,
+        0.0,
+        0.0,
+        0.2660044932398109,
+        0.9639717887864931
+      ],
+      "support_top": 0.2703941304747057,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "cylinder:0",
+        "resting_orientation": "standing",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 0.5384916173301306
+      },
+      "span_load_extension": {
+        "original_case": "cylinder_y0_4",
+        "target_max_dimension_m": 1.0669171909529878,
+        "mass_kg": 3.0
+      }
+    },
+    {
+      "id": "span_load_ellipsoid_030",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.6678781984711146,
+          1.0482116123363556,
+          0.5034632731364392
+        ],
+        "mass": 3.0,
+        "inertia": [
+          [
+            0.20283342774510585,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.10493048330854175,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.23172133083447055
+          ]
+        ]
+      },
+      "source": [
+        -0.1164717097264345,
+        0.05931470529728444,
+        0.5227318592277294,
+        0.0,
+        0.0,
+        0.010624564884972175,
+        0.9999435577176369
+      ],
+      "destination": [
+        0.031227330950948456,
+        0.44468565909854046,
+        0.5227318592277294,
+        0.0,
+        0.0,
+        0.010624564884972175,
+        0.9999435577176369
+      ],
+      "support_top": 0.27100022265950974,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "ellipsoid:0",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 0.021249529562097923
+      },
+      "span_load_extension": {
+        "original_case": "ellipsoid_y0_4",
+        "target_max_dimension_m": 1.0482116123363556,
+        "mass_kg": 3.0
+      }
+    },
+    {
+      "id": "span_load_triangular_prism_030",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          1.0604989468747992,
+          1.1575210650904753,
+          0.8567557283696671
+        ],
+        "mass": 3.0,
+        "inertia": [
+          [
+            0.4068167638782576,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.3240898465638794,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.36389142139501773
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5302494734373996,
+            -0.3858403550301584,
+            -0.42837786418483353
+          ],
+          [
+            0.5302494734373996,
+            -0.3858403550301584,
+            -0.42837786418483353
+          ],
+          [
+            0.0,
+            0.7716807100603169,
+            -0.42837786418483353
+          ],
+          [
+            -0.5302494734373996,
+            -0.3858403550301584,
+            0.42837786418483353
+          ],
+          [
+            0.5302494734373996,
+            -0.3858403550301584,
+            0.42837786418483353
+          ],
+          [
+            0.0,
+            0.7716807100603169,
+            0.42837786418483353
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.3090046245275436,
+        0.32380858126943823,
+        0.6297200271235517,
+        0.6910993507757544,
+        0.1496051047168201,
+        0.14960510471682012,
+        0.6910993507757546
+      ],
+      "destination": [
+        0.6474538062086894,
+        0.07276524026742826,
+        0.6297200271235517,
+        0.6910993507757544,
+        0.1496051047168201,
+        0.14960510471682012,
+        0.6910993507757546
+      ],
+      "support_top": 0.24387967209339312,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "triangular_prism:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "3kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 0.4263693909708991
+      },
+      "span_load_extension": {
+        "original_case": "triangular_prism_y0_1",
+        "target_max_dimension_m": 1.1575210650904753,
+        "mass_kg": 3.0
+      }
+    },
+    {
+      "id": "span_load_tapered_box_030",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          1.2490171133777273,
+          0.9358672569756941,
+          0.6359919985557257
+        ],
+        "mass": 3.0,
+        "inertia": [
+          [
+            0.24922847261798023,
+            5.714538042121915e-18,
+            -0.0
+          ],
+          [
+            5.714538042121915e-18,
+            0.369954198682934,
+            6.869201288505112e-19
+          ],
+          [
+            -0.0,
+            6.869201288505112e-19,
+            0.42981052937452313
+          ]
+        ],
+        "vertices": [
+          [
+            -0.6245085566888636,
+            -0.46793362848784703,
+            -0.26607828511004855
+          ],
+          [
+            0.6245085566888636,
+            -0.46793362848784703,
+            -0.26607828511004855
+          ],
+          [
+            0.6245085566888636,
+            0.46793362848784703,
+            -0.26607828511004855
+          ],
+          [
+            -0.6245085566888636,
+            0.46793362848784703,
+            -0.26607828511004855
+          ],
+          [
+            -0.3747051340133182,
+            -0.28076017709270823,
+            0.3699137134456772
+          ],
+          [
+            0.3747051340133182,
+            -0.28076017709270823,
+            0.3699137134456772
+          ],
+          [
+            0.3747051340133182,
+            0.28076017709270823,
+            0.3699137134456772
+          ],
+          [
+            -0.3747051340133182,
+            0.28076017709270823,
+            0.3699137134456772
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        0.07125943129197188,
+        0.11179356669573903,
+        0.5877248682996968,
+        0.0,
+        0.0,
+        0.506679147335694,
+        0.8621347004123974
+      ],
+      "destination": [
+        -0.2547335356888695,
+        -0.20977935076798193,
+        0.5877248682996968,
+        0.0,
+        0.0,
+        0.506679147335694,
+        0.8621347004123974
+      ],
+      "support_top": 0.3216465831896483,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "tapered_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "3kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 1.0626570310526056
+      },
+      "span_load_extension": {
+        "original_case": "tapered_box_y0_4",
+        "target_max_dimension_m": 1.2490171133777273,
+        "mass_kg": 3.0
+      }
+    },
+    {
+      "id": "span_load_box_035",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.646349192567014,
+          0.870196972722025,
+          1.1162223825938187
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.5842652604652495,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.48525157512284034,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.3427112646027606
+          ]
+        ]
+      },
+      "source": [
+        0.24061668303921369,
+        -0.25117223804096156,
+        0.7835584157567959,
+        0.0,
+        0.0,
+        0.9613937692167548,
+        0.27517634438883254
+      ],
+      "destination": [
+        0.44637663005425965,
+        -0.36044515482077566,
+        0.7835584157567959,
+        0.0,
+        0.0,
+        0.9613937692167548,
+        0.27517634438883254
+      ],
+      "support_top": 0.22544722445988646,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "box:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 2.584046406901427
+      },
+      "span_load_extension": {
+        "original_case": "box_y1_0",
+        "target_max_dimension_m": 1.1162223825938187,
+        "mass_kg": 3.5
+      }
+    },
+    {
+      "id": "span_load_elongated_box_035",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.111474810035569,
+          0.42788024000276653,
+          0.44273733996015435
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.11057020682744703,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.41748950994875755,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.4137168446624585
+          ]
+        ]
+      },
+      "source": [
+        0.3107391888186021,
+        0.35348378660072366,
+        0.41910364345282414,
+        0.3419789895687344,
+        0.6189106322350162,
+        0.6189106322350162,
+        0.3419789895687345
+      ],
+      "destination": [
+        0.3936850905825257,
+        0.5964053693802203,
+        0.41910364345282414,
+        0.3419789895687344,
+        0.6189106322350162,
+        0.6189106322350162,
+        0.3419789895687345
+      ],
+      "support_top": 0.2051635234514407,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "elongated_box:1",
+        "resting_orientation": "large_face",
+        "position_bin": "1:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 2.1319951000520034
+      },
+      "span_load_extension": {
+        "original_case": "elongated_box_y1_1",
+        "target_max_dimension_m": 1.111474810035569,
+        "mass_kg": 3.5
+      }
+    },
+    {
+      "id": "span_load_cylinder_035",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          0.5352709291482486,
+          0.5352709291482486,
+          1.1559851643561982
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.45242981172230584,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.45242981172230584,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.12535029832116285
+          ]
+        ]
+      },
+      "source": [
+        -0.18984563576496105,
+        -0.33852636297707306,
+        0.7299867864980953,
+        0.0,
+        0.0,
+        0.986448513040977,
+        0.16407111604193259
+      ],
+      "destination": [
+        -0.30700189126160715,
+        -0.5328700327401732,
+        0.7299867864980953,
+        0.0,
+        0.0,
+        0.986448513040977,
+        0.16407111604193259
+      ],
+      "support_top": 0.15199420431999622,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "cylinder:1",
+        "resting_orientation": "standing",
+        "position_bin": "0:0",
+        "size_bin": "over_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 2.8119600680381627
+      },
+      "span_load_extension": {
+        "original_case": "cylinder_y1_4",
+        "target_max_dimension_m": 1.1559851643561982,
+        "mass_kg": 3.5
+      }
+    },
+    {
+      "id": "span_load_ellipsoid_035",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          1.268663339741161,
+          0.8002445182462588,
+          1.0845494805014952
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.31791180131186875,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.4875069929203704,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.3937321427526171
+          ]
+        ]
+      },
+      "source": [
+        0.023965531529260176,
+        0.0713414305586868,
+        0.7034036340443985,
+        0.4274335267105409,
+        0.5632943445952424,
+        0.5632944139827522,
+        0.4274335793624951
+      ],
+      "destination": [
+        0.09650252724241735,
+        0.36699831568862423,
+        0.7034036340443985,
+        0.4274335267105409,
+        0.5632943445952424,
+        0.5632944139827522,
+        0.4274335793624951
+      ],
+      "support_top": 0.3032813749212663,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "ellipsoid:1",
+        "resting_orientation": "curved_stable",
+        "position_bin": "1:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 474,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 1.8433609136112579
+      },
+      "span_load_extension": {
+        "original_case": "ellipsoid_y1_2",
+        "target_max_dimension_m": 1.268663339741161,
+        "mass_kg": 3.5
+      }
+    },
+    {
+      "id": "span_load_triangular_prism_035",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          0.46566775465534505,
+          0.3518188001036499,
+          1.1278439202262314
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.3950769531903605,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.40263274836579355,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.05569108832791096
+          ]
+        ],
+        "vertices": [
+          [
+            -0.23283387732767252,
+            -0.1172729333678833,
+            -0.5639219601131157
+          ],
+          [
+            0.23283387732767252,
+            -0.1172729333678833,
+            -0.5639219601131157
+          ],
+          [
+            0.0,
+            0.2345458667357666,
+            -0.5639219601131157
+          ],
+          [
+            -0.23283387732767252,
+            -0.1172729333678833,
+            0.5639219601131157
+          ],
+          [
+            0.23283387732767252,
+            -0.1172729333678833,
+            0.5639219601131157
+          ],
+          [
+            0.0,
+            0.2345458667357666,
+            0.5639219601131157
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        -0.4441963895051533,
+        0.39603856955786787,
+        0.33290761662205304,
+        0.43842440493080687,
+        0.5547828774944914,
+        0.5547828774944915,
+        0.4384244049308069
+      ],
+      "destination": [
+        -0.6949271325421097,
+        0.267007675394618,
+        0.33290761662205304,
+        0.43842440493080687,
+        0.5547828774944914,
+        0.5547828774944915,
+        0.4384244049308069
+      ],
+      "support_top": 0.21563468325416968,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "triangular_prism:1",
+        "resting_orientation": "large_face",
+        "position_bin": "0:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 1.8040416346365682
+      },
+      "span_load_extension": {
+        "original_case": "triangular_prism_y1_3",
+        "target_max_dimension_m": 1.1278439202262314,
+        "mass_kg": 3.5
+      }
+    },
+    {
+      "id": "span_load_tapered_box_035",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          0.6145880322059466,
+          1.0313783000442107,
+          0.8263717668458226
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.40547944842804334,
+            -4.731018606168488e-18,
+            -0.0
+          ],
+          [
+            -4.731018606168488e-18,
+            0.2642567654927355,
+            7.697622808148911e-19
+          ],
+          [
+            -0.0,
+            7.697622808148911e-19,
+            0.29673476450263664
+          ]
+        ],
+        "vertices": [
+          [
+            -0.3072940161029733,
+            -0.5156891500221054,
+            -0.3457269636803951
+          ],
+          [
+            0.3072940161029733,
+            -0.5156891500221054,
+            -0.3457269636803951
+          ],
+          [
+            0.3072940161029733,
+            0.5156891500221054,
+            -0.3457269636803951
+          ],
+          [
+            -0.3072940161029733,
+            0.5156891500221054,
+            -0.3457269636803951
+          ],
+          [
+            -0.18437640966178398,
+            -0.3094134900132632,
+            0.48064480316542746
+          ],
+          [
+            0.18437640966178398,
+            -0.3094134900132632,
+            0.48064480316542746
+          ],
+          [
+            0.18437640966178398,
+            0.3094134900132632,
+            0.48064480316542746
+          ],
+          [
+            -0.18437640966178398,
+            0.3094134900132632,
+            0.48064480316542746
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        -0.4090908483791177,
+        -0.3199779988173016,
+        0.7639680353635578,
+        0.13573681787124572,
+        0.7763169585625113,
+        0.606355788922576,
+        0.10601958952250788
+      ],
+      "destination": [
+        -0.6547140207791524,
+        -0.5180213938541189,
+        0.7639680353635578,
+        0.13573681787124572,
+        0.7763169585625113,
+        0.606355788922576,
+        0.10601958952250788
+      ],
+      "support_top": 0.3473607925993222,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "tapered_box:1",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 250,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 2.795397919089213
+      },
+      "span_load_extension": {
+        "original_case": "tapered_box_y1_1",
+        "target_max_dimension_m": 1.0313783000442107,
+        "mass_kg": 3.5
+      }
+    },
+    {
+      "id": "span_load_box_040",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.5666648072461591,
+          0.4300708459345083,
+          1.0807142144833037
+        ],
+        "mass": 4.0,
+        "inertia": [
+          [
+            0.4509680486363626,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.49635073905253024,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.16868997876471672
+          ]
+        ]
+      },
+      "source": [
+        0.18913480522520443,
+        -0.4632764439917224,
+        0.44698657748780124,
+        -0.11952604033359426,
+        0.6969315071670759,
+        0.696931507167076,
+        -0.11952604033359429
+      ],
+      "destination": [
+        0.25280196543209565,
+        -0.9227763223651805,
+        0.44698657748780124,
+        -0.11952604033359426,
+        0.6969315071670759,
+        0.696931507167076,
+        -0.11952604033359429
+      ],
+      "support_top": 0.231951154520547,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "box:2",
+        "resting_orientation": "large_face",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "4kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 3.481294353749609
+      },
+      "span_load_extension": {
+        "original_case": "box_y2_3",
+        "target_max_dimension_m": 1.0807142144833037,
+        "mass_kg": 4.0
+      }
+    },
+    {
+      "id": "span_load_elongated_box_040",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.1460159408471378,
+          0.46978711631453524,
+          0.5469094772451943
+        ],
+        "mass": 4.0,
+        "inertia": [
+          [
+            0.17326997031857944,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.537487504325454,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.511350823776959
+          ]
+        ]
+      },
+      "source": [
+        -0.26334159786091926,
+        -0.21610028833291628,
+        0.5711987799300329,
+        0.0,
+        0.0,
+        0.9957852426214826,
+        -0.09171559615068194
+      ],
+      "destination": [
+        -0.2689063336237717,
+        0.12315733335690737,
+        0.5711987799300329,
+        0.0,
+        0.0,
+        0.9957852426214826,
+        -0.09171559615068194
+      ],
+      "support_top": 0.2977440413074357,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "elongated_box:2",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "4kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 3.3252819871351096
+      },
+      "span_load_extension": {
+        "original_case": "elongated_box_y2_0",
+        "target_max_dimension_m": 1.1460159408471378,
+        "mass_kg": 4.0
+      }
+    },
+    {
+      "id": "span_load_cylinder_040",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          0.7290562320729734,
+          0.7290562320729734,
+          1.0933270718808832
+        ],
+        "mass": 4.0,
+        "inertia": [
+          [
+            0.531335442750319,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.531335442750319,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.26576149476222066
+          ]
+        ]
+      },
+      "source": [
+        0.37568127318402766,
+        -0.08001811811394499,
+        0.7108529483693333,
+        -0.32648529325077386,
+        0.6272219330436046,
+        0.6272219330436049,
+        -0.3264852932507739
+      ],
+      "destination": [
+        0.12815234253475222,
+        -0.22107977982581845,
+        0.7108529483693333,
+        -0.32648529325077386,
+        0.6272219330436046,
+        0.6272219330436049,
+        -0.3264852932507739
+      ],
+      "support_top": 0.3463248323328465,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "cylinder:2",
+        "resting_orientation": "lying",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "4kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 4.101459067975398
+      },
+      "span_load_extension": {
+        "original_case": "cylinder_y2_1",
+        "target_max_dimension_m": 1.0933270718808832,
+        "mass_kg": 4.0
+      }
+    },
+    {
+      "id": "span_load_ellipsoid_040",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.718215531387294,
+          1.2930985088267037,
+          0.7024379657070255
+        ],
+        "mass": 4.0,
+        "inertia": [
+          [
+            0.4331045698392939,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.2018505290385115,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.4375874606111556
+          ]
+        ]
+      },
+      "source": [
+        -0.31229405250148434,
+        -0.19965735663560247,
+        0.6985266690143945,
+        -0.6134185339745646,
+        0.7897580022855206,
+        8.648152223818586e-07,
+        1.3160084003328706e-06
+      ],
+      "destination": [
+        -0.5715047420769699,
+        -0.46216411047982503,
+        0.6985266690143945,
+        -0.6134185339745646,
+        0.7897580022855206,
+        8.648152223818586e-07,
+        1.3160084003328706e-06
+      ],
+      "support_top": 0.34730768616077695,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "ellipsoid:2",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:0",
+        "size_bin": "over_115cm",
+        "mass_bin": "4kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 514,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 4.461624379262882
+      },
+      "span_load_extension": {
+        "original_case": "ellipsoid_y2_3",
+        "target_max_dimension_m": 1.2930985088267037,
+        "mass_kg": 4.0
+      }
+    },
+    {
+      "id": "span_load_triangular_prism_040",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          1.194583509201515,
+          1.0454176391739713,
+          0.8412472685465865
+        ],
+        "mass": 4.0,
+        "inertia": [
+          [
+            0.47876522012260414,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.4737372823550652,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.4807045245862742
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5972917546007575,
+            -0.34847254639132375,
+            -0.42062363427329325
+          ],
+          [
+            0.5972917546007575,
+            -0.34847254639132375,
+            -0.42062363427329325
+          ],
+          [
+            0.0,
+            0.6969450927826476,
+            -0.42062363427329325
+          ],
+          [
+            -0.5972917546007575,
+            -0.34847254639132375,
+            0.42062363427329325
+          ],
+          [
+            0.5972917546007575,
+            -0.34847254639132375,
+            0.42062363427329325
+          ],
+          [
+            0.0,
+            0.6969450927826476,
+            0.42062363427329325
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.37729934918945884,
+        0.23712046591936353,
+        0.7305650956815323,
+        0.0,
+        0.0,
+        -0.7601681595380381,
+        0.6497263802744597
+      ],
+      "destination": [
+        0.29576546154720473,
+        0.6863519472843473,
+        0.7305650956815323,
+        0.0,
+        0.0,
+        -0.7601681595380381,
+        0.6497263802744597
+      ],
+      "support_top": 0.309941461408239,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "triangular_prism:2",
+        "resting_orientation": "large_face",
+        "position_bin": "1:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "4kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 4.556041523628928
+      },
+      "span_load_extension": {
+        "original_case": "triangular_prism_y2_2",
+        "target_max_dimension_m": 1.194583509201515,
+        "mass_kg": 4.0
+      }
+    },
+    {
+      "id": "span_load_tapered_box_040",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          1.2766032688924804,
+          0.6925879000500218,
+          1.1832373798194522
+        ],
+        "mass": 4.0,
+        "inertia": [
+          [
+            0.5498353449193921,
+            2.7072067841697966e-18,
+            -0.0
+          ],
+          [
+            2.7072067841697966e-18,
+            0.820399365127176,
+            1.3074564334410265e-18
+          ],
+          [
+            -0.0,
+            1.3074564334410265e-18,
+            0.4962672028967969
+          ]
+        ],
+        "vertices": [
+          [
+            -0.6383016344462402,
+            -0.3462939500250109,
+            -0.49502788339385245
+          ],
+          [
+            0.6383016344462402,
+            -0.3462939500250109,
+            -0.49502788339385245
+          ],
+          [
+            0.6383016344462402,
+            0.3462939500250109,
+            -0.49502788339385245
+          ],
+          [
+            -0.6383016344462402,
+            0.3462939500250109,
+            -0.49502788339385245
+          ],
+          [
+            -0.3829809806677441,
+            -0.20777637001500654,
+            0.6882094964255997
+          ],
+          [
+            0.3829809806677441,
+            -0.20777637001500654,
+            0.6882094964255997
+          ],
+          [
+            0.3829809806677441,
+            0.20777637001500654,
+            0.6882094964255997
+          ],
+          [
+            -0.3829809806677441,
+            0.20777637001500654,
+            0.6882094964255997
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        -0.031546968327291314,
+        0.21811653201357573,
+        0.6522566468258812,
+        0.0,
+        0.0,
+        0.9696033305806082,
+        -0.244682204761588
+      ],
+      "destination": [
+        -0.40637953085487855,
+        0.08963885418151604,
+        0.6522566468258812,
+        0.0,
+        0.0,
+        0.9696033305806082,
+        -0.244682204761588
+      ],
+      "support_top": 0.15722876343202877,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 2,
+        "family_x_yaw_bin": "tapered_box:2",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "4kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 3.6359764955550116
+      },
+      "span_load_extension": {
+        "original_case": "tapered_box_y2_2",
+        "target_max_dimension_m": 1.2766032688924804,
+        "mass_kg": 4.0
+      }
+    },
+    {
+      "id": "span_load_box_045",
+      "payload": {
+        "shape": "box",
+        "size": [
+          0.6561591640304731,
+          0.8227087912222377,
+          1.087382143245375
+        ],
+        "mass": 4.5,
+        "inertia": [
+          [
+            0.6972186302262228,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.604854290246278,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.41527297638582183
+          ]
+        ]
+      },
+      "source": [
+        0.13211437450817698,
+        -0.3100651429142477,
+        0.7669682293077906,
+        0.0,
+        0.0,
+        -0.17267654865577722,
+        0.98497858329221
+      ],
+      "destination": [
+        -0.056872684279930474,
+        -0.768321526443644,
+        0.7669682293077906,
+        0.0,
+        0.0,
+        -0.17267654865577722,
+        0.98497858329221
+      ],
+      "support_top": 0.2232771576851032,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "box:3",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "4.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 5.936092521400862
+      },
+      "span_load_extension": {
+        "original_case": "box_y3_2",
+        "target_max_dimension_m": 1.087382143245375,
+        "mass_kg": 4.5
+      }
+    },
+    {
+      "id": "span_load_elongated_box_045",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.2045807513792006,
+          0.5753036978551872,
+          0.5638576849798661
+        ],
+        "mass": 4.5,
+        "inertia": [
+          [
+            0.24334118762876494,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.6633563533140501,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.6682459242596746
+          ]
+        ]
+      },
+      "source": [
+        -0.2114761285163591,
+        0.22188712228229202,
+        0.48939930246418417,
+        0.0,
+        0.0,
+        -0.6127217753118833,
+        0.7902986942028021
+      ],
+      "destination": [
+        -0.14567977255018844,
+        0.513781171947348,
+        0.48939930246418417,
+        0.0,
+        0.0,
+        -0.6127217753118833,
+        0.7902986942028021
+      ],
+      "support_top": 0.20747045997425112,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "elongated_box:3",
+        "resting_orientation": "large_face",
+        "position_bin": "0:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "4.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 4.9641853171066055
+      },
+      "span_load_extension": {
+        "original_case": "elongated_box_y3_0",
+        "target_max_dimension_m": 1.2045807513792006,
+        "mass_kg": 4.5
+      }
+    },
+    {
+      "id": "span_load_cylinder_045",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          1.181469886440201,
+          1.181469886440201,
+          0.8315440942432524
+        ],
+        "mass": 4.5,
+        "inertia": [
+          [
+            0.6518883375354739,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.6518883375354739,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.7851774895678245
+          ]
+        ]
+      },
+      "source": [
+        0.30143899430828947,
+        -0.11674041711820671,
+        0.7255054020842292,
+        0.0,
+        0.0,
+        -0.300971093897017,
+        0.9536332631774298
+      ],
+      "destination": [
+        0.03684066677057546,
+        0.12300034706488272,
+        0.7255054020842292,
+        0.0,
+        0.0,
+        -0.300971093897017,
+        0.9536332631774298
+      ],
+      "support_top": 0.309733354962603,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "cylinder:3",
+        "resting_orientation": "standing",
+        "position_bin": "1:0",
+        "size_bin": "over_115cm",
+        "mass_bin": "4.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 5.671763706780029
+      },
+      "span_load_extension": {
+        "original_case": "cylinder_y3_0",
+        "target_max_dimension_m": 1.181469886440201,
+        "mass_kg": 4.5
+      }
+    },
+    {
+      "id": "span_load_ellipsoid_045",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.8940902054543841,
+          1.1635872212369232,
+          0.7764645576564287
+        ],
+        "mass": 4.5,
+        "inertia": [
+          [
+            0.4402872969125531,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.3155162635768627,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.4844998163059486
+          ]
+        ]
+      },
+      "source": [
+        -0.13300010075960267,
+        0.29751811335824263,
+        0.7337801171905167,
+        0.0,
+        0.0,
+        -0.26006668606310535,
+        0.9655906579913427
+      ],
+      "destination": [
+        -0.46936659748657195,
+        0.14364572753904406,
+        0.7337801171905167,
+        0.0,
+        0.0,
+        -0.26006668606310535,
+        0.9655906579913427
+      ],
+      "support_top": 0.3455478383623023,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "ellipsoid:3",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "4.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 5.757002777733535
+      },
+      "span_load_extension": {
+        "original_case": "ellipsoid_y3_0",
+        "target_max_dimension_m": 1.1635872212369232,
+        "mass_kg": 4.5
+      }
+    },
+    {
+      "id": "span_load_triangular_prism_045",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          1.0098854580489416,
+          1.0442442091268196,
+          0.7518669034566718
+        ],
+        "mass": 4.5,
+        "inertia": [
+          [
+            0.4846004322662958,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.4032143098885818,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.4638368617697344
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5049427290244708,
+            -0.3480814030422732,
+            -0.3759334517283359
+          ],
+          [
+            0.5049427290244708,
+            -0.3480814030422732,
+            -0.3759334517283359
+          ],
+          [
+            0.0,
+            0.6961628060845464,
+            -0.3759334517283359
+          ],
+          [
+            -0.5049427290244708,
+            -0.3480814030422732,
+            0.3759334517283359
+          ],
+          [
+            0.5049427290244708,
+            -0.3480814030422732,
+            0.3759334517283359
+          ],
+          [
+            0.0,
+            0.6961628060845464,
+            0.3759334517283359
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.039884254110836515,
+        0.3603442889457146,
+        0.6042594144338819,
+        0.5703421501992298,
+        -0.4179830519364619,
+        -0.417983051936462,
+        0.57034215019923
+      ],
+      "destination": [
+        0.47741772330790255,
+        0.5218283430159099,
+        0.6042594144338819,
+        0.5703421501992298,
+        -0.4179830519364619,
+        -0.417983051936462,
+        0.57034215019923
+      ],
+      "support_top": 0.25617801139160856,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "triangular_prism:3",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "4.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 5.018298583661779
+      },
+      "span_load_extension": {
+        "original_case": "triangular_prism_y3_1",
+        "target_max_dimension_m": 1.0442442091268196,
+        "mass_kg": 4.5
+      }
+    },
+    {
+      "id": "span_load_tapered_box_045",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          1.0413778812249286,
+          0.6842669698047673,
+          1.0583552508295582
+        ],
+        "mass": 4.5,
+        "inertia": [
+          [
+            0.517237563627912,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.6803416907142731,
+            -6.049907982829677e-18
+          ],
+          [
+            -0.0,
+            -6.049907982829677e-18,
+            0.4109556314818893
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5206889406124643,
+            -0.34213348490238366,
+            -0.4427812784082845
+          ],
+          [
+            0.5206889406124643,
+            -0.34213348490238366,
+            -0.4427812784082845
+          ],
+          [
+            0.5206889406124643,
+            0.34213348490238366,
+            -0.4427812784082845
+          ],
+          [
+            -0.5206889406124643,
+            0.34213348490238366,
+            -0.4427812784082845
+          ],
+          [
+            -0.3124133643674786,
+            -0.20528009094143018,
+            0.6155739724212737
+          ],
+          [
+            0.3124133643674786,
+            -0.20528009094143018,
+            0.6155739724212737
+          ],
+          [
+            0.3124133643674786,
+            0.20528009094143018,
+            0.6155739724212737
+          ],
+          [
+            -0.3124133643674786,
+            0.20528009094143018,
+            0.6155739724212737
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        0.4848209656670046,
+        0.30266297633135775,
+        0.6650870957543287,
+        0.0,
+        0.0,
+        -0.3523230221072496,
+        0.935878457970486
+      ],
+      "destination": [
+        0.3798181968770583,
+        0.4949629661715355,
+        0.6650870957543287,
+        0.0,
+        0.0,
+        -0.3523230221072496,
+        0.935878457970486
+      ],
+      "support_top": 0.22230581734604413,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 3,
+        "family_x_yaw_bin": "tapered_box:3",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "4.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 5.563081045022421
+      },
+      "span_load_extension": {
+        "original_case": "tapered_box_y3_2",
+        "target_max_dimension_m": 1.0583552508295582,
+        "mass_kg": 4.5
+      }
+    },
+    {
+      "id": "span_load_box_050",
+      "payload": {
+        "shape": "box",
+        "size": [
+          1.0019625513951174,
+          0.9777494219761071,
+          0.9921709468104106
+        ],
+        "mass": 5.0,
+        "inertia": [
+          [
+            0.8084987999455328,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.8284717258720333,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.8166345360720104
+          ]
+        ]
+      },
+      "source": [
+        -0.31365490751800085,
+        0.48905206214956953,
+        0.7778017833913098,
+        0.0,
+        0.0,
+        0.6154011454131413,
+        0.7882140763930785
+      ],
+      "destination": [
+        -0.47057977048273497,
+        0.30509282093268775,
+        0.7778017833913098,
+        0.0,
+        0.0,
+        0.6154011454131413,
+        0.7882140763930785
+      ],
+      "support_top": 0.2817163099861045,
+      "strata": {
+        "family": "box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "box:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "0:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 1.3257895899493473
+      },
+      "span_load_extension": {
+        "original_case": "box_y0_2",
+        "target_max_dimension_m": 1.0019625513951174,
+        "mass_kg": 5.0
+      }
+    },
+    {
+      "id": "span_load_elongated_box_050",
+      "payload": {
+        "shape": "elongated_box",
+        "size": [
+          1.1486496760100664,
+          0.5669795610975628,
+          0.5197675775229088
+        ],
+        "mass": 5.0,
+        "inertia": [
+          [
+            0.24651006556100744,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.6623143386841932,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.6836924587085064
+          ]
+        ]
+      },
+      "source": [
+        0.015643727264902596,
+        -0.001592257962109933,
+        0.46284915608523125,
+        0.0,
+        0.0,
+        0.6817791489239822,
+        0.731558057909617
+      ],
+      "destination": [
+        0.4957373048403995,
+        -0.049993775493605196,
+        0.46284915608523125,
+        0.0,
+        0.0,
+        0.6817791489239822,
+        0.731558057909617
+      ],
+      "support_top": 0.20296536732377682,
+      "strata": {
+        "family": "elongated_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "elongated_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 1.500383773641065
+      },
+      "span_load_extension": {
+        "original_case": "elongated_box_y0_2",
+        "target_max_dimension_m": 1.1486496760100664,
+        "mass_kg": 5.0
+      }
+    },
+    {
+      "id": "span_load_cylinder_050",
+      "payload": {
+        "shape": "cylinder",
+        "size": [
+          0.3724930287617686,
+          0.3724930287617686,
+          1.0813011246610142
+        ],
+        "mass": 5.0,
+        "inertia": [
+          [
+            0.5305314227292753,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.5305314227292753,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.08671941029757235
+          ]
+        ]
+      },
+      "source": [
+        0.25613560791712253,
+        -0.10567728094775497,
+        0.3688648605505093,
+        0.5539236777574302,
+        0.4395094529355229,
+        0.43950945293552296,
+        0.5539236777574302
+      ],
+      "destination": [
+        -0.18213981962315912,
+        0.0710567136986697,
+        0.3688648605505093,
+        0.5539236777574302,
+        0.4395094529355229,
+        0.43950945293552296,
+        0.5539236777574302
+      ],
+      "support_top": 0.182618346169625,
+      "strata": {
+        "family": "cylinder",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "cylinder:0",
+        "resting_orientation": "lying",
+        "position_bin": "1:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 1.3414656622036498
+      },
+      "span_load_extension": {
+        "original_case": "cylinder_y0_1",
+        "target_max_dimension_m": 1.0813011246610142,
+        "mass_kg": 5.0
+      }
+    },
+    {
+      "id": "span_load_ellipsoid_050",
+      "payload": {
+        "shape": "ellipsoid",
+        "size": [
+          0.7533798600917941,
+          0.7435092521230509,
+          1.0698702683041428
+        ],
+        "mass": 5.0,
+        "inertia": [
+          [
+            0.42435709974843916,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.42805090114827743,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.28009680539612747
+          ]
+        ]
+      },
+      "source": [
+        -0.27373049407595296,
+        -0.16102827722800872,
+        0.5924684881387255,
+        0.6676166659820214,
+        0.23299782682044456,
+        0.23299782682044462,
+        0.6676166659820216
+      ],
+      "destination": [
+        -0.5253789918506084,
+        0.03736804854823306,
+        0.5924684881387255,
+        0.6676166659820214,
+        0.23299782682044456,
+        0.23299782682044462,
+        0.6676166659820216
+      ],
+      "support_top": 0.22071386207720012,
+      "strata": {
+        "family": "ellipsoid",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "ellipsoid:0",
+        "resting_orientation": "curved_stable",
+        "position_bin": "0:0",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 0.6715663058923439
+      },
+      "span_load_extension": {
+        "original_case": "ellipsoid_y0_3",
+        "target_max_dimension_m": 1.0698702683041428,
+        "mass_kg": 5.0
+      }
+    },
+    {
+      "id": "span_load_triangular_prism_050",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          1.1297712463908143,
+          1.2331308958718636,
+          0.9127194231970716
+        ],
+        "mass": 5.0,
+        "inertia": [
+          [
+            0.769499145715427,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.6130201166945508,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.6883053078423154
+          ]
+        ],
+        "vertices": [
+          [
+            -0.5648856231954071,
+            -0.4110436319572879,
+            -0.4563597115985358
+          ],
+          [
+            0.5648856231954071,
+            -0.4110436319572879,
+            -0.4563597115985358
+          ],
+          [
+            0.0,
+            0.8220872639145758,
+            -0.4563597115985358
+          ],
+          [
+            -0.5648856231954071,
+            -0.4110436319572879,
+            0.4563597115985358
+          ],
+          [
+            0.5648856231954071,
+            -0.4110436319572879,
+            0.4563597115985358
+          ],
+          [
+            0.0,
+            0.8220872639145758,
+            0.4563597115985358
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        0.3090046245275436,
+        0.32380858126943823,
+        0.6549233040506812,
+        0.6910993507757544,
+        0.1496051047168201,
+        0.14960510471682012,
+        0.6910993507757546
+      ],
+      "destination": [
+        0.6474538062086894,
+        0.07276524026742826,
+        0.6549233040506812,
+        0.6910993507757544,
+        0.1496051047168201,
+        0.14960510471682012,
+        0.6910993507757546
+      ],
+      "support_top": 0.24387967209339312,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "triangular_prism:0",
+        "resting_orientation": "small_or_sloped_face",
+        "position_bin": "1:1",
+        "size_bin": "over_115cm",
+        "mass_bin": "5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 0.4263693909708991
+      },
+      "span_load_extension": {
+        "original_case": "triangular_prism_y0_1",
+        "target_max_dimension_m": 1.2331308958718636,
+        "mass_kg": 5.0
+      }
+    },
+    {
+      "id": "span_load_tapered_box_050",
+      "payload": {
+        "shape": "tapered_box",
+        "size": [
+          1.08047700441155,
+          0.80958302293345,
+          0.5501723892084017
+        ],
+        "mass": 5.0,
+        "inertia": [
+          [
+            0.3108427084341561,
+            -0.0,
+            1.839070900184808e-18
+          ],
+          [
+            -0.0,
+            0.46141423532880405,
+            1.7454995570951157e-18
+          ],
+          [
+            1.839070900184808e-18,
+            1.7454995570951157e-18,
+            0.5360682415651754
+          ]
+        ],
+        "vertices": [
+          [
+            -0.540238502205775,
+            -0.404791511466725,
+            -0.23017416283208644
+          ],
+          [
+            0.540238502205775,
+            -0.404791511466725,
+            -0.23017416283208644
+          ],
+          [
+            0.540238502205775,
+            0.404791511466725,
+            -0.23017416283208644
+          ],
+          [
+            -0.540238502205775,
+            0.404791511466725,
+            -0.23017416283208644
+          ],
+          [
+            -0.32414310132346497,
+            -0.242874906880035,
+            0.3199982263763153
+          ],
+          [
+            0.32414310132346497,
+            -0.242874906880035,
+            0.3199982263763153
+          ],
+          [
+            0.32414310132346497,
+            0.242874906880035,
+            0.3199982263763153
+          ],
+          [
+            -0.32414310132346497,
+            0.242874906880035,
+            0.3199982263763153
+          ]
+        ],
+        "faces": [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            0
+          ],
+          [
+            0,
+            4,
+            7
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            2,
+            3,
+            6
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            6,
+            7,
+            4
+          ]
+        ]
+      },
+      "source": [
+        0.07125943129197188,
+        0.11179356669573903,
+        0.5518207460217347,
+        0.0,
+        0.0,
+        0.506679147335694,
+        0.8621347004123974
+      ],
+      "destination": [
+        -0.2547335356888695,
+        -0.20977935076798193,
+        0.5518207460217347,
+        0.0,
+        0.0,
+        0.506679147335694,
+        0.8621347004123974
+      ],
+      "support_top": 0.3216465831896483,
+      "strata": {
+        "family": "tapered_box",
+        "yaw_bin": 0,
+        "family_x_yaw_bin": "tapered_box:0",
+        "resting_orientation": "large_face",
+        "position_bin": "1:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "applied_world_yaw_rad": 1.0626570310526056
+      },
+      "span_load_extension": {
+        "original_case": "tapered_box_y0_4",
+        "target_max_dimension_m": 1.08047700441155,
+        "mass_kg": 5.0
+      }
+    }
+  ],
+  "scope": "30 cases fixed with user approval; 3-5 kg, maximum dimensions 1.0-1.3 m; unchanged physical limits and success criteria; search 1-8 modules",
+  "provenance": {
+    "source": "artifacts/runs/resumed_holdout120_inputs_20261022.json",
+    "sha256": "2ecf2fff085675abb32b549c2621235a75be2d25b148e59c79a6223a3a5e990e",
+    "previously_evaluated": true
+  },
+  "execution_order_note": "Balanced six-shape checks first; physical inputs, identities and success rules unchanged. These inputs have already been used during development.",
+  "original_physical_panel_sha256": "2d22d3a5988ca9e35686018bf1f3ca627a93402ca4bd35ecea4a7ed9f4cefadb",
+  "physical_input_source": {
+    "path": "artifacts/runs/task_unified120_v5_inputs_20261023.json",
+    "sha256": "272182f12da6ac62977404a72e9584ae461113312e233c6ba9fb907c3267d039"
+  },
+  "rationale": "Larger opposing-surface separation requires connection reach; moderate additional payload motivates distributing limited pad forces. Neither mechanism forces a module count."
+}

@@ -1,0 +1,639 @@
+{
+  "scope": "30 frozen enlarged tasks; final results on local PC only; interrupted remote results excluded",
+  "overall": {
+    "successes": 16,
+    "total": 30,
+    "fraction": 0.5333333333333333,
+    "reaches_threshold": false,
+    "failures": {
+      "constant constraint infeasible": 3,
+      "initial_planning_deadline": 6,
+      "contact_load_limit": 3,
+      "contact allocation objective unresolved: 4.924174662807536e-07": 1,
+      "contact solve PrimalInfeasible": 1
+    }
+  },
+  "same_sources": true,
+  "same_settings": true,
+  "missing": 0,
+  "by_size_cm": {
+    "65": {
+      "total": 6,
+      "successes": 4,
+      "selected_modules": {
+        "4": 2,
+        "3": 3,
+        "5": 1
+      },
+      "executed_modules": {
+        "4": 2,
+        "3": 3
+      }
+    },
+    "75": {
+      "total": 6,
+      "successes": 4,
+      "selected_modules": {
+        "3": 4,
+        "4": 2
+      },
+      "executed_modules": {
+        "3": 4,
+        "4": 2
+      }
+    },
+    "85": {
+      "total": 6,
+      "successes": 3,
+      "selected_modules": {
+        "3": 2,
+        "5": 1,
+        "4": 3
+      },
+      "executed_modules": {
+        "3": 2,
+        "5": 1,
+        "4": 3
+      }
+    },
+    "100": {
+      "total": 6,
+      "successes": 3,
+      "selected_modules": {
+        "3": 1,
+        "4": 4,
+        "5": 1
+      },
+      "executed_modules": {
+        "3": 1,
+        "4": 4
+      }
+    },
+    "120": {
+      "total": 6,
+      "successes": 2,
+      "selected_modules": {
+        "4": 4,
+        "5": 1,
+        "6": 1
+      },
+      "executed_modules": {
+        "4": 2
+      }
+    }
+  },
+  "by_family": {
+    "box": {
+      "successes": 4,
+      "total": 5,
+      "fraction": 0.8,
+      "reaches_threshold": true,
+      "failures": {
+        "contact allocation objective unresolved: 4.924174662807536e-07": 1
+      }
+    },
+    "elongated_box": {
+      "successes": 2,
+      "total": 5,
+      "fraction": 0.4,
+      "reaches_threshold": false,
+      "failures": {
+        "constant constraint infeasible": 2,
+        "initial_planning_deadline": 1
+      }
+    },
+    "cylinder": {
+      "successes": 3,
+      "total": 5,
+      "fraction": 0.6,
+      "reaches_threshold": false,
+      "failures": {
+        "contact_load_limit": 1,
+        "contact solve PrimalInfeasible": 1
+      }
+    },
+    "ellipsoid": {
+      "successes": 3,
+      "total": 5,
+      "fraction": 0.6,
+      "reaches_threshold": false,
+      "failures": {
+        "constant constraint infeasible": 1,
+        "initial_planning_deadline": 1
+      }
+    },
+    "triangular_prism": {
+      "successes": 2,
+      "total": 5,
+      "fraction": 0.4,
+      "reaches_threshold": false,
+      "failures": {
+        "contact_load_limit": 1,
+        "initial_planning_deadline": 2
+      }
+    },
+    "tapered_box": {
+      "successes": 2,
+      "total": 5,
+      "fraction": 0.4,
+      "reaches_threshold": false,
+      "failures": {
+        "initial_planning_deadline": 2,
+        "contact_load_limit": 1
+      }
+    }
+  },
+  "selected_modules": {
+    "4": 15,
+    "3": 10,
+    "5": 4,
+    "6": 1
+  },
+  "executed_modules": {
+    "4": 13,
+    "3": 10,
+    "5": 1
+  },
+  "successful_modules": {
+    "4": 9,
+    "3": 6,
+    "5": 1
+  },
+  "skeletons": 4,
+  "port_contact_structures": 25,
+  "planning_s": {
+    "minimum": 5.583142314106226,
+    "median": 11.839663620106876,
+    "maximum": 38.35877797892317,
+    "over15": 6
+  },
+  "failures": [
+    {
+      "phase": "CARRY",
+      "reason": "constant constraint infeasible",
+      "count": 1
+    },
+    {
+      "phase": null,
+      "reason": "initial_planning_deadline",
+      "count": 6
+    },
+    {
+      "phase": "DESCEND",
+      "reason": "constant constraint infeasible",
+      "count": 1
+    },
+    {
+      "phase": "LOAD",
+      "reason": "contact_load_limit",
+      "count": 1
+    },
+    {
+      "phase": "LOAD",
+      "reason": "contact allocation objective unresolved: 4.924174662807536e-07",
+      "count": 1
+    },
+    {
+      "phase": "UNLOAD",
+      "reason": "contact_load_limit",
+      "count": 1
+    },
+    {
+      "phase": "ACQUIRE",
+      "reason": "contact_load_limit",
+      "count": 1
+    },
+    {
+      "phase": "LIFT",
+      "reason": "constant constraint infeasible",
+      "count": 1
+    },
+    {
+      "phase": "ACQUIRE",
+      "reason": "contact solve PrimalInfeasible",
+      "count": 1
+    }
+  ],
+  "remote_diagnostic": [
+    {
+      "case": "large_elongated_box_100cm",
+      "local_planning_s": 25.35352425277233,
+      "remote_planning_s": 46.320749691000856,
+      "remote_reason": "initial_planning_deadline",
+      "scope": "interrupted pre-fix diagnostic only; same inputs/seeds; local 32 vs remote 24 workers"
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "local_planning_s": 9.105414756108075,
+      "remote_planning_s": 17.466690872000072,
+      "remote_reason": "initial_planning_deadline",
+      "scope": "interrupted pre-fix diagnostic only; same inputs/seeds; local 32 vs remote 24 workers"
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "local_planning_s": 20.223898692056537,
+      "remote_planning_s": 38.57112347400016,
+      "remote_reason": "initial_planning_deadline",
+      "scope": "interrupted pre-fix diagnostic only; same inputs/seeds; local 32 vs remote 24 workers"
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "local_planning_s": 12.055180667899549,
+      "remote_planning_s": 18.958846759000153,
+      "remote_reason": "initial_planning_deadline",
+      "scope": "interrupted pre-fix diagnostic only; same inputs/seeds; local 32 vs remote 24 workers"
+    }
+  ],
+  "rows": [
+    {
+      "case": "large_box_065cm",
+      "size_cm": 65,
+      "family": "box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.54900466883555,
+      "simulated_s": 66.22249999929804,
+      "result_path": "artifacts/runs/large30_final_20261024/large_box_065cm/result.json",
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_elongated_box_065cm",
+      "size_cm": 65,
+      "family": "elongated_box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 9.598349684849381,
+      "simulated_s": 55.40749999955377,
+      "result_path": "artifacts/runs/large30_final_20261024/large_elongated_box_065cm/result.json",
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_cylinder_065cm",
+      "size_cm": 65,
+      "family": "cylinder",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.516803570091724,
+      "simulated_s": 69.62499999921758,
+      "result_path": "artifacts/runs/large30_final_20261024/large_cylinder_065cm/result.json",
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_065cm",
+      "size_cm": 65,
+      "family": "ellipsoid",
+      "success": false,
+      "reason": "constant constraint infeasible",
+      "phase": "CARRY",
+      "planning_s": 6.35594993410632,
+      "simulated_s": 17.957500000040238,
+      "result_path": "artifacts/runs/large30_final_20261024/large_ellipsoid_065cm/result.json",
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_065cm",
+      "size_cm": 65,
+      "family": "triangular_prism",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 6.636293923016638,
+      "simulated_s": 63.19499999936962,
+      "result_path": "artifacts/runs/large30_final_20261024/large_triangular_prism_065cm/result.json",
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_tapered_box_065cm",
+      "size_cm": 65,
+      "family": "tapered_box",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 19.318921884987503,
+      "simulated_s": 0,
+      "result_path": "artifacts/runs/large30_final_20261024/large_tapered_box_065cm/result.json",
+      "modules": 5,
+      "contacts": 3
+    },
+    {
+      "case": "large_box_075cm",
+      "size_cm": 75,
+      "family": "box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 6.7276414996013045,
+      "simulated_s": 62.10999999939528,
+      "result_path": "artifacts/runs/large30_final_20261024/large_box_075cm/result.json",
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_elongated_box_075cm",
+      "size_cm": 75,
+      "family": "elongated_box",
+      "success": false,
+      "reason": "constant constraint infeasible",
+      "phase": "DESCEND",
+      "planning_s": 13.166478087659925,
+      "simulated_s": 30.50500000010015,
+      "result_path": "artifacts/runs/large30_final_20261024/large_elongated_box_075cm/result.json",
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_075cm",
+      "size_cm": 75,
+      "family": "cylinder",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 5.78419861709699,
+      "simulated_s": 57.854999999495895,
+      "result_path": "artifacts/runs/large30_final_20261024/large_cylinder_075cm/result.json",
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_075cm",
+      "size_cm": 75,
+      "family": "ellipsoid",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.620886190328747,
+      "simulated_s": 64.4774999993393,
+      "result_path": "artifacts/runs/large30_final_20261024/large_ellipsoid_075cm/result.json",
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_075cm",
+      "size_cm": 75,
+      "family": "triangular_prism",
+      "success": false,
+      "reason": "contact_load_limit",
+      "phase": "LOAD",
+      "planning_s": 12.783260446041822,
+      "simulated_s": 11.787375000010776,
+      "result_path": "artifacts/runs/large30_final_20261024/large_triangular_prism_075cm/result.json",
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_tapered_box_075cm",
+      "size_cm": 75,
+      "family": "tapered_box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 5.583142314106226,
+      "simulated_s": 61.392499999412244,
+      "result_path": "artifacts/runs/large30_final_20261024/large_tapered_box_075cm/result.json",
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_box_085cm",
+      "size_cm": 85,
+      "family": "box",
+      "success": false,
+      "reason": "contact allocation objective unresolved: 4.924174662807536e-07",
+      "phase": "LOAD",
+      "planning_s": 12.0004822621122,
+      "simulated_s": 9.334999999999066,
+      "result_path": "artifacts/runs/large30_final_20261024/large_box_085cm/result.json",
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_elongated_box_085cm",
+      "size_cm": 85,
+      "family": "elongated_box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.509650103282183,
+      "simulated_s": 62.727499999380676,
+      "result_path": "artifacts/runs/large30_final_20261024/large_elongated_box_085cm/result.json",
+      "modules": 5,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_085cm",
+      "size_cm": 85,
+      "family": "cylinder",
+      "success": false,
+      "reason": "contact_load_limit",
+      "phase": "UNLOAD",
+      "planning_s": 12.240723668131977,
+      "simulated_s": 30.26200000009899,
+      "result_path": "artifacts/runs/large30_final_20261024/large_cylinder_085cm/result.json",
+      "modules": 3,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_085cm",
+      "size_cm": 85,
+      "family": "ellipsoid",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.339525698218495,
+      "simulated_s": 85.04749999885289,
+      "result_path": "artifacts/runs/large30_final_20261024/large_ellipsoid_085cm/result.json",
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_triangular_prism_085cm",
+      "size_cm": 85,
+      "family": "triangular_prism",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.466241376940161,
+      "simulated_s": 68.03749999925512,
+      "result_path": "artifacts/runs/large30_final_20261024/large_triangular_prism_085cm/result.json",
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_tapered_box_085cm",
+      "size_cm": 85,
+      "family": "tapered_box",
+      "success": false,
+      "reason": "contact_load_limit",
+      "phase": "ACQUIRE",
+      "planning_s": 12.07942146807909,
+      "simulated_s": 7.184124999994594,
+      "result_path": "artifacts/runs/large30_final_20261024/large_tapered_box_085cm/result.json",
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_box_100cm",
+      "size_cm": 100,
+      "family": "box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 5.820740603841841,
+      "simulated_s": 66.06499999930176,
+      "result_path": "artifacts/runs/large30_final_20261024/large_box_100cm/result.json",
+      "modules": 3,
+      "contacts": 2
+    },
+    {
+      "case": "large_elongated_box_100cm",
+      "size_cm": 100,
+      "family": "elongated_box",
+      "success": false,
+      "reason": "constant constraint infeasible",
+      "phase": "LIFT",
+      "planning_s": 14.297573199030012,
+      "simulated_s": 13.377500000018369,
+      "result_path": "artifacts/runs/large30_final_20261024/large_elongated_box_100cm/result.json",
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_100cm",
+      "size_cm": 100,
+      "family": "cylinder",
+      "success": false,
+      "reason": "contact solve PrimalInfeasible",
+      "phase": "ACQUIRE",
+      "planning_s": 10.170530076138675,
+      "simulated_s": 4.325000000001258,
+      "result_path": "artifacts/runs/large30_final_20261024/large_cylinder_100cm/result.json",
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_ellipsoid_100cm",
+      "size_cm": 100,
+      "family": "ellipsoid",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 10.545757023151964,
+      "simulated_s": 87.18499999880234,
+      "result_path": "artifacts/runs/large30_final_20261024/large_ellipsoid_100cm/result.json",
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_triangular_prism_100cm",
+      "size_cm": 100,
+      "family": "triangular_prism",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 16.59325319295749,
+      "simulated_s": 0,
+      "result_path": "artifacts/runs/large30_final_20261024/large_triangular_prism_100cm/result.json",
+      "modules": 5,
+      "contacts": 3
+    },
+    {
+      "case": "large_tapered_box_100cm",
+      "size_cm": 100,
+      "family": "tapered_box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 12.270330887287855,
+      "simulated_s": 70.01499999920836,
+      "result_path": "artifacts/runs/large30_final_20261024/large_tapered_box_100cm/result.json",
+      "modules": 4,
+      "contacts": 2
+    },
+    {
+      "case": "large_box_120cm",
+      "size_cm": 120,
+      "family": "box",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 11.678844978101552,
+      "simulated_s": 84.90499999885625,
+      "result_path": "artifacts/runs/large30_final_20261024/large_box_120cm/result.json",
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_elongated_box_120cm",
+      "size_cm": 120,
+      "family": "elongated_box",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 24.598381384275854,
+      "simulated_s": 0,
+      "result_path": "artifacts/runs/large30_final_20261024/large_elongated_box_120cm/result.json",
+      "modules": 4,
+      "contacts": 3
+    },
+    {
+      "case": "large_cylinder_120cm",
+      "size_cm": 120,
+      "family": "cylinder",
+      "success": true,
+      "reason": "task_completed",
+      "phase": "RETREAT",
+      "planning_s": 8.909071566071361,
+      "simulated_s": 92.53499999867583,
+      "result_path": "artifacts/runs/large30_final_20261024/large_cylinder_120cm/result.json",
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_ellipsoid_120cm",
+      "size_cm": 120,
+      "family": "ellipsoid",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 38.35877797892317,
+      "simulated_s": 0,
+      "result_path": "artifacts/runs/large30_final_20261024/large_ellipsoid_120cm/result.json",
+      "modules": 5,
+      "contacts": 5
+    },
+    {
+      "case": "large_triangular_prism_120cm",
+      "size_cm": 120,
+      "family": "triangular_prism",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 17.567382207605988,
+      "simulated_s": 0,
+      "result_path": "artifacts/runs/large30_final_20261024/large_triangular_prism_120cm/result.json",
+      "modules": 4,
+      "contacts": 4
+    },
+    {
+      "case": "large_tapered_box_120cm",
+      "size_cm": 120,
+      "family": "tapered_box",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "phase": null,
+      "planning_s": 26.22051795013249,
+      "simulated_s": 0,
+      "result_path": "artifacts/runs/large30_final_20261024/large_tapered_box_120cm/result.json",
+      "modules": 6,
+      "contacts": 2
+    }
+  ]
+}

@@ -2,6 +2,916 @@
 
 ## 現在地
 
+- **2026-10-27 ユーザーが現成果を一旦受理し、分割コミットを依頼。** 構造生成・幾何計算、把持/解放制御、軽量制御、検証ツール、結果記録に分割する。追加のシミュレーション試験は実行していない。前の120件105成功と今回30件23成功は算術上128/150（85.3%）だが、異なる実装・評価方針の累積記録であり、現行制御150件の成功率として扱わない。
+- **コミット前の関連検査は164件成功。** 最小モデルに接触精度の設定欄がない場合の初期化エラーと、ネイティブ計算を使わない物体干渉回避経路の未定義変数を修正した。試験に使った設定値・ネイティブ経路は変えていない。後者は解析微分あり/なしの両経路で追加検査。ログは `artifacts/commit_validation_20261027.log`。この修正後に30件を再実行した実績とはしない。
+- **保存範囲。** 最終の大型30件・重負荷30件・軽量30件、保存6/7/8機比較の入力・結果・計画・ハッシュ一覧と集計を残す。構造選択の詳細候補列はローカルに残し、Gitには `selection_summary.json` と共有した生成ソースのハッシュ一覧を保存。保存3例の再生に必要なシーンと開始状態も含める。大量の複製ソース、コンパイル済みバイナリ、途中の不採用実験は追加しない。再実行用シェルは未使用の出力先を第1引数、必要なら別PC設定を第2引数に取り、認証情報や一時SSHソケットを固定しない。
+
+- **2026-10-27 軽量制御の30条件再検証を完了。23/30成功（76.7%）、80%には1件不足。** `artifacts/runs/span_load30_priority_20261026`、session26222正常終了。全30件を同一ソース・設定、同じ入力・乱数で構造生成から判定。途中修正・条件再試行なし。旧v11の成功11件はすべて維持し12件を追加成功。全試験37.60分（旧88.95分）、実行600秒超過0件（旧14件）。旧試験と新しい追加安全評価方針の成績は合算しない。
+- **形状別は箱5/5、細長箱5/5、円柱4/5、楕円体1/5、三角柱4/5、台形4/5。** 失敗7件は楕円3kgの配置姿勢未達、楕円3.5kgの降下動作時間超過、台形3.5kg/楕円4.5kgの持上げ加速度未発見、楕円5kgの支持台との形状干渉、三角柱5kgの機体部品間形状干渉、円柱5kgの構造選択未完。幾何干渉は最小間隔-1.012e-5/-2.040e-5mで検出、MuJoCoの禁止接触イベントは0であり衝撃破損を実測したという意味ではない。楕円体が弱点。50区分の補正後検定では失敗集中を検出しなかったが、均一性の保証や改善不要という根拠にはしない。
+- **多数機の完遂は6機6/9、7機6/7、8機1/1。** 4機1/2、5機9/10、計画未完1件。29成立計画は接続骨格7種類、接続口/把持面29種類、分岐5・pitch把持7、全29件で選択根拠complete。前回との接続/把持面一致28/29、円柱4.5kgのみ異なる。構造を再生成しており、成功数差を制御変更だけの厳密な因果推定とはしない。
+- **計算時間と保存結果の確認。** 計画5.29〜14.71秒（中央値9.18）、全件15秒内。搬送に到達した25件の1回平均3.49〜8.05ms（条件中央値4.82ms）、最長呼出し11.40ms。全工程の最長80.13ms、把持平均6.98〜25.30ms、解放平均6.45〜13.02msなので実時間100Hzは未達。成功23件の実行79.54〜464.22秒（中央値171.08）、物理時間比1.31〜5.15（中央値2.31）。成功23件の駆動/関節/禁止干渉/搬送高度/最終配置・速度・解放維持の独立再確認issues0、全30ソース・設定・入力・乱数一致確認。成功中に30N超過8件、5Nm超過4件、個別面50ms離脱4件を別記。モデル上の駆動限界内での成立であり、実機構造強度の証明ではない。
+- **終了後の入口。** `final_summary.json`、`analysis.json`、`comparison.json`、`completion_audit.json`、`planned_diversity.json`に保存。READMEの2026-10-27節へ結果を反映。今回依頼は30例の再検証であり完了。残る失敗の修正・追加試験は自動では行わない。制御・構造生成コードはこの試験中変更せず、runnerへの既存軽量制御フラグ転送のみ追加。コミット依頼なし。
+
+- **軽量制御30件は24判定・19成功・5失敗。** 7機円柱4.5kg339.0秒、8機三角柱4.5kg302.3秒で全工程成功。失敗は円柱5kg計画未完、楕円3kg姿勢未達、楕円3.5kg降下時間超過、台形3.5kgと楕円4.5kgの持上げ加速度未発見。実行600秒超過0。台形4.5kgは退避、箱/細長箱5kgは搬送中。session26222継続、残り6件を同じ実装で判定する。最新日付は10/27へ移ったが出力rootは起動日10/26のまま。
+
+- **軽量制御30件は15件判定・11成功・4失敗で継続中。** 計画未完1、楕円3kgの最終姿勢未達1、楕円3.5kgの降下時間超過1、台形3.5kgの持上げ加速度未発見1。実行600秒超過は0。箱3kgは旧時間超過→約144秒成功、箱/細長箱4kg（6機）も約126/143秒成功。全29成立計画の台数はN4=2/N5=10/N6=9/N7=7/N8=1で選択根拠complete29。session26222継続、実装・条件・上限は起動後変更なし。最終集計には `artifacts/priority_control_20261026/report_panel.py` と既存analyze/audit_plannedを使用する。
+
+- **軽量制御30件の全計画を終了。** 29成立、円柱5kgのみstructure selection did not complete（14.361秒）。成功計画5.294〜14.715秒。前回と同じ入力・乱数・生成設定、全件15秒以内で計画処理終了。成立29件を3並列で実行開始。実装・上限を固定し、計画失敗も30件の分母へ含める。
+
+- **2026-10-26 軽量制御で30条件を再検証中（新依頼）。** ユーザー「これで再度30例を検証」により `artifacts/runs/span_load30_priority_20261026` を起動、session26222。前回の固定30入力と乱数2026102404+iで構造生成から実行。入力SHA1044f08f5cda20f49cd2eb55dbd7a4204e7ff31be4a1f74934691dfc876654ab。軽量制御100Hz・物理刻み0.125ms、全件固定、3実行並列・計画先行。初期計画15秒、計画外部監視30秒、実行600秒、keep-going。実行スクリプトは `artifacts/priority_control_20261026/run_panel.sh`、ログは同ディレクトリpanel.log。別PCの認証接続を再確立し、生成関連1019ファイルSHA一致を確認。ローカル32＋remote18生成workerは前回通り。試験中に制御を変更・条件再試行せず30件を完走し、追加安全値を別記した保存結果確認・失敗区分・時間比較を行う。これが最新の再開地点。
+
+- **2026-10-26 制御軽量化の比較完了。6/7/8機の保存成功例を3/3完遂。** 最終v5は `artifacts/runs/priority_control_v5_20261026`。箱6機126.834秒、円柱7機180.161秒、三角柱8機297.800秒（物理時間63.42/74.13/76.83秒）。旧v10は455.541/783.697/2288.261秒。旧6並列＋開発処理、新3並列のため、この比を同条件の純粋な実装速度比とはしない。全例で同一の保存入力・シーンのバイト列を使用、新3件のソース・設定も一致。構造の再探索や新30/120件は実行していない。
+- **搬送は平均4.82/5.20/6.54ms、最大6.00/6.40/7.59ms。** 解放は平均8.62/10.85/13.33ms、最大35.26/41.44/51.32ms。把持取得は平均16.88/24.20/25.18ms、全工程の最長呼出し36.37/42.56/51.32ms。100Hz（10ms間隔）の指令設定で全工程を実行したが、シミュレーションは計算完了を待つため、全工程の実時間100Hz達成ではない。物理・独立監査込みの実行時間は物理時間の2.00/2.43/3.88倍。
+- **機体・タスクの独立確認も3/3問題なし。** `summary.json` のissuesは空。実際の駆動上限、関節範囲・速度、禁止接触、搬送高度、配置位置・姿勢・速度と解放後2秒の成功判定は維持。8機で個別面の50ms接触欠落を記録したが、タスク完遂。最終3例の接触荷重30N/5Nm超過はなく、先の解放単独probeの超過と混同しない。構造強度・実機保全の実証ではない。発行推力は元の0〜最大値へ飽和、最大修正1.18e-6N未満で数値丸めの負値を除いた。
+- **今回の採用内容と終了状態。** `--task-priority-control`で20ms先読み・反復接触修正・補助荷重上限の強制を外し、瞬時の力学配分と把持時の基準を保持。解放は既存の空荷退避制御へ直接移行する。距離計算は現在の非衝突を既存の剛体移動上界で確認できる間だけ再利用。追加安全値は記録対象、各物理刻みの独立監査は継続する。重い行列・数値解法は既存のネイティブ実装、物理刻み0.125msは不変。関連25検査成功、最終3プロセス正常終了。旧制御は比較用として保持。次の課題は把持取得・解放の10ms超過と未使用条件での検証だが、今回依頼の保存3例の比較は完了し、追加の多数試験は起動しない。READMEへ結果と再実行コマンドを記載。コミット依頼なし。
+
+### 今回の開発経過（以下の「検証中」はその時点の記録）
+
+- **軽量制御v3は6/7/8機の3例すべて完遂。** box040 155.34秒、cylinder040 227.31秒、prism045 337.92秒。搬送平均4.74/5.26/6.55ms。旧v10の455.5/783.7/2288.3秒とは実行並列数が異なり、純粋な実装速度比ではない。8機は個別面の接触欠落50msを超えたがタスク完遂。解放平均57〜94ms/最大1.8〜3秒が残り、接触分枝の反復探索が主因だった。
+- **追加の軽量化v5を検証中。** 解放は既存のHeldBackgroundWithdrawalへ直接渡し、接触分枝の反復最適化を省略。保存UNLOADから15sim秒の短比較は6/8機とも衝突・駆動違反なし、物体変位21µm/1.1mm、制御平均4.8/8.0ms。8機で30N/5Nm超過あり（新方針で記録のみ）。距離制約は既存の剛体移動上界で現観測の非衝突を確認できる間は計算を再利用し、追加の1mm/3cmを能動制約にしない。実行の全物理刻み衝突監査は継続。未来衝突の厳密保証ではない。
+- **v4は追加した推力指令検査で3件停止。** 解放開始時の空荷配分の数値残差で負推力−2.38e-8/−1.42e-8Nを返したことを同一停止状態から確認（release_bounds.json）。機体の推力限界を変更せず発行指令を元の0〜最大推力へ飽和させ、回数/最大差を記録する修正。v5の3例は `artifacts/runs/priority_control_v5_20261026`、sessions98804/15324/80637。25関連検査成功。v3の旧接触解放用の追加分岐は共通コードから除去し、既存の解放方式は既定/比較用に保持。新方式は `--task-priority-control` の明示指定。全3件が揃ったら summarize.py で機体・タスク条件、同一入力/シーン/ソースを確認し、READMEと最終記録を更新する。
+
+- **2026-10-26 制御軽量化を再開（新依頼）。** ユーザーは機体保全→タスク成立→追加安全設定の優先順を明示し、過去に完遂した6〜8機の例で高速化の検証を依頼。`--task-priority-control`を追加。30N/5Nm、個別面の50ms離脱、材料点3cm変位、余裕距離、モデル貫入2mmは記録対象へ。実際の禁止接触、関節範囲・速度3rad/s・駆動定格、推力上限、搬送高度・最終配置/速度/解放2秒は維持。構造強度の実証ではない。物理刻み0.125ms・モデルは変更せず、制御を100Hzにし、20ms先読み/発行前保持予測/非線形接触再修正を外す。瞬時接触モデルによる配分と従来の把持基準・空荷退避は保持。取得/解放の接触合力・モーメント上限の円錐制約も省略。ネイティブ行列/解法を使用、学習・構造選択は変更なし。
+- **比較進行中:** `artifacts/runs/priority_control_v3_20261026` のbox040(6機)、cylinder040(7機)、prism045(8機)。旧v10の同じ保存計画/endpointから完成体を開状態で開始し全工程。3並列、各600秒監視。sessions96426/24136/79174。runnerは `artifacts/priority_control_20261026/replay.py`。v1は400Hzの途中比較180秒終了、v2は集計numpy.bool_のJSON化失敗/8機300秒終了で最終成績に合算しない。型変換を修正し24検査成功。8機の保存CARRY一点は新方式25呼出し平均約4ms、実時間全工程達成ではない。現在の瞬時接触正荷重条件は維持しており、下限不足まで全て許容した方式ではない。
+
+- **最後の30件を完了し停止。** coordinator1138744/session18546は正常終了。30結果、11成功/19失敗、途中一括中断なし、条件の再試行なし。入力SHAは1044f08f5cda20f49cd2eb55dbd7a4204e7ff31be4a1f74934691dfc876654abのまま。run_limitsで600秒の個別上限を固定、14件を時間超過として終了した。成功11件はaudit_completed_panelでissues0、実装/設定の全件一致も確認。初期計画29成立・1未発見、全計画15秒内。N4=2/1成功、N5=10/6、N6=10/4、N7=6/0、N8=1/0。楕円0/5・台形0/5・5kg0/6、50比較の統計検出なしを均一成功保証とはしない。final_summary.json/analysis.json/completion_audit.jsonへ保存。READMEを更新し、追加実験は行わない。
+
+- **08:54 UTC 進捗確認。** 最終v11は21判定・11成功・10失敗（実行時間超過7、降下動作時間超過1、制御指令未発見1、構造選択未完1）。80%には届かないが、最新指示通り残り9件を継続中。実装・条件・上限変更なし。全30判定後に保存成績を監査して報告し、追加実験はしない。
+
+- **08:30 UTC 進め方確認。** 最終v11は12判定・7成功・5失敗（実行600秒超過3、降下動作時間超過1、構造選択未完1）。残り18件を継続。ユーザーの最終試験指示に従い、失敗を見てruntimeや時間上限を変更しない。一括中断monitorなし、個別watchdogのみ有効。途中の成績で80%未達が確定しても全30件を完了して報告する。
+
+- **08:10 UTC 進捗確認。** 最終v11は29計画成立、円柱050のみ14.301秒で選択未完。計画成立は5.061〜13.986秒、N4=2/N5=10/N6=10/N7=6/N8=1、全29件に選択根拠complete。動作2成功、箱030が600秒超過、計画失敗込み4判定。上限時に該当プロセス群のみ終了し次件へ進むことを実際の実行で確認。最新指示に従い、途中成績による修正・一括中断・追加試験はしない。未完の26件を継続する。
+
+- **正式v11起動。** 30件完走・実行600秒・計画外部30秒の監視つき、3実行並列・先に全計画。所有プロセスのみ停止する時間監視の短い動作検査成功。remote/local生成関連1018ファイルSHA一致（v11_remote_preflight.json）。前の円柱045開発再生は最新指示を受けて終了しinterrupted保存、span_load30_armijo_cylinder045_remoteへ回収。正式結果には数えない。
+
+- **最後の30件に計算時間上限を追加。** ユーザーの追加指示により、非現実的な計算時間はその条件を失敗として終了する。初期計画15秒の受理条件は維持。実行は待機を除く600秒、計画処理が戻らない場合はプロセス開始30秒で外部監視が打切り。これらの超過で一括試験は中断せず、30件を完了する。追加改善や再試行はしない。
+
+- **最後の30条件へ移行。** ユーザーは「次の30条件試験を最後」「途中停止せず30条件やりきる」と指示。従来の7失敗・計画時間超過による一括中断を、この正式v11では無効にした。各条件の失敗基準は維持、runtimeは変更せず、成否にかかわらず全件報告で今回を終える。
+- **直前の台形050開発全工程は未達。** span_load30_armijo_landing_tapered050/output: 31.685000000105784sim/3539.5650596157648wall、unloaded gravity allocation unresolved: 128.145。接地は通過したが、退避前の重力配分が未成立。新30へ加算しない。追加の修正は行わず、最終30で全体成績を測る。
+
+**再開時の要点（2026-10-26 最終30件完了・停止）:** 最新ユーザー指示による最後のv11は30/30判定完了、11成功・19失敗（36.7%）で80%未達。実行600秒超過14、制御指令未発見3、降下動作時間超過1、構造選択未完1。全件同一ソース・設定、成功11件の独立確認issues0。6〜8機は17/29計画で選択、成功は6機4件のみ。全検証88.95分、計画5.06〜14.30秒。実験プロセスは終了、追加の改善・再試験を自動で再開しない。結果は artifacts/runs/span_load30_v11_20261026/final_summary.json と READMEの2026-10-26節。今回コミット依頼はない。
+
+- **07:23 UTCの進め方見直し。** 正式v11は未起動。今回の接地修正は楕円030の全工程成功、線探索修正は台形050解放10sim/退避準備まで確認済み。全工程の台形050/session82935はCARRY23.445、remote円柱045/session73573はLOAD14.167で進行中。制約逐次追加は連続動作で退行し不採用。これ以上同方式の追加高コスト試行は行わず、残る2全工程の結果を確定→remote/local同一runtime確認→run_panel_v11.sh（3並列/計画先行）を進める。30件24成功と偏りの確認が未完であり、時間を理由に完了扱いにしない。
+
+- **制約逐次追加は新線探索との併用でもruntime不採用。** span_load30_release_generated_tapered050：0.1325sim/126.411wallで20ms保持入力未発見。単発同一観測は22.356→16.102秒でも、微小な入力差から後続の非線形探索が変わり、基準の10sim継続を維持しない。機能維持の根拠がなく採用しない。追加の同方式全工程は起動しない。runtimeは全制約solver＋幅比例の違反減少を維持。
+
+- **新線探索との組合せで制約逐次追加に速度利得。** 同一解放失敗観測の現runtime22.356秒→既存artifact constraint_generation16.102秒、双方5反復・全物理成立、最終入力最大差2.19e-5、peak29.61587N。制約solver合計6.934→0.237秒、微分11.918/12.059秒。以前のLOAD入口比較とは別で、新線探索が数値経路を改善した条件。runtimeへは未採用、span_load30_release_generated_tapered050で入口から3sim継続を比較開始。
+
+- **接地改善の楕円030が全工程成功。** span_load30_landing_brake_ellipsoid030/output：66.6575sim/1728.089wall、N4、task_completed。保存成績独立監査issues0。接地のみartifact＋旧数値判定、全工程の有効性を確認。新30へ加算せず、正式再実行が必要。
+
+- **remote円柱045を現runtimeの対照へ変更。** 旧数値判定＋接地のみの実行はLOAD13.667まででinterrupted.json付き停止（所有47486、子なし）。完遂の成否は未判定。接地・線探索・16workersの現runtimeを同期し、span_load30_armijo_cylinder045/output/session73573で保存v9円柱045計画から開始。以前の固定入力基準の成功と同じ入力root、保存開発対照であり新30へ加算しない。
+
+- **解放10simの継続は退避準備まで成立。** span_load30_release_armijo10_tapered050：10.0025sim/527.469wall、停止理由なし、ready true、complete false。元UNLOAD入口とq/v再構成一致。全タスク成功ではない。配置まで運ぶ全工程の台形050はLIFT16.445、楕円030はDESCEND28.30、remote円柱045はLOAD13.667で未完。接地コードでは達成可能区間全体が予定減速より強い場合も扱うよう追加し、関連停止検査6件成功（前23と計29件）。
+
+- **06:54 UTCの進め方見直し。** 正式v11は未起動。今回は接地減速/数値線探索の短区間に実測改善がありruntimeへ反映した。全工程3対照が未完のため、同仮説の追加全工程は増やさない。解放10simの移行確認を並行し、結果確定後に同一runtimeの新30へ進む。初期30入力SHA不変、関連28検査成功。実時間制御達成や新30の80%達成は未主張。
+
+- **新数値判定で解放3sim継続成功。** span_load30_release_armijo_tapered050：3.0025sim/381.882wall、停止理由なし、ready/completeともfalse（全解放・全タスク成功ではない）。元0.13sim未成立を通過。runtime28検査成功0.99s。退避への移行を確認するため同一入口から10simまでをspan_load30_release_armijo10_tapered050で開始。全工程はlocal楕円030/台形050・remote円柱045で継続。
+
+- **接地停止と数値線探索をruntimeへ反映。** 短区間の物理改善・同一観測の修正成立を根拠に、DESCENDのみ配置許容を停止点超過へ使わず、必要時は達成可能区間内の追加減速を許可。予定軌道の減速定数は将来停止距離に維持し、厳密な停止保証とはしない。ResponseContactControlの違反改善は修正幅に比例する十分減少へ。全工程対照は継続中で、新30達成は未確認。実行中の楕円030/remote円柱045は接地のみartifact、台形050は両方artifactを開始時に取込済み。解放armijo短継続は2sim通過（旧0.13sim停止）。2.5ms代替と早期復旧は採用しない。
+
+- **同一解放観測の20ms修正は数値判定変更で成立。** armijo_repair.pyは修正線探索の違反減少条件を固定10%から修正幅alphaに応じる十分減少（1e-4*alpha）へ変更。最終物理受理は不変。台形050の保存0.13sim観測で5反復、22.753wall、peak29.61587N、成立。従来は約150秒で未発見。span_load30_release_armijo_tapered050で入口から3sim継続中/session99986。2.5ms代替継続v2は計算が重く、20ms自体の数値修正へ切替えてinterrupted保存のうえ停止。初版wrapperのlocal import衝突は修正したが、両者全工程成功ではない。
+- **新数値判定の全工程対照を追加。** execute_armijo_landing.py、台形050保存計画からspan_load30_armijo_landing_tapered050/output（sessionはtool参照）。接地改善を併用し、物理/観測/成功条件不変。別PCでは16worker把持予測を同期し、接地変更のみの円柱045全工程をspan_load30_landing_brake_cylinder045/session4586で実行中。両者runtime未採用。台形050の既に破綻したLOAD最終観測は新線探索でもPrimalInfeasibleであり、局所修正が全失敗を救うとはしない。
+
+- **接地の短い再現で改善。** span_load30_descent_stop_ellipsoid030：旧許容3cmは2.885simで未成立、許容0だけは2.2575simで未成立。許容0＋予定軌道の減速上限を必要時だけ外し、実際の達成可能加速度区間内で減速を選ぶphysical_brakeは3.1925sim/228.988wallで接地、鉛直速度−0.0002417m/s、peak29.999853N/3.50706Nm。物理上限不変、全工程成功ではない。execute_landing_brake.pyで楕円030保存計画の全工程対照開始（session45958）。runtime未採用。
+- **解放20ms未成立に対する実保持区間の対照。** 台形050のUNLOAD入口再現は0.13simで同じ未成立。保存した同一指令は2.5msでは修正0、peak16.27988N、0.0383wallで成立。release_hold_fallback.pyは20ms未発見時に限り実2.5msの同じ物理検査を行うartifact。入口から3sim継続をspan_load30_release_short_tapered050/session2104で検証中。局所成立を全工程成功としない。runtime未採用。
+- **円柱045の採用runtime対照は失敗。** span_load30_release_runtime_cylinder045/output：RECOVER15.7125sim/2097.647wall。以前のremote成功と同じ構造だが、背景保持設計の観測時刻と入力が異なる（handoff12.2475→11.7575、基準入力最大差2.9763N）。解放前の失敗なので解放変更の因果効果とはしない。
+
+- **LOAD+LIFT早期復旧も全工程は2/2未達、runtime不採用。** 台形050はUNLOAD31.6175sim/2018.179wall、楕円030はDESCEND30.175sim/1934.556wallで実保持入力未発見。両者とも復旧イベント0であり、運搬通過を早期復旧の効果としない。remote楕円をspan_load30_early_supported_ellipsoid030_remoteへ回収済み。
+- **楕円030の接地直前を確認。** failure_geometry_summary.json：台まで3.002µm、物体鉛直速度−0.0268125m/s。降下の実状態停止判定が、配置位置許容3cmを停止点超過にも許している（ScalarProgress.choose）。接地で支持面を越える余裕に使うのは不適切。元の条件付き停止モデルのまま、DESCENDでposition_toleranceを0にするartifact比較を開始。continue_descent.py、span_load30_descent_stop_ellipsoid030/old/session23884 と zero（sessionはtool参照）、保存entry_DESCENDから最大6sim秒。物理MJB・q/v/ctrlは同一、制御器の履歴は再構成のため元軌道完全再生ではない。構造選択/全工程成功には数えず、実物理上限/独立監査は不変。runtime未変更。
+
+- **円柱045の再構成LOAD入口を計測、追加solver案は採用せず。** profile_load_entry.py（実サイクル完全再現ではなく保存q/v/ctrlと基準からの1呼出し）。16微分並列で3.695wall、微分1.521s/制約solver1.578s。既存artifact constraint_generationを同一入口へ適用するとsolver1.191sだが全体3.744s、最終入力最大差0.5193。load_entry_profile/generatedのJSON/prof/commandをspan_load30_release_runtime_cylinder045/outputに保存。全体速度利得と出力同一性が得られずruntime不採用。
+
+- **05:56 UTCの30分見直し。** 正式30未再開。今回採用は解放20ms＋解放16workersと把持予測16workersのみ。LOAD-only復旧は全工程2/2未達で不採用。LOAD+LIFT版（台形050/楕円030）は両方まだ復旧イベント0でLIFT17.945/CARRY20.303；進展を早期復旧の因果効果とはしない。円柱045の採用runtime対照はLOAD12.6675。残3件を先に確定し、同じ復旧仮説の新たな全工程追加は行わない。初期30入力SHA不変、git diff --check正常。
+
+- **20ms把持予測の微分を16並列へ変更。** response_workers_benchmarkは8並列0.829/0.873s→16並列0.475/0.555s、状態/荷重微分差0。response_batches_benchmarkは3条件×16の処理量が6条件×8より良好。HeldContactTrackingのCachedResponse workersだけ変更（分離距離側8は維持）、設定記録にも16を追加。関係30検査成功0.62s。進行中3件は既に旧8並列HeldContactTrackingをimport済みで、そのまま継続；remoteは未同期。次の新規一括は3実行並列を予定。全周期実時間性の達成とはしない。
+
+- **LOADのみ早期握り直しは採用しない。** 三角050も26.4725sim/1265.039wallの4回目RECOVERで実保持入力未発見、最大持上げ2.25µmで全工程未達。台形050と合わせ2条件とも改善未確認のため、この旧variantの成功例回帰円柱045をinterrupted.json付きで停止（所有1123106/子無し）。新runtime（解放20msのみ）で円柱045を別途再生開始：span_load30_release_runtime_cylinder045/session41344。LOAD+LIFT早期版はlocal台形050/session5511、remote楕円030/session75227で継続。remote初回はscene.xmlのasset絶対path未置換により物理開始前エラー、startup_errorとして別保存しXML/SHAを修正後に新規実行。
+
+- **楕円050の解放単独版が全工程成功。** remote出力をspan_load30_release_preview_ellipsoid050_remoteへ回収、N7、79.66sim/2174.364wall、task_completed、保存監査issues0。正式30へ加算しない。
+- **LOADのみ早期握り直しの台形050は未達。** 2回復旧後LIFTへ進むが、23.7675sim/1239.152wallで再度入ったRECOVERの摩擦分枝未成立。lift側は従来の停止後復旧で、早期判定対象外だった。source近傍/低速度/物理チェックは維持して早期対象をLOADとLIFTへ揃えるexecute_early_supported_recovery.pyを作成。local同台形050（span_load30_early_supported_tapered050/session5511）とremote楕円030（span_load30_early_supported_ellipsoid030、sessionはtool参照）を対照開始。runtimeへ早期処理は未採用。remoteは旧楕円050完了・回収後に変更3runtimeとdriverを同期。入力はv10保存計画/endpoint、asset path置換SHAをpath_adaptation.jsonへ記録。
+
+- **台形030の解放単独版は全工程成功。** span_load30_release_preview_tapered030/output：N5、92.305sim/1636.022wall、task_completed、保存成績の独立監査issues0。正式v10未完分へ加算しない。早期握り直しの台形050は2回復旧後LIFT23.2275、三角050は複数復旧後LOAD24.8575で未完。退行対照として旧成功円柱045に同じ早期握り直しを開始（span_load30_early_recovery_cylinder045）。remote楕円050はRETREAT49.62へ。
+
+- **解放20msをruntimeへ反映（05:32 UTC）。** ContactUnloadの予測区間のみ20msへ、実2.5ms更新/0.125ms物理刻み/制約は不変。HeldInputGuardへworkers引数を追加し解放だけ16。根拠は解放単独box050の全工程成功と独立監査issues0。関係17検査成功。進行中4対照は開始時に取り込んだ旧runtime＋同じ解放overrideで継続し、保存snapshotと区別する。早期握り直しはまだartifactのみ。
+
+- **早期握り直しの台形050は旧停止時刻を通過。** 現在RECOVER14.7375sim、全工程成功ではない。共通イベント則の別形状対照として同じ7機三角050でも開始（span_load30_early_recovery_triangular050、sessionはtool参照）。旧40ms延長とは別の仮説。残るv10の台形030は長いREFINE後にLOAD33simへ進んだ。remote楕円050も継続。
+
+- **解放だけの変更で7機・箱050の全工程成功。** release_preview_box050/output：101.9475sim/928.087wall、task_completed、保存成績の独立監査issues0。把持/運搬はv10のまま、解放20ms＋微分16workers。併用版とは別の開発結果。正式30へ加算しない。
+- **未完だった台形050はLOADで失敗。** release_preview_tapered050/output：N7、14.2125sim/578.438wall、保持入力/支持復旧の両方が未発見。解放前なので解放修正の成否とは分ける。これにより解放だけで全30の80%へ届く根拠は足りない。
+- **握り直し開始の遅さを同じ保存系列で確認。** early_recovery_probe.json：台形050の14.1125/14.1925秒は既存SupportedRecoveryの最初の5ms指令が0.086/0.084wall・修正0で成立、14.210秒は未発見。停止後まで待たず予測の接触回復未達を契機に支持近傍で試すartifact execute_early_recovery.pyを作成、同じ7機の全工程対照開始（session38854、span_load30_early_recovery_tapered050）。LOAD中のみ、元20ms予測の終端0.5N未達/未発見を契機に既存復旧を試し、最初の物理指令が未成立なら元のguard経路を継続。観測/物理/成功基準・実時間経過は不変。runtime未変更。
+- **残る実行中:** local release_preview_tapered030/session26140、remote release_preview_ellipsoid050/session8540。両者v10未完ケース。
+
+- **7機・箱050の併用版が全工程成功。** fine_generated_box050/output：task_completed、95.500sim/1145.137wall、peak25.5076N、配置位置誤差6.48µm/姿勢5.23e-5rad、運搬最低clearance0.14988m、接触途切れ0。fine確認1942回/修正0、保存成績の独立監査issues0。解放単独対照はまだDESCEND中で、40ms把持予測の成功効果とは区別する。正式30へ加算しない。
+
+- **05:02 UTCの進め方見直し：40ms把持予測は採用しない。** fine＋逐次制約版の三角050はLOAD14.35以後、楕円045はLOAD16.0以後に長区間修正未発見/非常に重い計算となり、完遂改善は未確認。両対照をinterrupted.json付きで停止、remote回収済。長い定入力予測の局所救済を全工程効果としない。正式runtime v10の把持/運搬は維持し、解放20msの単独効果を優先する。
+- **実行中の開発対照（正式30へ加算しない）：** local fine_generated_box050/session7687（40ms併用、UNLOAD35.405）、release_preview_box050/session22816（把持v10＋解放20ms/16workers）、release_preview_tapered050/session57154（同じ単独変更）、remote release_preview_ellipsoid050/session8540（同じ変更）。後2件はv10未完の重い条件を確認するため。remote入力はv10計画/endpointをコピー、asset絶対pathだけ書換え前後SHAをpath_adaptation.jsonへ保存。
+
+- **解放変更の単独全工程を追加。** execute_release_preview.py / span_load30_release_preview_box050/output（session22816）。把持・荷重移行・運搬は現runtime v10を維持、解放guardのみ20msへ（同じ実2.5ms更新/物理刻み/制約）、微分16workers。combined fine_generated箱はDESCEND32.9simまで修正0/1700確認成立。三角・remote楕円は40ms修正未発見が出ているため、長予測を解放修正と一括採用しない。正式30未再開。
+
+- **支持平面による更なるsolver短縮は不採用。** cone_cut_solver.pyは保存4部分問題を0.016/0.515/1.427/3.585秒で全制約確認付きで解いたが、同一観測の非線形修正全体は120秒を超えて未完となったため中断（fine_cone_cut_interrupted.json）。部分問題の微小な解の違いが非線形探索へ影響するため、部分速度だけで採用しない。全工程は既存の制約逐次追加v2を保持。
+
+- **解放20ms予測で10秒継続・退避準備まで到達。** long_release10_box050：10.0025sim/453.849wall、reason null、ready true/complete false、peak29.99813N、接触無し8.88425s。全タスク完了ではない。細かな受理＋制約逐次追加＋解放20msの全工程箱050を開始（fine_generated_box050）。
+- **数値高速化版へ開発全工程を切替。** fine_generated_triangular050（session44501）とremote fine_generated_ellipsoid045（session85486）。前local fine_acceptance三角はLOAD13.85以後に重い計算が続いたため高速化版へ切替、remote coarse-only楕円はLOAD20.91まででfine受理版へ切替。両旧版にinterrupted.jsonを残し、未完で成功へ加算しない。remote旧出力回収済。
+- **制約逐次追加v2の同一観測修正も成立。** 39.820wall（4問題保存の圧縮を含む）、peak20.537N/終端全6面正荷重。fine_generated_v2_t14.885_0.04.json。v1との差は小さい必要入力補正の精度を保つため部分問題に既存solverを使うこと。正式runtime未変更。
+
+- **fine修正の重い部分を実測し、制約逐次追加を試作。** cProfile：65.218秒中41.710秒がconic solver、微分11.760秒。40176行/84変数の保存問題で全solve8.628秒→必要制約追加＋全行検査0.0418秒、違反無し。全修正もv1で36.022秒/最大20.537N/終端6面荷重>0へ。後から有効になる制約・等式・不成立・小さい必要修正を検査し、小修正の数値精度のため部分問題にも既存solverを使うv2を作成、4検査成功。constraint_generation.pyはartifactのみ、runtime未採用。v2同一観測の全修正と問題保存を開始（sessionはtool参照）。
+
+- **粗予測の誤受理観測をfine修正で救済。** long_guarded_hold三角050/14.885秒、fine_contact_acceptance.py：同じ40msを実刻みで確認し、不成立なら同じ物理/追従制約と接触維持目的で修正。63.066wall、最大20.602N、全物理/追従成立（終端1面0N、完遂は未確認）。execute_fine_acceptance.pyで同じ保存N7計画の全工程対照を開始（session19284）。以前の40ms延長だけとは異なり、数値刻みの誤受理を修正対象とする。runtime未採用。
+- **解放の継続を10秒まで延長。** continue_release.pyの最大区間を引数化しready/completeを結果へ保存。long_release10_box050（session9243）は元UNLOAD入口から同じ20ms予測、物理/監査不変。先の3秒成功と合算しない。
+
+- **40ms版で粗予測の誤受理を確認。** long_guarded_hold_triangular050/output/future_grid_0.04_all.json：最後40観測の9でmixedピーク<=30N・fine>30N。14.8775sは29.352→36.158N、14.895sは29.396→41.457N。従来20ms対照の0件とは異なる新証拠。issued_previous_0.04.jsonでは前入力のみ成立の標本0、単なる前指令への切戻しを原因修正としない。次は同じ予測区間のfine受理/必要時fine修正を検討。
+- **組合せ円柱040は全工程成功。** N7、76.450sim/806.616wall、task_completed。旧成功を維持した開発対照であり正式30へ加算しない。
+- **解放20ms予測の短継続は3秒通過。** span_load30_long_release_box050/result.json：3.0025sim/416.423wall、reason null、元入口q/v再構成一致。以前の0.975〜1.0275s未成立を通過したが、ready falseで解放完了ではない。runtime未採用。
+
+- **組合せ版の三角050も未達、同じ予測延長仮説の全工程追加は止める。** long_guarded_hold_triangular050/output：LOAD14.9725sim/896.521wall、最終2.5ms指令と支持復旧が未成立。279成立/6未発見、finite_short_fallbacksの利用無し。単に20→40msだけで後続成立を保てない。円柱040はRETREAT60.96simで継続、remote旧40ms楕円045も継続。保存直前系列で新指令がまだ成立する前実指令を捨てていたかを40msfineで比較する。runtime未変更。
+
+- **解放の目標変更だけの保存観測対照は未発見。** release_restart_box050の停止q/vで既存摩擦代替と同じtracking開放目的へ変えるprobe_release_tracking：1.123wallでも未成立、tracking_repair.json。runtime不採用。
+- **解放の予測延長を短い継続で確認開始。** continue_long_release.py / span_load30_long_release_box050。元UNLOAD入口から最大3sim秒、指令更新2.5ms/物理刻み/監査はそのまま、事前guardだけ20ms予測。元2.5msでの停止0.975〜1.0275秒より前から荷重増加を扱えるかを検証する。全工程成功として数えない。
+
+- **進め方の見直し（2026-10-26 04:21 UTC）。** 30条件再検証はまだ起動しない。localの組合せ修正は三角050 LOAD14.35（前40ms版14.0025停止を通過、原因効果未確定）、円柱040 CARRY20.105へ。remote旧40ms楕円045はLOAD16.5025。現runtime変更無し。名目荷重追加/単純短fallback/差分C++化は不採用、同じ仮説の追加全工程を重ねない。組合せの完遂と既存成功例への影響を先に確認する。
+
+- **名目ゼロ目的の先行確認は実把持モデルで高速化。** v10楕円045の名目空中保持、前指令の1rotorに+0.01Nの数値初期点対照。元1.391wall/要求差9.98e-9、先行確認0.0983wall/差0、両方40ms全条件成立。zero_anchor_benchmark.json。一般実時間高周期の証明ではない。
+- **組合せ修正の成功例退行確認も開始。** execute_long_guarded_hold.py、v10円柱040保存計画からspan_load30_long_guarded_hold_cylinder040/output。local三角050と同一override、正式結果への加算なし。
+
+- **40ms三角050停止点でも実2.5msは成立。** short_fallback_probe.json：修正1回、peak24.4444N、1.568wall。40ms未発見を即停止する経路と通常20ms未発見→2.5ms検査の不整合を揃える組合せを開始。execute_long_guarded_hold.py / span_load30_long_guarded_hold_triangular050/output / session53696。40ms＋前実指令＋保持にshort_fallbackを接続。名目要求が非負目的0かつ全物理/追従条件成立なら先に返すzero_anchor_check（不要な微分回避）も含む。各override本文/hash保存。正式runtime未変更。
+- **LOAD率の保留対照は救済根拠なし。** 40ms三角050/13.9825sの同一観測・前実指令で、次率0.632546/前率0.631046の両方が粗予測成立・fine無修正未成立。load_rate_13.9825_0.04.json。元のLOAD入口時刻と失敗時nominalからhandoffを再構成した診断であり、元optimizer状態再現ではない。率governor未採用。
+
+- **40ms＋前実指令＋指令保持の三角050は未達。** span_load30_long_warm_hold_triangular050/output：N7、LOAD14.0025sim/879.343wall、finite allocation fallback unresolved、lookahead177成立/5未発見。元15.570秒の局所救済を全工程救済にはできなかった。remote楕円045同方式は進行中。runtime未変更。
+
+- **設計法線荷重への軟目標単純追加は不採用。** Pro既存load_reserveレビューの候補(a)を同一三角050/15.570s/40msでartifact比較。元/追加とも粗＋fine物理成立だが、fine元終端全接触0.5N超→追加で1面0N、不足積分0→0.0106875N s。peak21.475→20.665Nだけを改善としない。nominal_load_cost.py/probe_nominal_load_cost.pyとnominal_load_comparison_t15.57_0.04.json。全工程は起動せず、runtime未変更。
+
+- **40ms＋前実指令の追加保存観測対照。** v10台形035・25.480秒は6.142wallで成立、fine40msも修正0で成立。楕円030・19.150秒は3.085wallで未発見。long_horizon_0.04_t*_previous.json。局所成立を全工程へ読み替えない。
+
+- **40ms＋前実指令初期点＋100Hz間保持の楕円045対照を別PCで開始。** remote artifacts/span_load30_long_warm_hold_ellipsoid045/output、入力v10楕円045計画/endpoint（ファイル内asset絶対pathだけremote化）。remote全実験完了を確認後、現amsrr_det/build py/ccを同期。local三角050と同じwrapper/物理、開発比較のみ。
+
+- **短区間代替だけでは楕円045全工程は未達。** span_load30_short_fallback_ellipsoid045/output：LIFT17.360sim/1172.987wall、finite allocation fallback unresolved。2.5ms代替15回、20ms未発見17回。近い区間の通過を全工程成功へ読み替えず、runtime未採用。同仮説の全工程再試行は止め、事前予測/指令生成の改善へ戻る。
+
+- **微分の姿勢差分ループC++化は速度改善なし、未採用。** native_response_difference_benchmark：同一観測・8/16/4workers、state/load微分差0。16workers既存0.514/0.484秒に対しnative0.606/0.616秒、物理rollout側が支配的。artifact試作のみ、runtime未変更。
+
+- **別PCの固定入力基準修正版・円柱045が全工程成功。** remote_fixed_base_cylinder045/result.json：N7、82.155sim、task_completed。wall8437.813秒は正式計画中のSIGSTOP待機を含むため連続実行速度に使わない。正式v10未完分の代用にはしない。元出力を回収済。
+
+- **早い観測で40ms＋前実指令初期点は成立。** 定入力保持三角050の15.570秒：要求初期点では40ms未成立31.508秒、前実指令を初期点にすると4.567秒で成立、fine40msも修正0で成立。long_horizon_0.04_t15.57_previous.json。目的は同じ要求指令からの変化/接触復元で、初期点だけ実前指令に変更。
+- **40ms予測＋前実指令初期点＋100Hz間の指令保持で三角050全工程対照を開始。** execute_long_warm_hold.py、span_load30_long_warm_hold_triangular050/output。微分計算workers16（出力同値を別途確認）で実装速度も改善。2.5ms物理/追従guard/成功判定は維持。現在runtime未採用、上記組合せの効果を検証する。
+
+- **定入力保持対照は2/2失敗、runtime不採用。** 楕円045もLIFT18.2875sim/1416.246wall、finite allocation fallback unresolved。予測と発行を合わせるだけでは未達。三角050保存15.600秒の40ms修正も未成立12.644秒。より早い15.570秒は20msfine22.32Nだが40msfine164.90Nとなる境界で、ここからの40ms修正を追加比較。直前15.560秒の旧入力40ms予測は22.40N・追従内。future_grid_0.02_all/0.04_all.json。
+
+- **三角050の予測終点直後に衝撃が残る例を確認。** 15.6000秒の同指令fine20ms最大28.031Nは終点15.6200秒。2.5ms後も実指令は同一で、次fine予測は15.62075秒に66.497N。前予測範囲から0.75ms外に衝撃がある。直近5区間のwarmstart有り再生速度差0、無し最大1.34e-8、数値初期化だけを原因としない。20msの範囲だけでは後の成立性を守れない具体例。保存15.6000秒から40ms予測で改善入力が見つかるかprobe_horizon_length.py/session51199を開始、runtime未変更。
+
+- **実発行指令の未来予測を確認。** v10楕円030と定入力保持三角050の直近40ms・各16観測で、実指令を20ms保持して混合刻み/実刻みを比較。混合では荷重内・fineだけ荷重超過となる標本は0。後半では混合でも既に荷重/追従域外。刻み差だけを原因としない。future_grid_comparison.json。特に定入力保持でも最終2.5ms修正後の実指令が20ms成立を保持するとは限らず、予測と発行を区別して追う。
+
+- **20ms代替未発見でも実保持2.5msは成立する停止観測を確認。** guard_restart_ellipsoid045/output/short_fallback_probe.json：LOAD同一観測/参照、前実指令から元HeldInputGuardの修正1回で成立0.815秒、peak30.000000217N（元数値許容内）。通常経路の20ms未発見は最終2.5ms検査へ渡るが、配分代替だけ即拒否していた点を切分ける。
+- **実保持区間での代替を開発全工程で開始。** execute_short_fallback.py、span_load30_short_fallback_ellipsoid045/output。20ms未発見後のみ元2.5ms物理/追従検査へ渡し、そこでも未発見なら拒否。長期成立扱いにせずfinite_short_fallbacksを別記。既存予測指令保持案は重ねない。元runtime未変更、override関数本文/hash保存。
+
+- **解放の初期点再試行は3秒継続に失敗。** release_restart_box050は1.0275sim/301.133wall、attempts1/recovered0/unresolved1。元短再生0.975秒と停止観測が異なり、元保存停止点を救済したことを全工程へ読み替えない。入口q/v一致でも全軌道一致は未確認、runtime不採用。
+- **定入力保持の三角050は失敗。** held_command_triangular_prism_050/output、RECOVER15.6275sim/699.340wall、摩擦分枝未発見。楕円045はLOAD16.0simで進行中。予測後の指令保持単独で成功したとはしない。
+- **予測並列数の計測。** 同一6機20ms微分、全出力差0。単独8threads約0.85秒→16約0.51秒。ただし6同時では8threads2.575/2.733秒、16threads2.645/2.608秒で改善無し。3同時16threadsは1.032/1.142秒（1予測0.344/0.381秒）、6同時4threads2.352/2.260秒。response_workers_benchmark/response_batches_benchmark.json。現runtime未変更、次の同時実行数/並列数を見直す根拠。実時間高周期達成ではない。
+
+- **箱の解放停止点も要求指令からの再計算で成立。** 同じ停止観測・要求87.782N予測に対し、前実指令初期点は未発見0.976秒、要求指令初期点は29.980735Nで成立0.680秒。span_load30_release_box050/repair_anchor/previous.json。guard_restart.pyを使い同じ入口から3秒の解放継続を開始（session86127、span_load30_release_restart_box050）。元runtimeは未変更。
+
+- **箱050の解放区間だけを再実行して失敗を捕捉。** span_load30_release_box050：入口再構成q誤差8.67e-19/v誤差0、解放0.975sim/265.272wallで保持入力未発見。元全工程の停止時刻1.0275秒とは異なるため全軌道一致とはしない。failed_inverse_request.npzで最終2.5ms input目的・物理MJB・実前指令保存。要求/実前指令を初期点にした同じ停止観測の対照を開始。
+
+- **正式v10を26判定19成功7失敗4未完で中断。** 三角050(N7/LIFT16.7875sim)が保持入力未発見、24/30不可になったため監視がcoordinator1071798と残4子を停止、interrupted.json記録。旧v9/別PC開発結果を合算しない。
+- **予測指令と実発行指令の対応を調べる対照を開始。** 既存20ms予測が成立した場合だけ、次の100Hz更新まで予測した指令そのものを保持するexecute_held_command.py。現行は補正量を保持し、その間の名目指令変更を足す。2.5msの元の物理/追従検査と未発見時拒否は維持。楕円045/三角050保存計画から開発全工程2件（session34877/89826）。正式runtime未採用、新たなPro相談はモデル制限で未実施、既受領レビューの実発行系列と予測の対応という論点に沿った切分け。
+
+- **v10は25判定19成功6失敗。** 7機箱050がUNLOAD35.9875simで保持入力未発見。残5すべて成功が必要。監視の7失敗中断条件は維持。解放入口からの短い開発継続continue_release.py/session43940、span_load30_release_box050で原因を捕捉中。正式runtime未変更。
+- **局所制約の違反最小化はLOAD楕円も未成立。** elastic_finite_start_previous.json、47.478秒。物理判定は緩めず、不成立なのでruntime不採用。
+
+- **区間接触目的の全工程は失敗、runtime不採用。** remote_running_tapered035/outputへ回収。CARRY23.8825sim/1439.246wallで保持入力未発見。追加59探索/34改善/6fine拒否、追加155.502秒。途中接触不足の改善を完遂改善にしない。別PC/背景時期差があるため元v10との直接因果比較とはしない。
+- **近似問題の不成立から立て直す数値対照。** elastic_restoration.pyは入力/信頼領域を維持し、他の線形化制約違反を最小にする提案を作る。実採用は元の非線形物理/追従検査のまま。台形035停止観測は22.702秒でも未成立、elastic_guard_start_-1.json。LOAD楕円045でも別対照を開始（elastic_finite_ellipsoid045.log）。正式runtime変更無し。
+
+- **LOAD有限再計算は初期点変更だけでは未発見。** guard_restart_ellipsoid045の同一停止観測/参照で、前実指令とLOAD名目指令を初期点にしたfresh20ms計算は双方未成立（46.368/47.625秒）。finite_start_previous/nominal.json。最終2.5msの初期点改善と、前段20ms未発見を区別する。
+
+- **初期点再試行の全工程対照は前段で失敗、改善効果未確認。** guard_restart_ellipsoid045/outputはLOAD17.520sim/583.118wallでfinite allocation fallback unresolved。guard再試行attempts=0、狙った最終保持修正には到達していない。背景計画時期も異なるため、初期点変更の有害/有効どちらの証拠にもしない。保存された同一LOAD観測・参照で有限20msの初期点（前実指令/LOAD名目指令）を比較中、runtime未変更。
+
+- **v10は24判定19成功5失敗。8機での全工程成功を確認。** 三角柱045（N8）が把持運搬配置退避までtask_completed、計画14.506秒、物理実行wall2288.261秒（6並列・開発対照同時実行下）。成功N4=1/N5=9/N6=6/N7=2/N8=1。独立保存結果監査19件で矛盾0。残6件中5成功が必要、runtimeを変更せず継続。数秒計画達成と実時間高周期達成を混同しない。
+
+- **直近実指令の再利用も保存観測で確認。** 4失敗条件で直近20msの8指令を同じ停止観測から再予測し、物理・追従を無修正検査。楕円045だけ7.5/10ms前の指令が成立（peak29.012/29.445N）、他3条件は8指令すべて不成立。recent_commands_validation.json。過去に成立した指令を無検査で再利用する方式は採用しない。正式runtimeは維持。
+
+- **楕円045の初期点差を確認、単独全工程対照を開始。** 同じ失敗観測で前実指令から開始すると元と同じ未発見（22.875秒）、要求指令から開始すると同じ制約で成立（3.514秒）。guard_start_-1.json/guard_start_anchor.json。失敗時だけ要求指令から再計算するexecute_guard_restart.pyをartifactに作成、span_load30_guard_restart_ellipsoid045/output/session33070で全工程を開始。正式v10は未変更。
+- **v10成功17件の保存結果を独立再点検。** 荷重等の最大値と最終到達条件に矛盾0。新しいシミュレーション結果ではなく保存結果監査。まだ残8件未完、全体80%未達。
+
+- **v10追加失敗を保存物理モデルで切分け。** 楕円045は要求指令32.895N/前指令31.186Nで荷重超過、追従内。台形045は17.899/17.698Nで荷重内、追従外。exact_guard_violation.json。失敗条件の同一観測・同一要求を新しい数値初期点から修正すると、楕円045のみ29.999975Nで成立（3.514秒）。他3件は未発見。guard_start_anchor.json。実行全体の救済ではなく数値初期点の対照、正式runtimeは未変更。
+
+- **追加Pro相談はモデル利用制限で未実施。** 既存ブラウザ会話のモデル選択を確認、GPT-6は「利用上限に達しました」でロック、選択中はGPT-5.6 Sol/中程度。pro_model_limit.pngを保存・ユーザーへ表示。モデル変更や新たな質問送信はしていない。現在の表示だけから過去の返答モデルを断定しない。既に受領した区間接触評価レビューを元に比較を継続。
+- **区間接触目的の全工程対照を別PCで開始。** session37597、remote artifacts/span_load30_running_tapered035/output、入力はv10のN6台形035保存plan/endpoint（asset絶対パスのみremoteへ置換）。execute_running_refinement.pyは元終端不足達成値を保護し、途中不足を改善した指令だけfine20msで再確認し採用。元解は常に残す。development_override4ファイル/hash保存。runtimeへ未採用・正式30へ合算しない。localのv10はそのまま継続。
+- **v10は22判定17成功5失敗。** N7台形045（LIFT16.0125sim）とN6楕円045（LIFT18.6525sim）が保持入力未発見で失敗。残8のうち7成功が必要。7失敗になれば監視停止、原因修正へ戻る。
+
+- **進め方の定期見直し。** v10は20判定17成功3失敗で24/30が可能。8機三角045はLIFT、遅い台形030もCARRYへ到達。途中で手法を混ぜず残り10を継続する。荷重衝撃（楕円030）と追従域の速度超過（台形035）を区別し、未発見を物理的不可能とは呼ばない。7失敗なら監視が所有計算だけを停止、保存直前系列から修正へ戻る。
+
+- **v10は20判定17成功3失敗。** N6台形035がCARRY25.510simで保持入力未発見。保存MJBの要求指令はpeak18.331N、直前指令延長14.602Nで荷重域内だが両者追従域外。楕円030の荷重衝撃とは別。成功N4=1/N5=9/N6=6/N7=1。残10条件（8機三角045もACQUIRE開始）を同じruntimeで継続。
+
+- **v10は17判定15成功2失敗で継続中。** 成功N4=1/N5=9/N6=4/N7=1。失敗は楕円030のLIFT保持入力未発見と円柱050の計画未完。台形030/035が遅いが未失敗、重い条件へ進行中。coordinator1071798/session83808、監視72567、遠隔円柱045開発98435/PID45893は再開済。現在の取得コマンドは `python3 artifacts/span_load30_20261024/panel_status.py artifacts/runs/span_load30_v10_20261026`。正式runtimeを変更しない。
+
+- **楕円030は離れていた面の再接触で荷重が跳ねる予測。** failure_edge.json：直前実発行区間peak11.905N、次の停止観測への再生q差1.74e-18/v差0。直前指令の延長では最初の刻みでpad0/2荷重0、1.625msでpad0の58.303Nへ上昇。要求指令でも1.75msで60.660N。単に前の指令へ戻す修正は不成立。初期化warmstart差は原因を支持しない。原物理/成功条件は不変。
+
+- **v10最初の実行失敗は楕円030。** N4/LIFT19.180sim/745.516wall、保持入力未発見・元位置から離れ復旧不可。新診断4ファイル保存。MJB＋保存gain/biasで未発行指令予測peak60.660N、直前指令を同じ現観測から延長58.303N、両方物体追従域外。保存された直前5区間の実発行再生はwarmstart付き速度差0、無しでも最大3.02e-9、物理保存/再生に矛盾無し。executed_replay_check.json/exact_guard_violation.json。制御へ実機未観測値を追加したわけではなく開発診断のみ。
+
+- **v10全30計画完了、物理6並列へ。** 29成立（5.203〜14.855秒）、円柱050は14.912秒でstructure selection did not complete。選択構造N4=2/N5=10/N6=9/N7=7/N8=1、骨格7・口/把持面29・分岐5・pitch7。全30snapshot同一、hash/入力/seed不一致0。planned_diversity.json。遠隔開発PID45893はSIGCONT済み（98435継続）。
+- **v10の達成不能時監視を起動。** monitor_panel.py/session72567、monitor_v10.log。7失敗ならcoordinator1071798とその子孫だけを停止しinterrupted.jsonへ記録する。30全件が揃うまで実装を混ぜず、完了した19件等の旧結果を合算しない。
+
+- **正式v10進行中。** coordinator1071798/session83808、出力artifacts/runs/span_load30_v10_20261026、ログformal_v10.log。最初の12計画は全成立6.953〜14.855秒。runtimeを途中変更しない。全30計画終了後に遠隔開発45893をSIGCONTする。7失敗で24/30へ届かなくなったら所有coordinatorと子を中断する。別PCは検証代表の背景計算待機を含むためwallを連続速度へ読み替えない。
+
+- **入力基準修正の円柱040全工程成功。** 7機、76.535sim/720.350wall、task_completed。楕円045は17.330sim/564.164wallでRECOVER失敗。開発代表であり正式30へ合算しない。
+- **正式v10を起動する。** v9からClarabel1thread、固定gimbal/名目経路停止域の有限再計算、固定入力linearization基準修正、失敗時診断保存を含む。区間接触目的は不採用。入力30/hash/seed/物理/成功判定は維持。run_panel_v10.sh。遠隔開発円柱045 PID45893は初期計画の間のみSIGSTOP、paused_for_v10.json。30計画後に必ず再開する。
+
+- **入力基準修正版の楕円045は失敗。** LOADの保持入力未発見からRECOVERへ移り、摩擦分枝未解決で終了。現在の修正だけで全条件の接触移行を解決したとはしない。円柱040は配置・解除まで到達して継続中、遠隔円柱045も継続中。
+
+- **失敗直前の実発行系列を保存する診断を追加。** 直近40制御周期の観測q/v、実指令、前指令、参照、warmstartを循環保持し、失敗時だけfailed_issued_sequence.npzと物理MJBを保存。制御/判定へ入力しない。起動中代表は追加前のsnapshotのまま。構文/差分検査成功。
+
+- **短いCARRY対照3本完了、接触目的追加はまだ不採用。** 全て0.3sim通過。旧入力基準/修正基準/修正基準＋区間目的の最長不足18.75/3.875/4.375ms、2.5ms標本不足積分0.005023/0.001819/0.001151、peak26.094/26.316/28.085N、wall106.19/99.46/157.27s。区間目的は不足の深さを減らすが連続欠落を短縮せず追加54.12s、全工程へ直ちに追加しない。キャッシュ再初期化の開発継続で原失敗再現ではない。現基準修正の関連27検査成功0.58s。
+- **遠隔へ入力基準修正を同期し円柱045全工程を開始。** build/*.pyとamsrr_det/*.pyを同期、source snapshot付きspan_load30_fixed_base_cylinder045/output、session98435。現PC2代表も継続。別PC結果は正式local30へ合算しない。
+
+- **CARRY短区間の旧終端評価は0.3秒を通過。** 現入力基準修正版、保存入口から制御器cacheを初期化した開発継続。99.457wall、peak26.316N、最長不足3.875ms。元全工程の完全再生ではなく失敗原因未確定。旧入力基準だけ戻した短対照26403、区間評価短対照23223が進行中。
+- **保存失敗観測の区間評価に局所改善。** 円柱045 finalからfine20ms比較、終端不足0維持、途中不足二乗平均0.16783→0.1296875、欠落面不足14→10.375ms、先頭2.5ms不足不変、peak22.102→21.003N。既に50ms超過した状態の診断でありタスク救済ではない。元入口結果は以前の記録を参照（同名JSONはfinal比較へ更新）。新目的の荷重/入力微分誤差8.45e-12、元幾何項はこの検査範囲外。
+- **入力基準修正版の全工程2件を開始。** fixed_base_ellipsoid045/output（42417）、fixed_base_cylinder040/output（87381）。新接触目的は入れず、保存生成plan/endpointからの開発検証。正式30へ合算しない。
+
+- **正式30は未達のまま。** v9は26判定19成功7失敗4未完。現在は追加代表の原因切分け中、正式v10未開始。
+- **接触配分の固定入力基準を修正。** ContactAllocation.linearizeは最適化対象外のgimbalにも前周期anchorを使っていた。現nominalで初期化し、最適化対象だけanchorを使う。独立MuJoCo応答の回帰検査を含む23検査成功。この修正後の全工程は未実施。
+- **円柱045のgimbal代替全工程は失敗。** CARRY20.12075sim/3745.052wall、carried_pad_load_gap。20ms成立815回・未発見1回、gimbal代替0回なので旧停止通過を代替の効果としない。span_load30_gimbal_fallback_cylinder045/output。
+- **有限減速2の楕円045はLOADで失敗。** 16.465sim/451.628wall、最終保持入力未発見。failed_guard_request/failed_feedback_requestを保存。新接触配分修正前の実行。保存指令の再構成予測はpeak30.289N、他制約内だがMJB未保存のためバイト単位同一応答ではない。
+- **LOAD進行保留の効果は未成立。** 未発見観測のfine20ms再修正は次率/保留とも成立（140.995/210.641秒、指令差0.49136/0.09948）。保留必須の根拠ではなくgovernor未採用。探索半径対照も未発見で不採用。
+- **円柱050の幾何反復増加は採用せず。** 固定生成規則の近接失敗4trialで45→90反復を比較。一部幾何通過後も荷重/接触適合未成立、採用候補0。geometry_budget_comparison.json。
+- **gimbal射影は粗予測のみ成立。** Proレビュー受領。保存円柱で参照最大0.000334rad変更により瞬時/粗20ms成立、fine未受理。runtime未採用。
+- **Proの区間接触評価レビュー受領。** 20ms途中の法線不足二乗平均は回復を早める選好であり、50ms以内回復保証ではない。元終端不足達成値を保護した同条件比較を推奨。保存CARRY入口では元/区間とも不足0で指令変化なし。短い連続実行で接触不足の発生を追う。pro_running_contact_review.txt。
+
+- **有限減速単独全工程は楕円045で失敗。** 17.7725sim/966.463wall、no attainable path acceleration。9有限代替中6回は名目停止域未成立。保存停止点で同エラーを再現し、連続減速参照から新20ms＋fine修正成立、最大29.0823N、物体速度0.007374→0.005347m/s。このカテゴリーも同じ有限代替へ接続、25検査成功。改訂代表はsession92812/finite_braking2_ellipsoid045（未完）。
+- **円柱LOADの保留率は粗予測のみ成立。** 未発見観測で次率94.19秒未発見、保留率60.11秒成立だがfineは33.429/31.607Nで双方不受理。保留率のfine再修正は210.64秒で成立、指令最大差0.09948。次率側も同じfine再修正で比較中（18182）。governorは未実装。数値探索半径＋進歩判定対照trust_meritは80.24秒未発見でruntime不採用。
+- **Proへgimbal参照の物理域射影を相談。** pro_gimbal_projection_request.png保存表示。位置サーボ命令のまま現在q/vの努力/位置域へ最小変更し、同じ変更名目入力で瞬時配分を行う案。未採用、原円柱停止観測でartifact比較中。
+
+- **円柱LOADの正確な未発見入力を回収。** remote_load_capture_cylinder045/input_hold_capture に直前成立4実周期とfailed_*観測/名目入力/参照を保存。診断停止13秒台で全工程結果ではない。直前観測の同一比較は次率/前率とも20ms成立・fine無修正成立（5.57/5.08秒）。未発見観測の次率は94.19秒で粗/精とも未成立、前率を比較中。進行保留の効果はまだ未確定。
+- **LIFT入口3観測の接触込み配分対照。** v9台形035/045・三角045で再構成した初期経路では旧/接触込み加速度区間が一致、両方作用射影無し・瞬時再検査成立。entry_allocation_comparison.json。正確な当該周期再生ではない。区間制約追加だけの救済根拠は得られずruntime未接続。
+- **数値探索の追加切分け。** 保存円柱未成立問題で、非線形再検査不受理時に探索半径を縮め、違反修復の進歩判定を線探索率連動にする対照probe_load_numerics.pyをartifactで開始（27131）。元物理/追従/合否閾値は維持。runtime未変更。
+
+- **保存楕円の連続減速参照は20ms成立。** protected_peak_ellipsoid045/path_failure_probe.json：元停止エラーを再現、加速度区間[0.92178,5.50725]と名目上限0.05413が不交差。連続減速参照の新20ms入力とfine再修正（最大指令差0.04023）は成立、peak29.7179N。実物体速度予測は0.02078→0.02311m/sであり、実減速や停止保証とはしない。
+- **既存有限再計算を名目停止域未成立にも接続。** 原処理と同じ連続減速参照＋現在観測の20ms再計算を用い、未発見は拒否、実保持区間検査は維持。finite_path_braking_fallbacks/outside_nominal_stopping_domain_stepsを記録し、旧名目停止域維持と混同しない。関連23検査成功0.74秒。楕円045の選好無し全工程を開始（session87625、span_load30_finite_braking_ellipsoid045/output）。最終同時集合LPはまだ制御に未接続。
+- **円柱名目空中設計の物理応答を確認。** v9cylinder045/airborne_load_probe.json：20msの物体z変化−2.36e-8m、vz−1.28e-6m/s、pad鉛直合計−44.12N、最大合力17.664N。停止観測で直前指令を20ms保つとpeak122.36Nで不成立。空中設計の成立と移行成立は別、法線合計だけで支持荷重を判断しない。
+
+- **Proへ経路加速度と作用配分の不整合を相談、レビュー受領。** pro_path_allocation_review.txt：rotor boxで選んだaの作用を後段で別作用へ射影しても元aで進行する不整合は修正対象。ただし6方向厳密追従は物理的必要条件でない。接触込みの同一凸近似集合で(a,input)を対応付ける局所対照と、有限補正後の最終指令対応を区別。空の停止域を新集合が広げるわけではない。実物体非ゼロ速度を参照凍結で停止扱いしない。
+- **接触込みscalar_intervalの共通計算を追加、制御では未使用。** affine_bounds.pyに任意の線形上下限を同時に含める引数、元の既定は同じ。独立LPとの端点比較含む8検査成功0.62秒。現在の経路制御にはまだ接続しない。
+- **保存楕円の停止状態で新旧加速度区間は同じ。** protected_peak_ellipsoid045/output/path_contact_interval_comparison.json：両方[0.921780,5.507250]m/s²、名目上限0.0541266と不交差。現在点で接触制約追加が救済する結果ではない。要求作用の不整合が以前の周期で発生したかは未確認。同状態の連続減速20msの再計算はsessionにて実行中（protected_peak_path_failure.log）、runtimeへ代替未追加。
+
+- **保護付きpeak全工程は2/2失敗、runtime不採用。** 楕円045もLIFT17.2375sim/1780.927wallでpath cannot preserve nominal stopping domain。追加374探索/157採用/fine拒否64、追加計算650.714秒。台形の保持未発見と別の停止理由であり、物理不能や同一原因とはしない。区間peak選好の追加だけでは後続成立性を確保できなかったため、これ以上同じ全工程試行を増やさない。
+
+- **保護付きpeakの台形045は失敗。** LIFT14.735sim/1404.758wall、最終保持指令未発見・支持復旧未発見。278追加探索/158微小〜実改善、fine不受理40、追加計算637.506秒。採用分のpeak合計2095.133→2071.413N（合計は時系列性能指標ではない）。局所荷重低下を全工程成功にしない。楕円045は継続、runtimeへ選好未採用。
+- **別PC台形035は元失敗を再現せず解除まで到達。** 実行機による背景計算遅延も異なり正式結果と合算しない。保存feedback比較はq最大差1.13e-5、u最大差0.00301（混合単位）；これだけで失敗原因を確定しない。remote_v9_tapered035_design/comparison.json。
+
+- **ProのLOAD進行レビュー受領。** pro_load_progress_review.txt：同一の最後の成立観測で「次の補間率」「直前の率」を元目的/元検査で比較。進行時間thetaを実時間より速く進めず、保留後追い付かない。率1を離床と混同せず、空中側/持上げ開始の実指令を検査し支持離脱は観測幾何＋支持無し応答で区別。物理時間/履歴/期限は保留しない。現コードの23秒検査はd.time-entryであり、entryを遅らせる実装は禁止。
+- **円柱LOADの正確な比較入力をremoteで捕捉中。** capture_load_inputs.pyは元captureにfull feedbackへの補間済み入力参照と直前実入力、20ms未発見時の観測/要求も保存。session82124、remote artifacts/span_load30_load_capture_cylinder045/output、local load_capture_cylinder045_remote.log。遠隔runtimeはv9のまま、診断は正式に合算しない。probe_load_progress.pyを準備済み（未実行）。
+
+- **失敗時入力の診断保存を追加。** HeldInputGuard/ConstrainedMomentumFeedbackは最後に渡されたq/v/指令/参照を保持。check_local_taskは例外時の現観測と厳密一致する要求だけfailed_guard_request.npz/failed_feedback_request.npzへ保存（同じactuator設定/時刻/phaseを添付）。以前の周期の要求を当該失敗として保存しない。関連18検査成功0.57秒。現在実行中3代表はこの診断追加前の起動版。
+- **状態差分ループのnative化比較は採用せず。** 同じ予測の微分出力差0。3反復でPython1.229/1.129/1.098秒、native1.005/1.279/1.387秒。並行実行下で安定した短縮無し。state_difference_benchmark.json、C++/benchmarkは開発artifactのみ。
+- **ProへLOADの進行変数を相談中。** 現行は3秒固定補間で20ms未発見でも補間率が進む。原因確定ではない。成立予測に応じた補間率/終了判定/停滞を成功にしない条件の最小対照を依頼。pro_load_progress_request.png保存表示、proTab/id1、入力1826/停止2628。保護peak2全工程は未完、別PC台形035診断は失敗再現せずDESCENDへ進んだ。正式30へ合算しない。
+
+- **共通実装へ2件の小変更を反映。** held_input_solver/response_contact_controlのClarabelをmax_threads=1へ変更（同一4問題の解一致・時間短縮の測定あり）。ConstrainedMomentumFeedbackは固定gimbal範囲未成立も既存の有限20ms再生成へ送り、未発見なら引き続き拒否。関連26検査成功0.59秒。進行中の開発対照は起動時source snapshot＋保存overrideで識別し、新runtimeの正式結果に読み替えない。正式v10は未開始。
+- **補助円錐条件のQR縮約は速度改善なし。** ProtectedIntervalPeakCostのnominal履歴条件を直交変換で行数削減する同一保存問題の比較は6.200→6.461秒、solver合計1.195→1.223秒。入力条件/非線形検査維持だが速度根拠が無いため既定false/runtime不採用。保護付き全工程は縮約無しで継続。
+
+- **円柱045停止状態で有限指令を発見。** gimbal_domain_probe.json：設計指令のgimbal努力最大1.044倍/直前実指令0.1539倍。現在観測＋復元LOAD静止参照から20ms指令成立（7.896秒）、fine20msは追加修正1回で成立。正確な失敗補間指令未保存なので元エラーの完全再現ではない。execute_gimbal_fallback.pyで固定gimbal範囲エラーも既存の20ms有限再計算へ送る単独全工程対照を開始（session37840、span_load30_gimbal_fallback_cylinder045/output）。上限/参照/未確認入力の受理は変えない。runtime未採用。
+- **v9成功19件の保存結果を独立再監査。** completion_audit.json issues=[]。最終姿勢・物理最大値の保存記録に矛盾無し。新シミュレーションではなく、未完4と失敗7を成功へ合算しない。
+
+- **保護付き区間peakの保存状態対照が完了。** 台形：29.9029→21.2339N、接触不足norm2.88839→2.80300、nominal運動量偏差norm0.20365→0.15102、追従域内・gimbal指令変更0、15.170秒。楕円は改善未発見で元入力維持、11.470秒。どちらもfine160刻み20ms・3反復で実行時速度ではない。
+- **保護付き全工程2代表を開始。** execute_protected_peak.py：追加探索は独立optimizer/cacheで実行し、元接触制御を変更しない。粗い1反復→fine20msの元/新入力を修正無しで検査、接触/nominal偏差非悪化・peak低下時だけ採用。局所solverのみ1thread。session52070台形045/99075楕円045、出力span_load30_protected_peak_*。development_override5files/hash保存。旧paused nominal2本は明示中断記録の上停止した。
+- **7機円柱045のgimbal範囲失敗を診断中。** 保存状態から元20ms有限予測で指令を再生成できるか検証。正確な失敗LOAD補間指令は未保存で、完全再現とはしない。session19521/probe_gimbal_domain.py、runtime無変更。
+
+- **正式v9を26判定19成功7失敗で中断。** 円柱045も「fixed gimbal outside input domain」で停止し、24/30に届かなくなったため所有coordinator1027315と子4件を停止、interrupted.json保存。未完4を失敗/成功へ読み替えない。元入力/成功判定は不変。
+- **Pro区間peakレビューを受領。** pro_interval_peak_review.txt：次の局所対照は元接触不足とnominal運動量履歴偏差の両方を非悪化とし、区間最大合力を下げる。恒久的な必要条件でなく効果切分け。基準の20ms成立解を常に保持、追加未発見をタスク停止理由にしない。ProtectedIntervalPeakCostをartifactへ追加、保存楕円/台形2状態を比較中。正式runtime未採用。
+
+- **区間全体のpeak選好を局所比較、Proへ交換条件を確認中。** terminal_peak_cost.pyのIntervalPeakCostは実際の全期間max norm(F)/30を再評価し、最大点の局所微分で提案する。大域最適性/未発見=不存在の主張無し。元接触不足norm以下、gimbal固定、物理/追従条件維持。fine楕円は元入力から改善無し、台形はpeak29.9029→23.8419N・接触norm2.88839→2.83859・追従違反−0.0215→−0.00833、nominal運動量偏差norm0.20365→0.60733へ増加。interval_peak_fine.json/.npz、runtime未採用。Proへそのまま全工程対照にするかnominal偏差非悪化も保護すべきかを相談。pro_interval_peak_request.png保存/表示、返答待ち（proTab/id1、1826入力/2488停止）。
+- **終端peakのみの選好は区間peakを増やした。** 保存楕円：終端17.737→17.407N、区間20.0035→20.0393N（19.5→19.875ms）、先頭2.5ms18.3488→18.3783N。保存台形：終端16.3505→13.9742N、区間29.9029→29.9511N（いずれも2.375ms）。元物理/接触/追従条件は成立。terminal_peak_fine.json/.npz、terminal_peak_locations_fine.json。終端低下を将来成立の改善としない。全工程未実施。
+- **数値solverの並列数を同一4問題で比較。** held_input_solverのClarabel既定はfaer32threadsであることをget_infoで確認。conic_thread_probe/thread_benchmark.json：0(auto32)/1/2を各3反復、解差0・status一致、同じ許容誤差。最新中央値auto32→1は0.1133→0.0623、0.0971→0.0711、0.0909→0.0420、0.0768→0.0542秒。formal6並列下の限定計測。bench_conic_threads.pyは三角Pを対称へ戻して目的値を評価。runtimeへ未採用、局所peak比較では1threadを使用。
+- **正式v9は24判定18成功6失敗、残6全部成功で80%。** 7機箱050が成功、成功内訳N4=1/N5=11/N6=5/N7=1。新しい7機台形045/三角045もLIFT保持未発見で停止。7失敗なら所有coordinator1027315と子を中断する。正式ソース固定継続。
+
+- **Proの将来成立性レビュー受領。** pro_future_feasibility_review.txt：まず成立していた直前区間で、荷重内訳/圧縮速度/要求作用/飽和/実発行系列を対応付ける。新たな固定余裕は入れず、元J_contact達成値以下・元物理/追従条件の中で終端最大合力R_T=max_i norm(F_i(T))/30を下げる選好を最小対照候補にする。停止余裕には実制動能力が必要で未根拠、静止設計の荷重分配をそのまま強制しない。20ms未発見後2.5msだけ成立で継続した系列と、20ms連続成立系列を混同しない。
+- **remoteで6機台形035の直前成立ブロック捕捉を開始。** session89606、v9_capture_tapered035_remote.log、remote入力artifacts/span_load30_v9_tapered035、出力artifacts/span_load30_v9_capture_tapered035/output、capture_input_hold.py。元plan/endpointをコピーし絶対asset rootのみremoteへ変更。元失敗の完全再現ではなく開発診断。正式v9に合算しない。実行runtimeはv9と同じ、停止後input_hold_captureへ4周期観測/発行とphysical/clearance modelを保存する。
+
+- **nominal運動量比較remote三角050は失敗。** remote_nominal_momentum_triangular050/outputへ回収。LIFT中に最終保持未発見、支持復旧の摩擦分枝も未発見。局所選好の改善を全工程改善へ読み替えない。runtime未採用。local2本はpaused_nominal_for_formal_execution.jsonのPIDで停止中。remote session53112終了。
+
+- **Proへ将来の指令成立性を相談、返答待ち。** pro_future_feasibility_request.pngを保存・表示。有限20ms成立が次の成立を保証しない点について、終端荷重低減/荷重増加速度と制動余裕/支持作用からの接触目標を比較依頼。任意固定余裕や物理緩和は求めない。nominal比較は正式未採用と明記。browser proTab/id1、入力1826、送信後停止button2318。
+- **v9台形035の保存状態診断。** guard_current_reference_probe.json：直前実入力予測49.0717N→数値修正30.1408Nで未発見、追従/距離は成立。guard_current_width_0.01/0.1/1.0.jsonでも未発見。元失敗時提案入力そのものは未保存なので完全再現とはしない。正式ソース無変更。7機円柱040もACQUIRE10.78simで保持未発見（元v8と同じ接続/姿勢）、計画未完を含め3失敗。正式v9は15判定12成功、6機全工程成功1。
+
+- **進め方の定期見直し。** 正式v9は9判定・8成功・計画未完1、実行6並列。現時点で実行失敗はなく、runtime固定で継続。計算の長い楕円030/台形030/035を監視し、明確な不具合か7失敗で24/30へ到達不能なら所有プロセスを中断し原因へ戻る。remote nominal override4ファイル/hash保存済、別PC比較継続。local開発2本は停止状態のまま（paused_nominal_for_formal_execution.json）。
+
+- **正式v9は7判定・6成功・計画未完1、物理6並列継続。** local開発nominal比較2件（1026226/1026422）は正式30の処理を優先して再度SIGSTOP。paused_nominal_for_formal_execution.json。必要時のみ再開し、中断前後wallを連続実行速度へ読み替えない。別PC44605/session53112のnominal三角050は継続。正式runtime無変更。
+
+- **v9構造監査完了。** 29plan: N4=2/N5=11/N6=8/N7=8、骨格6/口+把持面28/分岐4/pitch7/接触2〜7。全29選択根拠complete、30snapshot同一・hash/固定入力/seed不一致0。8機の有限負担成立候補は9条件、いずれも選択候補より負担大（eight_module_comparison.json）。N8採用無し。v8と接続modelが異なるのは2条件。初期計画失敗円柱050は、1888独立trialの多数が姿勢未収束/荷重基準未発見であり、物理不能とはしない。
+
+- **v9全30初期計画完了、物理6並列へ。** 29成立、円柱050はstructure selection did not complete（15.041s、選択未完で不受理）。成立5.046〜14.856秒。比較実験local1026226/1026422、remote44605をSIGCONTで再開。計画一時停止区間は開発比較wall時間へ含まれるため、連続実行の速度値として使わない。正式coordinator1027315/session86586。
+
+- **正式v9を開始（session86586）。** 固定30/hash/seed/物理/成功判定は不変。v8からの変更はmultiscale差分再探索と、距離専用EPA計算が反復上限に達した時だけ精度を維持してprivate modelでmax(2000,4倍)反復まで再計算する処理。別エラー/再失敗は伝播。関連25検査成功0.98秒。元の三角045失敗の正確な予測qは未保存なので、当該失敗の救済を実測したとはしない。run_panel_v9.sh/formal_v9.log、出力artifacts/runs/span_load30_v9_20261026。実行中runtimeはここで固定する。
+- **nominal運動量の3開発対照は計画の間のみ一時停止。** local1026226/1026422、remote44605へSIGSTOP、保存記録paused_nominal_for_v9.json。30初期計画が終わったらSIGCONTで再開する。正式v9に未採用/合算しない。旧結果の4未完を成功と仮定せず、新30を同じ実装で確認する。
+
+- **Proが目的の混同を確認、比較の仮説を変更。** pro_momentum_reference_review.txt：旧J_H（タスク速度の運動量との差）は元の位置復元帰還も変える。単なる作動条件追加ではその混同は残る。新比較は同じ観測から元指令を保持した運動量履歴との差を、共通座標/原点/換算尺度で最小化。同じ接触改善/物理/物体域を維持し、元予測に上限違反があっても選好参照に限る。外側の閉ループ全体の保存保証ではない。
+- **旧task-rate選好の3全工程は停止。** fixed楕円25293はRECOVER17.745sim、台形25373はLIFT14.5025sim、remote74254/PID44511はLOAD（最新log参照）。所有processのみ停止、各interrupted.json。全工程結果へ数えない。初回＋修正2段で進めた仮説をここで再評価し、目的の混同の具体的理由に基づいて上記nominal履歴偏差の仮説へ変更する。旧選好が一般に無効だと証明したわけではない。
+- **新目的の保存状態対照は成立。** nominal_momentum_cost.py/probe_nominal_momentum.py。追加段階のgimbal固定、元接触達成値以下。楕円coarse3.800秒、fine再検査も修正0、nominal履歴偏差二乗指標0.067736→0.000300・接触norm1.03675→0.96092・最大19.0693N。台形fine17.638秒、指標0.041475→0.001386・接触norm2.88839→2.77034・最大29.989N。旧task-rate指標と数値比較しない。
+- **新目的3代表を開始、runtime未採用。** execute_nominal_momentum.pyは元接触解が元指令と厳密に同じならそのまま返す（nominal履歴偏差0の最適解）。他は粗い1反復→fine20ms再検査/必要時修正、同じfine接触改善・指標低下・gimbal保持を確認。local66814楕円045/69855台形045、remote53112三角050。出力artifacts/span_load30_nominal_momentum_{ellipsoid045,tapered045,triangular050}/output、remoteは別PC側。local2出力development_overrideへ4実行ファイル/hash保存。正式v9は未開始。
+- **新目的の座標契約を独立確認。** nominal_momentum_frame_check.json：独立質量行列による共通原点評価との差5.55e-17、全体平行移動時の差8.33e-17、元指令自身の偏差4.15e-16。物理予測の妥当性/全工程成功とは別の検査。
+
+- **Proへ目的定義を追加確認（返答待ち）。** pro_momentum_reference_request.pngを保存・表示済。タスク速度への運動量誤差を最小化すると位置誤差を戻す外側の加速度も打ち消し得ること、元の接触補正u_c=u_nomでも追加計算が別指令を選ぶことを確認。元nominal入力の予測運動量履歴との差を目的にする案と、補正があった時だけ現目的を使う案を比較依頼。実行中3代表へ途中で混ぜない。
+- **数値修正単独台形はCARRYで接触途切れ失敗。** 20.050375sim/2279.385wall、carried_pad_load_gap。multiscale_tapered045/output。最終観測のfine20ms再探索は現目的で成立しても終端3接触が0N、全接触0.5Nを追加した対照は未発見。運搬入口では元/0.5N追加とも同じ成立入力だった。現在の20ms上限検査だけで全工程の接触維持を主張しない。carry_contact_probe.json/carry_contact_final_probe.json、現runtimeは変更無し。
+- **並列数の限定計測。** 同じ保存問題、local開発3本と並行時の入力微分計算4workers1.059/1.182秒、8workers0.654/0.719秒、16workers0.509秒、出力差0。prediction_worker_comparison.json。全6ケース同時処理のthroughputではないので既定8を変えない。
+
+- **数値修正単独remote三角050は失敗。** RECOVER16.4875sim/1174.701wall、摩擦分枝の未発見。multiscale再探索6回/救済0。remote_multiscale_triangular050/outputへ回収。実機/物理不能とはしない。
+- **remoteを修正版運動量対照へ切替。** session74254、momentum_fixed_triangular050_remote.log、remote root artifacts/span_load30_momentum_fixed_triangular050/output。execute_momentum_fixed.py/momentum_contact_cost.py/execute_saved_endpoint.pyを同期。local2代表と同じ補正規則、別PCの時間/背景計算として記録。local固定版2出力へdevelopment_overrideの実行wrapper/目的ファイルとSHA-256を保存。
+
+- **約30分の進め方確認。** 数値差分修正だけの台形はLIFT19.50simまで進み旧停止15.95simを通過、未完。remote三角はLIFT16.35sim、未完。運動量修正版は楕円25293/台形25373が接近〜把持中。局所改善を全工程へ読み替えず、これ以上同系の高コスト候補を増やさずこの結果を先に取る。次も新しい指令不整合/計画不成立なら該当観測を保存して原因を分ける。正式30は旧v8の19/26・7失敗から未更新。
+
+- **運動量対照で指令系の不整合を発見。** 楕円33762はLOAD15.730sim/464.106wallで「bounded momentum fixed gimbal outside input domain」。118補正中116で局所指標改善したが全工程失敗。停止q/vでは元設計gimbal指令の要求努力が定格0.152Nmに対し最大0.3803Nm、直前指令は上限内。追加補正がgimbal位置を変えるのに外側は元位置を固定する構成。LOAD中の正確な補間指令そのものは未保存で、gimbal_domain_diagnosis.jsonは設計指令との対比。台形旧checked56273/PID1023224は同不整合修正のため停止、12.5025sim、interrupted.json保存。
+- **追加選好を外側と同じ調整入力に限定。** baseline接触解のgimbal位置指令を追加最適化中は固定（baselineは常に候補に残す）。元の接触補正・最終guardの探索範囲は変えない。artifact MomentumContactCostへanchorと固定入力の等式/非線形チェック。保存楕円は3.871秒で元制約成立、fine20msも修正0、指標0.028456→0.001169・最大18.6705N。台形fine17.468秒、指標0.070986→0.029223、接触norm2.8884→2.7523・最大29.9798N。
+- **修正版の全工程2代表開始。** execute_momentum_fixed.py（粗い1反復、軽量方向、追加段階のgimbal固定、fine20ms再検査/修正、fineで接触/運動量改善かつgimbal保持の場合のみ採用）。local25293楕円045/25373台形045、artifacts/span_load30_momentum_fixed_{ellipsoid045,tapered045}/output。数値修正単独台形31811とremote三角67626も継続。runtimeへ選好未反映、正式v9未開始。運動量仮説の高コスト対照は初回/数値検査修正版/指令範囲修正版の段階まで実施、この次も不成立なら同じ再試行を増やさず仮説を見直す。
+
+- **運動量目的の方向計算を軽量化する対照。** C++完全同値化は0.431→0.382秒の小改善、runtime不採用。入力の影響を計算する際だけ各予測姿勢の運動量写像を固定し、非線形の目的/制約再評価は元のままにした案では、保存楕円の方向行列相対差0.000102、勾配相対差0.000123、方向計算0.435→0.000542秒。momentum_contact_cost.pyにapproximate_momentum_jacobianの明示flag追加、既定false。
+- **軽量方向の保存問題2件は成立。** 楕円3.937秒（旧6.304）、指標0.028885→0.001141、接触norm1.0382→0.8652。fine20msも修正0、最大18.416N、指標0.028456→0.001158。台形fineは17.705秒（旧23.099）、指標0.070986→0.029220、接触norm2.8884→2.7525、最大29.9797N。いずれも3反復の開発比較で、全工程や同時負荷を揃えた速度保証ではない。全工程2本は起動済み旧方向を維持し、正式v9未開始。
+
+- **fine確認を含む運動量対照を台形045で開始。** session56273、execute_momentum_checked.py、artifacts/span_load30_momentum_checked_tapered045/output。粗い予測の1反復後、fine20msの元HeldInputGuardで再検査/必要時修正し、同じfine評価で元接触不足以下かつ運動量指標低下の場合だけ採用。追加問題未発見/改善無しは元成立指令へ戻し通常の最終2.5ms検査は維持。runtimeへ未反映、楕円33762は粗い選好のみの別対照として継続。
+- **運動量目的の微分を独立検査。** 保存楕円状態の予測状態を同方向へ直接摂動し、差分幅1e-4〜1e-6で相対差1.27e-11〜1.78e-10。momentum_derivative_check.json。応答物理モデル自体の微分精度保証ではなく、状態から目的を作る微分の確認。
+
+- **運動量選好の時間刻み確認。** 楕円のfine0.125ms/20msも指令修正0、二乗平均指標0.028456→0.001188・接触norm1.03675→0.98714・最大20.004→18.832N。台形のcoarse候補はfineで35.777Nとなり不採用（guard修正1.0255）。同じ台形をfine予測で再最適化すると元制約内、指標0.070986→0.037732・接触norm2.88839→2.84748・最大29.9833N、23.099秒。粗い予測の成功を独立fine成功と混同しない。
+- **全工程運動量対照は楕円045のみ開始。** session33762、execute_momentum_refine.py、output=artifacts/span_load30_momentum_ellipsoid045/output。baseline接触補正が成立した場合だけ同接触達成値以下で運動量改善1反復、未発見なら元成立指令へ戻す。元2.5msguard/入力発行方式/物理条件維持。runtimeへ未採用。台形は粗い予測差があるので全工程をまだ起動しない。
+- **運動量計算の同値な高速実装をartifactで確認。** 元の質量行列式との最大差4.44e-15、運動量ベクトル2.52e-17。subtree計算で1評価164.6→40.4µs（単一保存状態）、momentum_contact_cost.pyへ反映。起動済み楕円33762は旧artifact実装をロード済み。目的/物理を変えた高速化でない。
+
+- **multiscale楕円045は失敗、正式v9未開始。** LIFT18.770sim/1106.084wall、有限配分代替の20ms未発見。台形045（31811）とremote三角050（67626）は継続。previous_retry楕円030（50611）は全工程成功66.7375sim/2174.895wall、再探索2回とも直接救済0なのでretryの効果とは断定しない。
+- **Pro整合性レビュー受領。** pro_wrench_consistency_review.txt：外側の全体運動量と後段接触補正の整合を先に比較。元の接触不足達成値を制約として維持し、その中で外側と同じ運動量の等価速度誤差を低減。瞬時総作用完全保存を必須へ戻さない。成立中の先行状態で比較し実発行/全工程で確認する。
+- **運動量選好の保存状態比較、楕円で局所改善。** artifact momentum_contact_cost.py/probe_momentum_contact.pyのみ、runtime未反映。元20ms成立入力を起点、接触不足norm上限を維持した元物理/追従制約内の再最適化。楕円045は接触norm1.0382→0.9852、運動量等価速度の正規化平均二乗0.028885→0.001169、最大力19.985→18.830N、6.304秒。台形比較session14459実行中。独立fine/実発行/全工程は未確認。
+
+- **現行runtimeの同状態再検査も成立。** guard_current_reference_runtime.json（session73724）は元参照/観測でfactor10、最大26.515745N・追従違反−1.58e-8、独立距離合格。通常未発見を2.5ms予測の制約緩和で通したのではなく、同じ非線形検査で確認した。再探索時間と回数を結果へ保存する変更も追加済み。
+- **remoteの直前指令retry三角050は失敗し回収済み。** 16.635sim/1097.541wall LIFT、2再探索とも未発見。remote_previous_retry_triangular050/outputへ保存。別PCへ現行response_contact_control.py/check_local_task.pyを同期し、正式v8保存構造からmultiscale_triangular050対照を開始（session67626、multiscale_triangular050_remote.log）。こちらはartifact wrapperでなく現行runtimeを直接使用。localはmultiscale楕円04586665/台形04531811、旧previous_retry楕円03050611が継続中。正式v9未開始。
+
+- **共通runtimeへmultiscale数値再探索を反映（正式v9は未開始）。** build/response_contact_control.pyは従来処理を_updateへ分離、通常未発見時だけ差分幅×10/×100を試す。目標/入力始点/物理再検査は同じ、終了時に元の差分幅へ戻す。別の例外は握り潰さない。再探索を含む呼出し時間を記録。check_local_taskの設定/hashと結果へ数値再探索回数を追加。5新規契約検査を含む25検査成功0.81秒、計測追加後関連19検査成功0.41秒。既存全工程プロセスは起動時のv8＋同等artifact wrapperを実行しており、その記録を新runtimeの正式成績とはしない。
+- **保存経路参照でも数値救済を確認。** 最初のguard診断は保存経路から1周期減速した参照だったため、追加更新しない保存参照で再確認。guard_current_reference_baseline.jsonは追従違反0.00880364で未発見、guard_current_reference_multiscale.jsonはfactor10で全制約成立・最大力26.51575N。同じ最終観測と直前実入力を起点とする対照で、実失敗時の未保存の提案入力そのものではない。runtime単独同診断session73724も終了（出力確認待ち）。
+- **絶対保持の対照は終了。** absolute+retry楕円045は19.500sim/1098.342wall LIFT経路条件で失敗。20ms未解決0・4再探索すべて救済しても未達、最終guard変更6回。absolute v2台形はCARRY21.5025simで所有PID1012488を停止しinterrupted.json保存。どちらもruntime不採用。これ以上同じ全工程対照を繰返さない。
+
+- **数値微分の粗さを変える再探索が同じ失敗状態を救済。** previous_retry楕円045の最終状態とLIFT減速参照を再構成。失敗は荷重でなく物体速度追従（許容0.02030868m/s、最小残違反0.008658）。力26.26N/侵入0.487mm/距離合格。入力の影響の微分は最小差分幅6.055e-6でnorm24.81、提案1e-3の予測改善0.02481に対し実改善1.07e-6。幅1e-3ではnorm0.285・予測改善2.85e-4/実1.59e-4へ改善。単に細分化するだけで正確になる状況ではない（guard_steps_probe.json）。幅1e-3固定では2.012s/4反復、1e-2固定では2.314s/7反復で元の全制約成立。物理条件/観測/追従域を緩めない。
+- **multiscale対照開始、runtime未変更。** artifacts/span_load30_20261024/multiscale_response.pyは通常解法の未発見時だけ元の差分幅×10、×100で微分を新しく計算して同じ非線形問題を再試行。成功/失敗後に差分幅を元へ戻し、別観測へ粗い微分を持越さない。元入力からの始点/目標を維持し、previous-input/absolute-hold変更とは分離。guard_multiscale_probe.jsonで上記失敗をfactor10で救済。execute_multiscale.py全工程: local86665楕円045、31811台形045。runtime未採用、正式v9未開始。
+- **直前実指令retry単独の結果。** 台形045は15.9525sim/904.846wall LIFT失敗、2再探索とも未発見。楕円045は18.345sim/1066.274wall LIFT失敗、再探索5回中4回救済したが最終2.5msの追従域で未解決。3kg楕円50611はCARRY継続、remote三角050 session5701はLIFTへ進行。absolute hold v2台形89833はCARRY、absolute+retry楕円56543はLOAD継続。全工程成功はまだ無い。
+- **運動量診断は原因確定ではない。** 絶対保持v2楕円の停止状態で全体の等価速度誤差z+0.023745m/s・角速度x−0.12828rad/s、物体単体はz−0.01719m/s・角速度x−0.0640rad/s。接触補正は物体域のみ制約し全体運動量を等値保存していないが、それだけで今回の原因とはしない。path_momentum_diagnosis.jsonへ保存。目的/制約追加はしない。
+
+- **30分の進め方確認。** 近似停止域の迂回は同状態で20ms未発見のため拡張しない。初期値再探索の単独3代表＋remote三角050（session5701）を優先する。absolute hold v2台形は持上げ18simへ到達、楕円v2は失敗済み。補完性を1条件で見る最後のabsolute hold修正対照として、absolute+retry楕円045 session56543（execute_absolute_retry.py）も開始。これで同仮説の高コスト修正後対照は2回分とし、これでも進まなければ繰返さず原因を見直す。runtimeはまだv8、80%未達。
+
+- **保存LIFT経路失敗の原因を再現。** probe_path_failure session30421終了。瞬時の経路加速度区間[2.52328,5.46462]m/s²と名目上限0.0541266m/s²が交差せず、停止距離超過でない（実位置0.0038425/経路長0.15m、実速度0.0094677m/s）。同じ保存設計/観測/経路進行で元のエラーを再現した。連続減速参照から新20ms候補は未発見。path_failure_probe.jsonへ記録し、この代替拡張は採用しない。瞬時区間の未発見を物理不能とはしない。
+
+- **Proの経路未発見レビューを保存。** pro_path_fallback_review.txt。近似加速度区間/名目停止距離での未発見にも連続減速参照＋元20ms物理検査を代替とする整理は整合するが、区間交差の空と停止距離超過を区別し、観測速度の実減速・元終点/物理域/時間履歴を確認する。短区間成立を終点停止保証へ読み替えない。相談本文は最初に導入行だけ送られたため、その後本文を送信して具体的返答を取得済み（pro_path_fallback_request.png）。
+- **path_failure_probeを楕円v2失敗観測で実行中。** session30421、probe_path_failure.py。保存feedback設計・LIFT経路進行・最終観測から原因再現し、同じ連続減速参照の20ms候補とfine再検査を試すartifact。runtimeは未変更。
+- **再探索全工程は3代表。** 8728楕円045、24753台形045に加え50611楕円030（以前は降下未発見）。絶対保持v2台形89833も継続。計画生成を再実行しない開発対照であり正式30へ合算しない。
+- **再探索profile確認。** previous_hold_profile.pstats：2問題の最適化5.374秒中、微分予測3.373秒、入力制約solve0.938秒。主threadのwaitは並列予測待ちであり競合の証拠ではない。物理予測は既にnative実行、細かなPython差分ループだけを主ボトルネックとしない。profile再試行出力はprevious_hold_profile_result.jsonへ分離、元comparison JSONは元log値へ復元。
+
+- **絶対保持v2の楕円045は失敗。** 中間1040回の指令保持で最終guard変更0だがLIFTの停止可能域を維持できず終了。20ms348成立/2未発見。予測入力整合だけでは全工程の改善にならない。台形v2は継続中、runtime未採用。
+- **台形の10ms入力対照も完了。** baseline捕捉85622終了。元指令再生の最大状態差は位置1.75e-8/速度6.80e-6。絶対保持はguard変更0、peak29.903Nは同値、終端最大19.147→18.763N、接触不足norm0.7071は同値。楕円の局所改善を全形状へ一般化しない。
+- **直前実指令からの新20ms再探索を独立対照中。** execute_previous_retry.pyは元の差分加算方式を維持し、20ms未発見時だけ微分を更新して直前実発行入力から再計算。現在観測/同一目標/同一物理条件、旧解の期限延長でない。local sessions8728楕円045/24753台形045。retry成功は独立カウンタへ記録。runtimeは正式v8のまま。
+
+- **捕捉楕円LOADの再探索で新20ms解を2通り発見。** probe_previous_hold.pyは同じ未成立観測（capture/output/final.npz）と固定LOAD参照を用い、直前実発行/直前20ms成立入力をanchorとして新しい微分から再探索。3.160/3.045秒で成立、peak24.600/27.091N。初期点のみの寄与とは断定しない（旧失敗nominalそのものは未保存、cached微分も再計算）。両解とも独立fine0.125ms/20msの元guardを無修正で通過、peak24.218/27.431N、終端全pad法線0.5N超。previous_hold_comparison.json/previous_hold_fine_check.jsonへ保存。20ms未発見を物理不能としない具体例。runtimeへのretry採用はまだ。
+- absolute hold v2 session89833台形/94046楕円が実行中、台形baseline入力列捕捉85622も継続。v2楕円では20ms未発見が出たが全工程結果はまだ無い。
+
+- **absolute hold v1台形は失敗、対照の不完全さを確認。** LIFT15.2925sim/883.886wall、保持未発見。中間1119回のうち597回でclip/瞬時affine検査が別入力へ差し替え、最大差20N相当。受理入力の絶対保持として効果判定できない。楕円v1未完は所有processだけ中断しinterrupted.json保存。
+- **absolute hold v2対照を開始、runtime未採用。** execute_absolute_hold_v2.pyでは受理済み絶対指令を中間3回そのまま提案し、旧差分加算/瞬時affine差替を通さない。外側の元2.5ms有限応答（荷重/駆動/関節/物体域/距離）検査と独立監査は全維持。最終guard変更数を記録し、変更時は元20ms予測の実行と主張しない。台形045 session89833、楕円045は直前tool出力参照、出力artifacts/span_load30_absolute_hold_v2_{tapered045,ellipsoid045}/output。台形baseline捕捉85622は継続。
+
+- **現プロセス3件のみ。** local capture_input_hold台形045 session85622/PID1010270（LIFT15.5sim）、absolute_hold台形045 session74011/PID1011224（LIFT15.0sim）、absolute_hold楕円045 session89169（LOAD16.0sim）。楕円capture32194/比較94918は終了、remote診断も停止済み。runtimeはまだ正式v8のまま。
+- 楕円10ms対照の最大指令差4.509はrotor13（gain1）の推力4.509Nと確認。次はrotor2 −1.031N、rotor9 +1.034N。保持対照の最終guard変更は4回全0。単に単位混合normからNと推測していない。
+
+- **楕円045の同状態10ms入力保持対照を完了。** capture session32194終了、input_hold_captureに4実指令と物理モデルを保存。baseline再生の観測との差は最大位置9.97e-9/速度1.60e-6で復元を確認。予測定入力と実発行の最大差は中間で4.509（指令単位混合、N等へ一括解釈しない）、最終guard修正0。絶対保持はguard修正0/距離違反0、peak20.783→18.349N、終端接触不足norm0.7071→0.5032N、終端最大力は16.024→17.990Nで下がってはいない。予測との全速度max差0.01997→0.000499（約40分の1）、物体位置差3.597→0.399µm。LOAD台上の10msなので搬送進行改善/全工程成功は未確認。input_hold_comparison.json/prediction_match.jsonに保存。
+- **楕円045のabsolute hold全工程対照も開始。** execute_absolute_hold.py、artifacts/span_load30_absolute_hold_ellipsoid045/output、absolute_hold_ellipsoid045.log。正式runtimeへ未反映。台形の入力列捕捉と全工程対照は継続中。
+
+- **absolute hold全工程対照1件も並行開始。** local session74011 execute_absolute_hold.py、保存構造v8台形045、出力artifacts/span_load30_absolute_hold_tapered045/output、absolute_hold_tapered045.log。受理済み絶対指令を中間更新の提案にし、既存clip/瞬時検査/最終保持検査は維持。runtime未採用。短区間捕捉2件は継続し、同じ状態比較はまだ未完。
+- **別PC形状診断は中断。** remote所有PID44037のみ停止、interrupted.json保存しremote_ccd_capture_triangular045へ回収。元LOAD14.66sim失敗が再現せずLIFT18sim以降へ進んだため、繰返す制御失敗の対照へ集中。形状失敗を修正したとは扱わない。session70720終了。
+
+- **Pro入力保持レビュー受領、runtime未変更で対照準備。** pro_input_hold_review.txtへ会話全文保存。差分を新nominalへ足す未予測の入力変更を先に分離し、受理済み絶対入力の保持を終端荷重目的追加より先に比較。元の参照/目的/上限/2.5ms検査を維持し、最終検査で修正されたら元予測の実行と呼ばない。未発見時の前回指令再検査は別対照（残時間の期限をリセットしない）。
+- **入力列捕捉をlocal2件開始。** session85622=hold_capture_tapered045、session32194=hold_capture_ellipsoid045。script capture_input_hold.pyが最初の20ms未発見直前の成立計算と実発行4回を保存して診断終了する。出力artifacts/span_load30_hold_capture_{tapered045,ellipsoid045}/input_hold_capture。probe_input_hold.pyで保存入力列/絶対保持を同じ初期q/v・物理刻みで比較する準備済、まだ未実行。execute_absolute_hold.pyは全工程比較用artifact（未起動）、元のclip/瞬時検査/最終guardを保持し、途中変更数を記録。
+
+- **正式v8を中断: 26終了19成功7失敗4未完。** 三角050のLOAD保持未発見が7件目で24/30へ到達不能。所有coordinator974652と子だけ停止、interrupted.jsonへ記録。未完は円柱045/楕円050/台形035/台形050。成果未達。runtimeはv8のままでまだ変更していない。
+- **Proへ入力保持の整合性を相談中。** 20ms定入力を10msごと最適化するのに、中間3回は保存差分を更新基準入力へ足す現方式を説明。受理済み絶対入力を10ms保持し元2.5ms検査を維持する最小対照を、終端荷重目的追加より先に検討すべきか相談。送信証跡pro_input_hold_request.png保存・表示済、既存browser tab1/handle proTab。回答はまだ未取得。
+
+- **正式v8途中25終了19成功6失敗、残5すべて成功なら80%。** 新失敗は細長050 RECOVER摩擦分枝未発見、台形045 LIFT保持未発見、楕円045取り直し後LOAD保持未発見。7機箱050は成功。残り円柱045/楕円050/台形035/三角050/台形050は実行中。7失敗なら所有coordinator974652のtreeを中断し改善へ戻る。明確な論理不具合は未確認、形状計算上限は不正な接触を受理せず失敗として扱われた。runtime固定継続。
+- **remote形状捕捉はsession70720へ再起動。** 初回67760は保存sceneの絶対パスがlocalのままで起動失敗。remoteコピーのplan.json/scene.xmlのrootだけamsrr_det_large30へ置換（元の固定入力/正式artifactは不変）、空captureディレクトリを除去して再開。元14.66sim停止を通過しLIFT15.73simへ進行、まだ形状失敗を捕捉できていない。異なる背景計算タイミングの開発再生であり、元失敗の修正とは扱わない。
+
+- **正式v8途中21終了18成功3失敗。** 追加は三角045（7機）LOAD14.6625sim/339.459wall、距離用形状計算のEPA反復500上限、深さとsupport差約8.8nmで必要1nm精度未達。実監査最大18.947N/侵入0.107mm/距離違反0。停止qで同じfull距離queryは成立（part1.909mm/env33mm）なので予測/候補qの失敗と区別。runtime変更無し、同一30は継続。
+- **別PCで三角045形状失敗を捕捉する開発対照を開始。** session67760、ccd_capture_triangular045_remote.log、remote入力artifacts/span_load30_v8_triangular045、出力span_load30_ccd_capture_triangular045/output。capture_collision_failure.pyは最初のmj_collision FatalErrorのモデルMJB/q/呼出stackを保存し元の失敗を維持するartifact。正式成績へ合算しない。
+
+- **正式v8途中17終了15成功2失敗。** 6機3成功/7機1成功。追加失敗は楕円030（4機）DESCEND30.120sim/1955.193wall、最終保持入力PrimalInfeasible、20ms成立1890/未成立2。実監査最大29.9988N、距離違反0、支持喪失最長21.375ms。前版と同じ降下の未発見であり物理不能とはしない。残13件の同一実装検証を継続、runtime無変更。
+
+- **別PC numeric_v2台形035（6機）全工程成功。** 75.3325sim/3438.962wall。保存先artifacts/span_load30_20261024/remote_numeric_v2_tapered035/output、元remote span_load30_numeric_v2_tapered035/output。旧v7降下停止を通過、20ms未成立0/成立1912。開発用保存構造の対照につき正式v8へ合算しない。session36179終了。正式v8は13終了12成功1計画失敗、6機成功2件。
+
+- **正式v8途中11終了10成功1計画未発見。** 成功10件の保存物理上限・最終位置/姿勢/速度・解除待機を別集計で再確認し不一致0（completion_audit.json）。6機箱/細長は退避中、7機円柱は持上げ中。runtime固定。panel_status.py/audit_completed_panel.pyはartifact内の読み取り集計であり実行制御は変更していない。remote台形035の開発対照はUNLOADへ進行、正式成績には合算しない。
+
+- **正式v8計画完了、物理6並列を開始。** 29plan成立、円柱050は未発見14.629秒。成立計画5.242〜14.750秒。N4:2/N5:10/N6:10/N7:7、今回はN8採用無し。骨格6、口/把持面28、分岐4/pitch把持7。planned_diversity.jsonへ30snapshot同一・hash/入力/seed不一致0を保存。29の選択根拠/動作成績は別途確認、80%はまだ未確定。runtime固定継続。session45775/coordinator974652。
+
+- **正式v8計画14件終了、全て15秒以内（5.242〜13.977秒）。** session45775/coordinator974652。最初のplanned auditは7plan/8snapshotで同一runtime・保存hash/入力/seed不一致0。audit_planned_panel.pyを追加、全計画終了後再実行する。remote台形035対照はCARRY23.41simまで進行、正式成績へ含めない。
+
+- **正式v8を開始。** artifacts/span_load30_20261024/run_panel_v8.sh、formal_v8.log、出力artifacts/runs/span_load30_v8_20261026。固定30/hash/seed/物理/成功/計画15秒不変。全計画先行50worker（local32/remote18）、その後物理6並列。runtime固定し全30を同一実装で評価する。旧120は実行しない。remote台形035の開発対照も継続しているため、計画時間の競合を監視し、多発超過なら多数検証前に対処する。
+- **6機・楕円5kgのnumeric_v2全工程成功。** artifacts/span_load30_numeric_v2_ellipsoid050/output/result.json、78.355sim/1340.178wall、把持・搬送・配置・退避完了。旧11.10sim持上げ前停止を解消。楕円045はLOAD失敗、remote台形035はCARRY継続中。保存構造の対照は正式v8の成績には合算しない。
+
+- **numeric_v2楕円045はLOADで失敗、楕円050/台形035はCARRYへ進行中。** 楕円045は取り直しを一度完了したが、その後LOADでPrimalInfeasible、復旧も未発見。936.848wall、実監査最大合力29.9999948N、距離違反無し。結果artifacts/span_load30_numeric_v2_ellipsoid045/output/result.json。残2代表は継続、正式v8未開始。
+- **Proレビュー受領・保存。** pro_control_room_review.txt。未発見状態に定入力解があった今回の例から制御余地枯渇を主張しない。必要なら、直前成立状態で接触不足改善と物体進行を維持し、終端最大合力を入力変更より先に下げる対照を提案。これは再帰的成立/能力保証ではなく荷重選択の診断。新たな法線固定追従/上限縮小は採用していない。
+- **捕捉v7楕円045の荷重内訳を診断。** captured_load_components.log。未補正入力の独立fine20ms最大合力37.756N、法線ベクトル8.190N、接線36.857N（最初2.5msは24.327N）。修正入力は22.553N、法線4.892N、接線22.016N、同じ物体域と距離を維持。各接触の世界座標法線/摩擦ベクトルをそれぞれ合算しており、単なるsqrt(F²-Nscalar²)の推定ではない。旧捕捉状態の局所対照であり、現全工程の原因確定ではない。
+
+- **Proへ手法上の追加確認を送信、返答待ち。** 二分割では双方未発見でも差分幅修正で定入力成立したことを報告。数値問題と区別し、荷重移行/降下で後の制御余地を失う仮説の診断と最小対照を依頼。実装/高速化は依頼していない。送信証跡pro_control_room_request.pngを表示済み。ブラウザtab1の同じ既存Pro会話。
+
+- **numeric_v2の楕円045はRECOVERを完了しLOAD20.34simへ復帰。** 旧版の取り直し中停止は通過したが、全工程は未完。楕円050はLOAD12.02sim、remote台形035はLIFT17.91sim。runtime固定、正式v8未開始。run_panel_v8.shは用意済みでまだ実行していない。
+
+- **numeric_v2を代表3件で全工程検証中。** local楕円045 session18508、楕円050 session80914、remote台形035 session36179。logはnumeric_v2_ellipsoid045/050.log、numeric_v2_tapered035_remote.log。runtimeは更新済みでremote同期済み、正式v8未開始。入力/物理/成功条件不変。今回の変更では構造生成を変更していない。
+- **細かい差分幅の持越しが実際の退行原因。** numeric_capture045はLOAD15.5sim以降で失敗状態を捕捉。捕捉問題をepsilon下限6.055e-6で解くと4.95秒未成立（実失敗の全反復を再現）、初期1e-4なら1.13秒成立。小さいほど良いとは限らない。start_problemで毎回の初期差分幅へ戻し、その問題内だけ誤差に応じて縮小する。これは観測や物理条件の変更ではない。
+- **線形解法の精度も修正。** held_input_solver.solveへ必要精度を渡し、Responseは物理再検査の精度より細かい値で開始、改善しないとき1e-12まで精細化し再利用微分も無効化する。旧の必要修正4e-9→0を返す単体再現は解消。元の最終物理検査は維持。46関連検査成功0.93秒。
+- **変更後の保存問題3件すべて成立。** numeric_v2_guard045:1.118秒（epsilon下限を事前設定してもstart_problemで復元）、guard050:0.702秒、lookahead045:2.573秒。新問題内での差分細分化は2回、改善を維持。artifactのprecise_held_solver.pyは旧source文字列に依存する診断なので、runtime更新後は再利用しない。
+- **旧numeric全工程2件は中断。** 楕円050とremote台形035は差分幅持越し不具合修正のため所有processのみ停止、各output/interrupted.json記録。旧楕円045はRECOVERで失敗済。いずれも正式結果に合算しない。
+
+- **数値修正の全工程対照・楕円045は失敗。** numeric_ellipsoid045/output、15.280simでRECOVERへ入り342.509wallで未成立。LOAD最終保持で違反7.2e-7が残るのに局所QPが変更0（正規化制約残差4.47e-9）を返し続けた。現solver許容1e-8/受理1e-7が原因候補。1次元の必要修正4e-9も旧solverは0を返し、精度1e-12診断は3.999727e-9を返す再現済。物理条件は変えず数値精度を改善する。capture_guard_failure.pyを同楕円045でsession87135実行、numeric_capture045.log、capture先span_load30_numeric_capture045/guard_capture。runtime精度変更はまだ無い。
+- 楕円050・remote台形035の全工程対照は継続中。楕円050は旧11.10sim停止を越えてLOAD13.67sim、台形035はLIFT17.91sim。成功へ加算しない。
+- precise_held_solver.py/probe_precise_guard.pyはartifactのみ。捕捉楕円050は精度1e-12で0.695秒成立し局所成功維持。capture045が終わったら同一失敗問題を旧/高精度で比較する。
+
+- **数値修正後44関連検査成功0.89秒。** exact捕捉楕円045のruntime補正2.410秒成立、独立fine20msも合力22.553N・モーメント2.606Nm・距離/物体域成立。最初2.5msの状態と荷重差0。numeric_runtime_tests.log/numeric_final_ellipsoid045.log/numeric_fine_precision.log。remoteへ変更3ファイル同期し台形035全工程もsession99799で開始、numeric_tapered035_remote.log。局所検査は全工程成功の代用ではない。
+
+- **正式v7中断後の数値修正を実装、代表2件を検証中。** 新30は依然未達（v7 25終了18成功7失敗5未完）。v8未開始。local session37484/18498で同じ保存構造の楕円050/045全工程を実行、numeric_ellipsoid050/045.log。正式成績へ合算しない。
+- **楕円045の正確な未成立問題で微分幅の原因を確認。** 固定相対幅1e-4は未発見、1e-5/1e-6は2.48/2.33秒で成立。入力の実応答と局所近似が食い違う既存検査を契機に幅を縮小する共通処理は2.61秒で成立。CachedResponseへ実装、中心差分の丸め誤差との釣合いcbrt(eps)を下限（接触微分の保証ではない）。元の非線形再検査を維持。非線形人工応答で精度改善/無変更時維持/下限停止の3検査成功。
+- **距離提案と最終検査の計算条件を統一。** separationへacceptanceと同じ形状queryを共有しMjDataは専用。曲面距離のhalo差で約0.216nmの不一致を確認。共有だけでは4.2pmの境界誤差が残るため、提案だけCCD許容1nm内側を狙う。元の成功/非線形距離許容1µmは変更しない。捕捉楕円050は修正済runtimeで0.631秒成立、gap29.999000996mm、力11.5163N。guard_final_runtime.log。関連22検査成功。
+- **Pro提案の入力2分割対照は不採用。** 正確な未成立観測/参照で1分割25.42秒未発見、2分割68.14秒未発見。直前成立状態は両方成立。二分割だけで問題が解消する根拠は無い。実験artifactのみ。後続の微分精度修正を優先する。
+- 捕捉remote2件と二分割/微分/距離診断は終了。runtimeの新しい距離/微分修正はlocalのみで、remote未同期。adaptive_difference.pyの診断subclassはruntime採用前の実験用であり、採用後のruntimeに重ねて使わない。
+
+- **正式v7を中断: 25終了18成功7失敗、5未完。** coordinator932190と所有子だけ停止、interrupted.json保存。7失敗で80%到達不能になったため改善へ戻る。追加は細長050 RECOVER摩擦分枝未発見、楕円050 LOAD距離微小修正停滞、台形045（詳細はresult）。runtimeはv7のままで未変更、次の正式v8未開始。
+- **診断を別PCで2件実行中。** SSH session3537=capture_lookahead.py 楕円045（最初の20ms未発見と直前の成立観測/参照を保存して停止）、session84143=capture_guard_failure.py 楕円050（最終保持の失敗問題を正確に保存して停止）。logはcapture_ellipsoid045/050.log。remote artifacts/span_load30_capture_ellipsoid045,050。成功率へ加算しない。
+- **未採用の診断実装:** two_block_probe_control.py（2.5ms/残17.5ms、同入力は現方式を再現、正則化は時間比重みで同入力時同値）。予測の同入力全state/load完全一致、入力切替後の独立積分一致、後半入力が前半へ影響しない微分を1e-30許容で確認。実状態の最適化対照は未実行。probe_guard_roundoff.pyは同じ捕捉問題で線形提案のみ0/1e-10m内側余裕を比較する予定、非線形の元判定は不変、まだ結果なし。
+
+- **v7途中22終了18成功4失敗。** 楕円030は4機DESCEND30.130sim/2904.367wallで保持指令未発見、最大合力29.99989N。楕円045は6機LOAD16.24sim/702.128wallで有限応答代替未発見、最大30.00000004N（監査許容内）。台形035/円柱050と合わせ4失敗。8機三角045・7機箱050等は実行中、runtime固定。
+- **Proへ荷重余裕の根本相談・返答保存。** pro_load_reserve_request.png送信証跡表示済、pro_load_reserve_review.txt。次に改善が必要なら、同じ目的/物理条件で2.5ms入力と残17.5ms入力を分ける最小対照を優先。合力増加の法線/接線を分離し、最初の20ms未発見と直前の成立状態から比較。設計荷重の固定追従・恣意的余裕制約を同時追加しない。二分割は未実装で、現30へ混ぜない。
+
+- **v7途中20終了18成功2失敗。** 台形035はDESCEND29.6375simで保持指令未発見（接触荷重最大29.9929N、実監査距離違反無し）、円柱050は計画未発見。6機細長040/楕円040/三角040/台形040と7機円柱040/細長045など成功。8機三角045は実行中。遅い楕円030もDESCENDまで進行。source/条件固定、明確な実装不具合未確認につき同一30の完走継続。
+
+- **v7進め方再点検:** 10終了9成功1計画未発見、動作完了9は全成功。6並列維持。台形030はUNLOAD、台形035はCARRY、楕円030はCARRYで接触補正が遅いが進行。明確な実装不具合/停止は未確認、runtime固定継続。29計画に分岐5/pitch把持7。入力30と保存request/seed一致、hash1044f08f…も維持。新30の達成は未確定。
+
+- **v7計画完了・動作6並列中。** 29成立/円柱050未発見1（14.396s）。成立29計画5.300〜14.930s・中央値9.074s、N4:2/N5:11/N6:8/N7:7/N8:1（8機は三角045）。骨格7種、接続口/把持面込み29種、接触2〜7。29選択根拠complete、30source snapshot同一・hash不一致0。planned_diversity.json保存。全工程成功はまだ未確定。
+
+- **正式v7実行開始。** session27488、formal_v7.log、artifacts/runs/span_load30_v7_20261026。全計画先行・50構造worker（local32/remote18）後に物理6並列。runtime固定、完了まで変更しない。開始2件は7.65/8.04秒。全30の80%達成はまだ未確認。
+
+- **正式v7へ移行（起動準備）。** 元の固定30/seed、物理・成功・計画15秒不変。数値復元/距離許容整合/単位スケーリング/CCD設定保存/実保持2.5ms fine prefixを同一実装で検証。関連43検査成功3.36秒。台形/楕円の未完開発対照とremote prefix_floor対照は計算資源を空けて正式評価するため中断記録、成功へ加算しない。終端0.5N追加条件は効果未確認のためruntime不採用。
+
+- **7機細長5kgの数値修正対照が全工程成功。** restoration_v2_elongated050/output、77.2875sim/555.577wall。旧14sim持上げ停止を解消。CCDラッパ修正前の開発対照であり正式30へ合算しない。
+- **混合刻みをruntimeへ整理。** FiniteDifferenceResponseの任意fine prefixとして実装、HeldContactTrackingのみ最初2.5msを実行刻みで評価。旧artifactと同じ積分状態引継ぎ、入力変数/20ms期限は不変。2つの検査で独立fine保持との全state/load・入力微分一致、尾部の全状態引継ぎも確認。runtime_prefix_precision.logで元の保存状態の独立fine20ms検査も成立。Proレビューは保存済。全工程は進行中の同原理artifactで確認中。
+
+- **予測モデルの精度初期化バグを修正。** held_contact_tracking.correctのdataclasses.replaceがPlantModel.__init__の診断patchを再実行し、CCD精度1e-12/1000を1e-9/100へ戻していた。薄いラッパだけshallow copyしmjを差替える形で設定を保存。再現検査追加2件成功。旧対照の刻み差にはこの精度差も含まれる。
+- **混合刻みはartifact段階。** prefix_response.py：最初の2.5msを0.125ms、残17.5msを0.5ms。私有予測の全積分状態をcopyDataで継ぎ、実simの隠れた状態は入力にしない。精度設定修正後prefix_repeat_preserved.logで最初の保持区間のstate/load差0、再計算差0、model差0。粗予測のみは精度をそろえても環境29.998873mmで不成立、混合予測は独立fine20msも上限/距離/物体域成立。runtimeにはまだ混合刻みを採用していない。
+- **Proレビュー受領・保存。** pro_mixed_step_review.txt。次の実発行区間の写像をguardと一致させる最小修正として支持。粗い後半/次周期での成立や固定締切計画の残部の成立までは引き継げない、観測誤差0.127µmを一般上界にしない。
+- **現在の全工程対照:** local prefix_ellipsoid050（session84256）とremote prefix_floor_cylinder045（session86407、接触下限の対照も含む）。旧restoration_v2楕円とremote terminal_floor_v4は精度初期化不具合で中断記録。local restoration_v2細長050はUNLOAD後RETREAT68simへ到達、台形045はLIFT14sim。これら旧精度の比較対照で正式結果へ合算しない。
+
+- **関連40検査成功3.19秒。** 新しい制約スケーリングの既知解/単位変更/非破壊検査を追加。restoration_v2の台形045・細長050・楕円050をlocal、terminal_floor_v4円柱045をremoteで開始。前remote v3は同じ共通数値不具合修正のため停止し中断記録、v4が同仮説の最後の修正後全工程対照。
+- **刻み感度は完全一致ではない。** 保存楕円050の20ms補正は粗刻み0.5ms力15.1722N、実行と同じ0.125ms力15.1713N。ただし20ms全区間の環境距離は29.998873mmで元監査29.999mmを約0.127µm下回る。coarseの成立をfineの成立と呼ばない。最終2.5msguard/独立監査は維持し、全工程で確認する。restoration_precision.logに最初の2.5msも記録。
+
+- **距離修正を全保持応答へ完成。** 微小な距離制約と力制約を同一絶対誤差で解くため、必要なnm修正を無視していた。円錐の同値な正スケーリング・距離違反の連続値評価（不成立は必ず拒否）・制約外での最小修正を組み合わせる。保存楕円050の20ms応答は旧9.42秒未発見→2.25秒/2反復で成立、元の距離/全物理/物体域検査維持。単独の連続値/スケーリングだけでは未成立だったため組合せで採用。
+- **旧代表の結果と停止:** 細長050は14.2425sim/207.6wallで支持復旧時の接触解未発見、成功でない。台形045・楕円050は新しい共通数値修正を確認するため所有processを中断、interrupted.jsonを保存。次は同じ保存構造のrestoration_v2で全工程を確認する。
+
+- **保持入力の可行性復元をruntime採用。** Responseのinput目的で制約外なら最小修正で制約復元を優先、元の非線形検査を保持。保存台形045のruntime診断3.55秒で成立、30関連検査成功。全工程対照はlocal台形045・細長050（この2つは距離修正前版）。
+- **距離制約と監査の数値許容を整合。** 最終距離検査は元から1µmを許容するがResponseの線形制約は許容0で、初回予測刻みから名目30mm等へ戻す不可能な要求になっていた。保存楕円050は従来PrimalInfeasible、同じ監査許容を適用すると2.12秒で入力成立・元の監査合格（環境29.99900033mm）。監査/物理上限/成功条件は変更無し。共通定数化、Responseの距離制約だけ同値へ。別local全工程楕円050を開始。
+
+- **v6中断: 24終了18成功6失敗、残6未完。** 所有coordinatorと未完processだけ停止、interrupted.json保存。新たな失敗は台形045・細長050・楕円050の保持指令未成立等。正式30は未達。
+- **保持指令の数値修正を改善中。** 保存台形045の同状態・同制約で、従来15.27秒未発見に対し、制約違反解消を先に求める計算は4.83秒/3反復で成立。観測速度継続参照の診断であり実失敗時の厳密参照や全工程成功ではない。input目的だけruntimeへ反映し代表全工程を確認、次の正式v7は同じ30件を新規実行する。remote円柱045の接触下限対照は別途継続、正式結果に含めない。
+
+- **v6途中21終了18成功3失敗。** 円柱045（今回は6機、v5は7機）がCARRY開始0.05秒後、20.895sim/1474.35wallでcarried_pad_load_gap。20ms計算805回accepted/0unresolvedだが、これは物理/物体域の成立で接触回復保証ではない。楕円045は二度目のRECOVER中。他runtime固定継続、未完9件。
+- **円柱045の別PC診断:** probe_terminal_contact_floor.log。停止観測速度を継続する参照（失敗時厳密経路とは別）で、soft20msは4.933s・終端1面0N、同じ上限/域＋終端0.5N必須にすると2.767sで局所問題PrimalInfeasible。接触回復未発見と物理不能を区別。runtimeには採用しない。
+- **距離計算の省略対照:** probe_intended_clearance.py/log（artifactだけ）。既に許可される物体/把持面ペアを距離候補から除外。保存台形030の指令と全予測状態の差0、5.879→5.749s（約2.2%）。小さい利得のみで、正式runtime/結果は変更していない。
+
+- **v6途中20終了18成功2失敗、残10。** 円柱050は計画未発見、台形035はDESCEND29.7575simで最終保持指令未成立（1434.27wall、修正8回、20ms未成立5回）。物理不能とはしない。楕円030は以前の運搬/降下停止を通過して全工程成功。6機細長040・楕円040・三角040・台形040と7機円柱040・細長045など成功。楕円045はRECOVER中、台形030は計算が重いがLIFT34simまで進んでいる。coordinator889526、runtime/cache固定継続。
+- **v6計画多様性:** planned_diversity.json。骨格6種、口/把持面込み28種、分岐4、pitch把持7、接触数2〜6。8機成立候補9条件はいずれも選択構造より負担大。強制台数指定無し。
+
+- **v6進め方の再点検:** 10終了9成功1計画未発見、動作完了9件は全て成功。遅い台形030 LOADも29simへ進行。明確な実装不具合は確認できず、同じ実装の30検証を継続する。計画/生成の検証完了と制御の遅さを分ける。設定辞書へ追加予定だった新flag文字列は置換元がなく追加されていないが、実装そのものと新object_tracking_domain.pyは全30のsource_snapshotに保存・hash一致済み。実装条件の監査はsourceも併用する。
+
+- **v6途中7終了6成功1計画未発見。** 29実行構造は4機2/5機11/6機9/7機7、8機成立候補9条件はいずれも負担で劣位。計画は29件5.233〜14.463秒、円柱050未発見15.143秒（終了処理含む）。30source snapshotの差分/保存hash不一致0。runtime固定で継続。
+- **台形030 LOADの遅さを別PCで計測。** tapered030_load_profile.log/profile。保存entry_LOAD・観測速度継続という診断参照で、補正5.874s（うち入力差分予測2.816s、他に並列距離計算待ち）。最大力18.68N、細刻み18.84N、位置差1.69µm。実際の経路参照と同じではなく、全工程/実時間性の根拠にはしない。正式processはCPU計算を継続し28simへ進行、停止/再起動していない。
+
+- **正式v6実行中。** coordinator PID889526、formal_v6.log、artifacts/runs/span_load30_v6_20261026。22条件計画終了時点で全て15秒以内、全計画後に6物理並列。runtime/共有cacheは固定。Pro解除レビューはpro_release_progress_review.txtへ保存済み。まだ24/30達成ではない。
+
+- **正式v6を開始する準備完了（まだ起動前）。** run_panel_v6.sh、出力予定artifacts/runs/span_load30_v6_20261026、物理6並列・全計画先行。元30入力/seed/物理/15秒維持。最後の関連30検査成功2.86s、同停止状態runtimeの指令/細刻み結果は前の有限応答対照と同一。新source object_tracking_domain.pyを出所台帳へ追加。
+- **7機箱の停滞を再現・改善。** old解除は4面約1mm/最後約−0.18mm・2Nのまま。停止状態で開離を要求した診断入力は、全物理条件を守り72〜76更新/0.1825〜0.1925simで全面0.2mm以上を達成。check_release_progress_modes.logでは旧目的loss0.494→別摩擦分枝0.218で改善しているため、重みの折合いだけでなく、先に見つけた保持分枝で探索終了することと、4周期中3周期は元の保持へ戻すことが原因。
+- **解除の分枝提案をruntimeへ採用。** contact_friction_modes.py/ContactStepControl。開離方向を含む緩和問題は分枝を提案するためだけに使い、実入力は元の摩擦則・全物理条件・元の目的で再計算。現在より良くない先頭分枝で止まらず、解除中は毎周期比較。実入力へ新たな毎面単調開離条件を足していない。probe_release_task_modes_every_step.logで0.1825sim全面開離、guard修正/代替0。初期のtask_modes_v2/v4（10ms比較）は停滞しており不採用、全工程の新実績はまだ無い。
+- **旧箱全工程は中断。** finite_fallback_box050/output/interrupted.json。55sim付近UNLOAD停滞が再現され、所有process886902と子だけ停止。成功/正式失敗へ合算しない。local保存状態probe完了、remote release_box050_probeも6sim終了。
+- **楕円v2は降下で未成立。** finite_fallback_v2_ellipsoid030/output：30.085sim/1642.007wall、partial-contact input leaves object tracking domain。20ms1890成立/未解決3、瞬時配分の代替4回。運搬は通過、配置未完。
+- **最終保持指令の物体域を修正問題にも追加。** 旧HeldInputGuardは物理上限だけ修正し、物体域違反は棄却するだけだった。ObjectTrackingDomainへ同じ位置/姿勢/速度の式を共通化し、2.5msの修正でも制約に含める。元の最終域検査・物理再検査は維持。域違反だけでも修正に入り、実際に修正した入力を再確認する検査を追加。関係21検査成功0.55s、その後の30検査にも成功。全工程は正式v6で確認する。
+- **Pro解除レビュー受領（保存待ち）。** 不足量max(0,0.2mm-gap)を先に最小化する優先順位案は妥当、毎面単調増加は迂回を排除し得る、局所未発見≠物理不能。実診断では別分枝で元の目的自体も改善したため、辞書式の目的変更はせず、タスク方向の分枝提案/保持解の早期return/次周期の比較欠落を先に修正した。
+
+- **6機台形040の有限応答対照は全工程成功。** remote_finite_fallback_tapered040/outputへコピー済。71.9025sim/935.263wall、把持・運搬・配置・退避完遂。旧のLIFT/CARRY失敗を通過。これは保存構造の開発対照1件で、正式30へ合算しない。
+- **制約付き20ms補正＋有限応答接続をruntimeへ整理。** held_contact_tracking.pyは173行の共通実装へ置換、Responseへ同じ目的/物体域/全制約と非線形再検査、前段未成立時の同じ有限応答接続をConstrainedMomentumFeedbackへ。check_local_taskは直前実発行入力と全形状モデルを渡し、運搬全段階の最終2.5ms物体域も確認。物理/成功/入力30は不変。runtime_before_constrained_trackingに開発前比較用コピー。正式v6未開始。
+- **実装整理後の検証:** 関係26検査成功0.67s、追加の世界角速度/姿勢Jacobianを含む7検査成功0.30s（重複6を含む）。停止状態のruntime指令/細刻み結果は採用前artifactと同じ。回復期限方式は未実装、接触回復保証は主張しない。
+- **余計なコピーを除去。** 経路参照の巻き戻しでdeepcopyすると変更しないMuJoCoモデルまで複製されていた。経路属性と更新されるinfo辞書だけを保存。モデルをdeepcopyすると失敗する検査で保証。姿勢差のC化・box問題先行対照は速度利得が確認できずruntimeへ採用しない。
+- **実行中の開発対照は更新前artifactのまま:** local finite_fallback_v2_ellipsoid030（session21153）はCARRYへ、finite_fallback_box050（session24700）はUNLOADへ。sourceを変更したのは既に読み込まれた4runtimeモジュールのみで、実行processの関数は変えていない。これらをruntime正式評価にはしない。
+
+- **追加代表:** finite_fallback_box050/output（session24700、local）を開始。新しい接続/高速経路とCでまとめた同一姿勢差計算のartifact。元の正式v5 7機箱5kg保存計画で、最初から全工程。runtime未採用、正式結果へ合算しない。
+- **Cの姿勢差計算は速度効果未確定。** native_response_difference.py/response_difference.ccは各時点のmj_differentiatePosを同じ順でまとめるだけ。保存状態の指令/細刻み結果は高速経路と完全同じ、wall0.733s（Python高速経路0.658s）で今回の計測では短縮なし。これを高速化達成として採用しない。
+- **Proの回復進捗レビュー受領。** pro_contact_progress_review.txt。上限/物体域成立と0.5N到達計画は別。先送りが確認されたら20msの固定絶対回復時刻を保持し、同じ期限での終端下限を受理条件へ。通常復帰も最終保持入力を検査。20ms未発見は50ms以内の物理不能ではない。現在の停止原因はstatus取りこぼしであり、先送り原因未確定なので期限方式は未実装。
+
+- **有限応答接続の楕円1回目はLIFT17.3525sim/431.269wallで終了。** 20ms617回成立/未解決0、有限応答への代替2回。停止理由はcontact allocation AlmostPrimalInfeasibleが対象の完全一致文字列から漏れたもの。反応未発見を表す同系列statusを全て有限応答へ接続、5検査成功。正式/runtimeへ未採用。
+- **現在localはfinite_fallback_v2_ellipsoid030（session21153）。** 同じ保存構造で全工程再実行。remote台形は旧artifactのままCARRY26sまで進行中（session96157）、sourceを実行中変更していない。
+- **実装高速化artifact fast_constrained_tracking:** 制約無し二次問題の解が、実際の全物理/物体域の非線形再確認で成立する場合だけ制約行の組立を省く。不成立なら同じ全制約問題を解く。保存停止状態で0.789→0.658s、最終入力変化normは0.8992793929549997→0.8992793929549284、最終結果は丸め誤差のみ。fine0.125ms対照でも力15.213N/物体域成立、位置差0.73µm。全条件の速度達成とはしない。
+- **Proへ追加相談送信:** pro_contact_progress_request.png表示済。終端回復目標を毎周期更新して先送りする懸念への、固定回復期限/減少条件/設計荷重の役割をレビュー依頼。返答待ち。現時点で先延ばしが今回停止の原因と確定したわけではない。
+
+- **有限応答接続の全工程対照を開始:** local finite_fallback_ellipsoid030/output（session39663）、remote span_load30_finite_fallback_tapered040/output（SSHsession96157）。楕円はremotev3と同じ保存構造、台形は同じ正式v5由来の保存構造。正式結果へ合算しない。接続2検査成功、runtime関連20検査成功。artifactの経路info辞書がrestore後にaliasで書き換わる記録不具合のみ検査で修正、実状態/経路位置速度への影響なし。実行中の版は修正前（記録差のみ）。
+
+- **直近対照は両方未成功。** 通常補正＋初期値修正の台形040はCARRY23.2725sim/533.591wallで物体追従域を離れる予測を拒否。制約付き20msのremote楕円030は349回成立/未解決0の後、LIFT14.795simで前段の瞬時配分PrimalInfeasible、支持復旧も未整定で拒否。正式v6は未開始、80%未達。
+- **Proの有限応答接続レビュー受領。** pro_finite_fallback_review.txt。瞬時モデル未成立は有限応答入力の不存在を意味しない。直前実入力は初期値のみ、同じ物理/物体域を満たす入力だけ採用。経路位置だけ止めて速度を残したり瞬間停止要求にしない。履歴/期限は戻さず、通常復帰も最終指令を検査。
+- **停止状態probeで有限入力を発見。** remote_constrained_v3_ellipsoid030/output/final.npz。実測速度を継続する参照（失敗時の厳密経路参照ではない）で20ms全制約成立、0.789s、最大15.21N。finite_fallback_probe.log。全工程成立は未確認。finite_allocation_fallback.py/execute_finite_fallback.pyをartifact実装、runtime未採用。既存の制限内の連続減速参照を提案してから有限応答で確認し、失敗なら旧入力を無検査発行しない。
+
+- **最新の対照は2件、まだ実行中。** local guard_warm_start_tapered040/output（session91123、同名.log）はruntimeの通常20ms補正＋復旧ノルム/調整guard/入力初期値修正。remote span_load30_constrained_tracking_v3_ellipsoid030/output（session89425、constrained_tracking_v3_ellipsoid030_full.log）は制約付き20ms補正のartifact。初期値修正だけの効果と、新方式の接触維持を切り分ける。正式30件再開はまだ、80%未達。
+- **artifact統合不具合を修正。** 高速化版のResponse全体差替えが、通常2.5ms guardにもseparation.batchを要求してremote楕円試験がAttributeError終了。local対照も所有processを止め、正式/物理失敗と数えない。batchがある補正器だけ並列化し、通常経路は元の直列atを使用。実保存状態で通常guardの修正成立を確認、patch適用下の関連15検査成功。これ以前の制約付きfull対照は全て未完なので成功としない。
+- **runtimeの修正探索の初期値も改善。** HeldInputGuardは通常受理した指令も保存し、ResponseContactControlのinput目的も直前受理指令から開始する。目的は新要求への近さのまま、入力を現観測の範囲内へ投影し全非線形条件で受理。新要求そのものが不成立の場合に局所探索の出発点を捨てない変更。関連20検査0.67秒成功。新20ms制約付き補正はまだruntime未採用。
+
+- **制約付き20ms対照を実装最適化して再開（runtime未採用）。** 初版は1補正4.5〜4.8sのためlocal/remoteのartifact全工程をLOAD直後で中断、interrupted.json記録。所有processのみ停止。必要な全時点/全制約を維持して距離線形化をprivate MjDataの8workerで並列化、入力差分予測も4→8worker。同保存状態の最終指令は差0で4.78→2.22s。
+- **目標の整理と不要計算の省略:** 健全な接触のgapを名目値へ合わせ続けるのをやめ、0.5N不足がある面だけ幾何接近＋荷重回復を目的にする。上限/物体域/非線形全時点検査は維持。名目指令が全条件を満たし非負目的の0（1e-24以下の丸め誤差）なら勾配/最適化不要。同保存状態の再確認は0.0406〜0.0416s、差分再生成0回（constrained_zero_tolerance_profile.log）。この目標変更自体の効果は全工程対照待ち。
+- **最新の全工程対照:** local constrained_tracking_fast_tapered040/output（session88728）、remote span_load30_constrained_tracking_fast_ellipsoid030/output（session61350）。execute_constrained_tracking.pyでは同じ最終2.5ms指令の物体域検査もLOAD/LIFT/CARRY/DESCEND全てへ適用し、旧の部分接触時だけという条件を外した。どちらもまだ成功未確定。旧遅い対照と混ぜない。
+
+- **Proの短区間制御レビュー受領。** pro_short_horizon_review.txt、送信画面pro_short_horizon_request.png表示済。事後棄却でなく20ms応答の荷重/駆動/関節/距離を生成時制約とする第一対照を支持。物体単体の追従域・非接触力0・50ms履歴を維持、定入力20ms不成立≠実動作不能、再帰的成立保証は無い。接触/停滞へ失敗が移るだけなら採用しない。
+- **制約付き補正をartifact実装、runtime未採用。** constrained_contact_tracking.pyは既存ResponseContactControlを再利用し、20ms定入力・0.5ms予測刻み、全物理上限/距離と物体の位置/姿勢/並進/角速度域を同時制約。接触表面距離不足と終端荷重不足を別出力にして、欠落時の力微分0で距離方向まで消さない。元指令からの変化を小さくする正則化。最終非線形再確認と既存2.5ms guard、実履歴は維持。20ms未発見は記録し、元の2.5ms確認付き入力へ戻す（20ms成立とはしない）。
+- **対照の検査:** 物体位置/姿勢/世界角速度の入力微分を20姿勢×4方向の数値差分と比較、最大差5.33e-10。台形040 LIFT開始の保存状態で指令成立1回、実行側dt=.000125維持。全工程をlocal constrained_tracking_tapered040/output（session99570）とremote span_load30_constrained_tracking_ellipsoid030/output（session86898）で実行中。まだ成功未確定。
+- **直前2対照は全工程未成功。** guarded_acquisition_box050はREFINE荷重違反を通過したがCARRY27.25sim/344.406wallで入力修正未成立、修正1回。remote_norm_recovery_ellipsoid045は速度問題を通過し復旧継続したがLOAD25.55sim/644.588wallで物理応答の指令未成立。runtimeの復旧ノルム整合/把持調整guardは保持、20ms補正は旧のまま。関連20検査0.64s成功（recovery_guard_checks.log）。正式v6未開始、30件80%未達。
+
+- **正式v5は23完了17成功6失敗で中断。** 復旧の速度制約に実装不整合を確認。各軸±0.02m/sの箱制約では合成0.02m/sを保証せず、楕円045が各軸は制約内・合成0.0201743m/sで停止。所有coordinator/未完7processのみ停止しinterrupted.json記録。6失敗は円柱050計画未発見、楕円030/台形035接触欠落、台形040保持指令未成立、箱050REFINE荷重超過、楕円045復旧速度。正式v6未開始、目標未達。
+- **復旧の速度制約を修正。** ContactStepControlで並進/角速度のノルムを直接2次錐制約へ追加し、接触分枝の圧力補正にも行次元を保持。SupportedRecoveryは同じ0.02m/s/0.1rad/sを指定。簡略予測だけでは実応答が0.02000993m/sになるため、既存HeldInputGuard/ResponseContactControlにも速度ノルムの全保持区間検査と修正を追加。判定の数値残差許容は他の物理検査と同じ1e-7。初期物理/force/速度/接触条件は維持。
+- **保存状態の対照:** recovery_norm_probe.py。旧は6更新/0.03simで速度超過停止。新は100更新/0.5sim継続、修正16回、実並進速度最大0.01999999275m/s・角速度0.07671763rad/s。合成速度検査/代替経路での制約保持を含む20検査相当（19後に1追加）を実施、最新12検査成功。
+- **把持調整にも保持区間の物理検査を追加。** check_local_taskのACQUIRE/REFINEへ元の2.5ms HeldInputGuardを適用、LOAD等は既存通り。guarded_acquisition_box050/output（session51400）が元のREFINE失敗段階を通過しLOADへ。別PC norm_recovery_ellipsoid045/output（session26175）で同runtimeの全工程確認中。まだ成功未確定、正式に合算しない。
+- **予測力超過を補正目標へ加える対照は未採用。** remote span_load30_force_horizon_tapered040はLIFT17.8175sim/397.635wallで接触配分未成立・source復旧不可。単一目標追加では改善せず、同仮説の高コスト反復は行わない。正式runtimeのheld_contact_trackingは変更なし。
+
+- **正式v5は20完了16成功4失敗、残10件。** 7機円柱040・分岐6機細長040を含め成功。台形040はLIFT17.375simでheld input修正未成立、source近傍外のため支持復旧拒否。保存直前入力の2.5ms予測最大力33.282N、実履歴最大29.999992Nで停止しており上限違反を成功扱いにしていない。
+- **20ms先の力上限超過を補正目標にも入れるartifact対照。** held_contact_force_horizon.py/execute_force_horizon.py。元の20ms非線形上限検査と2.5ms実入力guard/成功条件は不変。接触開離だけでなく予測された力超過も補正方向へ反映する。別PC span_load30_force_horizon_tapered040/output（session98048）で全工程検証中、runtimeへは未採用。
+- **全計画集計:** 30件中央値8.978s・最大14.321s、時間超過0。選択29構造は4機2/5機10/6機9/7機8、2〜7接触、分岐4件、pitch把持7件、番号同型を除く骨格6種/口と面28種。固定探索で8機成立候補は9条件にあったが、全て選択構造より推力負担大。planned_structure_summary.json。
+
+- **幾何距離による接触復元の対照は未採用。** remote_bridge_ellipsoid030はLOAD18.170sim/223.089wallで「partial-contact input leaves object tracking domain」。欠落面の微分が得られても全体の物理成立を保証せず、物体応答guardが拒否した。正式v5のruntimeは未変更。現在12完了9成功、同一source/settingsを確認。6機箱040は成功、7機円柱040はCARRY進行中。
+
+- **v5途中10件終了8成功2失敗。** 計画未発見の円柱050と、楕円030 CARRYのcarried_pad_load_gap。選択29件は4機2・5機10・6機9・7機8、8機なし。正式runtime固定で6並列継続。
+- **楕円030の保存状態診断:** 欠落接触の圧力/入力微分が0で、保持補正のmaxによる出力行も勾配0。終端距離約92µmで、幾何距離から接触側へ向かう提案に置換したartifactでは勾配0.01676が得られた。実際の再接触成功を意味しない。held_contact_bridge.py/execute_contact_bridge.pyを別PCのspan_load30_bridge_ellipsoid030/outputで全工程対照中（session42731）、runtime未採用・正式結果には合算しない。非線形の物理検査/全体成功条件は不変。
+
+- **v5計画全30終了、29実行可・時間超過0。** 円柱050だけ固定系列内で成立構造未発見（14.321s）。他29は15秒以内。現在は物理検証中。
+- **物理の並列数を3→6へ変更、試行そのものは継続。** 初期3試行と残26待機processを保持し、旧coordinator PIDのみ停止してresume_prepared_panel.pyへ引継ぎ。prepared_processes.jsonに29processのPID/生成時刻を保存。runtimeソース・入力・生成済構造・物理・実行状態は未変更。同じPCで後続の開始口を6並列で開く。新coordinator local session1832、formal_v5_execution.log。旧session49584はcoordinator停止で終了。計画は全部終了済みなので競合による計画時間変更なし。
+
+- **正式v5開始、runtime/共通cache固定。** artifacts/runs/span_load30_v5_20261025、run_panel_v5.sh、formal_v5.log、local session49584。元30入力/seed/15秒/物理/成功条件維持、全計画後に物理3並列。旧結果は合算しない。計画超過連続2または累積3なら中断。まだ完了ではない。
+- **cache修正後の4代表は全て15秒内:** 台形0458.962s、三角04513.966s、箱04012.659s、円柱03514.592s。refreshed_cache_planning。localの元CAD値との完全一致・無効cache拒否2検査成功、remote read_bounds=Trueも確認。geometry_kernel/物理条件/生成規則はv4と同じ。出所を正しく更新した共通部品boundsの再利用だけを復旧。
+
+- **正式v4は計画17件目までで自動中断、物理未開始。** 計画超過が円柱03516.680s・箱04017.039s・三角04015.086sの累積3件となったためrunnerが所有processを停止。interrupted.jsonあり。手動停止を試みた時点では既にrunner終了済みで対象なし、本家への操作なし。
+- **直接原因の1つを修正:** authored_part_boundsの出所hashがgrasp_geometry.py更新に追随せず無効だった。read_bounds=False、差分キーは同ファイルのみ。planning_contextが毎回約1.9秒の元CAD hull再構築へ進み、remoteでも同じ初期化があった。prepare_part_bounds.pyで再生成し、前後のbounds値は完全一致。local/remoteへ同じファイルを配置。refreshed_cache_planning（session9600）で台形045/三角045/箱040/円柱035の時間を確認中。正式v5はまだ未開始。
+
+- **正式v4開始、runtime固定。** artifacts/runs/span_load30_v4_20261025、run_panel_v4.sh、formal_v4.log、local session15059。元の新30入力/seed/15秒閾値/全物理条件は維持。旧v3の16/23や開発成功を混ぜない。全計画後に物理3並列。計画超過が連続2件または累積3件なら中断修正。
+- **探索順序をruntime採用:** 最初の59組が全て観測される前に追加236までを投入していたため、重い必要検査が追加探索と競合。最初の固定系列を完了してから追加へ進む。候補/独立系列/59組の確率根拠を維持し、未観測の追加候補を失敗にしない。prefix_barrier_planningは台形04512.987s（従前21.202s）、三角04516.151s、箱04015.188s。全条件15秒を達成したとはしない。共通ライブラリの検証/読込をfork前に1回だけ行う変更も採用。
+- **最終検査:** 力問題分割/形状包囲箱は独立計算比較を含む52検査成功4.07s。探索順序/終了/確率/接触配分/物体応答/復旧条件の43検査成功1.45s。CPU割当変更は一切採用していない。
+
+- **最新の制御確認:** current_partial_elongated040は6機4接触で全工程成功83.03sim/436.291wall、部分接触対応24更新。物体単体の短区間応答guardを含む現runtimeでの開発確認。current_partial_tapered040はCARRY25.185sで有限入力上限修正が未成立、558.620wall、部分接触24更新/保持修正2回。未成功。保存された直前指令の予測では上限/距離は成立するため、失敗した新指令や線形化の問題はまだ未特定。
+- **計画高速化を継続:** タスク力の5場面は力変数が独立なため、共通の最小残差=max(個別最小)、その残差で共通余裕=min(個別最大)として小さな線形問題へ分解。140比較の最大差3.74e-15、0.334→0.146s。独立の全体LP比較を含む26検査成功。入力basis識別を一度だけ計算しmemoの巨大JSON反復を省略。途中停止は未観測処理の有限姿勢/経路検査ループ内にも追加。
+- **形状計算の高速化:** 物体を包む箱から3cm超の点は、元の回避残差/微分が0と確定するため精密表面投影を省く。polytopeはCOM補正済三角形から包囲箱を作り、単純なsize/2では代用しない。175生成のprofile17.325→12.517s（力問題分割と合わせた比較）。境界点の残差・境界以外の微分を独立計算と比較。bounded_dedicated_planningで4代表を計測中、正式v4未開始。
+- **CPU割当の対照は未採用。** E/P完全分離は悪化、screenのみ高速core指定は台形045を約15sへ短縮するが箱040は遅くなる。24workerも混在。これらを一般的な高速化達成とはしない。artifactのみ。形状中心方向を先に検査する対照も効果不足で未採用。
+
+- **最新: active接触配分と物体単体の応答検査をruntimeへ採用、全工程確認待ち。** active_elongated040は6機4接触で成功82.995sim/418.160wall（追加物体guard前の開発対照）。瞬時力と入力感度が共にゼロの面だけ瞬時正下限を外し、反力0/0.5N復元目標/欠落履歴は維持。最終指令の短時間予測で物体単体の位置・姿勢・並進/角速度を別々に確認するguardを追加。関係42検査成功5.48秒。弱い正接触は除外しない。LOAD/LIFTの同じ支持近傍復旧を適用、通常の物理監査は不変。
+- **専有計画測定は未達。** cancel_fit_planning_dedicated: 台形04521.961s、台形03512.262s、三角04516.179s、箱04015.729s。30件正式再開前に高速化。台形045の必須N7試行16はfinite_and_approach9.13s、単独profileは4.08s。同一候補/判定のままCPUの処理割当をartifactで比較中（affinity_planning）。
+- **未採用対照の終了:** remote8 tracking_priorityはLIFT18.925s/1026.85wallで失敗。局所32.5msのactive対照も未成立。8機安定性を解決したとはしない。正式v3は16/23で中断済み、正式v4は未開始。
+
+- **制御の現在の有望比較はactive_elongated040（local session11325）。** 力と入力微分が両方ゼロの面だけ瞬時下限0へし、実接触則の反力0のまま残存接触で配分。0.5N復元目標・全物理/成功監査は維持。停止状態から40更新(.1s)継続でき、最長不足.375ms。全工程はCARRY21.87sまで進行中、まだ成功未確定。artifact active_contact_allocation.py / execute_active_allocation.py、runtime未採用。
+- **Proの接触集合レビュー受領。** pro_active_contact_review.txt、request.png表示済。存在しない面へ瞬時正荷重を要求しない整理は妥当。ただし全体運動量だけでは物体の支持を保証できず、最終指令の短区間で物体単体の位置/姿勢/速度を既存許容域と照合する受理条件が必要。0.5N未満というだけで面を除かない。実履歴/欠落時計を戻さない。runtime採用時はこの物体応答検査を足す予定、まだ未実装。
+- **8機短時間のactive対照は未成立。** remote active_probe.logでは32.5msで他面も弱まり通常配分が未成立。部分接触を許すだけで全構造の保持が解決したとはしない。6機の改善と区別する。
+- **追従許容域の対照は未採用。** tracking_priority.pyは正規化した有界入力探索、位置/姿勢/各速度を別々に予測全区間でチェック。6機は持上げ通過後CARRY20.48sでconstant constraint infeasible。補正11回、旧非悪化条件なら拒否7回。Proレビューpro_tracking_priority_review.txt保存。remote8機対照session23341（tracking_priority.log）はLOAD15.86s時点で継続。
+- **単発復元と更新時刻下限の対照は不十分。** remote8 branch_recaptureは最初の再接触後再び失敗。20ms復元から通常制御へ戻すprobeも2更新後失敗。branch_floorも3修正後LIFTで未成立。runtimeへ未採用。local6 branch_recaptureもLIFT18.12sで未成立、未採用。
+- **円柱045のsource_guard比較は全工程成功80.84sim、復旧発動0回。** source_guard_cylinder045。背景計算の時刻が違うため、この試行から適用拡張が直接の成功原因とはしない。保存された正式停止状態でSupportedRecovery初指令が成立した根拠は別途あり。
+- **計画高速化の追加:** 未観測停止をfit残差評価ごとにも確認。構造生成の1回内で同じ接続口幾何の再読込を省く局所cacheを実装し、同seedの全接続選択完全一致を含む17検査成功。remoteへ同期済。負荷あり計測は台形04518.40秒→cache版20.52秒、ばらつき/終了処理が残る。台形035は12.06秒。専有計測前なので改善達成を主張しない。最新残差内停止の時間は未測定。
+
+- **formal v3は23件完了16成功7失敗で中断。** 未完7件が全成功でも23/30のため、所有process treeを停止しinterrupted.jsonへ記録。既知計画3失敗、接触3失敗、円柱045 LOADの有限入力修正未成立1件。旧成績と混ぜない。残った正式processなし。
+- **計画終了の短縮をruntimeへ実装（実測待ち）。** 未観測の残処理だけを計画専用memo内のcancelled印で工程境界停止。Poolの受信を維持したclose/joinは継続し、必要59標本を中断しない。PlanningCancelledは物理失敗/標本に算入せず、選択後の結果は不使用。remoteにも同じ停止を実装、まだ同期していない。18関連検査1.35秒成功(cancel_checks.log)。
+- **接触分枝修正は単一状態で有効、runtime未採用。** 8機停止状態で2.5ms実入力保持後の各面0.5N・全上限が成立、3.29wall。元の逆応答は力微分ゼロで未成立だった。修正は未接触面のみ表面距離の微分で接触側へ提案し、元の非線形力条件で受理。execute_branch_recapture.pyをremote8機全工程で検証中(session60984)。細長040停止状態も成立(1.54wall、branch不要の初期入力が終端成立)。台形040は2.5ms未成立、20ms単一状態検証session71999。
+- **台上復旧の適用範囲をartifactで確認中。** 円柱045の有限入力修正未成立時も、既存SupportedRecovery初指令は.064wallで成立。LOAD/LIFTで同エラー時に元の位置/速度/残存接触guardを保って復旧するexecute_source_guard_recovery.py、local session26054。実行中なので成功未確定。
+
+- **formal v3: 21件完了15成功6失敗、9件未完。** 6/7機の全工程成功あり。台形040がCARRYでconstant constraint infeasible、計画3失敗+接触3失敗。残り全部成功なら24/30。runtime固定継続。source復旧の開発成功は合算しない。
+- **接触復元の局所診断（remote、正式へ合算なし）。** 8機停止状態は1面gap4.7nm/開き速度.919mm/s。以前の入力を保持すると50ms後gap.321mm。20ms先の元の力下限つき逆応答もPrimalInfeasible。下限を外す診断ではgapが3µmまで抑制されるが接触は戻らず、採用しない。力微分がゼロの未接触面だけ、姿勢微分と表面距離で接触分枝へ進め、最後は元の力下限/全物理上限で再検査するartifact contact_branch_repairを単一状態で検証中(session76782)。実行器未変更。
+
+- **台上復旧の段階制限を広げたremote楕円030は全工程成功。** remote_source_recoveryへ回収、79.3425sim/799.568wall、source近傍で3回復旧。元の速度/近傍/接触/全物理監査・110秒期限は不変、時計や履歴の巻戻しなし。artifactの比較結果で正式へ合算しない。runtimeへはまだ未採用（formal v3継続のため）。
+- **formal v3は11成功5失敗、残り14。** 新しい失敗は細長箱040のconstant constraint infeasible。計画3失敗と楕円030失敗を含む。progress_v3.pyで現況を取得可能。選択計画は全件固定済。
+
+- **Pro保持下限レビュー受領。** pro_held_floor_review.txt（UIの回答保存）。瞬時下限・次更新時刻下限・20ms先の改善は役割が異なる。次周期の入力存在は保証せず、開始時不足/全区間の欠落履歴/終端の真のqvを区別する。台上復旧を観測条件で判定する拡張も整合。
+- **8機の終端下限対照は改善なし、未採用。** remote8_endpoint_floorへ回収。LIFTでfinite inverse PrimalInfeasible。新しい硬い下限を入れるだけで常に維持できるとはしない。source復旧拡張の楕円対照はDESCENDまで進行、session40152継続。正式v3は8成功・4失敗、物理の未完あり。
+
+- **v3継続：6成功・4失敗（計画3+楕円030LIFT1）、残り未完。** 楕円030finalで1パッドgap+1.3986µm、力の入力微分行ゼロ。物体はまだsource支持、速度.000226m/s。既存SupportedRecoveryの初指令は同状態で26msで成立。phase=LOAD限定のためLIFTでは呼ばれなかった。diagnose_v3_normal.log/probe_v3_supported.log。
+- **source復旧拡張はartifactだけで対照中。** execute_source_recovery.pyはLOAD/LIFTで既存の支持近傍/速度/残存接触/有限入力条件を全て保ち同じ復旧を使う。remote artifacts/span_load30_v3_source_development/output、session40152。楕円030は復旧を経て再度LOAD24秒へ進行中、まだ成功とはしない。正式v3runtime非変更。
+- **remote8機対照はLIFTで未成立。** artifacts/span_load30_v3_8module_development/output（session12330終了）。同停止状態で2.5ms後0.5Nを回復する逆応答もPrimalInfeasible（probe_final_response、probe.log）。開離後の復元が常に可能とはしない。
+- **接触を失う前の保持下限をartifact検証。** execute_endpoint_floor.pyはtransport guardだけ予測を1物理刻み延長し、最後の積分前力が実際の2.5ms更新時刻に対応するようにする。その時点の各法線0.5Nを既存全上限と併せ再確認/最小入力修正。解除では下限0のまま。remote8機endpoint_floor、session25946。Proへ役割/再帰的成立の限界を質問済、pro_held_floor_request.png（表示済）。まだruntimeへ採用しない。
+
+- **別PCでv3選択8機の先行開発確認 session12330。** remote artifacts/span_load30_v3_8module_development、三角045のgenerated_plan/endpointをコピーしscene.xmlとplan.jsonの両方の絶対パスをremoteへ変換。execute_saved_endpointで全工程を試す。正式30には合算しない。local v3は初期3件が配置/退避へ進行中、runtime非変更。
+
+- **v3全30の計画終了、物理検証開始。** 27件実行可、台形03515.051秒/台形04518.648秒の時間超過2件、円柱050は固定系列で成立候補未発見13.094秒。実行する台数内訳4機3・5機10・6機7・7機6・8機1（三角045）。途中結果で全体成功率を主張しない。31検査済のruntimeは固定。formal_v3.log/session20252を追う。終了処理は各計画.27〜3.02秒ほどで、受信待ちの停止は再発していない。
+
+- **正式新30 v3実行中 session20252。** artifacts/runs/span_load30_v3_20261025、formal_v3.log、run_panel_v3.sh。runtime固定、全計画後に物理3並列。終了修正を含む関連31検査1.00秒成功。現時点で30条件の成功率80%は未達、作業継続。
+
+- **正式v2中断、終了処理を修正してv3へ。** 20計画完了・全件15秒以内、物理実行は未開始。円柱045のlocal Pool終了中、結果writerがpipe_write・他workerが待機、remoteは終了済で2分以上戻らず、所有groupを停止。v2/interrupted.json。公開Pool.terminateの受信停止と大きな結果の送信が競合する経路を除くため、local/remoteともclose→joinで既投入結果を受信しきる。終了後の結果は候補選択/確率標本には追加せず、終了時間は計画に算入。選択終了時の未完了標本は未観測のまま。
+- **修正後の総計画:** 円柱04512.711/三角04514.394/箱04013.204/細長05013.286秒。drained_runtime。再現用初回debug_shutdownはfaulthandlerの監視threadによりspawnへ変わり起動失敗、測定不採用・停止。SIGUSR1登録だけの再現2は旧方式でも12.05秒で終了し、問題は毎回再現ではない。runtimeは終了時の競合経路自体を除去した。
+- 大きな結果48件の受信を含む終了検査を追加。runtime_checks_v4.log確認後にrun_panel_v3.shを開始。v3は同じ30入力を改めて生成、旧v1/v2へ合算しない。
+
+- **正式新30 v2へ進む。** 小分け巡回の総計画batched_runtimeは三角04514.740/箱04012.242/細長05013.386秒で全代表15秒内。runtimeを固定し、run_panel_v2.shを開始する。全計画を先に計測し、物理実行は3並列。元の30入力・乱数・15秒閾値・全物理/成功条件は不変。結果はartifacts/runs/span_load30_v2_20261025、formal_v2.log。途中結果を最終成績としない。
+
+- **小分け巡回をruntime採用（総計画の確認中90020）。** 初期59は8組ずつ、追加236までは32組ずつ台数を巡回し、候補取得後は従来の重量下限優先。固定系列・独立試行内容・必要標本は不変。all_blocks選択単体は三角14.201/箱12.194/細長13.213秒、構造と推力負担は同じ。関連29検査0.88秒成功。remoteへ同一source同期済。
+- 正式runnerの中断規則を明示：単発15秒超過は失敗として残し、2件連続または累積3件の計画超過で中断・修正へ戻る。ユーザーの「多い場合は先に対処」に対応。15秒閾値や成功条件は不変。以前の「1件でも中断」は試験段取り側の過剰停止であり、手法要件ではない。
+
+- **新30件の正式v2は未開始。** v1の15完了9成功と開発対照を分ける。計画時間の残課題を確認中。旧120は再実行しない。
+- **最新runtimeの楕円040開発対照は全工程成功。** response_ellipsoid040、6機5接触、78.13sim/713.498wall。台形030は従来のLIFT停止点を通過しCARRYまで進行したが、計画の計測資源を空けるため中断（成功扱いしない）。空中再捕捉は採用していない。
+- **計画の追加系列を費用下限順に投入する変更を採用。** first59発行後、成立候補なしなら固定236までを台数ごとに投入。必要59標本と生成規則は不変。cleanupは別PCとlocalを同時に開始し両方完了してから返す。priority_planning_runtime:箱0409.244/三角04515.514/細長05012.719秒。以前の単独総時間16.601/14.943/14.194秒に対し箱は改善、三角は未達。
+- **追加比較は未採用。** 追加台数間の完了待ちextra_barrierは選択単体15.351/8.044/12.343秒（三角/箱/細長）で三角改善なし。screenのPコア固定は三角17.844秒。別PC24workerの総計画は三角17.598/箱9.575秒で18workerより改善なし。extra_blocks(session67704)で追加系列を32組ずつ巡回する比較を開始。生成規則と終了証拠は不変。正式v2前にruntimeを固定する。
+
+- **負荷を含む総計画時間は未達。** 2つの開発実行と重なったfull_planning_runtimeは箱04016.262/三角04515.241/細長05015.131秒。計画単体の速さを総計画達成としない。作業PCを計画へ専有させた再測定session85776は開発実行終了を待機中。
+- **検証の資源競合を除くため待機口を追加。** check_local_task `--execution-gate` は計画完了・時間判定後、物理開始前だけファイル待機。計画/実行の測定から独立した試験待ち時間を記録する。既定実行には影響なし。artifact run_panel `--defer-execution` は全30の計画を直列計測してから物理を3並列、初期計画超過があれば残り計画前に中断。入力・候補選別・成功判定は不変。正式v2準備済run_panel_v2.sh、まだ起動しない。
+- **remote楕円030の再捕捉対照は搬送を通過したが、UNLOADで保存計画の絶対パス違いにより終了。** 54.20sim/780.35wall、再捕捉0回。これは転送した開発計画metadataの本PCパス未変換によるFileNotFoundで、物理不能/全工程成功のどちらにも数えない。remote_recapture_result.jsonを回収。remote現在idleで最新runtimePython同期済。
+- 新runtimeの関連38検査成功1.34秒。円柱停止状態で有限入力を保持した後、追加の終端mj_forwardでも法線最小2.35N/荷重最大13.56Nで成立を確認（recapture_endpoint.log）。連続保持の保証とはしない。
+
+- **円柱7機/5接触の開発対照が全工程成功。** recapture_cylinder:76.3575sim/548.35wall、空中再捕捉0回。接近の有限応答代替による通過を確認。姿勢/観測/成功上限不変。正式へ合算しない。
+- **接近時の有限応答代替をruntime採用。** ContactStepControlで既知の摩擦分枝・定数制約未成立だけ、同じ指令保持区間で物理条件を検査する入力を求める。支持回復の物体速度条件は落とさず、その経路では使わない。面別法線下限の配列もResponseContactControlで扱うよう修正。関連14検査成功。
+- **解放後の上限確認欠落を修正。** ContactUnloadが退避処理へ引継いだ後に確認が抜けていた。保存解放入口から旧版43.85Nで失敗、10ms区間確認を継続した版は37.37simで退避完了、最大29.999996N（release_baseline_ellipsoid.log / release_guard60_ellipsoid.log）。runtime採用、関連9検査成功。全工程は別途確認。
+- **制御計算の実装短縮。** 同じ制約と元目的の誤差上限を検査したままactive-setを先に試し、接触荷重の集計を一括配列へ変更。7機保存状態20更新のprofileは.307→.204秒、配分部分.075→.011秒。実時間400Hz達成ではない。関連15検査＋独立MuJoCo荷重対照1検査成功。全工程の現在runtime対照はellipse040(session77311)。
+- **Pro再捕捉レビュー受領** pro_recapture_review.txt。瞬間近似で不可でも有限時間で戻せることは整合。欠落時計を切替でリセットせず、通常制御へ戻れること・再開離・材料移動・追従・期限と計算中の状態変化を別途確認する。runtime空中再捕捉は未採用。台形030のartifact対照session39164、remote楕円030session89670は進行中。
+
+- **10/25再開、30件80%は未達。** 正式v1は15完了9成功のまま。以降は開発対照であり正式成績へ合算しない。
+- **計画側の短縮を実装:** 先頭59組が完了し成立候補があれば追加未完了試行を中止（未観測扱い）。生成だけを固定独立の計算機抽選で別PCへ分担。ソース一致を起動時検査し、機種/依存版と混合分布を記録。Pro確認 `pro_prefix_hardware_review.txt`。18remote+32localで箱04012.885/三角04514.568/細長05013.275秒（選択単体、実runnerの総計画時間未確認）。関連10検査成功。実装は `remote_structure_workers.py`、select_structure、check_local_task。
+- **荷重参照対照は未採用。** local円柱はLIFT20.0775simで瞬間配分未成立、remote楕円はUNLOADでcontact_load_limit（667.75wall）。途中進行を全工程成功と誤読しない。内部姿勢復元を回復後にも引継ぐ対照はLIFT失敗、未採用。
+- **接触再捕捉を対照中。** 円柱停止状態の2.5ms実応答は終端全接触0.5Nと全区間上限を満たした（1.295秒、peak23.15N）。既存成功監査の50ms欠落上限は不変。artifact execute_recapture.pyは瞬間近似が未成立のLIFT/CARRY/DESCENDだけ短区間の復元を試し、経路進行を戻し、全物理上限を維持。local円柱session78845。まだruntime未採用。Proへ原則相談送信確認済 `pro_recapture_request.png`、返答待ち。
+- SSH再接続は `/tmp/amsrr-det-span3.sock`、認証秘密は保存していない。旧span2socket設定は後で更新必要。
+
+- **正式新30 v1を中断（15完了9成功）。** 計画15s超が2件、接触計算の未成立が4件。ellipsoid035は途中中止、残り未実行。runtime混合なし、`span_load30_v1_20261025/interrupted.json`。親603897と残実行618637停止済。session57711終了。少数の改善確認を先に行う。
+- **接触近似の切分け:** 正式cylinder040最終状態は簡略摩擦分枝未成立だが、同じ2.5msの実応答を用いる入力計算は上限内で成立（acquisition_response_cylinder.log）。artifact `acquisition_response_fallback.py` は既定の下限と独立監査を保ち、ACQUIRE/REFINEだけ未成立時に実応答へ切替える対照。全動作local33176進行中、まだruntime未採用。
+- **internal restore remoteは全工程成功。ただし回復後feedbackはinternal_tracking=False。** SupportedRecoveryがオプションを引継いでいないため、相対姿勢補正が直接の成功原因とは言わない。確認・修正後の対照が必要。距離加速度v2はRECOVERから進まず途中中断、未採用。remote32004停止・ソース再同期済。
+- **速度:** 最新箱040の親profileは17.73s、計算本体の合計は幾何185/material78/static37/model30/finite8CPU秒。台数均等投入の対照は箱15.80/台形04516.20/細長05016.76s、改善不十分で未採用。CPU AVX2版はABI修正後10検査成功したがmicro約3%だけで未採用。既存remote_search.GenerationPoolを使う生成だけの分担対照session73873（remote_generation_current）を開始、runtimeは非変更。
+
+- **正式v1現在4成功/5完了。** 楕円030は支持上で3回回復した後、LIFT25.495simの力配分未成立。代表保存計画での成功は正式成功へ読み替えない。箱/細長/円柱/三角030成功、検証継続session57711。
+- **remote箱050の7機対照成功**103.6475sim/831.57wall。正式加算なし。距離加速度のlocal対照45332は正式計画の計算資源を空けるため中断しremote40598へ移した。remoteはLOADで有限上限なしの追加行が目的誤差計算0*infとなりnan、未採用。物理不可能の証拠ではない。
+- **別の保持条件の対照remote30340。** 瞬間の.5N法線下限だけでなく、実保持2.5ms後にも同じ.5N下限を満たす入力修正（execute_held_floor.py）。20ms補正/実行監査は維持、LOAD/LIFT/CARRY/DESCENDのみ、解放の下限は0のまま。楕円030で評価中、未採用。
+- **CPU向けgeometryビルド試験はruntime非変更。** artifacts/kernel_v3のAVX2版は初回C++オブジェクト生成でsegfault、不採用。Eigenのメモリ確保ABIを旧版へ合わせた追加試験中。正式runtimeのkernelは元binary/hashのまま。
+
+- **正式v1は進行中、細長030が最初の1件成功。** 72.21sim、全process351.48s、初期計画10.76s。box030/cylinder030はUNLOAD、ellipsoid030開始。runtime固定、session57711。
+- **Pro二階距離条件レビュー受領。** pro_distance_review.txt/png。距離h>=0に加えpsi=Jv+omega*h>=0が滑らかな連続系の開始条件。実入力の同時成立・Jdot v・最近点切替・保持区間検査は別。ω=2/sは共通初期設計値で制動限界からの導出ではない。未採用のartifact distance_acceleration.pyは実速度座標のJacobian、位置積分の中央差分による曲率を扱う局所案で安全証明を主張しない。
+- **幾何修正後の楕円050は未解決。** geometry_terminal_retryはLOAD10.865sim、9回の入力修正後に距離修正が不成立。境界で止めるだけでは遅い。entry_LOADの台余裕3.96µm/接近8.40µm/s、停止直前は余裕0/接近6.40mm/s（distance_state.log）。早期制動を入れたartifact対照execute_distance_acceleration.pyをlocal45332で開始。正式v1へは混入しない。
+
+- **正式新30 v1開始 session57711。** artifacts/runs/span_load30_v1_20261025、formal_v1.log。承認入力固定、seed固定、各requestから新規生成、実行3並列・計画直列32。ここからruntimeソースは固定。未完。
+- **台形の精度修正版はLOAD14.3575simで停止。** 補正の違反比率.0665→.000144→1.78e-6と改善していたが、変更幅が小さいだけで未成立のまま終了していた。微小更新終了は成立入力を得た後だけに修正。既存最大8反復・物理/監査上限不変。幾何制約追加と合わせ正式v1で確認する。
+- **24worker比較は不採用。** 箱04016.82/三角04517.60/細長05017.47/三角04016.41秒で32より遅い。正式v1は32を維持。最新幾何関連16検査成功.61秒、diff check成功。
+
+- **全30の生成確認完了、成立29/30。** remaining_pipelineの18件を含む。円柱050は固定最大236系列でも候補未発見。箱04015.76s、三角04517.03s、細長05016.21sなど15s超が残る。正式全工程30はまだ未実行。
+- **幾何修正の実不具合を修正。** 5kg楕円6機のremote対照はLOAD10.98simで台との距離下限を予測違反。入力修正は距離を合否にしか使わず、計算する制約に入れていなかった。ResponseContactControlで全予測時刻の距離Jacobianと入力微分を加え、元の全形状検査で再確認。同一停止直前の状態で旧版未発見→新版有効指令、台距離29.9999993mm/力16.847N、元の30mm±1µm判定不変（geometric_guard_before/after.log）。初回成立入力の高速解以外は幾何制約を入れた解へ進む。全楕円050対照local37096で実行中。
+- **実行中:** 台形050精度修正版local51467（geometric修正前）、箱050remote2897（精度修正前）、楕円050最新local37096。初期計画24worker比較local78541（現在32workerより遅い）。これら保存計画の開発対照を正式30へ合算しない。
+
+- **終端法線不足の補正を採用。** current_proposal楕円4機は94.6075sim/798.98wallで全工程成功。位置2.33mm/姿勢.093rad、上限・成功判定不変。予測初期の不足が目標を支配しないよう20ms後を評価、全区間上限は保持。
+- **回復姿勢未収束は再試行へ。** 成立中の回復指令を維持し0.3s整定後に再設計、全体110s期限は維持。単独対照で再設計は成功したが後続LIFTは失敗しており、完遂保証ではない。
+- **実不具合：修正入力の誤差判定が緩かった。** 台形terminal_retryはLOADで30.000016Nを許容して独立監査失敗。HeldInputGuardは1e-7比率で検知した後、ResponseContactControlの1e-6比率まで許容して返していた。guard用修正は1e-8・内部解法精度も連動へ修正。関連21検査成功（precision_tests.log）。精度修正版台形session51467実行中、remote旧精度の箱050/楕円050対照session2897/80994、途中で源泉更新しない。
+- **計画の待機削減を採用。** 成立なし時に既定追加系列を前の完了待ちなしで投入、独立列と最初59組の証拠は不変。部品点/単機運動をfork前に1回準備。箱04015.76秒/三角04014.31秒、同構造同費用。関連19検査成功4.63秒。補助4巡は改善なしで不採用。warm_geometry箱22.16秒/cylinder旧pipeline19.60秒は2つの計画実験が重なったため性能比較に使わず、pipeline_runtimeが再計測。
+- **残り18条件の生成確認中 session35328** remaining_pipeline。正式新30まだ未実行、入力不変。現在control変更を固定して正式検証へ進む準備段階。
+
+- **代表現runtimeは4/6完遂。** 箱5機/円柱4機/三角5機/細長6機成功。楕円4機はLIFTで接触喪失、台形7機はRECOVERで保持姿勢未収束。補助再設計を失敗時に続ける対照は再設計成功後LIFTで接触喪失、単独では未解決。
+- **保持補正の切分け:** 入力上限を同時に扱う有界最小二乗では、保存状態の線形残差2.03e-5→9.76e-19へ改善したが全楕円は22.03simで接触喪失、未採用。終端の法線不足を評価する対照は楕円で搬送完遂しUNLOAD進行中（session1957）、同じ変更＋回復再試行の台形対照session91976。全予測区間の力・トルク上限と独立物理監査は不変。
+- **追加6生成:** 箱035 5機/9.66s、台形035 6機/11.45s、箱040 5機/20.02s、台形040 6機/9.15s、箱050 7機/7.37s、楕円050 6機/12.45s。箱040は固定系列198番目で初成立、代表三角は128番目。補助探索が従来1巡のみだったため同生成則4巡の比較を開始（session17106、独立1候補試行と確率根拠は変更しない）。正式30未実行。
+
+- **10/25 最新runtime生成を更新。** task_contactsは保守摩擦2.25、候補点の鉛直支持上限から接触数の下端を誘導。選択した粗い接触点集合の要求力残差が残る試行は構造化前に終了（生成器の範囲限定、物理不能とは呼ばない）。主/補助共通。任意の追加入力方向改善は省略し、元の有限入力最小化/タスク余裕検査は保持。選択順は費用下限優先に変更、独立試行の定義/59組の根拠は新処理へ更新。必要な下限と粗い推奨接触数の記録を区別。関連25検査成功3.35s。
+- **新runtime代表6生成 `current_proposal`:** 箱5/3 477.643/7.93s、円柱4/4 364.399/12.46s、三角5/4 607.438/15.30s、楕円4/4 339.173/8.25s、細長6/4 579.351/5.41s、台形7/6 746.873/10.17s。三角のみ15s目標を僅かに超過。正式新30はまだ未実行。
+- **全形状の距離制約をContactStepControlへ採用。** 非把持部品対物体を含むall_geometry=True。元の独立判定不変。関連13検査成功1.00s。新生成6保存計画をこのruntimeで実行中：local91235（箱/円柱/三角）、remote80396（楕円/細長/台形）。remoteは最新PythonとXML変更を同期済、planの絶対path正規化済。
+- **台形の未採用対照:** 追加改善省略＋全形状距離制約で旧干渉は回避したがRECOVER16.245sで観測保持基準の有限接触姿勢計算が未収束。`execute_recovery_retry.py` は未収束を物理不能とせず、成立中の回復制御を続け0.3s以上整定後に再設計。session25227、current_proposal台形で未完。runtime recoveryはまだ未変更。
+- **保持補正の追加対照（未採用）:** `execute_terminal_floor.py` は予測法線不足の評価を20ms区間最小から終端へ移す。全区間の上限検査/実行監査は維持。current_proposal楕円、session1957。不可変の初期不足が補正目標を支配し得る点の切分け、まだ効果未確認。
+- **Proレビュー受領 `pro_tracking_priority_review.txt/png`:** 追従の厳密な非悪化を外し、物理条件＋明示した運転範囲の下で接触不足だけを優先する設計は整合。ただし正規化尺度を運転許容と同一視しない、全予測区間を検査、20ms予測と20ms回復要求を区別、維持後の追従/期限を確認。同じ状態の拒否理由で原因を確かめること。既述の単純tracking_domain対照は悪化のため採用しない。
+
+
+- **10/25 継続、代表225は4/6完遂。** 箱5/3、円柱4/4、三角5/4、細長6/4が成功。楕円4/4はLIFT 19.8225sの接触下限不成立、台形7/6はACQUIRE 13.00775sで非把持部品と物体の距離不足。正式30未実行。
+- **新しい未採用対照:** 楕円で予測法線不足を20ms内に回復させる `execute_horizon_floor.py` はCARRY 21.675sまで進むが同じ下限不成立。追従非悪化を既存12状態誤差楕円体内へ置換した `execute_tracking_domain.py` はLIFT 16.555sで失敗。単に追従条件を変えただけで改善したとは言えない。Proへこの優先順位の原則を相談、返答待ち（pro_tracking_priority_request.png）。
+- **接近の干渉:** ContactStepControlの距離制約は床/台のみ、非把持部品対物体を含めていなかった。`execute_full_clearance.py` はall_geometry=Trueを対照。旧225台形は干渉を回避するが12.865sで入力問題未成立。追加改善を省いた新台形goalの対照はREFINEまで進行中（session16774）。runtimeへはまだ未採用。
+- **速度:** 追加の入力方向改善を省略＋lxmlの対照は円柱16.13/台形15.80/三角19.14秒。全試行を1processで完結しても16.35/15.76/19.63で改善なし。共通Casadiのfork前準備も17.30/16.42/21.80で改善なし、未採用。同期済remoteで分担は15.64/13.91/17.56（capacity_distributed）、まだ一部15s超。
+- **lxmlのみ採用。** 3つのXML生成処理をlxmlへ変更。削除中のiter走査をlistで固定し空frame削除を同値化。元parserとの全物理パラメータ/3step状態完全一致、モデル/接触/開き経路/接近参照24検査成功7.04s。requirementsにlxml6.0.2を追加。計画再測定xml_compact16.63/16.26/19.48。任意方向改善の省略自体と225生成はまだartifactのみ。
+- **生成高速化対照:** `plan_wrench_gate.py` は選択済み粗い接触点集合に力不足が残る場合、この生成試行を早期終了する。全構造の不可能証明でなく、この固定生成則の範囲のみ。代表3つの既存成立候補はすべて粗い力条件を満たしていた。session79107で再発見/時間を確認中。正式30へ入れるなら独立系列の新手続きとして記録する。
+
+
+- **10/25 継続・正式30未実行。** Proの接触数/到達性レビューは受領済 `artifacts/span_load30_20261024/pro_capacity_review.txt/png`。接触の物体力学だけでなく、到達性と関節負荷を生成へ結ぶ方向。粗い力配分を最終の固定制約にせず、最終受理は全体で再配分する。
+- **予測法線荷重の下限補正を採用。** 既存20ms予測で0.5Nを割る分を同じ接触追従の残差へ加える。compact箱6機5接触の全工程は82.77sim/544.67wallで成功、位置38µm/姿勢9.67e-6rad。独立物理判定不変。再設計引渡しの実時間差もあるため単一対照だけの因果確定ではない。関連制御12検査成功0.91s。
+- **生成対照225の代表6保存計画を実行中。** local session17511：箱5機3接触、円柱4機4接触、三角5機4接触。remote session43446：楕円4機4接触、細長6機4接触、台形7機6接触。remoteの初回は絶対path不一致で起動失敗、plan/sceneのrootを正規化し再起動。台形はACQUIRE干渉、楕円は力配分未成立で失敗。新30正式成績ではない。
+- **未採用生成対照:** `plan_torque_guided.py` は粗い接触力配分から把持面のDockにかかるモーメントを計算し、定格超過を接続候補の優先度へ加える。排除/最終固定配分には使わない。225生成を土台に箱/円柱/台形で比較中、session99583。runtime生成はまだ元の4.5方式。
+- **遠隔最新:** runtime Python/native/identity/部品cacheは代表6起動直前に同期済。専用rootとsocket `/tmp/amsrr-det-span2.sock`、master99560。実行中にソース更新しない。
+
+
+- **10/25 00時台 継続、正式新30未実行。** タスク入力は承認済み3〜5kg/1.0〜1.3mのまま。計画時間の超過と生成能力を改善中。Proへ「接触方向/摩擦を含む支持上限から接触数を誘導、到達性・静的駆動の不成立をどう減らすか」を送信、回答待ち。URL /c/6ad7c38d-aeac-83eb-bf56-e58882046c27、proTab。
+- **計算改善:** nativeの物体侵入ペナルティを部品ごとの最大点だけ微分する同値実装へ。全点の距離は確認、選ばれた最大点の微分のみ計算。既存全点版との値/微分対照含め16検査成功4.05s。build_geometry_kernel.pyでbinary/identity更新、prepare_part_bounds.pyで古くなった部品境界cache再生成。選択の証拠計算も結果更新時だけに変更、関連8検査成功。代表円柱22.57s、台形26.82s、同費用394.3307/619.8992。まだ15s未達。
+- **採用しなかった速度対照:** pending先読み64は円柱25.76s、共有メモリ経由plan転送26.69s、worker24（任意改善省略＋lxml）22.80s。artifactのみ。local24+remote12は21.99s、台形未発見で終了。遠隔sourceがgrouped版前のため、同一実装・最終性能比較には使わない。
+- **制御:** 近似法線力が楽観的で.5Nを割る際に、不足分を次の近似下限へ加える修正をruntimeへ追加（上限は不変、最後の実モデル検査不変）。同じ箱停止状態で4回目に.5045N、以前は8回すべて.463〜.475N。不足分の修正のみの全箱はLIFT constant constraint infeasibleで失敗。
+- **開発中の制御対照（artifactのみ）:** execute_predictive_floor.pyは既存20ms予測のgap制御へ予測法線荷重の.5N不足も含める。箱compact6機5接触をsession85098で実行、CARRYまで進行、未完。旧normal_margin_boxは失敗。remote円柱のnormal_margin版session54976（最初2回はpath/directory不備で起動失敗後、path正規化して再実行）、現在RECOVERで進まず。成果を正式30へ加算しない。
+- **生成則対照（未採用）:** plan_contact_capacity.py は候補面の鉛直支持上限を足して接触数抽選の下端を誘導、全構造の不可能証明には使用しない。mu2.25の3代表: 箱5機3接触457.22/8.92s、円柱4機4接触362.15/20.43s、台形7機6接触728.83/18.32s。mu4.5: 箱6機5接触429.00/6.22s、円柱5機5接触394.33/23.52s、台形6機5接触684.59/18.77s。旧台形は各N236試行中1成立、同一処理59内の改善が必要。現在225で楕円/三角/細長も追加比較中（session54397は最初3件完了、追加sessionは直近tool参照）。runtimeのtask_contactsはまだ旧法。
+
+
+- **継続・新30未実行。** 現runtimeは独立試行を1候補単位へ変更、59組終了時に成立ゼロなら固定系列を最大236へ延長。Pro確認済 `pro_single_trial_review.txt/png`。5%上限は新1候補単位、旧4候補単位では18.55%までで同じ保証ではないとユーザーへ説明済。補助も同規則、主要関連11検査成功。
+- **代表生成:** compact対照（lxml＋任意入力方向改善省略、artifactのみ）では箱6/10.18s、円柱5/19.51s、三角6/16.43s、楕円5/16.23s、細長6/20.17s、台形7/28.27s。現本体は任意改善保持。local32+remote12全試行は円柱23.24s、生成のみremoteは19.46s、まだ目標未達。時間超過改善後に正式30へ。
+- **代表保存計画実行:** 三角6機、細長6機、台形7機が成功。箱は支持離脱、円柱は保持入力未成立、楕円は着地期限。支持近傍の回復は同一チェックポイントで1.3975s後引渡し、支持なし1周期も全物理検査成功。runtimeへ採用したが全箱再実行は回復へ入らずLIFTの近似力配分不成立で19.34sに失敗。実時間による再設計引渡し差がある。
+- **着地改善採用:** 楕円は終了時に支持から1.489mm浮き、旧参照追加上限2mmで追従誤差を吸収できなかった。追加参照を2mm/s・最大3cm（タスク位置許容）へ変更するremote対照で76.55sim/490.78wall、位置0.307mm/姿勢0.00159radで全工程成功。物理貫入2mm/荷重等不変、build/touchdown_translation.pyへ採用。
+- **2周期保持ガードは未採用。** 円柱の対照は成功したが修復0回。再設計引渡し時刻差があり、ガード効果とは言えない。runtime2.5msのまま。
+- **遠隔:** socket /tmp/amsrr-det-span2.sock、専用root /home/leus/amsrr_det_large30。現在代表実行すべて完了。本体同期は新1候補試行/近傍回復/着地修正より前なので最終試験前に同期必須。
+
+
+- **新30は未完。承認範囲3〜5kg/最大寸法1.0〜1.3m固定、SHA256 1044f08f5cda20f49cd2eb55dbd7a4204e7ff31be4a1f74934691dfc876654ab。** 新規正式30は未開始。代表で計画23〜53秒のため時間を先に改善。`artifacts/span_load30_20261024/` が現在の開発記録。
+- **生成の実装修正:** 実CAD部品のサンプルが物体内部へ入る量を連続姿勢修復に追加、各部品で最大侵入点1行に集約（全サンプル判定/最終mesh検査不変）。native `geometry_object_avoidance` の形状値と独立差分一致。静的LPの双対値からgimbal負荷勾配を計算し同じLPで改善を確認。6機候補の最大負荷4.941→.895、6歩/.249s。新箱6/円柱4/三角5機を生成、23.83/52.81/29.45s。関連24検査成功6.43s（auto pytest pluginを無効化すること）。
+- **実行:** object_fit_v3箱030の6機保存計画は全工程成功78.37sim/462.19wall、ただし生成19.26sなので正式新30の成功ではない。remote円柱035は32.75simでnative新symbol欠落、同期不備による開発実行失敗。遠隔はPythonとnative/identityを同時同期してから再試行。保存計画実行は新規生成の時間を隠して正式成績へ入れない。
+- **制御:** LOAD/LIFT/CARRY/DESCENDへ既存2.5ms実保持ガードを適用済。SupportedRecoveryの予圧誘導に既存.5N下限へ戻す条件を追加したが未検証。recovery_triangleに旧7機のRECOVER入口を保存。Proは再設計開始と引渡しを分けることを支持、絶対接線速度判定の単純緩和は不可。`pro_transition_review.txt/png`。
+- **時間対照:** 全候補への任意の入力負担追加改善を省く対照でも22.81/52.87/28.16s、主因は総生成・物理受理量。Proは選択後だけの任意改善でも基本生成手続きへの59組保証を維持可能と確認、旧全候補追加改善後の保証へ読み替え不可（`pro_deferred_review.txt/png`）。本体は追加改善を各候補に行うまま。
+- **探索単位の対照（本体未採用）:** 独立試行を4候補→1候補へ明示的に再定義するartifact `plan_single.py`。同じ59組で箱6機/429.0023/11.49s、円柱5機/394.3307/23.19s、三角未発見/8.03s。旧4候補試行と同じ能力・確率保証とは主張しない。59先頭終了後も全不成立なら固定系列を最大236まで延長する理論をProへ確認中。生成能力を保つ必要があり、未採用。
+- **次の対照:** 接触役割の粗い力学を後段と同じ摩擦2.25へ揃え、選んだ接触集合で要求力が埋まらない間だけ接触を追加（最大N）する `plan_force_consistent.py`、1候補試行59組、3代表0/8/16、session75569。現在はartifactのみ。全構造の物理不能とは解釈しない。
+- **remote現接続:** foreground SSH master session99560、`/tmp/amsrr-det-span2.sock`、専用 `/home/leus/amsrr_det_large30`。remote実行なし。system/mainline非変更。runtime同期は最新native込みで必要。旧SSHソケットは無効。
+
+- **ユーザーが範囲変更を承認。** 3〜5kg・最大寸法1.0〜1.3mの提案30を `artifacts/runs/span_load30_inputs_20261024.json` として固定。seed2026102404、6形状×5重量、探索1〜8機。12〜18kgは不採用の開発入力として保存。回答待ちは解消。30件80%以上まで続行。
+
+- **10/24 21:45頃、範囲回答待ち・新30未達。** 12〜18kg固定入力は未変更。回答後にレビュー可能な別案 `artifacts/heavy30_20261024/proposed_span_load30.json` を作成したが、未実行・正式差替えではない。6形状×3/3.5/4/4.5/5kg、最大寸法1.0〜1.3m、元姿勢/位置をseed2026102404で抽出、探索1〜8機。大きな対向面間隔と荷重分散から多数機を動機づけ、台数強制はしない。元の12〜18kgはユーザー指定ではなく私の設定。
+- **制御診断更新:** 円柱7機の保持区間ガード版は全工程成功（399.928wall）。箱7機の同ガード回帰対照はlocal session89940、`guarded_box.log`、`span_probe/box/guarded_execution`。楕円6機の近似未成立時短応答fallbackはACQUIREを通過したがRECOVER継続（session9087、現在約76sim）。遠隔台形6機fallbackはLIFTで `contact allocation nonlinear force check unresolved`、失敗。遠隔三角7機はRECOVERから進まず110.005sim/1221.19wallでtimeout。結果コピー `triangular_execution_result.json`。制御wrapperはartifactのみ、本体未採用。
+- **容量足切りを追加して検査23件成功。** `frozen_structure_trial` のタスク生成だけ、最大要求力>30N×台数なら接触生成前に未成立。1機1接触というこの生成器の範囲だけの根拠であり、全合法多接触構造の物理不能ではない。確率試行の未成立として記録、未完了扱いと混同しない。関連23検査成功5.44s（`compact_final_tests.log`）。
+- **高速化の対照:** 59組・均等投入・重い受理だけPコア限定・48workerは20.399s、32workerの18.89sより改善せず、本体へ未採用。Clarabel内部tol1e-11→1e-9は1候補6.76→6.20sのみで、本体の設定変更なし。物理再検査閾値は不変だったが幅広い同等性未確認。`profile_fast_conic.log`。今後の最終30へこれらの対照値を混ぜない。
+- **Pro59組レビュー保存済:** `pro_block_review.txt/png`。共通最終費用と潜在未省略出力の最小値の関係を使う証明を支持、下限省略後の各組値が同じという主張はしない。スクリーンショットをユーザーへ表示済。
+
+- **10/24 21:30前、今回の新30は未達・重量範囲の回答待ち。** 私が設定した12〜18kg入力は未変更。async質問は「6〜8機の検証を優先して重量範囲を見直す」か「12〜18kgを維持」。回答なしを承認にしない。別途の開発診断で4kg・約0.71mの箱は6機5接触で全工程成功（66.8225 sim / 490.67 wall、生成25.55秒）。1.2m・4kgの6形状では5形状で6〜7機を生成、細長箱は未発見。この診断は固定30の差し替え・成績ではない。
+- **失敗した生成拡張を整理。** 複数面/部分姿勢修復/7角度格子/力残差の姿勢射影は、12kgを成立させず4kgも悪化したため本体から撤回し `artifacts/heavy30_20261024/rejected_joint_growth/` へ退避。現在はタスク荷重から接触集合を作り、届く接触の順に接続する5角度格子方式。接触数は理想30N容量からの下限〜Nの一様抽出。補助も同じ規則、主探索100%タスク。1接触1機の生成範囲を明示。実材質の最初6回が失敗したときだけ表面上の移動を許す追加6回は保持（実際の許容誤差不変）。パッド別距離にしたnative ABIを保持。
+- **高速化採用:** `_clearance_cost` と同じ箱干渉計算をC++へ追加。回転/複数障害物の独立NumPy対照で誤差2e-13以内。8候補の生成は3.664→1.198秒、全選択は25.55→25.27秒に留まる。14関連検査成功（`compact_generation_tests_v2.log`）。少数候補の有限接触・方向調整が残る長い処理。Pコアへの限定はartifactのみ、59組・均等配分対照で20.06→18.89秒、同じ6機/負担510.650845。
+- **確率停止根拠を59組へ改善、Proレビュー済。** `structure_stopping.py` は、各Nの同じ添字を1組とする潜在最小費用 Y_k=min_N C_Nk に対し、共通最終費用B<=min_k Y_kを用いる。各Nの改善事象⊆組の改善事象、.95^59=.0484945<.05。個々N自身の最良値に対する保証ではない。省略後の組値はIIDとせず、下限で省略しなかった仮想手続きで証明。補助はBを下げるだけ。全必要群の共通59先頭が揃うまで、どの必要群にも確率上限を表示しない。旧99実績とは分ける。独立有限分布列挙・下限省略・未完了検査を含む8検査成功（`block_stopping_tests.log`）。README更新。runtimeの投入順序は従来の下限優先のまま、均等配分はartifactのみ。99→59は同じ候補の保証ではなく、最終新30は同一方式で新規生成が必要。
+- **開発実行状況:** 1.2m箱7機は全工程成功（90.47sim/550.69wall）。円柱7機はLOAD荷重上限、楕円6機はACQUIRE摩擦分枝、台形6機はLIFT constant constraint infeasible。三角7機はremote実行中session49562。基準 `span_probe/*/execution`。これらから80%は主張できない。
+- **制御の短い対照（本体未採用）:** `guarded_transport.py` は既存HeldInputGuardをLOAD/LIFT/CARRY/DESCENDへ適用。円柱は旧失敗を通過してUNLOADへ進行、session74228、`guarded_cylinder.log`。初回wrapper差分は `span_probe/cylinder/guarded_execution/experimental_runtime.py` とoverride JSONに保存（元snapshotだけを正本にしない）。`fallback_transport.py` は接触近似の既知の未成立2種類にだけ同じ2.5ms実保持応答の追従解を試す。楕円local session9087、台形remote session42362。全工程成功・採用はまだ未確認。
+- **remote専用環境:** `/home/leus/amsrr_det_large30`、SSH control `/tmp/amsrr-det-heavy-remote.sock`。proxsuiteがlibgomp不足で起動しなかったため、本PC `/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0` (SHA256 d46f9225c1883039e8a6853e6d96ca1af11d034ce186a090952e4a7c8a7c2fdc) をremote `.venv/lib/libgomp.so.1` へコピー、`LD_LIBRARY_PATH=/home/leus/amsrr_det_large30/.venv/lib` をプロセスに指定。システム/本家は非変更。旧v2質量診断は4/6/8kg未発見（82/143/195秒）、10kgの最終結果は未回収。remote control sourceは同期前のまま、今の生成を使う最終試験では再同期必要。
+- **Pro:** L1荷重上限を真の30N合力球へ精密化するのは物理緩和ではないが、旧数値受理集合は拡大と明示すべきとの回答。固定候補6例の内接球多面体診断では物体だけの釣合いも不成立、runtime未採用。レビュー本文/画像 `pro_model_review.txt/png`。59組のPro返答は21:25頃に受領、まだ本文/画像保存前。重要修正は「省略後の各組の値は変わり得るが、最終B<=潜在全体最小値が保たれる」。
+
+- **10/24 21時前の継続状態：新30は未達。** 12kg代表箱では生成成立ゼロが続いており、全30を機械的に実行していない。`artifacts/heavy30_20261024/` が今回の開発記録。ユーザーへ async 質問中：最初にこちらが設定した12〜18kgを維持するか、目的（6〜8機の検証）に合わせ重量範囲を見直し新30を作り直すか。**回答前に固定30を変更しない。** 切り分けでは旧生成器4kgで6機5接触が成立（実行未検証）。12〜18kgはユーザー指定値ではない。
+- 現在のコードは**開発途中で未採用の変更を含む**。`task_structure`：7点の実関節範囲格子、接続順の到達性評価、部分姿勢修復、接触と接続の共同生成、複数把持面対応（2N+2自由口）、方向の異なる接続案保持。接触数<=Nでは力から選んだ接触集合へ接続を合わせ、>Nでは共同生成と既存自由面の追加。`task_contacts`：受理器と同じ保守摩擦2.25、接触容量下限・追加数の指数分布、欠落作用の全成分二乗評価。物理摩擦4.5・上限・最終受理は不変。独立試行の規則は最終凍結後に99試行を再実行する。
+- `task_contact_fit.py` を追加：姿勢合わせに物体荷重の凸射影残差を追加。最適力を固定した残差微分（包絡定理の勾配）を4方向の独立差分で確認、勾配差1.1〜2.3e-9。全身/有限接触の成立証明ではない。`grasp_geometry` にこの任意項とパッド別接触距離を追加。native geometry ABIを距離配列へ拡張してビルド済。`grasp_task` は元6回材質修復が失敗したときのみ、表面上の滑りを許す追加6回を試す。最終の距離/法線許容不変。まだ一連動作で新実績なし。
+- 直近開発30独立試行×4開始点（N6/7/8、各10）：`balanced_targets.json` で幾何未完104/120、材質6、干渉5、開き3、静的2。力残差が小さい候補を得たが完成受理なし。`repair_candidate.py` は8機・試行3・開始0に干渉修復/力残差ペナルティ継続を試す単体診断、session79773。関連テストsession51666、結果 `current_tests.log`。採用しない実装を最終成果に残さず、コンパクト化する必要あり。
+- remote は最新コードへ同期後 `mass_probe_v2.py`（4/6/8/10kg切り分け）実行中 session6952。旧shape_probeは12kgの残5形状すべて未発見で終了。専用root `/home/leus/amsrr_det_large30`、control `/tmp/amsrr-det-heavy-remote.sock`、本家非変更。
+- Pro第2回答：複数面対応は合理的。18kg側面は保守モデルで9面必要、2N+2は同時接触可能数ではない。同じ姿勢・駆動を共有する制約を維持し、既存面追加/新機体追加は同じ欠落作用と到達性で比較。独立99試行は新手続きについて再評価。低台数でも多接触が成立したら低台数を正当に選ぶべきで、6〜8強制は禁止。
+
+- **新依頼を実行中（10/24夜）：6〜8機が有利になりそうな新規30条件で80%以上。** `artifacts/runs/heavy30_inputs_20261024.json` を結果を見る前に固定。6形状×12/13.5/15/16.5/18kg、最大寸法0.70〜1.05m、元の姿勢/位置、1〜8機検索・物理/成功条件不変。生成スクリプト `scripts/generate_heavy_panel.py`。旧120/大型30は再実行しない。まだ新30の成功実績なし、完了扱い不可。
+- **代表12kg箱：現行成立0（17秒）。** 6接触以上で静的検査へ到達したものは1件、幾何未完が中心。接触選択順と接続順を分離し届きやすい未割当接触を次に選ぶ対照も成立0。荷重/30Nによる必要接触数下限を追加した対照も0。現在は接続追加途中に12反復の部分姿勢修復を挿入する対照 `artifacts/heavy30_20261024/partial_fit` 実行中（session70247）、最終方式未確定。関連8検査成功は部分修復を入れる前の版。
+- **Proへ根本相談、回答あり。** 同じ既存チャットへ、力の要求と接続木を共同生成する方向をレビュー依頼。荷重/30Nは楽観下限、現在の5.5fn<=30近似は25.14N/接触という別の保守的制約、18kgでは8役割で中継余地ゼロ。1役割1機は生成器の範囲で物理限界ではない。未使用口から到達可能な表面と不足作用を同時評価、中継を禁止しない方向を支持。99試行の根拠は新しい固定規則の独立試行に適用し旧結果は混ぜない。
+- **別PC診断完了。** 専用 `/home/leus/amsrr_det_large30`、SSH control `/tmp/amsrr-det-heavy-remote.sock`。重量だけを変えた開発診断は4kgで6機5接触が成立、6/8/10kgは未発見。30入力を変更した結果ではない。ローカル `artifacts/heavy30_20261024/mass_probe.py`、リモート同配下に結果。現remoteは部分姿勢修復前のコード。現在の新規30はまだ走らせていない。
+
+- **10:44 JST、今回の大型30改善を完了。** 最終同一ソース `artifacts/runs/large30_release_modes_20261024` は **25/30 (83.3%)**。初回16/30から失敗10件が成功・成功1件が失敗（楕円100）で純増9件。元入力/seed一致、source/settings一致、30件の構造選択根拠complete。旧120は再実行していない。runner session76438終了0、稼働中の本作業実験なし。`improvement_summary.json` と `report.json` が正本。READMEの大型30節を最終結果へ更新。
+- **失敗5件。** 細長75/箱85：LOAD台支持喪失。台形85：ACQUIRE摩擦分枝の成立指令未発見。楕円100：DESCEND保持計画時間超過（初回成功からの後退）。楕円120：初期計画20.2066秒。全体83.3%、事前50群比較のFisher＋Holmで明確な失敗集中なし（最小補正p=1）。小標本の均等性・未使用条件への汎化は主張しない。
+- **計算・構造。** 計画5.89〜20.21秒、中央値10.17秒・95%点13.32秒、29件は13.62秒以内、超過6→1。全30は51.41分（実行3並列・計画直列32）。選択3機9/4機17/5機4、実行3機9/4機17/5機3、成功3機7/4機15/5機3。骨格3種・接続口/把持面27種、6〜8機は未採用。全工程wall/sim中央値4.17、2.58〜7.57。搬送平均6.80〜21.34ms、解放平均20.04〜65.79ms、解放最長1呼出し7.02秒。**実時間制御未達、VIM4/実機未検証**。速度達成を主張しない。
+- **最終検査。** `final_tests.log` は数値・接触・取得・構造生成・形状の50検査全成功（5.86秒、既存hppfcl非推奨警告1）。新しい正常接触→分離の実QP2fixtureも含む。代表6/6と部分対照は最終25件へ合算していない。commitは今回依頼されておらず未実施。
+
+- **10:31 JST、最終固定30は26完了21成功。** `large30_release_modes_20261024`（session76438）、runtime固定、3実行/計画直列32。三角100と箱120も全工程成功。失敗5件は細長75/箱85台支持喪失、台形85ACQUIRE摩擦分枝、楕円100DESCEND保持計画時間、楕円120初期計画20.2066s（15s超過）。計画超過は現在この1件だけ。細長120・円柱120はCARRY、三角120LIFT、台形120は待ち。残4件を終えるまで80%未確定。元120未再実行。source/settings集計は全30完了後、`summarize_improvement.py`。追加数値/分離検査12pass、代表6/6passは全30へ合算しない。
+
+- **10:21 JST、固定30は20完了17成功。** 同一runtime `large30_release_modes_20261024`（session76438）。失敗は前記3件のまま、計画超過0。円柱85と細長100も新規生成から成功。楕円100・円柱100はDESCEND、三角100はREFINE。元の120件は未実行。残り10件（120cm6件を含む）未完、80%達成をまだ主張しない。09:51のコード・設定を固定継続中。
+
+- **10:15 JST、固定30は16完了13成功。** `large30_release_modes_20261024`、session76438、同runtime固定。計画超過0。失敗は細長75/箱85のLOAD台支持喪失、台形85のACQUIRE摩擦分枝の成立入力未発見。すべて前の19/30でも失敗した条件で、新たな成功条件の緩和・再試行混合なし。5機の細長85全工程成功。円柱85UNLOAD・三角85CARRY・箱100計画が進行中。最終80%は未確認。集計用`summarize_improvement.py`へ選択台数に加え実行台数・成功台数・計画95%点を追加済（runtime変更なし）。
+
+- **10:03 JST、固定30継続中。** `large30_release_modes_20261024`は7完了6成功、計画超過0。細長75はLOAD `supported recovery requires source support contact`（初期計画10.964s）で失敗。台形65はRETREAT進行、円柱75/楕円75実行中。runtimeは09:51開始版のまま変更なし。session76438、3実行/計画直列32。同一元入力・seed、新規生成。未使用条件への汎化成績とは言わない。全30と成功率80%はまだ未確認。
+
+- **09:51 JST、代表6/6成功後、最終同一ソース30を開始。** `separation_six`は楕円65・細長100・箱120・三角65・台形65・円柱85すべて全工程成功。runtime snapshot6件一致。円柱85は83.8525sim/506.96wallで完了。12関連検査成功、git diff --check問題なし。
+- **進行中** `artifacts/runs/large30_release_modes_20261024`、session76438、`artifacts/large30_improvement_20261024/release_modes_panel.log`、起動スクリプト`run_release_modes_panel.sh`。元固定30入力・元seed・新規生成・主探索task100%・補助同grammar・99試行×4starts・steps80・構造workers32。実行3並列、計画直列。現runtime固定中。旧120不実行。結果が揃ったら `summarize_improvement.py` で元16/30との差、台数、計画時間、失敗偏り、source/settings一致を集計。過去の代表/部分試験を合算しない。計画時間超過が多数なら継続前に対処。
+
+- **09:43 JST、全分離枝の比較を統合。** `unilateral_six`は5/6成功、円柱85のみUNLOAD110s timeout。保存終了状態の単一周期比較で、現状維持はgap−0.354µmのまま、全分離の同一目的解は実2.5ms後gap+2.177µm。全分離では全3要素の力ゼロ、元制約残差4.3e-14・射影誤差1.94e-14、費用0.4825改善。初期の同UNLOADから100Hz（既存運動指令の10ms間隔）で全分離枝を比較する対照は49.785sim/265.81wallで退避完了、位置2.916mm・姿勢0.01028rad・最大10.712N。開離は約12sim時点。yaw費用を許容範囲だけへ変更した対照は円柱25simで未分離のため未採用（楕円部分成功と合算しない）。
+- **runtime採用:** 全分離枝を10msごとに比較、各数値ゼロの部分分離枝は従来どおり2.5msごと。小さい正荷重をゼロとみなすのではなく、別の非吸着力学の解を元の射影・物理制約で確認、同じ目的の改善だけ採用。既存の成立解がヒントとしてあるときは別の緩和問題による枝提案を省く。学習・全工程での構造選別なし。`contact_friction_modes.solve(separate_all=...)`。
+- **新代表6** `run_separation_six.py` / `separation_six.log` / `separation_six/` session4315、6並列。現在runtime固定。実停止QP2件のfixtureによる回帰検査含む `separation_mode_tests.log` を確認する。全30の最新完走は依然19/30、最終再生成30は未着手。
+
+- **09:35 JST継続。** `unilateral_six`は5/6完了全成功（三角65、台形65、楕円65、細長100、箱120）。円柱85はUNLOADが遅く80simでも1接触14mNが残る。runtimeはこの6件中固定。全30は未再実行。`unilateral_tests.log`11pass。
+- 円柱への全接触同時分離枝比較 `full_separation_checkpoint.py`は毎周期約53wall/simと重く、4sim時点で開発対照を中断（PID275674のみ）。分離効果の結論は出さず、runtime未採用。
+- **追加対照** `deadzone_release_checkpoint.py` は先にyaw漂流費用なしで解き、予測110s漂流が既存0.2rad内ならその指令、外なら許容境界までの二次費用で再計算。元の物理制約・解放枝比較・実保持区間ガード不変。楕円65同UNLOADから28.53sim/62.75wallで退避完了、0.974mm/0.01014rad/最大8.78N。円柱85同入口で実施中session64764 (`deadzone_cylinder085.log`)、まだ未採用。目的は厳密な停止保証ではなく既存タスク許容に基づく局所評価。runtime変更前に対照結果を確認。
+
+- **09:21 JST、接触解除の停止を修正して再検証中。** `refined_six`は三角65・楕円65全工程成功、台形65は無荷重の1接触がゼロgapで残る停止を確認。所有runner272174と子だけ停止、残りを未完として保存。有限接触の内部状態が成立している場合も、予測法線力が元数値許容1e-5以下の要素について非吸着・力ゼロの分離状態を比較し、同じ目的が改善する場合だけ採用する。元の力射影・全物理制約は再確認。`contact_friction_modes.solve(boundary_hint=...)`、解除だけで有効。台形の全く同じ接地状態から25.3925sim/73.57wallで退避完了、位置58.6µm・姿勢2.16e-6rad・最大11.15N。元の接触内部状態が成立しただけで分離状態を調べなかったことが停止原因。部分成功を30件へ加算しない。
+- **代表6再実行** `run_unilateral_six.py` / `unilateral_six.log` / `unilateral_six/`、session13188、3並列。現在runtime固定。第一版の代表6は中断。ゼロ荷重の実QP fixture `release_zero_force_branch.npz` を追加、費用0.137改善・元の全物理条件・非吸着力を検査。関連検査 `unilateral_tests.log`。直前の統合36検査は全成功。
+- READMEの現行制御説明を更新：20ms先の短区間接触予測による10msごとの保持補正と、解除2.5ms予測を明記。「未来接触予測なし」の旧説明を維持しない。全工程試行による構造選別は依然なし。現全30成績19/30、修正後全30は未実施。
+
+- **09:08 JST再整理。** 同一ソース新30 `large30_guarded_acquisition_20261024` 完走 **19/30 (63.3%)**。元16/30から改善、80%未達。source/settings整合true、同じ固定入力/seed、旧120未実行。`improvement_summary.json`を生成済。計画超過3（細長120 19.82s、楕円120 22.39s、台形120 15.99s）、解除/退避2、支持/追従/取得など6。現runtimeは次の改修済みで、この19/30のソースではない。
+- **採用して代表検証中の変更。** (1) 有限把持姿勢QPのactive方程式を長倍精度残差＋4回線形補正で解き直す。元の制約1e-8/物理1e-6/目的誤差契約は不変。SLSQPへ落ちた実5機候補で9.98→5.26s、4問題の補正約4ms/件。独立Clarabel比較fixture/test追加。(2) 解除の評価へ、重力回りのyawについて既存110sタスク期限・0.2rad許容から定速漂流費用を追加。開離誤差は宣言2mm/sで正規化（近傍で目標へ戻す速度capも同率）。局所目的であり停止保証とは言わない。(3) 分離後の開離参照6→20mm/s、元の関節・推力・力・加速度・衝突限界は維持。ContactUnloadへargs.durationを明示。
+- **修正の独立対照。** yaw費用だけの新楕円65は保存計画から全工程成功65.25sim/221.89wall。三角65同entryは33.5125sim/1.71mm/0.000117rad/最大11.67Nで退避完了。高速退避の同台形65entryは66.135sim（接地入口約33sの後）/8µm/2.4e-5radで退避完了、旧退避55.16s→16.55s。これら部分対照を全30成績に加算しない。
+- **現在の統合代表6** `run_refined_six.py` / `refined_six.log` / `refined_six/`、session80118、3並列。新30保存planの円柱85・三角65・台形65・楕円65・細長100・箱120。runtime固定中、完走後に最終同一ソース30を再実施。先に代表計画時間を確認する。新数値補正による細長120の構造選択は13.29s（同負担289.783）、楕円120は19.48sでなお15s未達。台形120の構造選択は13.35s（同負担299.584）。
+- **保持補正の変更は未採用。** 補正なしは新楕円100全工程成功91.575simだが円柱85RETREAT timeout（位置0.124m/姿勢0.438rad）。予測荷重が既存preloadを割る場合だけ補正する対照は、楕円65＋yaw解除は全工程成功65.91sim/姿勢0.0078rad、楕円100はRETREAT荷重超過。全体改善を確認できずruntimeの保持補正は元のheld_contact_trackingを維持した。
+- **棄却した解除対照。** 全6軸定速漂流費用は楕円65/三角65とも50simで未分離（物体は静止、padがほぼ0gapで残る）、未採用。実保持応答にyaw漂流の1周期制約を追加する案は0.66simで成立入力未発見、数値精緻化後も未達。2周期ガード＋微小収束/毎回微分更新も三角65の0.55simで残差未達。runtimeへ入れていない。
+- **数値計算の関連検査。** refined_runtime_tests.log=20pass、追加の実QPfixture比較を含む4検査も成功（pose_refinement_tests.log）。`.gitignore`で新runtime held_input_guard.pyを明示追跡対象に追加。実行中の本家へ操作なし。commit依頼なし。
+
+- **08:46 JST継続。** 新30は13完了8成功（計画超過0）、runtime固定。新たに箱85LOADの支持喪失、台形65RETREAT期限。台形65は位置8.3µm/姿勢2.4e-5radで静止しているが、UNLOAD約31s＋退避55.16sで110sに間に合わず。旧120未実行、公式成績はまだ旧16/30。
+- **解除のPro回答を完読・保存。** `pro_release_stop_response.txt`：最後の制動に必要な接触を外す前に、分離後の支持だけの最大姿勢/位置偏差を既存許容に照合する。現在の速度を分離後速度としない、支持COM高さ最小はねじり制動保証ではない、再接触は別問題。実XMLはcondim3/friction(.6,0,0)。物体＋同一支持のみの独立診断は、同楕円65UNLOAD状態から30s後0.0081rad、RETREAT状態から0.6475rad（精密30s予測は1.85〜1.95s）。入力モデルに荷重観測追加なし。`support_only_diagnostic.py`/`support_only_ellipse065.jsonl`。
+- **追加対照はまだ未採用。** PI新楕円65はRETREAT荷重超過47.82sで失敗、旧保存2成功を普遍化しない。2保持区間＋小ステップ収束修正は三角65の同entryで微小制約違反1.45e-6を残し失敗、runtime変更なし。解除開離誤差の正規化を宣言開離速度へ合わせる対照は楕円65同entry退避完了34.12s/姿勢0.20066rad、基準0.2radに未達。元の110s期限と許容.03m/.2radから定速漂流費用を加える対照を遠隔で楕円65/三角65実施中（`release_drift_checkpoint.py`、`drift_release_*.log`）。これは局所近似の費用であり、将来成立の保証ではない。
+
+- **08:37 JST進行中。** 新30 `large30_guarded_acquisition_20261024` は7完了4成功、計画超過0。失敗は楕円65RETREAT姿勢外（接地角度0.0062rad/角速度0.0032→RETREAT入口0.1205/.051→最終0.4578rad、位置1.81mm）、三角65UNLOAD実保持入力未発見（初回inverse QP PrimalInfeasible、予測荷重違反1.175倍分）、細長75RECOVER未整定。まだ80%達成を主張しない。新batchruntime固定、旧120不実行。
+- **Proへ解除移行の理論を相談中。** 前の全身加減速案(a)/(b)が実行未達だったことを報告し、残留角速度と停止姿勢の許容を結ぶ最小の制約/移行条件を依頼。角速度0.1rad/s内だけでは後の姿勢0.2radを守れない実測を共有。`pro_release_stop_request.png`保存・表示済。ブラウザtab1/ID2、入力482、送信後停止1250。返答待ち。前のreviewは完読済。
+- **PI対照は2件全工程成功、runtime未採用。** `integral_held_ellipse065`=旧公式保存plan、67.4875sim/221.34wall/最終姿勢0.11295rad。遠隔`pi_tri075`=前transfer保存plan、75.5025sim成功。現在の新30で失敗した楕円65と同じ新しい保存planにも遠隔で対照開始（`pi_fresh_ellipse065`、sessionはtool参照）。元の30と混ぜない。
+- **遠隔2保持区間のガード対照。** `two_hold_release_checkpoint.py`は予測のみ5ms/40substep、実発行は元2.5ms、全物理限界不変。同じ新三角65entry_UNLOADから実施、session23752/remote `two_hold_tri065.log`。現在の1周期ガードの先で成立入力を失う症状を、早期予測で防げるか調べる。runtime未採用。保存partialの成功を全工程としない。
+- 最終集計用`artifacts/large30_improvement_20261024/summarize_improvement.py`追加。30完了/同一ソース設定を要求し、旧16/30との差、台数/接続種、形状・姿勢・位置・寸法別、計画時間を集計。失敗偏りはn>=3群の片側Fisher＋Holmを探索的に記載し、検出なしを均等性の証明とはしない。
+
+- **08:27 JST新30を開始。** `artifacts/runs/large30_guarded_acquisition_20261024`、runner232893/session96924、`guarded_acquisition_panel.log`。実行4並列・計画直列32、元入力/seed、99試行×4初期値、task生成100%、steps80。取得連続参照・早期設計・held補正・有限解除＋2.5msガード＋摩擦未成立時の実保持fallbackを固定。**実行中runtime変更禁止、最終同一ソース30へ過去の部分成績を混ぜない。**
+- 共通runtimeの細長100同entry解除は39.3125s/位置1.224mm/姿勢0.02054rad/荷重21.93Nで退避完了（`integrated_fallback_elongated100.log`）。新しい解除fallback検査含め61種類の関連検査が成功、git diff --check問題なし。初期計画時間超過が多ければ多数を重ねる前に止める。
+- 位置積分のartifact対照は旧楕円65がDESCEND期限を通過しUNLOADへ進行。runtimeには未採用、同30へ入れていない。遠隔へ同PI対照を三角75で分担、session94908、`artifacts/pi_tri075.log`。これは新30とは別。台形85の退避切替荷重超過は未解決。
+
+- **08:26 JST継続。** 代表6v3は3成功（箱65、円柱100、楕円85）、細長100はUNLOAD近似摩擦モード未成立、台形65/三角65の進行中2件はrunner229179の所有子のみ停止。成功を全30へ合算しない。初回統合のHeldInputGuard bool/list例外を修正（距離APIはlist）、v1/v2中断済。姿勢切替をREFINEへ継続する統合抜けも修正済。
+- **解除fallbackをruntimeへ統合。** 摩擦近似が未成立時だけ、同じ実2.5msの入力/全substep物理限界を直接確認するResponseContactControl(tracking)へ渡す。近似失敗の指令は送らない。三角65の同entryで旧速い有限解除0.055s未成立に対しfallback33.0125s退避完了/0.978mm/最大25.78N。遠隔箱120の同entryは57.9125s退避完了/0.216mm/最大13.20N。台形85は退避切替7.837sに56.50N超過で未解決。現在runtimeで細長100の同entryを再確認中session6353、`integrated_fallback_elongated100.log`。関連新fallback検査を追加（`fallback_tests.log`）。
+- `planned_entry_trial`（初回観測より計画姿勢を常に優先）は箱65REFINEで失敗、未採用。`refinement_backtrack`の最後の姿勢振動点の中間も元有限LPは不成立、未採用。これらを生成不能の根拠へ用いない。
+- **保持の残る定常偏差の対照1件。** `integral_held_trial.py` は現行held補正へだけ0.2*Kpの物体位置積分を追加、外側参照系の安定極を確認、既存誤差許容で積分上限、明示的な配分射影/縮小時のみ積分停止。旧separate_outputとの二重補正なし。旧楕円65、session14845、`integral_held_ellipse065.log`。runtime未採用。既知の箱85/細長75だけを追う作業へ戻さない。
+- 次は上記局所対照を確認し、同一最終実装で元固定30・元seedを新規生成から実行。旧120は実行しない。計画の99試行×4初期値や物理限界を削減しない。現公式16/30のまま。制御全面LQRは代表4/6で未採用。保持は暫定held_contact_tracking、取得早期設計＋4s連続目標、解除有限モデル＋保持区間ガード＋摩擦未成立fallbackが現在runtime。
+
+- **08:15 JST継続・未完。** 公式は16/30、新30未実施、旧120未再実行。compact full-state LQR＋旧解除の保存6件は4/6（箱75・楕円75・細長100・旧楕円65成功、円柱85UNLOAD/三角75LOAD荷重超過）。全面置換しない。held補正＋旧解除の同6件を比較中（session29289、`held_original_six`）。
+- **把持開始の明確な不具合を修正中。** 箱65の旧ACQUIRE停止は片側gap0.17mmで両側接触0.3sを待つ設計開始条件。最初の接触から同タスクの計画姿勢を使って設計開始、LOADの全pad物理/静止条件は維持。`early_design_box065`は運搬/接地通過、旧解除で荷重超過。同entryを有限解除＋2.5ms実保持ガードで36.40s退避完了/28µm/最大11.98N。三角65も早期設計で旧有限精緻化失敗を回避し運搬/接地、解除の近似摩擦モードで未成立。
+- 円柱100の接触前solve失敗は線形緩和でも不成立（数値誤差ではない）。加速度型離隔制約への置換は接触前クリアランス違反となり棄却。代わりに実観測姿勢から4sで取得目標へ滑らかに移す`continuous_acquire`は以前の失敗を通過し退避まで進行。物理/距離基準不変。
+- **暫定統合:** `staged_approach.AcquisitionReference`、初回接触時の把持設計開始、`held_input_guard`（解除入力の実2.5ms全substepを再確認、上限違反予測時のみ同じ入力に近い成立入力へ修正）、`ResponseContactControl`入力差最小目的、解除開離速度を同1mm/.5s=2mm/sへ。保持は既存暫定held_contact_trackingを維持。新LQR/加速度family/多数棄却案はruntime未採用。関連42検査pass(5.82s)、`integrated_tests.log`。
+- **固定ソースの代表6全工程:** `run_integrated_six.py` session65778、3並列、`integrated_six.log`。箱65/円柱100/楕円85/細長100/台形65/三角65、保存計画であり新生成30ではない。これが進行中のためruntimeをさらに変更せず、次の判断は結果後。
+- 遠隔は専用wsへ現時点前のruntimeを同期し、`guarded_remote`箱120/楕円85を2並列session71739。早期設計＋旧cap有限解除のガード対照で現統合6とは異なる。結果を合算しない。`runtime_release_fallback_tri065` session8739は同三角65接地状態で近似摩擦が未成立時にのみ実保持応答の開離計算へ渡す対照。runtime未採用。所有実験のみ操作。
+
+- **08:02 JST進め方を見直し。** 難しい箱85/細長75への制御試作だけでは全体が進まないため、採用候補を広い既存計画6件で先に対照する。`compact_lqr_trial.py`=元のfull held-map rotor LQR＋従来ContactUnload（10ms連続移行）。`run_compact_six.py`をlocal2並列、session48816、`compact_six.log`/`compact_six/`。箱75・円柱85・楕円75・細長100・三角75・旧楕円65。保存計画の開状態から全工程であり新生成30ではない。runtime未変更。公式16/30を維持。
+- 従来解除を同じ新entry_UNLOADから再評価：楕円85は43.51s/位置17µm/姿勢0.00194rad、細長100は39.50s/99µm/0.000143rad、双方全退避成功。台形85は4.749s荷重63.25Nで失敗。`old_release_*`。箱120は前の従来解除対照で成功済。新有限解除が広範に改善したとは言えない。
+- 全身加減速のPro回答3m46s：まず共通gimbalで全頂点の全身釣合いを検査・修正し、対応入力を実行へ渡す。固定圧縮のモデル不成立を構造不能としない。方向だけの修正は残差を除けなかった。`acceleration_family.py`は静止/持上げ±/搬送±を同時に満たす、同じ局所有限則での共通姿勢・入力の加速度一次関数をLP/QPで生成（箱0.59s）。点間の実動作は別。`family_tracking`で滑らかな4/6s進行と姿勢変化速度を入れたが箱85はLIFT16.51s荷重超過、遠隔細長75も失敗（詳細未回収）。runtime未採用。`pro_nominal_acceleration_review.png`保存・表示済。
+- `free_compression_lqr`（圧縮復元費用なし）は両条件失敗、未採用。接線材料移動も含む`material_tracking`は細長75支持喪失、箱85は繰返し回復で未成功、停止候補。全身加減速の欠落だけで実失敗の原因を確定しない。
+
+- **07:51 JST継続・未完。** 公式16/30、新全30未実施、旧120未再実行。追加対照の結果を`artifacts/large30_improvement_20261024/control_comparison_0752.json`へ集約。新runtime変更なし（前の暫定held_contact_tracking＋有限解除は未検証のまま）。非線形終端LQは楕円65全工程成功71.99sim/242.76wall、箱85はCARRY20.87s荷重31.22N、材料移動2.3mm（旧16mmから低減）。B更新だけ/関節努力スケール/切替参照整合/2.5ms・20ms終端制約逆応答/有限滑り速度の参照/0.5s有限ホライズンLQRはいずれも箱・細長箱を成功させず、artifactのみ。加速度追従の全入力QPは楕円65成功64.80sim、箱85支持喪失。各試作を公式成績へ混ぜない。全状態LQRの無限期費用は箱の観測相対誤差で1.03e5、有限0.5sは1.26だったが、入力修正は定格11%対8%、有限版も失敗。費用条件だけを原因と断定しない。
+- **重要な設計切り分け。** `finite_task_margin.py`は元の有限滑りLPの全身釣合いにM*T*aを追加。固定qの箱85は静止/持上げ±成立、運搬±不成立。細長75は静止のみ成立。成功楕円65は全5シナリオ成立。外力6成分だけの加速度余裕とは違う。ただし固定圧縮/23s定常滑りという制限つきで、物理的不能や構造の劣位とはしない。`full_body_task_margin`の理想摩擦版は細長箱の静止も不成立だったため、採否は同じ有限則へ戻した。
+- **圧縮を変えると全例の名目加速度点が成立。** `finite_acceleration_basis.py`は元の小姿勢変更＋再検査で5点の姿勢/入力を作る。箱carry±の最大一般化座標変更約0.00123（位置/角度混在）、細長の負加速度約0.0055。全点成立だが遷移の速度/加速度/離隔/実行は未検証。各保存execution内に`diagnostic_acceleration_basis.npz`。固定姿勢のままgimbalのみをLP残差双対勾配で修正する`full_body_direction_repair.py`は箱/細長とも残差を除けず不採用（18/15s）。固定圧縮で接触反力が十分変えられないことを疑う。未探索構造の足切りへ未導入。
+- Pro6m9sレビュー：タスク運動と接触を保つ相対回復入力余裕を評価。内部誤差の新契約なしに3cm材料失敗上限を構造足切りへ流用しない。構造に能力がないことと帰還が入力を選べないことを分ける。`pro_relative_margin_review.png`表示済。上の名目加速度の新事実を送り、固定姿勢での推力方向変更と加速度依存の姿勢/入力参照の比較を相談中（`pro_nominal_acceleration_request.png`表示済）。
+- **現在の短い対照** `free_compression_lqr`：固定圧縮へ非常に強く戻す追加費用を除いた全状態保持写像LQR。加速度で必要な圧縮変化を帰還が妨げていないかを箱85/細長75で確認中（session7854/37105）。構造/実行物理/監査基準を維持、runtime未変更。Proの回答待ち。次は加速度点の成立と遷移の成立を分け、根拠なく構造を除外しない。
+
+- **07:30 JST継続・未完。** 公式大型30は16/30のまま、新全30なし。全状態保持写像LQRのrotor加速配分版は旧楕円65cm全工程成功63.57sim/134.60wall（LIFT平均2.42ms）。箱85cmはLIFT16.40s荷重超過、2.5ms入力安全修正付きでも16.22sに成立入力未発見。遠隔同修正版は楕円75cm成功64.01sim、細長75cmLOAD11.85s未成立。固定配分LQTは経路進行不足、制約付きLQTは楕円65成功68.92sim/222.31wallだが箱85は16.44s荷重超過。いずれもartifactでruntime未採用。
+- 箱85の`lqr_validity`で静止設計の微小差分精度とは別に、実運動中の保持応答との差が増加することを確認。物体速度予測差は約0.35→1.33mm/s、接触点1面の累積変位16.1mm。線形近似の相対誤差は実増分が小さい時に増大するので数字だけで原因確定しない。現在`nonlinear_lqt`で観測q/vから次2.5msの応答を毎回計算し同じ終端二次目的へ入れる比較を箱85・楕円65で実行中。保持応答だけで全工程成立とは言わない。
+- Pro2m23sレビュー完了：全状態/全入力LQRへの根本反対なし。名目参照自体の運動ずれ、入力制限/接触切替、旧生成器の制御余裕と新制御との意味の違いを要検証。`pro_full_state_review.png`保存・表示済。旧制御用余裕を新制御の保証へ読み替えない。runtimeのheld_contact_trackingは別の暫定案であり、最終採用ではない。
+
+- **07:12 JST継続・未完。** 全30新成績なし、公式16/30。fullstateの局所LQR対照を開始。既知物理の実2.5ms写像を全状態・Dock/推力に差分、全体作用零空間の制限を置かない。名目保持20sは楕円65/箱85成功、最大6.57/5.95N、設計0.13/0.09s、独立方向差分誤差0.13%/0.0046%。楕円は入力を実モータ域へ射影、物体ずれ0.75mm。固有値最大0.99999997/0.999999995で頑健安定を主張しない。`bounded_plant_lqr_probe`/`full_plant_lqr_probe`。Proへ根本的置換の妥当性を相談、返答待ち。
+- `plant_lqr_module.py` はartifactのみ。初回全工程はpath.advance欠落によるLIFT参照停止を特定し修正。修正前を手法の失敗と混同しない。現在box85(session15257)/旧ellipse65(session63098)をローカル、細長75を遠隔で全工程試験。構造/物理/成功基準/元governorの停止則を維持し、入力上下限から進行加速度域を計算。実入力射影後/支持切替/全工程は未検証。
+- **現在のruntime保持は別案の試験統合。** `build/held_contact_tracking.py` を新設しConstrainedMomentumFeedbackへ接続。20ms予測の法線復元＋物体追従、100Hz補正量を中間2.5ms更新でも保持。途中入力が域外なら補正全棄却する初版は旧楕円65CARRY失敗。実モータ域への射影後に同じ瞬時物理検査をする版は同条件全工程成功68.03sim/231.19wall、LIFT平均8.93ms。まだ最終採用としない。旧artifact joint_tracking系は現runtimeのbaseを読むので今後そのまま使うと二重補正になる。新LQR対照はupdate全置換なので影響なし。
+- **解除の最新。** 短区間上限修正付きの有限開放で箱120全退避68.70s/0.060mm/28.08N、細長75全退避37.80s/0.379mm、速い開放版の楕円85全退避44.10s/0.136mm/姿勢0.135rad。台形85は自由飛行への切替で失敗。切替後も検査し直前実入力を初期値とする版も未成立。既存20mm退避離隔まで有限制御を続ける版は台形が退避完了したが位置32.35mmで元30mm基準未達、箱120は0.4s未成立。runtime解除には未統合。短区間予測が安全指令を見つけたことと全解除成功を分ける。
+- 遠隔sampled_tracking細長100は保持/運搬を通過したがUNLOAD摩擦未成立。exact_tracking箱85は15.40s支持喪失で失敗（精密刻みだけでは直らない）。pressure_tracking箱85も28.49s支持移行失敗。いずれも不採用、終了済。旧120未再実行。
+
+- **06:56 JST継続。** 有限接触の開放指令＋同じ2.5ms実保持応答による上限修正（artifact `finite_guard_checkpoint`）で細長75cmは37.80s退避完了/0.379mm/荷重16.62N。箱120cmは旧31.35N違反を回避（最大28.08N）し退避へ到達、10000呼出上限で61.06s途中だったため20000呼出で完了まで再試験中（session32819、`finite_guard_box120_complete.log`）。新しい全30は未開始。
+- 有限近似が未成立の場合だけ同じ保持応答で開離指令を解く版を台形85cmで確認中（session10036、`finite_guard_taper085.log`）。楕円85cmは既存0.5s復元時定数に合わせた開放速度2mm/s＋同じガードで比較中（session52465）。開放経路＋旧入力差の2s補間だけの対照は細長/箱とも過負荷となり不採用。10ms逆応答で開離/エネルギーを直接最適化する版も短時間で未成立、不採用。
+- Pro4m42sレビュー：物体維持と機体開放を分け、姿勢・速度・実サーボ・基準入力を同じ開放運動に合わせる。時間混合率は荷重移行/完了の証明ではない。短応答の荷重/物体運動/実離隔で進行を評価。`pro_release_progress_review.png`保存・表示済み。
+- 保持の100Hz補正量保持版 `sampled_tracking` は旧楕円65全工程成功、67.63sim/295.99wall（400Hz補正411wallとの比較）。細長100を遠隔確認中session32789。20ms予測を実刻み0.125msにしたexact_trackingは箱85で再び回復へ移行、現在遠隔継続session35271。刻みだけの問題ではない。予測中の最小法線荷重も復元出力へ含めるpressure_tracking箱85をローカル確認中session60796。これらは全てartifactのみ。
+
+- **06:47 JST継続・未完。** 新30は箱120cm解除の荷重超過で停止済。完了26/成功15、旧公式16/30を更新しない。旧120未再実行。解除指令の実保持区間を再現し、31.3472621715Nを短区間予測31.3472621803N（位置差7.6e-13m）で再現、warmstart復元では完全一致。区間内最大35.252335N。`reproduce_release_peak.log`。
+- 旧解除＋10/20ms安全修正は細長75cmで0.22〜0.25sに成立解を見つけられず、有限接触案を初期値にした3回目も未達。箱120cmは旧解除で57.49s退避完了/0.119mm、修正0。新有限支持解除はまだruntimeにあるが広い検証で不合格、最終採用済みと扱わない。
+- 遠隔joint_trackingは保存楕円65/75・細長100の3件全工程成功、細長75/箱85は支持喪失で失敗。保持補正はartifactのみ。現在遠隔計算なし。局所解除は、旧指令の最小修正ではなく最初から開離を目的とするresponse_openも0.12sに未成立。エネルギー型目的を対照中。Proへ再現結果と解除目的/進行条件の根本整理を依頼、返答待ち。全30再開前に複数の保存接地状態で確認する。
+
+- **06:30 JST継続・未完。** 固定版30は元3件＋parallel27件を同じruntimeで実行中。19件終了11成功、計画超過0。新失敗は楕円85cmRETREAT姿勢誤差0.455rad、台形85cmUNLOAD摩擦モード未成立。その他箱65取得timeout、箱85/細長75支持喪失、円柱100取得solve、楕円65保持、三角65取得refine。旧120再実行なし。
+- **解除の次の局所改善は未採用。** 通常取得の0.2mm/s開放上限が解除にも適用されていたため、開放側だけ1mm/0.5s=2mm/sへ変えた`faster_release_checkpoint`で同じ楕円85接地状態から47.17s退避完了、位置0.304mm/姿勢0.126rad、違反なし。台形85・細長75を対照中(session29238)。runtimeは固定中で変更しない。
+- **遠隔分担。** 100Hz解除の部分試験は円柱65/細長75とも完了（位置0.081/0.323mm、wall80.0/44.2s）。未採用。`joint_tracking_module.py`は20ms予測終端で物体誤差微分＋2倍姿勢誤差も評価し、圧縮復元だけで物体追従を悪化させない変更。旧楕円65は接地へ到達したがremoteコピーplan.jsonの絶対パス欠落でUNLOAD中停止、成功扱いにしない。コピーのパスを修正し`joint_tracking_ellipsoid065_paths`で再実行(session84334)、既存成功楕円75(session34217)・細長100(session2227)も遠隔比較中。すべてartifactのみ、主30へ混ぜない。remote専用`/home/leus/amsrr_det_large30`。
+- **Pro2m20sレビュー完了。** 非圧縮目標は反力をゼロに置き換える操作ではなく整合的。切替時入力連続・実離隔は別途確認。台摩擦の内部式が反力を表せないことと、成功にモード拡張が必須であることを分ける。`pro_release_review.png`保存・ユーザーに表示済み。現在追加質問待ちなし。
+
+
+- **06:14 JST固定30検証中。** `large30_release_transfer_20261024`最初3件（細長65成功、箱65/cylinder65継続）と`large30_release_transfer_parallel_20261024`残り27件を合算する。同じruntime/入力/seed/制御設定。速度改善のため元scheduler181016だけ停止し、実行中子181019/182998を維持、未開始27件を4並列・計画直列32へ切替（session20405）。元3と新27は重複なし。`summarize_transfer.py`で全30とsource/settings一致を確認する。違う実装の過去partial結果とは混ぜない。関連36検査pass、diff check通過。
+- Proへ非圧縮解除目標と台の有限摩擦モードの理論を確認中。remoteの既存interval_acquisition対照は制御構成validationで開始前に拒否、物理実行していない。遠隔追加処理は現在なし。
+
+
+- **06:10 JST継続・未完。** 解除の目標を荷重移行と同期。初期圧縮を維持するsmooth版は細長75cmで0.0325s失敗し不採用。非圧縮側から同じ2sで開放する共通版は、同じ保存状態で細長75cm37.74s/位置0.379mm、円柱65cm40.95s/0.048mm、双方退避完了・荷重/距離違反なし。`ContactUnload`へこの小変更だけ採用。目標切替による失敗時再試行も改善せず不採用。台接触拡張/保持補正は引き続きartifactのみ。
+- 先のsmooth版7形状試験は部分区間であり全工程成績ではない。箱120cmは試験呼出数上限で退避途中、円柱85cmは位置ずれ8.5cm。新30はこれからで公式16/30を維持。旧120は再実行しない。
+
+
+- **06:01 JST継続・未完。** `large30_release_clearance_20261024`は円柱65cmUNLOADで有限接触計算未成立を確認し、runner163458の所有子のみ停止した。全30完走なし、公式16/30のまま。完了例には楕円65cm（追加保持補正なし、新生成で旧失敗から成功）、細長65・箱75・円柱75・楕円75の成功がある。箱65取得timeout、三角65観測後姿勢調整未成立、細長75台支持喪失もあり、部分成績を最終結果へ混ぜない。
+- **解除の根本欠落を局所特定、未採用。** ContactStepControlの摩擦境界処理はgripperのみ。台側にも同じ有限摩擦射影を適用するartifact `support_modes_scaled_module` は、円柱65の失敗最終状態で成立指令を返した（元残差3.72e-9/力射影誤差4.74e-11、台2接触滑り＋2離脱）。支持法線変数を元等式で消去し、同じ射影へ渡して元変数へ復元。台の摩擦係数0.6を保持。粘性で悪条件化した式を力単位へスケールする必要があり、未スケール版は0.005N残差で不採用。ただしentry_UNLOADからの実行は0.455sで別のモードが見つからず、近傍枝を加えた版も0.4625sで未成立。細長65は27.73s退避完了。runtimeへはまだ入れていない。力/速度/距離条件や支持を除く対照は原因診断だけであり採用しない。
+- **次の解除対照。** 共通2sの入力移行と同時に、法線隙間の目標も観測初期値から開放値へ滑らかに変える`smooth_release_module`。従来の即時1mm開放目標による遷移要求を分けるため、円柱65の同一entry_UNLOADから対照中（session7278）。runtime未変更。現在本番panelなし。
+- **保持診断（遠隔分担）。** Pro5m12s回答は、終端姿勢＋速度をタスク参照に対して定義し、最終入力でも双方を再評価すること、保持補正で変わっただけの要求を物理的未達と見なして積分停止しないことを指摘。`pro_joint_output_review.png`保存・表示済。別PCの`joint_output_newton`は保存下降状態で開離指標9.38e-4→1.09e-8、物体6出力を各5%改善、下降速度-3.187→-3.395mm/s、上限内荷重6.625N。単発の両立根拠であり閉ループ未確認/未採用。
+- **遠隔の積分対照は未達。** `projected_integral_transfer_ellipsoid065`は0.5*Kp積分＋明示的配分制限だけの積分停止、圧縮参照と入力移行同期。最終位置誤差56.5µm/姿勢0.00220radまで減ったが33.295s時に台から45.8µm上、23s保持参照期限で失敗。原条件の成功とはしない。出力をローカルへ回収済。remote現在実験なし。新しい保持制御はruntimeへ入れていない。
+
+- **05:40 JST・固定30を不具合修正後に再開。** `large30_numeric_release_20261024`は最初の完了例・細長箱65cmのUNLOADで非把持gimbal/object距離1mm違反。環境距離だけを制約していた新解除の欠落のためrunner156163の所有子のみ停止。`SeparationRateConstraints(all_geometry=True)`を追加し解除に適用、意図したpad/objectとobject/supportの接触許可は維持。2検査pass。全く同じentry_UNLOADから細長65cm28.263sで退避完了/最終位置0.0003mm、細長75cm38.025s完了/0.664mm、双方荷重/距離違反なし。修正前30へ合算しない。
+- **新30:** `large30_release_clearance_20261024`、sessionはtool参照。実行2/計画直列32、元30入力/seed維持、runtime固定。保持補正は含めない。旧120を再実行しない。
+- **追加診断完了。** transfer_release楕円65cmは32.310s/DESCEND期限、位置4.029mmで未採用。24物理core固定の計画比較は楕円120cm21.847s/細長120cm17.342sで改善せず不採用。Pro再送は再読込後に受理、姿勢＋速度を直接扱う案の回答待ち。remoteへruntime py同期済、現在remote実験なし。
+
+- **05:35 JST継続・未完。** 新しい全30は未実施、公式成績16/30。解除だけ共通runtimeへ採用：有限支持ContactStepControl、置いた物体の参照を保持・機体旧姿勢は拘束せず、実隙間0.2mm確認後に既存退避へ渡す。接触中2.5ms/退避10msを呼出元と一致。保存解除状態で細長箱75cmと楕円75cmは退避完了、最終位置誤差0.664/0.088mm、姿勢誤差0.0002/0.040rad、違反なし。円柱85cmも先の部分区間で完了。全工程への一般化は未確認。関連34検査pass。
+- **保持補正は未採用。** transfer_output（支持→空中の入力移行と圧縮参照を同期）は細長箱100cm全工程成功、68.45s/251.16wall。100Hzへ補正を間引くsampled_completeはLOAD後RECOVERで失敗、未採用。limited_integral65は過半の更新が停止し位置誤差3.915mm・DESCEND期限失敗、先の単純積分0.2（0.951mm）より悪化。積分停止の条件を安易に外して採用しない。Proの既存接地探索を含む2m13s回答は、配分前の共通位置積分・下流制約も含む方向別停止・空中から解除へ持越さないことを確認。スクリーンショットpro_bias_review.png表示済み。
+- **直前診断（完了）。** release_runtime_trialによる新解除のみの保存細長箱75cm（71945）、transfer_output＋新解除の保存楕円65cm（1173）、推力方向最適化の余剰変数を除くcompact_power_plan（8823）。本家/旧120は実行しない。いずれも全30へ合算しない。release_runtime細長75はLIFT保持失敗で解除へ到達しなかった。compact_powerは最大楕円19.65s/細長17.79sで速度改善なし、未採用。
+- **固定30開始。** `large30_numeric_release_20261024`、runner156163/session6715、実行2/計画直列32。新解除・推力方向改善・数値修正、保持補正なし。元30入力/各seedを維持。実行中runtimeは固定。Proへ積分対照の結果と姿勢＋速度を直接扱う案を送信したがUI送信エラーが出たため回答未確認。
+
+- **05:18 JST継続・未完。** 新しい全30は未実施、最終16/30のまま。新規代表6は3/6。runtimeに保持/解除の新制御は未採用。`check_local_task.py`には採用候補の`input_direction_refinement.py`を証拠保存一覧へ追加しただけ。
+- **保持改善は配置に未達。** `output_fast_ellipsoid065`は把持・運搬・下降まで進んだが、32.2425s/既存23s有限参照上限で終了。接触喪失ではない。最終高さ差3.462mm、全位置誤差3.769mm。既存`TouchdownTranslation`の探索は0.2mm/s・追加参照2mm上限で、残時間3.57sでは0.71mmしか追加しない。新設ではなく定常偏差問題。Proへこの事実と積分帰還の候補を送信、返答待ち。
+- **予測粗化対照。** `coarse_output_module`は予測だけ0.5ms、実行0.125ms不変。名目65/75cmとも23s保持、物体漂移1.76/7.80mm、最大荷重7.24/7.74N、wall193/175s。細長箱100全工程はLOAD中補正後のRECOVER設計未成立。入力の支持→空中移行と同じ補間で圧縮参照を変える`transfer_output_trial`を100cmで確認中session46853（LOAD→LIFTまでは進行）。未採用。精密予測の反復1回版65cm23sは551sと依然遅く、75cmの重複対照はPID142733を停止。
+- **共通の定常偏差対照。** `integral_output_module`は物体位置姿勢の積分項0.2*Kp、実駆動飽和時積分停止、既存追従許容に基づく積分状態上限、外側の線形参照モデル固有値を確認。粗い予測版と組み合わせた保存65cm全工程を開始（session41544）。runtime未採用、接地探索/23s/物理条件は変更しない。
+- **解除の保存状態対照が改善。** `unload_checkpoint.py`で細長箱75cmの同一entry_UNLOAD状態：現行0.236sで荷重100.25N、既存PlannedWithdrawalも0.022sで32.56N。有限接触・台支持を含む既存ContactStepControlへ切替える`step_unload_checkpoint`は6s違反なし/最大14.33N、最後各pad0.04N以下。続く`step_unload_module`は0.2mmの実幾何分離を確認後に既存HeldBackgroundWithdrawalへ渡し、同じ保存状態で37.7375s退避経路完了、最大20.257N/2.173Nm、違反なし。これは部分区間であり全工程成功とはしない。適用中2.5ms、離脱へ渡した後10ms。
+- **追加計画比較（制御診断並走中の参考計測）。** 2台数窓のスケジュールは最大楕円20.216s/細長箱120cm15.211sで大改善なし、未採用。N6の偶数50試行だけremote・奇数49試行local、元seed全99維持の`distributed_half_plan`は最大楕円16.736s/同306.943（remote12.426s）、全N6の分散より改善。runtimeには分散処理なし。最終の比較は重い診断を止めて行う。remoteソース同期済み、現在remote計算なし。
+
+
+- **05:04 JST時点・未完。** 新規代表6 `large_direct_power6_20261024` は3/6成功（以前0/6）：台形65・三角柱75/100成功。箱85LOAD台支持なし、楕円65CARRY保持、細長箱75UNLOAD荷重超過。全30新成績なし。解除周期2.5ms化は細長箱に効果なし、円柱85は今回はRECOVER timeoutで比較段階まで届かず、未採用。
+- **推力方向の局所改善を採用候補として統合。** `input_direction_refinement.py`は外力目標からpowerを下げるgimbal方向を求め、1/.5/.25の後退と既存有限接触・余裕・クリアランス検査、最後に接近経路作成。独立試行毎の固定手続き、全工程シミュレーションなし。最大楕円322.11→306.94、7機群を重量下界で除外。統合計画楕円120 19.563s、台形120 12.446s/5機/299.58、細長箱120 16.486s。改善のない候補の追加処理が時間を増やす問題もあり、全体計画15sは未達。関連15検査pass。
+- **相対保持の根拠と試作。** Pro1m17sレビューは、二出力を分けた継続補正は妥当だが、物体の累積姿勢誤差・途中更新・非線形出力を確認するよう指摘。`output_pulse_probe`は20ms終端の物体速度を保ち開離指標を下げる入力で共通相対速度を閉じる側へ反転、元制御へ戻すと再発。`separate_output_module`はこの勾配と実応答で継続補正。名目楕円65cmが23s保持成功（元9.535s）、物体漂移最大1.693mm、荷重7.211N、wall588s。遅いため未採用。続く75cmは停止して計算節約し、同じ条件で反復1回版 `output_fast_hold.py` の両ケース23s確認を開始。
+- **予測出力時刻の追加対照。** 物体速度だけ実制御周期2.5msへ合わせる `actual_output_short` は保存9sから1秒保持するが物体漂移6.38mm（20ms出力版1.01mm）へ悪化。未採用。20ms版は物体速度一致を全運動一致と主張しない。
+- **分散計画。** 新ソースをremote専用repoへ同期。N6をremoteへ分けた `distributed_six_plan` は最大楕円21.013s（同306.94）、remote計算16.90s＋起動/転送でlocal19.56より遅い。未採用。remote12物理/24論理i9-10920X。現在remote実験なし。
+
+
+- **04:55 JST継続・未完。** 代表6再生成 `large_direct_power6_20261024` は5件完了2成功、最後の三角柱75cm継続。台形65cm/三角柱100cm成功、箱85cm台支持なし、楕円65cmCARRY保持、細長箱75cmはUNLOAD荷重超過。全30新成績はまだなし、16/30のまま。
+- **推力負担最小化の数値修正を採用。** `minimum_input_lp.py`のpower coneは元等式を保持して解く。消去方式は失敗時の代替として保持。旧24/24棄却が24/24受理、最大楕円335.664→322.111、元物理残差1.98e-11。独立LP接平面下界による最適性確認含む6検査pass。新規計画最大楕円24.862s、台形120cm15.434s、細長箱120cm13.422s/負担289.975。15s全条件達成とはしない。remoteへこの最新pyは未コピー。
+- **保持の追加診断。** 半刻みでも楕円65cm9.493s開離で解消せず。Dock目標角のgap積分は名目から2.035sで開離に悪化、不採用。Pro4m23s回答は物体と相対出力の実入力作用を分けた短いパルス＋元制御復帰対照を要求。`output_pulse_probe.py`で保存9s状態を診断中、runtime未変更。
+- **解除時の更新周期対照を開始。** `ContactUnload`の接触保持・支持移行は現行10ms。把持と同じ2.5msにし、内部経過時計も一致させるartifact対照 `unload_period_trial.py`、細長箱75cm（新計画）と円柱85cm（旧計画）の全工程比較。releaseへ渡した後は旧10msのまま。未採用、物理条件不変。
+
+
+- **04:36 JST時点・未完。** 制御の新規採用はなし。`held_gap_correction.py`の一時統合は撤回し、`held_gap_correction_compact.py`としてartifactにのみ保存。`check_local_task.py`はHEADと同じ。全30の新成績なし、16/30のまま。物理・成功条件・120件再実行なしを継続。
+- **空中限定の開離補正対照は2/4。** `air_gap_elongated_box_100`全工程成功（旧失敗）、`air_gap_ellipsoid_075`既存成功維持。一方65cm楕円はCARRY、75cm細長箱はDESCEND荷重超過。LOADから補正すると65cm楕円は成功するが100cm細長箱は失敗する。ケース/段階を物体ごとに切替えず共通化が必要。全パッドの正の最悪開離をLP＋実応答で減らす`minimax_gap_trial`も65cm/100cm双方失敗で不採用。
+- **Pro6m33s案の実測。** 相対root/物体姿勢誤差から物体速度を変えずrootへの速度目標を作り、その運動量を全体参照へ加える`relative_momentum_module`。名目静止保持65cmはrate2/20/200で9.530/9.492/8.122s開離、物体漂移0.404/2.58/7.64mmで改善なし。75cmrate2は23s保持。追加の係数調整を打切り、この結果と作用の共用問題をProへ返し次の根本レビュー待ち。主制御は未変更。
+- **保持の未完診断。** `nominal_half_step.py`は同じ制御2.5ms・物理刻み半分.0625ms、名目65cm保持の刻み感度を比較中session63947。全工程ではない。
+- **計画の追加高速化を採用。** 実三角形上の接触点を求める既存8反復をnativeへ集約。Python版と5形状×2pad×4配置の出力比較と元の姿勢/開放回帰4検査pass。`native/geometry_kernel.cpp`、`native_grasp_geometry.py`、`contact_geometry.py`、material_surfacesキャッシュを更新。最大楕円25.265s（以前38.36s）、台形120cm14.825s（26.22s）、細長箱120cm14.842s（24.60s）。厳密に同じ選択負担/台数。直前採用ソースの関連40検査pass、新native分4pass。全タスク実行/時間の評価はこれから。
+- **分散計画はartifact比較のみ。** SSH接続更新済み、`/tmp/amsrr-det-remote.sock`6h。remote専用repoへ採用pyとnativeソース/同じbinaryをコピーしload確認。`remote_group.py`がN7の99×4のみ実行、同一seed・ソース照合、最後に圧縮pickle送信。`distributed_plan.py`で最大楕円19.229s、負担335.6638/5機は同じ。native更新後の交互スケジュールは24.331sへ悪化（上位台数の先行無駄仕事）し未採用。remote単独N7 15.312s、無圧縮転送含18.568s/13.3MB。現在remote実験なし。runtime分散接続は未実装。
+- **入力負担最小化の数値診断。** 最大楕円のprepare中24回のpower-cone最小化がすべてInsufficientProgressで棄却され、既存の成立LP/二次目的へ戻っていることを確認。QR消去、停止精度、行スケール変更はいずれも改善せず未採用。現在`direct_input_probe.py`で等式を消去せず元変数のまま解く比較中session15236。物理残差と負担の元受理条件は変えない。結果は`direct_input_probe.log/json`。
+
+
+- **04時台の継続：大型30改善は未完。** 最終30はまだ16/30のまま。短い保持応答に基づく開離予防は、保存楕円65cmで全工程成功、既存成功75cmもbest-effort版で成功。ただし細長箱75cm/100cm・箱85cmは失敗（scalar_best_*）。追加条件の未達だけで停止する厳格版は75cmへ退行したので不採用。現在は物理適合入力の範囲で全パッドの最悪開離指標を改善する試作で、保証とは呼ばない。runtimeへの採用はまだない。
+- **名目圧縮への復元試作は未採用。** scalar_restoreは箱85cmがCARRYまで進むが失敗、細長箱100cmもLIFT失敗。入力保持後のgdot+2*(g-g_ref)を用いたが全工程改善なし。次の局所対照は、取得/LOADの支持移行へ干渉せず、移動経路がある空中段階だけ開離補正するair_gap_trial。まだ開始前。Pro1m5s回答は元の局所応答補正に根本矛盾なし、全パッド達成と最悪面だけの改善、瞬時と区間条件を区別するよう指摘。名目圧縮への復元について追加レビュー待ち。
+- **計画高速化。** 同一の接触役割LPの2段を1つのHiGHS計算器で解き直し、160問題0.793→0.416s、値の差2.7e-15以下。runtimeへ適用、独立SciPy計算との24問題比較を含む8検査pass。式・目的・サンプル数は不変。direct_role_plansで最大楕円の全体時間確認中session79940。深い計算待ち列は楕円28.08sで大改善なし、runtime未採用。deep_queue_plans2の後続は誤ったケース名で未実行。前回deep_queue_plansは計画比較と制御実行の干渉を避けるため途中停止し時間評価から除外。
+
+
+- **03:50 JSTの見直し：大型30改善は未完。** 制御の採用追加はまだない。新しい全30も未実施。構造のgimbal数式の関節順序をローター順へ正規化し、同じ式のキャッシュ分裂を減らした（並替え・物理残差含む4検査pass）。最大条件の時間は約29〜30sで15s未達。24workerや全N式の親での事前生成は改善なし、未採用。
+- **保持の原因を具体化。** `nominal_hold_probe`は経路なし・生成q/uでの診断。楕円65cmは初速度0/計画微小速度の両方で9.535sに開離、成功楕円75cm/箱85cm/細長箱85cmは少なくとも10s保持。力真値は診断だけ。`decompose_gap_loss`で失われる面の開き70.756µmの内、機体集合と物体の相対剛体変位70.698µm、関節変形0.058µm。関節剛性だけでは解消しない原因の証拠。9s前から同傾向。
+- **保持区間の制約不足。** 瞬時の開離予防条件 gddot+4*gdot+4*g<=0 を追加しても9.645s開離、未採用。同じ9s状態で瞬間加速度1.610e-5、2.5ms後5.018e-5。最初のstepと私有qaccは一致、Jvも正負3差分幅で一致。入力保持中に応答が変わる。`barrier_one_step.log`、`check_gap_rate.py`。
+- **未採用の追加対照。** 実配分＋保持区間の内部LQRは独立微小偏差の予測差14/42%、成功例2も悪条件/未成立で不採用。相対基部加速度の優先化は名目から早期開離、仮想接線復元目的も楕円65cm7.97sで開離。これらをruntimeへ入れていない。
+- **現在の短い診断。** `held_gap_hold.py` / `held_gap_module.py`は2.5ms保持後の gdot+2*g<=0 を入力補正へ使う。固定全体作用版は9.23sで補正未収束。Pro8m45s回答は、剛体に近い機体全体の相対変位を変えるには全体作用の変更が必要になり得ると指摘。現在は同じ物理/荷重制約で全体作用変更を最小化する版を診断中、`held_gap_relaxed.log`、session29598。全工程検証ではなくruntime未採用。区間内の表面/荷重再検査と全工程確認が必要。
+
+- **2026-10-24 大型30条件を改善中、未完了。** 元large30入力・ケース別seedを維持し、旧120は再実行しない。現行の全30成績は16/30。新しい全30はまだ未実施、80%達成は主張しない。
+- **新規生成から代表6件は2/6成功（以前は0/6）。** `artifacts/runs/large_improve6_20261024`は完了。台形65cmは14.958s、三角柱100cmは11.809sで計画・全工程成功。残り箱85cm/三角柱75cmはLOAD台支持復旧、楕円65cm/細長箱75cmは空中接触維持で停止。全30の成績へ混ぜない。
+- **採用済み改善。** 共通gimbal式の容量再利用（未収束は元サイズへ戻る）、実凸部品の内部点による十分な重なり条件の早期棄却、元の残差・目的誤差を確認するQP別解法、AlmostPrimalInfeasible時の既存達成可能作用への射影。関連19検査pass。追加で固定接触配置の力/トルク釣合い緩和問題に対する双対下限を実装し、明確に不成立な接触配置だけ16回の推力方向計算前に除く。関連11検査pass。探索の99×4と機体/成功条件は不変。
+- **時間の残件。** 最新の代表計画は楕円120cm29.10s、台形120cm約17.9s、細長箱120cm約16.9sで15s未達。全頂点検査・共有待ち重複除去・固定姿勢の別QP経路は時間効果がなく未採用。追加の力/トルク早期棄却は129回の高価な失敗候補評価を減らしたが最大条件の壁時計改善は小さい。
+- **制御試作は採用せず。** 次周期圧縮制約、空中再接触（固定全体作用/作用変更の罰則/剛体同伴速度）、予測サーボ上限、圧力追従・圧力優先、MIT Kp500はいずれも全工程の改善を示せていない。すべて`artifacts/large30_improvement_20261024`内診断でありruntimeへ混ぜない。短時間の接触回復を全工程成功へ読み替えない。
+- **次の入口：内部形状の局所制御を診断中。** 成功2/失敗2の実際の2.5ms入力保持＋現行配分の数値微分では両者に弱減衰成分があり、失敗原因とはまだ断定できない。Proレビュー（3m36s）は、追加内部入力も最終配分を通した応答で微分し、全体運動との結合・非平衡ドリフト・差分幅依存を確認するよう指摘。`internal_lqr_probe.py`はその実経路の微分と局所安定化可能性を調べる診断。runtime未変更。新たな採用前には全工程・既存成功条件の退行確認が必要。
+
+- **2026-10-24 大型30条件の追加検証を完了：16/30成功（53.3%）。** 最終root `artifacts/runs/large30_final_20261024`、session37382終了。全ソース/設定一致、欠落0、旧120件再実行なし。65/75/85/100/120cmは4/4/3/3/2成功（各6件）。選択3機10・4機15・5機4・6機1、実行3機10・4機13・5機1。5機細長箱85cm成功。6機台形120cmは26.2sで未実行、5機5接触楕円120cmも38.4sで未実行。7/8機採用なし、骨格4/口把持面25種類。計画5.58〜38.36s、中央値11.84、超過6（120cmの4/6を含む）。最終run32.70分。成功率80%未達の拡張評価であり、既存120件の成績を混ぜない。
+- **修正と検証。** 退避の1m検索半径を越えたら形状中心距離＋半径で問い合わせを拡大。近接物理/成功条件は維持。球距離/Jacobian3検査pass、実5機5接触モデルの3m離隔でも有限値確認。最終120cm円柱のログで1mを越えて継続し、全工程成功。修正前版は途中停止し、最終30件すべて同修正版で実行した。残る失敗は計画超過6、保持3、荷重3、力配分精度1、把持成立解未発見1。今回の依頼はサイズ拡張の検証であり、追加の手法変更/80%までの改善は行っていない。
+- **遠隔診断と保存先。** 専用remote環境は残すが実験は停止済み。4条件の同入力seed比較でremote計画はlocalの約1.6〜1.9倍（worker24 vs32）。中断遠隔の成績は除外。最終集計`large30_summary_20261024.json`、固定入力`large30_inputs_20261024.json`、集計script`artifacts/summarize_size_extension_20261024.py`、入力生成` scripts/generate_large_panel.py`。READMEへ結果/制約を追記。新規commit依頼なし、未commit。以降は新しい指示から。以下の実行中記述は過去経過。
+
+- **大型30件・修正版を継続中。** session37382、`large30_final_20261024`、全30入力を1つのpanelとしてseed20261024で再実行、後半12の乱数列は以前の分割実行とは異なる。15件完了9成功、5機細長箱85cm成功。全最終結果はこのrootのみから集計する。`artifacts/summarize_size_extension_20261024.py`は最終30件が揃ってから実行。旧遠隔/旧残りlocalの同入力seedの時間比較は診断欄に分離。修正版3回帰＋実5機遠距離確認済み。次は残り15件の監視、30件同一性/サイズ別/構造数/機体数集計と報告。未完了。
+
+- **大型30件の明確な不具合を修正、全30件を修正版で再検証する。** 120cm箱は5機5接触で搬送・配置後、退避中にpad_gap_jacobiansの1m検索半径を越えて未捕捉ValueError→process_error。残りrunner PGID4087915を停止。接触/安全上限ではない検索半径を、近傍1mで見つからない場合だけ部品中心距離＋bounding radiiから拡大。近傍計算・物理/成功条件は維持。球の距離/Jacobian回帰3件pass、保存5機モデルを3m離した実形状でも有限距離/Jacobian確認。元の18件＋残り途中結果は修正版へ合算しない。以後最終出力は`large30_final_20261024`、元120件は実行しない。
+
+- **大型30件：先頭18件完了10成功。** ローカル65/75/85cm各6条件。物理/制御ソースと設定は18件一致。5機の細長箱85cm成功、最大採用5機。ローカル計画超過1（65cm台形19.08s）。現在残り100/120cm12件をローカルで実行中、session37299、出力`large30_remaining_local_20261024`、同flags/seed/32worker。元ローカルsession12010は正常終了。遠隔中断結果は合算しない。次は残り12件監視→30件同一ソース確認/構造・サイズ成績集計→遠隔超過と同入力/seedの時間比較→報告。今回依頼は追加検証であり80%まで手法を変更する依頼ではない。既存120件は再実行していない。
+
+- **大型30件：遠隔実行を中断。** 別PCで計画超過が3連続（100cm細長箱46.32s、円柱17.47s、楕円18.96s）。多数検証前に対処する指示に従い、専用remoteプロセス群PGID940のみTERM。`large30_remote_interrupted_20261024`へ記録回収済み、最終30件に合算しない。現在ローカル18件のみ継続、65cm箱/細長箱は双方4機で成功、計画約9.7秒。残り12件はローカルで同一入力/seedを実行し、サイズとPCによる超過を分離する。remote session81015は停止済み。
+
+- **2026-10-24 大型物体30条件の追加検証を実行中。** 最新依頼は既存120件を再実行せず、サイズ拡大30件を追加評価すること。`scripts/generate_large_panel.py`で元入力だけから生成（過去成否を参照しない）、6形状×最大寸法65/75/85/100/120cm、質量と姿勢を維持する相似拡大、慣性/台上高さ再計算。入力`artifacts/runs/large30_inputs_20261024.json`。主方式・成功条件は変更しない。ローカル先頭18件`large30_local_20261024`（session12010、2実行/32探索/計画直列）、別PC後半12件`large30_remote_20261024`（SSH session81015、2実行/24探索/計画直列）。共通seed20261024、80物理substeps、前回と同制御flags。別PC専用`/home/leus/amsrr_det_large30`へソース/仮想環境/実行依存を転送済み、libgompだけ専用.libsへコピーしLD_LIBRARY_PATH指定。グローバル環境変更なし。SSH制御socket `/tmp/amsrr-det-remote.sock`、port2222。遠隔依存import成功。初期2ローカル条件はLOAD/LIFTまで進行。完了後、遠隔結果を回収して30件集計、計算機別時間/機体数/寸法別成否を報告。計画超過が集中する場合は多数試行の継続前に原因確認。未完了。
+
+- **2026-10-24：別PCへの計算分担を許可、SSH接続確認済み。** `leus@192.168.96.35:2222`、WSL2/Linux x86_64、Core i9-10920X（12コア/24スレッド）、RAM31GiB、Python3/rsyncあり。認証秘密は保存していない。今後の独立条件検証の分担候補とする。専用環境の構築・同一条件での速度/動作比較は未実施、速度向上の実測なし。完了済み120件は再実行していない。
+
 - **2026-10-24：120件の連続表示コマンドを追加。** `scripts/replay_120.sh` からMuJoCo画面を1つ開き、保存構造＋endpoint＋実行設定で入力順に再シミュレーションする。構造探索なし。Nで次、Esc/Q/閉じるで終了、マウス視点操作、開始番号/件数指定。録画・結果は永続化せず、既存実行器の一時出力は各試行後に削除。元記録は変更しない。`check_local_task.main` は引数リストと読み取り用表示処理だけ追加、制御/物理条件は維持。
 - **全機体の表示を修正。** 最初は接触計算用の省略モデルを表示してしまい、接触Dock以外が欠落していた。現在は保存済みの全形状モデルへ関節状態を写し、位置計算のみで描画。6機ケースで計算側388形状に対して表示4552形状すべての描画対象登録、物理状態が変わらないこと、モデル切替/N/Qを確認。全体と搬送先が入る初期視点を設定。2件の短時間連続表示、失敗条件box_y0_0の失敗表示、成功条件elongated_box_y0_0の全工程成功を確認（全工程確認は全形状表示への修正前）。設定引継ぎ・endpoint高度変換の2検査成功。120件全再実行はしていない。背景計算と描画の所要時間により元の軌道/成否との完全一致は保証しない。
 

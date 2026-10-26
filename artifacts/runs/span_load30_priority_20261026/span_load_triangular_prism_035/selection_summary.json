@@ -1,0 +1,573 @@
+{
+  "protocol": {
+    "request": {
+      "id": "span_load_triangular_prism_035",
+      "payload": {
+        "shape": "triangular_prism",
+        "size": [
+          0.46566775465534505,
+          0.3518188001036499,
+          1.1278439202262314
+        ],
+        "mass": 3.5,
+        "inertia": [
+          [
+            0.3950769531903605,
+            -0.0,
+            -0.0
+          ],
+          [
+            -0.0,
+            0.40263274836579355,
+            -0.0
+          ],
+          [
+            -0.0,
+            -0.0,
+            0.05569108832791096
+          ]
+        ],
+        "vertices": [
+          [
+            -0.23283387732767252,
+            -0.1172729333678833,
+            -0.5639219601131157
+          ],
+          [
+            0.23283387732767252,
+            -0.1172729333678833,
+            -0.5639219601131157
+          ],
+          [
+            0.0,
+            0.2345458667357666,
+            -0.5639219601131157
+          ],
+          [
+            -0.23283387732767252,
+            -0.1172729333678833,
+            0.5639219601131157
+          ],
+          [
+            0.23283387732767252,
+            -0.1172729333678833,
+            0.5639219601131157
+          ],
+          [
+            0.0,
+            0.2345458667357666,
+            0.5639219601131157
+          ]
+        ],
+        "faces": [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            4,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            4
+          ],
+          [
+            0,
+            3,
+            5
+          ],
+          [
+            5,
+            2,
+            0
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            1,
+            2,
+            5
+          ]
+        ]
+      },
+      "source": [
+        -0.4441963895051533,
+        0.39603856955786787,
+        0.33290761662205304,
+        0.43842440493080687,
+        0.5547828774944914,
+        0.5547828774944915,
+        0.4384244049308069
+      ],
+      "destination": [
+        -0.6949271325421097,
+        0.267007675394618,
+        0.33290761662205304,
+        0.43842440493080687,
+        0.5547828774944914,
+        0.5547828774944915,
+        0.4384244049308069
+      ],
+      "support_top": 0.21563468325416968,
+      "strata": {
+        "family": "triangular_prism",
+        "yaw_bin": 1,
+        "family_x_yaw_bin": "triangular_prism:1",
+        "resting_orientation": "large_face",
+        "position_bin": "0:1",
+        "size_bin": "up_to_115cm",
+        "mass_bin": "3.5kg"
+      },
+      "resting_pose_generation": {
+        "method": "local_supported_COM_height_descent",
+        "evaluations": 154,
+        "final_tilt_step_rad": 9.5367431640625e-08,
+        "initial_rotation": [
+          0.7071067811865475,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "applied_world_yaw_rad": 1.8040416346365682
+      },
+      "span_load_extension": {
+        "original_case": "triangular_prism_y1_3",
+        "target_max_dimension_m": 1.1278439202262314,
+        "mass_kg": 3.5
+      }
+    },
+    "starts": 1,
+    "criterion": "sum actual rotor thrust**1.5",
+    "probability": 0.05,
+    "total_error": 0.05,
+    "groups": 8,
+    "trials_per_group": 59,
+    "task_wrench": true,
+    "maximum_trials_without_candidate": 236,
+    "trial_unit": "one generated and continuously improved structure",
+    "extension": "complete the first 59 trials per count in batches of 8 before issuing remaining fixed series in batches of 32 up to 236; stop selection once the first 59 blocks and an incumbent have evidence; later work is cancelled between stages and drained for shutdown but remains unobserved for selection",
+    "stopping_evidence": "59 aligned count blocks; common final incumbent; latent unpruned block minimum",
+    "generator": "task",
+    "task_generation_probability": 1.0,
+    "auxiliary_initial_enabled": true,
+    "auxiliary_generator": "task_growth_variable_count",
+    "calculation_reuse": "exact-input memo within this planning call; draws and per-trial budgets unchanged",
+    "input_direction_refinement": "omitted optional power step; finite input minimization and task-feedback margin checks retained",
+    "scheduling": "round-robin count batches until an incumbent; weight-lower-bound priority within a batch and after an incumbent; fixed count prefixes; distribute screens; collect all completed starts",
+    "generation_scope": "task-directed trees, one contact per module; variable-count auxiliary uses the same grammar",
+    "task_contact_count_law": "uniform from coarse vertical support count through N; infeasible selected coarse sets end this proposal, not a physical impossibility claim",
+    "contact_assignment_order": "task force selects contact set; seam reachability chooses its connection order",
+    "task_contact_selection": "normalized task-wrench residual and force-boundary distance; coarse friction 2.25 and 0.5 N normal floor; full material and actuation recheck",
+    "task_pose_initialization": "retain generated root, joints and contact targets for continuous surface fitting",
+    "probability_scope": "one more trial of this fixed generator; not existence of a better structure",
+    "generation_distribution": {
+      "remote_probability": 0.36,
+      "choice": "independent SeedSequence([seed,N,index,914]); no load-dependent reassignment",
+      "remote_identity": {
+        "machine": "x86_64",
+        "processor": "Intel(R) Core(TM) i9-10920X CPU @ 3.50GHz",
+        "versions": {
+          "python": "3.10.12",
+          "numpy": "2.2.6",
+          "scipy": "1.15.3",
+          "pinocchio": "3.8.0",
+          "mujoco": "3.16.0"
+        },
+        "mismatches": []
+      },
+      "physical_screens": "local",
+      "scope": "same mixed-machine generator for the next trial; not a per-machine probability bound"
+    }
+  },
+  "protocol_id": "3467de69c47b68b7b9759593f2e8f410e6ada6f85d83ced52ed402e28eb4a60d",
+  "seed": 2026102414,
+  "seed_source": "explicit_replay",
+  "workers": 32,
+  "worker_start_method": "fork",
+  "cancelled_excluded_trials": [],
+  "cancelled_extra_trials": [
+    {
+      "modules": 5,
+      "trial": 63,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 6,
+      "trial": 88,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 80,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 77,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 4,
+      "trial": 94,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 5,
+      "trial": 100,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 6,
+      "trial": 107,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 6,
+      "trial": 117,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 6,
+      "trial": 120,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 96,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 99,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 104,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 105,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 107,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 108,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 109,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 114,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 116,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 117,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 118,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 119,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 120,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 121,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 7,
+      "trial": 122,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 91,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 92,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 93,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 94,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 95,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 96,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 98,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 99,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 100,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 101,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 102,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 103,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 104,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 105,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 106,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 107,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 108,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 109,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 110,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 111,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 112,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 113,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 114,
+      "status": "unfinished_after_prefix_evidence"
+    },
+    {
+      "modules": 8,
+      "trial": 115,
+      "status": "unfinished_after_prefix_evidence"
+    }
+  ],
+  "cancelled_auxiliary_initial": false,
+  "worker_shutdown": {
+    "method": "cancel unobserved work between stages and drain results",
+    "wall_s": 0.5330838221125305,
+    "late_results": "not used in selection or evidence"
+  },
+  "wall_s": 7.331451361067593,
+  "initial": {
+    "wall_s": 0.7638041009195149,
+    "status": "completed_no_candidate",
+    "method": "task_growth_variable_count",
+    "collected_s": 1.577383941039443,
+    "burden": null
+  },
+  "selection_evidence": {
+    "protocol_id": "3467de69c47b68b7b9759593f2e8f410e6ada6f85d83ced52ed402e28eb4a60d",
+    "complete": true,
+    "method": "aligned_count_block_minimum",
+    "required_blocks": 59,
+    "scope": "one additional fixed independent trial in every count; each count is contained in this block event",
+    "block_improvement_probability_upper": 0.049507609888226944,
+    "undiscovered_structure_existence_probability_claimed": false,
+    "improvement_probability_target": 0.05,
+    "simultaneous_error_probability": 0.05,
+    "groups": [
+      {
+        "modules": 1,
+        "lower_bound": 190.9047985880518,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 251.03090726538284,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 2,
+        "lower_bound": 211.23066670889713,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 230.7050391445375,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 3,
+        "lower_bound": 243.37068649181495,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 198.56501936161968,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 4,
+        "lower_bound": 278.83703869217084,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 163.0986671612638,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 5,
+        "lower_bound": 315.71404210306935,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 126.22166375036528,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 6,
+        "lower_bound": 353.32222580993266,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 88.61348004350197,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 7,
+        "lower_bound": 391.3586641094065,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 50.57704174402812,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      },
+      {
+        "modules": 8,
+        "lower_bound": 429.667638013153,
+        "force_balance_tolerance": 1e-06,
+        "status": "fixed_trial_probability_bound",
+        "maximum_improvement": 12.268067840281617,
+        "required_trials": 59,
+        "completed_prefix_trials": 59,
+        "successful_prefix_trials": 0,
+        "one_more_trial_improvement_probability_upper": 0.049507609888226944,
+        "shared_error_probability": 0.05
+      }
+    ]
+  },
+  "selected_burden": 441.9357058534346,
+  "protocol_sources_file": "../selection_sources/087a03287223ed51ed85d07738214186c4cc862e5dec3a7be03fdbf37081a98d.json",
+  "archive": {
+    "source_file": "selection.json",
+    "source_sha256": "97f20e30d8fdfe3be52cd781d47e6da52b798d786b6f52096a08dfb9f3000908",
+    "omitted_trial_rows": 929,
+    "scope": "Selection protocol and stopping evidence; detailed candidate rows remain in the local raw output."
+  }
+}

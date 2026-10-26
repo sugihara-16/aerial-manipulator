@@ -1,0 +1,726 @@
+{
+  "shape_results": {
+    "box": {
+      "total": 5,
+      "successes": 5
+    },
+    "elongated_box": {
+      "total": 5,
+      "successes": 5
+    },
+    "cylinder": {
+      "total": 5,
+      "successes": 4
+    },
+    "ellipsoid": {
+      "total": 5,
+      "successes": 1
+    },
+    "triangular_prism": {
+      "total": 5,
+      "successes": 4
+    },
+    "tapered_box": {
+      "total": 5,
+      "successes": 4
+    }
+  },
+  "mass_results": {
+    "3.0": {
+      "total": 6,
+      "successes": 5
+    },
+    "3.5": {
+      "total": 6,
+      "successes": 4
+    },
+    "4.0": {
+      "total": 6,
+      "successes": 6
+    },
+    "4.5": {
+      "total": 6,
+      "successes": 5
+    },
+    "5.0": {
+      "total": 6,
+      "successes": 3
+    }
+  },
+  "total_wall_s": 2256.269750488922,
+  "old_total_wall_s": 5336.855427797884,
+  "success_wall_s": {
+    "min": 79.54462343407795,
+    "median": 171.07666741404682,
+    "max": 464.2184935170226
+  },
+  "all_execution_wall_s": {
+    "min": 45.405554111581296,
+    "median": 146.92701308475807,
+    "max": 464.2184935170226
+  },
+  "success_wall_over_simulation": {
+    "min": 1.3128341877343566,
+    "median": 2.305280495593921,
+    "max": 5.152370742264521
+  },
+  "all_phase_control": {
+    "ACQUIRE": {
+      "cases": 29,
+      "per_case_mean_ms": {
+        "min": 6.983931428527574,
+        "median": 15.917006698712662,
+        "max": 25.301284117209892
+      },
+      "worst_ms": 67.04310793429613
+    },
+    "REFINE": {
+      "cases": 28,
+      "per_case_mean_ms": {
+        "min": 7.096911191611606,
+        "median": 12.768417981145134,
+        "max": 21.87535439443309
+      },
+      "worst_ms": 80.13360807672143
+    },
+    "LOAD": {
+      "cases": 28,
+      "per_case_mean_ms": {
+        "min": 2.659090617671609,
+        "median": 4.300042146351188,
+        "max": 8.126340859259168
+      },
+      "worst_ms": 22.511260118335485
+    },
+    "LIFT": {
+      "cases": 28,
+      "per_case_mean_ms": {
+        "min": 3.509021310135722,
+        "median": 4.999301340430975,
+        "max": 8.204649583436549
+      },
+      "worst_ms": 29.502056073397398
+    },
+    "CARRY": {
+      "cases": 25,
+      "per_case_mean_ms": {
+        "min": 3.4938150265952572,
+        "median": 4.820539025240578,
+        "max": 8.04906929610297
+      },
+      "worst_ms": 11.398436035960913
+    },
+    "DESCEND": {
+      "cases": 25,
+      "per_case_mean_ms": {
+        "min": 4.101084638386965,
+        "median": 5.583231732227475,
+        "max": 8.893462163477874
+      },
+      "worst_ms": 12.582877185195684
+    },
+    "UNLOAD": {
+      "cases": 24,
+      "per_case_mean_ms": {
+        "min": 6.454416558206562,
+        "median": 8.630818094265011,
+        "max": 13.01804591086136
+      },
+      "worst_ms": 49.973346292972565
+    },
+    "RETREAT": {
+      "cases": 24,
+      "per_case_mean_ms": {
+        "min": 3.8601453218073365,
+        "median": 5.422751413894137,
+        "max": 8.38305865707781
+      },
+      "worst_ms": 43.62894641235471
+    }
+  },
+  "worst_control_ms": 80.13360807672143,
+  "maintained_successes": 11,
+  "new_successes": [
+    "span_load_box_030",
+    "span_load_tapered_box_030",
+    "span_load_cylinder_040",
+    "span_load_ellipsoid_040",
+    "span_load_triangular_prism_040",
+    "span_load_tapered_box_040",
+    "span_load_cylinder_045",
+    "span_load_triangular_prism_045",
+    "span_load_tapered_box_045",
+    "span_load_box_050",
+    "span_load_elongated_box_050",
+    "span_load_tapered_box_050"
+  ],
+  "regressions": [],
+  "identical_structure_count": 28,
+  "changed_structures": [
+    "span_load_cylinder_045"
+  ],
+  "failure_concentration": {
+    "method": "one-sided Fisher exact; Holm across all predeclared group comparisons",
+    "alpha": 0.05,
+    "clear_concentration": false,
+    "equal_failure_rates_certified": false,
+    "mechanical_cause_review_required": true,
+    "comparisons": [
+      {
+        "axis": "family",
+        "group": "box",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.28,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "elongated_box",
+        "total": 5,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.28,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "cylinder",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.24,
+        "p_value": 0.7638766087041949,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "ellipsoid",
+        "total": 5,
+        "failures": 4,
+        "failure_fraction": 0.8,
+        "other_failure_fraction": 0.12,
+        "p_value": 0.00579624717555752,
+        "adjusted_p_value": 0.289812358777876,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "triangular_prism",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.24,
+        "p_value": 0.7638766087041949,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family",
+        "group": "tapered_box",
+        "total": 5,
+        "failures": 1,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.24,
+        "p_value": 0.7638766087041949,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "0",
+        "total": 12,
+        "failures": 4,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.16666666666666666,
+        "p_value": 0.2664898320070734,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "1",
+        "total": 6,
+        "failures": 2,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.20833333333333334,
+        "p_value": 0.43330386089006767,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "2",
+        "total": 6,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2916666666666667,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "yaw_bin",
+        "group": "3",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.25,
+        "p_value": 0.8299911582670203,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:0",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.25,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:0",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.25,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:0",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.21428571428571427,
+        "p_value": 0.4183908045977012,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:0",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.17857142857142858,
+        "p_value": 0.048275862068965524,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:0",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.21428571428571427,
+        "p_value": 0.4183908045977012,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:0",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.25,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:1",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.20689655172413793,
+        "p_value": 0.23333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:1",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:1",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.20689655172413793,
+        "p_value": 0.23333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:2",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "box:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "elongated_box:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "cylinder:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "ellipsoid:3",
+        "total": 1,
+        "failures": 1,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.20689655172413793,
+        "p_value": 0.23333333333333334,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "triangular_prism:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "family_x_yaw_bin",
+        "group": "tapered_box:3",
+        "total": 1,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2413793103448276,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "large_face",
+        "total": 10,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.35,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "standing",
+        "total": 3,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.25925925925925924,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "curved_stable",
+        "total": 5,
+        "failures": 4,
+        "failure_fraction": 0.8,
+        "other_failure_fraction": 0.12,
+        "p_value": 0.00579624717555752,
+        "adjusted_p_value": 0.289812358777876,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "small_or_sloped_face",
+        "total": 10,
+        "failures": 2,
+        "failure_fraction": 0.2,
+        "other_failure_fraction": 0.25,
+        "p_value": 0.7715296198054818,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "resting_orientation",
+        "group": "lying",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.21428571428571427,
+        "p_value": 0.4183908045977012,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:1",
+        "total": 7,
+        "failures": 2,
+        "failure_fraction": 0.2857142857142857,
+        "other_failure_fraction": 0.21739130434782608,
+        "p_value": 0.532475685234306,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:0",
+        "total": 9,
+        "failures": 1,
+        "failure_fraction": 0.1111111111111111,
+        "other_failure_fraction": 0.2857142857142857,
+        "p_value": 0.9428824049513704,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "1:1",
+        "total": 9,
+        "failures": 2,
+        "failure_fraction": 0.2222222222222222,
+        "other_failure_fraction": 0.23809523809523808,
+        "p_value": 0.7029885057471266,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "position_bin",
+        "group": "0:0",
+        "total": 5,
+        "failures": 2,
+        "failure_fraction": 0.4,
+        "other_failure_fraction": 0.2,
+        "p_value": 0.3289124668435013,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "up_to_115cm",
+        "total": 18,
+        "failures": 4,
+        "failure_fraction": 0.2222222222222222,
+        "other_failure_fraction": 0.25,
+        "p_value": 0.7335101679929266,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "size_bin",
+        "group": "over_115cm",
+        "total": 12,
+        "failures": 3,
+        "failure_fraction": 0.25,
+        "other_failure_fraction": 0.2222222222222222,
+        "p_value": 0.5971706454465076,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "3kg",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.25,
+        "p_value": 0.8299911582670203,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "3.5kg",
+        "total": 6,
+        "failures": 2,
+        "failure_fraction": 0.3333333333333333,
+        "other_failure_fraction": 0.20833333333333334,
+        "p_value": 0.43330386089006767,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "4kg",
+        "total": 6,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.2916666666666667,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "4.5kg",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.25,
+        "p_value": 0.8299911582670203,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "mass_bin",
+        "group": "5kg",
+        "total": 6,
+        "failures": 3,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.16666666666666666,
+        "p_value": 0.12012967875036841,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      }
+    ]
+  },
+  "success_secondary_counts": {
+    "contact_force": 8,
+    "contact_moment": 4,
+    "contact_gap": 4
+  }
+}
