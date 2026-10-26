@@ -41,18 +41,86 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
         self.info.update(scope=__doc__,nominal_action_compensated=True,method='bounded_whole_momentum_geometry',normal_tracking=normal_tracking,internal_tracking=internal_tracking,contact_coupled=contact_coupled)
 
     def update(self,q,v,reference,velocity=None,input_reference=None,*,path=None):
+        self.last_request=dict(q=q.copy(),v=v.copy(),reference=reference.copy())
+        self.last_request.update({key:value.copy() for key,value in
+            [('velocity',velocity),('input_reference',input_reference)] if value is not None})
+        saved=None if path is None else dict(path.__dict__,info=path.info.copy())
+        try:
+            return self._checked_update(q,v,reference,velocity,input_reference,path=path)
+        except ValueError as error:
+            if str(error) not in ('constant constraint infeasible',
+                    'bounded momentum fixed gimbal outside input domain',
+                    'no attainable path acceleration',
+                    'path cannot preserve nominal stopping domain') and not str(error).startswith('contact allocation '):
+                raise
+            if not hasattr(self,'previous_issued_input') or self.contact_response is None:
+                raise
+            if path is not None:
+                path.__dict__.update(saved);path.info=saved['info'].copy()
+                # Continuous nominal braking reference, not an instantaneous stop.
+                # This is a reference proposal; finite response must still accept it.
+                acceleration=-min(path.peak,path.speed/path.period)
+                path.advance(acceleration)
+                reference,velocity=path.reference()
+            from build.held_contact_tracking import HeldContactTracking
+            if not hasattr(self,'held_tracking'):self.held_tracking=HeldContactTracking(self)
+            held=self.held_tracking
+            held.reference=held.air_gaps.copy()
+            held.target=reference.copy()
+            held.target_velocity=np.zeros(self.m.nv) if velocity is None else velocity.copy()
+            mujoco.mj_integratePos(held.model,held.target,held.target_velocity,held.horizon)
+            prior_failures=getattr(held,'failures',0)
+            command=held.correct(q,v,self.previous_issued_input)
+            if held.failures!=prior_failures:
+                if path is not None:path.__dict__.update(saved);path.info=saved['info'].copy()
+                raise ValueError('finite allocation fallback unresolved') from error
+            # The anchor is already an actual corrected command. Do not add the
+            # previous nominal correction again when the normal route returns.
+            held.correction[:]=0.;held.calls=0
+            self.tracking_reference=reference.copy();self.tracking_velocity=held.target_velocity.copy()
+            self.info['finite_allocation_fallbacks']=self.info.get('finite_allocation_fallbacks',0)+1
+            if str(error) in ('no attainable path acceleration','path cannot preserve nominal stopping domain'):
+                self.info['finite_path_braking_fallbacks']=self.info.get('finite_path_braking_fallbacks',0)+1
+                if path is not None:
+                    path.info['outside_nominal_stopping_domain_steps']=path.info.get('outside_nominal_stopping_domain_steps',0)+1
+            return command
+
+    def _checked_update(self,q,v,reference,velocity=None,input_reference=None,*,path=None):
         if self.contact_response is None:
             return self._update(q,v,reference,velocity,input_reference,path=path)
-        began=time.perf_counter();saved=None if path is None else path.__dict__.copy()
+        began=time.perf_counter();saved=None if path is None else dict(path.__dict__,info=path.info.copy())
+        self.normal_linearization_margin=0.
         for iteration in range(8):
-            if path is not None:path.__dict__.update(saved)
+            if path is not None:path.__dict__.update(saved);path.info=saved['info'].copy()
             command=self._update(q,v,reference,velocity,input_reference,path=path)
             accepted,info=self.contact_response.check(command,self.expected_acceleration)
             if accepted:
                 self.diagnostics.update(info,contact_iterations=iteration+1,wall_s=time.perf_counter()-began)
+                if np.any(self.contact_response.instant_floor==0.):
+                    self.info['partial_contact_updates']=self.info.get('partial_contact_updates',0)+1
+                if self.contact_response.minimum_normal_load > 0:
+                    from build.held_contact_tracking import HeldContactTracking
+                    if not hasattr(self,'held_tracking'):
+                        self.held_tracking=HeldContactTracking(self)
+                    if path is not None:reference,velocity=path.reference()
+                    command=self.held_tracking.update(q,v,command,reference,velocity,input_reference)
+                    self.diagnostics.update(held_tracking_calls=self.held_tracking.calls,
+                        held_tracking_derivatives=self.held_tracking.derivatives,
+                        wall_s=time.perf_counter()-began)
+                self.tracking_reference=reference.copy()
+                self.tracking_velocity=np.zeros(self.m.nv) if velocity is None else velocity.copy()
                 return command
-        if path is not None:path.__dict__.update(saved)
+            # Contact active-set changes can make an affine normal-force
+            # constraint optimistic. Tighten its next lower bound by the
+            # measured private-model deficit; the original physical check
+            # and the upper bound remain unchanged.
+            deficit=info['maximum_normal_deficit_n']
+            if deficit>0:self.normal_linearization_margin+=deficit+1e-6
+        if path is not None:path.__dict__.update(saved);path.info=saved['info'].copy()
         raise ValueError('contact allocation nonlinear force check unresolved')
+
+    def close(self):
+        if hasattr(self,'held_tracking'):self.held_tracking.close()
 
     def _update(self,q,v,reference,velocity=None,input_reference=None,*,path=None):
         began=time.perf_counter();m,l=self.m,self.local;ids=self.active
@@ -99,7 +167,8 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
         else:
             inverse,acceleration,extra,constant=self.contact_response.linearize(q,v,mass,act,ids,self.scale,nominal)
             H=inverse.T@mass@inverse;gradient=-inverse.T@target
-            extra_lo=self.contact_response.minimum_normal_load-constant;extra_hi=30.-constant
+            floor=self.contact_response.instant_floor
+            extra_lo=floor+(floor>0)*getattr(self,'normal_linearization_margin',0.)-constant;extra_hi=30.-constant
         wrench=T.T@act
         # Compare actual actuator+gravity action with the same nominal input
         # at its design geometry. Preserve the intentional supported LOAD
@@ -142,7 +211,7 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
             try:
                 x,residual,gap=solve(H,gradient,E,rhs,inequalities,inequality_lo,inequality_hi)
             except ValueError as error:
-                if str(error)!='contact allocation PrimalInfeasible':raise
+                if str(error)not in ('contact allocation PrimalInfeasible','contact allocation AlmostPrimalInfeasible'):raise
                 from build.contact_allocation_qp import solve as project
                 from build.momentum_feedback import TRACKING_TOLERANCES
                 W=np.linalg.solve(self.inertia,wrench)/TRACKING_TOLERANCES[6:,None]

@@ -35,6 +35,13 @@ def test_supported_four_module_numerical_regression():
     assert residual<1e-7 and gap<1e-8
 
 
+def test_large_object_projection_numerical_regression():
+    from pathlib import Path
+    problem=dict(np.load(Path(__file__).parent/'fixtures/contact_allocation_large.npz'))
+    x,residual,gap=solve(**problem)
+    assert residual<1e-7 and gap<1e-8
+
+
 def test_zero_pressure_row_and_no_wrench_equality():
     # An open contact contributes 0 <= 0 <= 30. It must neither destroy the
     # bounded closest-input optimum nor add a badly scaled dual variable.

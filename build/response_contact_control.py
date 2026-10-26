@@ -1,4 +1,4 @@
-"""Experimental constrained inverse of a complete 10 ms contact response.
+"""Constrained input optimization over the specified held-response interval.
 
 Uses observations and issued commands only. A local derivative proposes an
 input update; the same nonlinear response checks it before acceptance.
@@ -13,7 +13,19 @@ import scipy.sparse as sp
 
 from build.contact_step_control import pad_gap_jacobians
 from build.short_contact_response import ShortContactResponse
-from amsrr_det.clearance import MotionBoundedClearance
+from amsrr_det.clearance import (MotionBoundedClearance, CLEARANCE_TOLERANCE,
+                                PART_CLEARANCE, ENVIRONMENT_CLEARANCE)
+
+
+NUMERICAL_SEARCH_STATISTICS = dict(retries=0, recovered=0, recovered_scales={})
+
+def normal_load_violation(loads, minimum):
+    """Relative terminal deficit for positive per-pad pressure requirements."""
+    floor = np.broadcast_to(np.asarray(minimum, dtype=float), np.shape(loads))
+    if not np.isfinite(floor).all() or np.any(floor < 0):
+        raise ValueError('normal load requirements must be finite and nonnegative')
+    active = floor > 0
+    return float(np.max((floor[active]-np.asarray(loads)[active])/floor[active], initial=0.))
 
 
 class ResponseContactControl:
@@ -45,15 +57,78 @@ class ResponseContactControl:
             k = m.jnt_dofadr[j]
             self.speed[k:k+6] = [.02]*3 + [.1]*3
         self.iterations = iterations
-        if objective not in ['tracking','release_load_motion']:
+        if objective not in ['tracking','release_load_motion','input','contact_hold']:
             raise ValueError('unknown response objective')
         self.objective=objective
         self.minimum_normal_load=0.
+        self.object_velocity_norm_limits=None
+        self.object_tracking_domain=None
+        self.feasibility_tolerance=1e-6
         self.previous = None
         self.clearance = None if clearance_model is None else MotionBoundedClearance(clearance_model, links)
+        self.separation = None
+        if clearance_model is not None:
+            from build.separation_rate_constraints import SeparationRateConstraints
+            # Share the acceptance query and aim one geometry tolerance inside
+            # its boundary, so a numerically solved linear constraint does not
+            # stall just outside the nonlinear check. This reserve only guides
+            # proposals: the original distance acceptance remains unchanged.
+            reserve=min(CLEARANCE_TOLERANCE,float(self.clearance.model.opt.ccd_tolerance))
+            self.separation = SeparationRateConstraints(clearance_model, links, response_time=1.,
+                all_geometry=True, distance_tolerance=CLEARANCE_TOLERANCE-reserve,
+                distance_query=self.clearance)
 
     def update(self, q, v, reference, velocity=None, input_reference=None, normal_targets=None):
         started = time.perf_counter()
+        predictor = self.predictor
+        args = (q, v, reference, velocity, input_reference, normal_targets)
+        if not hasattr(predictor, 'initial_step'):
+            return self._update(*args)
+        initial = predictor.initial_step.copy()
+        minimum = predictor.minimum_step.copy()
+        previous = None if self.previous is None else self.previous.copy()
+        damping = self.damping
+        try:
+            return self._update(*args)
+        except ValueError as first:
+            if not str(first).startswith('complete contact inverse found no feasible held input:'):
+                raise
+            error = first
+            try:
+                # Contact branch changes can dominate very small secants.
+                # Wider secants only propose steps; the original nonlinear
+                # physical and tracking checks still decide acceptance.
+                for factor in (10., 100.):
+                    predictor.initial_step = factor*initial
+                    predictor.minimum_step = predictor.initial_step.copy()
+                    predictor.epsilon = predictor.initial_step.copy()
+                    predictor.cached = None; predictor.origin = None
+                    self.previous = None if previous is None else previous.copy()
+                    self.damping = damping
+                    self.secant_retry_attempts = getattr(self, 'secant_retry_attempts', 0)+1
+                    NUMERICAL_SEARCH_STATISTICS['retries'] += 1
+                    try:
+                        result = self._update(*args)
+                        self.secant_retry_recovered = getattr(self, 'secant_retry_recovered', 0)+1
+                        NUMERICAL_SEARCH_STATISTICS['recovered'] += 1
+                        scales = NUMERICAL_SEARCH_STATISTICS['recovered_scales']
+                        scales[factor] = scales.get(factor, 0)+1
+                        self.diagnostics['secant_retry_factor'] = factor
+                        return result
+                    except ValueError as retry_error:
+                        if not str(retry_error).startswith('complete contact inverse found no feasible held input:'):
+                            raise
+                        error = retry_error
+                raise error
+            finally:
+                predictor.initial_step = initial; predictor.minimum_step = minimum
+                predictor.epsilon = initial.copy()
+                predictor.cached = None; predictor.origin = None
+                self.diagnostics['wall_s'] = time.perf_counter()-started
+
+    def _update(self, q, v, reference, velocity=None, input_reference=None, normal_targets=None):
+        started = time.perf_counter()
+        if hasattr(self.predictor,'start_problem'):self.predictor.start_problem()
         m, n, h = self.m, self.m.nu, self.h
         d = self.query
         d.qpos[:] = q; d.qvel[:] = v
@@ -68,6 +143,9 @@ class ResponseContactControl:
         closing_limit=np.maximum(.0002,np.maximum(gaps,0.)/.5) if self.distance_closing else .0002
         normal_velocity = np.clip((-np.asarray(normal_targets)-gaps)/.5, -closing_limit, .0002)
         anchor = np.asarray(input_reference)
+        # Keep the desired command as the objective, but start from the last
+        # accepted input when available. An infeasible new request must not
+        # discard a usable starting point for the same constrained problem.
         current = anchor.copy() if self.previous is None else self.previous.copy()
         # The previous command can lie outside the NEW observation's input
         # bounds. Start the numerical search inside those bounds; otherwise a
@@ -85,18 +163,23 @@ class ResponseContactControl:
         current = np.clip(current, low, high)
         logs = []
         radius = 1.
+        solve_tolerance=min(1e-7,self.feasibility_tolerance*.1)
 
         def value(response, command):
             # Actual predicted displacement, not desired fictitious contact forces.
             dq = np.empty(m.nv)
             mujoco.mj_differentiatePos(m, dq, 1., q, response['q'])
-            if self.objective=='release_load_motion':
+            if self.objective=='contact_hold':
+                residual=self.hold_cost.residual(response,command,anchor)
+            elif self.objective=='release_load_motion':
                 # A common optimization cost, NOT the engine's stored energy
                 # or a Lyapunov proof. The nominal contact stiffness fixes the
                 # force weighting; no case-dependent fitted weight is used.
                 residual=np.r_[mass_root@response['v'],
                     response['loads'][-1,:,0]/np.sqrt(7500.),
                     1e-6*(command-anchor)/self.input_scale]
+            elif self.objective=='input':
+                residual=(command-anchor)/self.input_scale
             else:
                 residual = np.r_[(response['v']-desired)/self.speed,
                                   (J@dq/h-normal_velocity)/.0002,
@@ -110,37 +193,67 @@ class ResponseContactControl:
                       abs(initial_raw)/self.effort,
                       abs(response['motors'][:, 0, :self.nj])/self.effort,
                       abs(vs[:, self.vi])/3., response['penetration']/.002]
+            if self.object_velocity_norm_limits is not None:
+                start=int(m.jnt_dofadr[m.joint('object').id])
+                ratios.extend(np.linalg.norm(vs[:,start+offset:start+offset+3],axis=1)/limit
+                    for offset,limit in zip((0,3),self.object_velocity_norm_limits))
             violation = max(float(np.max(a, initial=0.))-1. for a in ratios)
-            if self.minimum_normal_load>0:
-                violation=max(violation,float(np.max(self.minimum_normal_load-response['loads'][-1,:,0],initial=0.))/self.minimum_normal_load)
+            violation=max(violation,normal_load_violation(response['loads'][-1,:,0],self.minimum_normal_load))
             violation = max(violation, float(np.max(self.qlo-qs[:, self.qi], initial=0.)),
                             float(np.max(qs[:, self.qi]-self.qhi, initial=0.)), 0.)
             violation = max(violation, float(np.max(-command[self.nj:]/self.rotor_limit, initial=0.)),
                             float(np.max(command[self.nj:]/self.rotor_limit-1., initial=0.)),
                             float(np.max(self.qlo[self.gimbal]-command[:self.nj][self.gimbal], initial=0.)),
                             float(np.max(command[:self.nj][self.gimbal]-self.qhi[self.gimbal], initial=0.)))
+            if self.objective=='contact_hold':
+                violation=max(violation,self.hold_cost.violation(response))
+            if self.object_tracking_domain is not None:
+                violation=max(violation,self.object_tracking_domain.violation(response))
             if self.clearance is not None:
-                bad,_,_=self.clearance.check_many(np.vstack([q,qs]),True)
-                if bad:violation=max(violation,1.)
+                bad,part,environment=self.clearance.check_many(np.vstack([q,qs]),True)
+                if bad:
+                    # Credit distance repair before it is complete, while
+                    # never accepting a pose rejected by the original check.
+                    violation=max(violation,2*self.feasibility_tolerance,
+                        (PART_CLEARANCE-CLEARANCE_TOLERANCE-part)/PART_CLEARANCE,
+                        (ENVIRONMENT_CLEARANCE-CLEARANCE_TOLERANCE-environment)/ENVIRONMENT_CLEARANCE)
             return .5*float(residual@residual), violation, residual
 
+        if self.objective=='contact_hold':
+            initial=self.predictor.evaluate(q,v,current)
+            initial_cost,initial_violation,_=value(initial,current)
+            if initial_cost<=1e-24 and initial_violation<=self.feasibility_tolerance:
+                self.previous=current.copy();self.response=initial
+                self.predicted_q=initial['q'].copy();self.predicted_v=initial['v'].copy()
+                self.diagnostics=dict(objective=self.objective,iterations=[],zero_cost_optimum=True,wall_s=time.perf_counter()-started)
+                return current
         accepted = None
         for iteration in range(max(self.iterations,8)):
             phase_start = time.perf_counter()
             response = self.predictor.evaluate(q, v, current, True)
             prediction_s = time.perf_counter()-phase_start
             cost, violation, residual = value(response, current)
-            if violation <= 1e-6:
+            if violation <= self.feasibility_tolerance:
                 accepted = (current.copy(), cost, response)
             D = response['derivatives']*self.input_scale
-            if self.objective=='release_load_motion':
+            if self.objective=='contact_hold':
+                A=self.hold_cost.jacobian(response,D,self.input_scale)
+            elif self.objective=='release_load_motion':
                 A=np.vstack([mass_root@D[-1,m.nv:],
                     response['load_derivatives'][-1,:,0]*self.input_scale/np.sqrt(7500.),
                     1e-6*np.eye(n)])
+            elif self.objective=='input':
+                A=np.eye(n)
             else:
                 A = np.vstack([D[-1, m.nv:]/self.speed[:, None],
                                J@D[-1, :m.nv]/(h*.0002), .001*np.eye(n)])
             P = A.T@A; c = A.T@residual
+            restoring = violation > self.feasibility_tolerance
+            if restoring:
+                # First restore the physical constraints with the smallest
+                # local input change. Pulling toward the nominal input here
+                # can repeatedly undo that correction at a nonlinear boundary.
+                P = np.eye(n); c = np.zeros(n)
             # Levenberg-Marquardt regularizes the LOCAL input increment, not
             # the task cost. Adapt it from actual/predicted cost reduction.
             solve_P=P+self.damping*max(float(np.diag(P).max()),1e-12)*np.eye(n)
@@ -162,7 +275,16 @@ class ResponseContactControl:
             upper = np.minimum(upper, (high-current)/self.input_scale)
             from build.direct_response_step import direct_step
             phase_start=time.perf_counter()
-            direct=direct_step(self,solve_P,c,response,D,current,lower,upper) if self.fast_solve else None
+            use_direct=self.fast_solve and self.object_tracking_domain is None and self.object_velocity_norm_limits is None and (self.separation is None or (iteration==0 and violation<=self.feasibility_tolerance))
+            direct=direct_step(self,solve_P,c,response,D,current,lower,upper) if use_direct else None
+            if direct is not None and self.objective=='contact_hold':
+                # This is a shortcut only when the actual nonlinear prediction
+                # accepts the unconstrained step. Otherwise construct and solve
+                # the complete constrained problem below, not just reject it.
+                direct_trial=self.predictor.evaluate(q,v,current+self.input_scale*direct)
+                direct_cost,direct_violation,_=value(direct_trial,current+self.input_scale*direct)
+                if direct_violation>self.feasibility_tolerance or direct_cost>cost+1e-10:
+                    direct=None
             if direct is not None:
                 change_scaled=direct;status='Solved';matrix=None;bound=None
                 solver_note=dict(direct_optimum=True,checked_substeps=len(response['states']))
@@ -174,15 +296,34 @@ class ResponseContactControl:
                 # physical constraints are removed by this vectorization.
                 states=response['states'];qs=states[:,1:1+m.nq];vs=states[:,1+m.nq:]
                 dq,dv=D[:,:m.nv],D[:,m.nv:]
+                if self.objective=='contact_hold':
+                    aa,bb,cc=self.hold_cost.constraints(response,D,lower,upper)
+                    matrices.extend(aa);bounds.extend(bb);cones.extend(cc)
+                if self.object_tracking_domain is not None:
+                    aa,bb,cc=self.object_tracking_domain.constraints(response,D,lower,upper)
+                    matrices.extend(aa);bounds.extend(bb);cones.extend(cc)
+                if self.separation is not None:
+                    # The nonlinear distance check must also inform the
+                    # correction. Linearize each predicted separation with
+                    # respect to the same held input, then recheck all poses.
+                    for step,(Jdistance,deficit) in enumerate(self.separation.batch(qs,vs) if hasattr(self.separation,'batch') else map(lambda pair:self.separation.at(*pair),zip(qs,vs))):
+                        bounded(Jdistance@dq[step],deficit,np.full(len(deficit),np.inf))
                 bounded(dq[:,self.vi].reshape(-1,n),
                         (self.qlo-qs[:,self.qi]).ravel(),(self.qhi-qs[:,self.qi]).ravel())
                 bounded(dv[:,self.vi].reshape(-1,n),
                         (-3.-vs[:,self.vi]).ravel(),(3.-vs[:,self.vi]).ravel())
+                if self.object_velocity_norm_limits is not None:
+                    start=int(m.jnt_dofadr[m.joint('object').id])
+                    for offset,limit in zip((0,3),self.object_velocity_norm_limits):
+                        for speed,derivative in zip(vs[:,start+offset:start+offset+3],dv[:,start+offset:start+offset+3]):
+                            matrices.append(np.vstack([np.zeros(n),-derivative]))
+                            bounds.append(np.r_[limit,speed])
+                            cones.append(clarabel.SecondOrderConeT(4))
                 # Future servo saturation is part of the unchanged physical
                 # response. Bound the initial issued input and verify actual
                 # clipped effort at every substep; do not additionally demand
                 # that the hypothetical pre-limiter effort stay unsaturated.
-                if self.minimum_normal_load>0:
+                if np.any(np.asarray(self.minimum_normal_load)>0):
                     normal_change=response['load_derivatives'][-1,:,0]*self.input_scale
                     bounded(normal_change,self.minimum_normal_load-response['loads'][-1,:,0],
                             np.full(len(self.links),np.inf))
@@ -195,16 +336,18 @@ class ResponseContactControl:
                         matrices.append(np.vstack([np.zeros(n),-derivatives[k,pad]]))
                         bounds.append(np.r_[limit,loads[k,pad]])
                         cones.append(clarabel.SecondOrderConeT(4))
-                settings = clarabel.DefaultSettings(); settings.verbose = False
-                settings.tol_gap_abs = settings.tol_gap_rel = settings.tol_feas = 1e-7
+                settings = clarabel.DefaultSettings(); settings.verbose = False; settings.max_threads = 1
+                settings.tol_gap_abs = settings.tol_gap_rel = settings.tol_feas = min(1e-7,self.feasibility_tolerance*.1)
                 phase_start = time.perf_counter()
                 cost_scale=1/max(np.diag(P).max(),1e-12) if self.objective=='release_load_motion' else 1.
                 matrix,bound=np.vstack(matrices),np.concatenate(bounds)
+                from build.held_input_solver import normalize_constraints
+                matrix,bound=normalize_constraints(matrix,bound,cones)
                 solver_note={}
                 if self.fast_solve:
                     from build.held_input_solver import solve
                     try:
-                        change_scaled,solver_note=solve(solve_P*cost_scale,c*cost_scale,matrix,bound,cones)
+                        change_scaled,solver_note=solve(solve_P*cost_scale,c*cost_scale,matrix,bound,cones,tolerance=solve_tolerance)
                         status='Solved'
                     except (ValueError,np.linalg.LinAlgError):status='fallback'
                 else:status='fallback'
@@ -224,24 +367,27 @@ class ResponseContactControl:
                 trial = self.predictor.evaluate(q, v, proposal)
                 next_cost, next_violation, _ = value(trial, proposal)
                 # A feasible current input cannot be replaced by an infeasible one.
-                valid = (next_violation <= 1e-6 and next_cost <= cost+1e-10)
-                repairing = violation > 1e-6 and next_violation < violation*.9
+                valid = (next_violation <= self.feasibility_tolerance and next_cost <= cost+1e-10)
+                # Backtracking shortens the proposed correction. Require
+                # sufficient decrease proportional to that step, rather than
+                # rejecting every small step for missing a fixed 10% decrease.
+                repairing = violation > self.feasibility_tolerance and next_violation < violation*(1.-1e-4*alpha)
                 if valid or repairing:
                     current = proposal; improved = True
-                    if next_violation <= 1e-6:
+                    if next_violation <= self.feasibility_tolerance:
                         accepted = (proposal.copy(), next_cost, trial)
                     break
-            logs.append(dict(cost=cost, violation=violation, improved=improved,
+            logs.append(dict(cost=cost, violation=violation, improved=improved, restoring=restoring,
                              next_cost=next_cost, next_violation=next_violation,
                              prediction_s=prediction_s, solver_s=solver_s, linear_rows=sum(len(x) for x in bounds),radius=radius,
                              solver_note=solver_note))
             if self.adaptive_damping:
                 step_scaled=alpha*change_scaled
                 predicted=-(c@step_scaled+.5*step_scaled@P@step_scaled)
-                agreement=((violation-next_violation)/max(violation,1e-15) if violation>1e-6
+                agreement=((violation-next_violation)/max(violation,1e-15) if violation>self.feasibility_tolerance
                            else (cost-next_cost)/max(float(predicted),1e-15))
                 if not improved:self.damping=min(self.damping*10.,1e8)
-                elif violation>1e-6 or predicted>1e-12:
+                elif violation>self.feasibility_tolerance or predicted>1e-12:
                     if agreement>.75:self.damping=max(self.damping/3.,1e-12)
                     elif agreement<.25:self.damping=min(self.damping*4.,1e8)
                 logs[-1].update(damping=self.damping,agreement=float(agreement))
@@ -249,9 +395,14 @@ class ResponseContactControl:
             if iteration+1>=self.iterations:
                 if accepted is not None:break
             if not improved:
+                # A small remaining physical violation must not disappear
+                # inside the linear solver's numerical tolerance. Recompute
+                # stale secants as well before trying the tighter solve.
+                solve_tolerance=max(1e-12,solve_tolerance*.1)
+                if hasattr(self.predictor,'cached'):self.predictor.cached=None
                 if not self.adaptive_damping:radius *= .25
                 continue
-            if np.max(abs(alpha*change/self.input_scale)) < 1e-4:
+            if accepted is not None and np.max(abs(alpha*change/self.input_scale)) < 1e-4:
                 break
         self.diagnostics = dict(objective=self.objective,iterations=logs, wall_s=time.perf_counter()-started)
         if accepted is None:

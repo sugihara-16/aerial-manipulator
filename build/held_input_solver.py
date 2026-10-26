@@ -13,6 +13,26 @@ import scipy.sparse as sp
 from scipy.linalg import svd
 
 
+def normalize_constraints(matrix, bound, cones):
+    """Equivalent cone rows in comparable units, including tiny distances.
+
+    Linear rows can scale independently; a second-order cone must use one
+    positive scale for its entire block. No bound or feasible set changes.
+    """
+    matrix, bound = matrix.copy(), bound.copy()
+    offset = 0
+    for cone in cones:
+        block = slice(offset, offset+cone.dim)
+        scale = np.maximum(np.linalg.norm(matrix[block], axis=1), abs(bound[block]))
+        if type(cone).__name__ not in ('NonnegativeConeT', 'ZeroConeT'):
+            scale[:] = max(scale)
+        scale = np.maximum(scale, 1e-30)
+        matrix[block] /= scale[:, None]
+        bound[block] /= scale
+        offset += cone.dim
+    return matrix, bound
+
+
 def violation(matrix, bound, cones, x):
     slack = bound-matrix@x
     offset = 0
@@ -28,7 +48,7 @@ def violation(matrix, bound, cones, x):
     return residual
 
 
-def solve(P, c, matrix, bound, cones):
+def solve(P, c, matrix, bound, cones, *, tolerance=1e-7):
     started = time.perf_counter()
     n = len(c)
     # Cholesky change of coordinates preserves the original quadratic cost.
@@ -36,7 +56,7 @@ def solve(P, c, matrix, bound, cones):
     scaled_matrix, scaled_c = matrix@transform, transform.T@c
     unconstrained=-transform@scaled_c
     residual=violation(matrix,bound,cones,unconstrained)
-    if residual<=1e-9:
+    if residual<=min(1e-9,tolerance):
         return unconstrained,dict(wall_s=time.perf_counter()-started,
             relaxed_status='unconstrained_optimum',reduced_variables=n,
             used_relaxation=True,maximum_violation=residual,
@@ -61,7 +81,7 @@ def solve(P, c, matrix, bound, cones):
         basis=Vt[rank:].T
     reduced=basis.shape[1]
     solver = proxsuite.proxqp.dense.QP(reduced, 0, len(indices))
-    solver.settings.eps_abs = solver.settings.eps_rel = 1e-8
+    solver.settings.eps_abs = solver.settings.eps_rel = min(1e-8,tolerance*.1)
     solver.settings.eps_primal_inf = solver.settings.eps_dual_inf = 1e-9
     solver.settings.max_iter = 200
     solver.settings.max_iter_in = 100
@@ -71,10 +91,10 @@ def solve(P, c, matrix, bound, cones):
     x = transform@(origin+basis@solver.results.x)
     residual = violation(matrix, bound, cones, x)
     relaxed_status = str(solver.results.info.status)
-    used_relaxation = relaxed_status.endswith('PROXQP_SOLVED') and residual <= 1e-7
+    used_relaxation = relaxed_status.endswith('PROXQP_SOLVED') and residual <= tolerance
     if not used_relaxation:
-        settings = clarabel.DefaultSettings(); settings.verbose = False
-        settings.tol_gap_abs = settings.tol_gap_rel = settings.tol_feas = 1e-9 if equalities else 1e-7
+        settings = clarabel.DefaultSettings(); settings.verbose = False; settings.max_threads = 1
+        settings.tol_gap_abs = settings.tol_gap_rel = settings.tol_feas = min(1e-9 if equalities else 1e-7,tolerance*.1)
         result = clarabel.DefaultSolver(sp.csc_matrix(np.triu(P)), c,
             sp.csc_matrix(matrix), bound, cones, settings).solve()
         if str(result.status) not in ['Solved', 'AlmostSolved']:

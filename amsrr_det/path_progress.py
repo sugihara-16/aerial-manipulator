@@ -34,7 +34,7 @@ class ScalarProgress:
     @property
     def finished(self):return self.distance-self.position<1e-8 and self.speed<1e-8
 
-    def choose(self,interval,*,observed_position=None,observed_speed=None,feedback_acceleration=0.,position_tolerance=.03):
+    def choose(self,interval,*,observed_position=None,observed_speed=None,feedback_acceleration=0.,position_tolerance=.03,allow_stronger_brake=False):
         if interval is None:raise ValueError('no attainable path acceleration')
         h=self.period;end=self.distance if self.pause_position is None else self.pause_position
         lo=max(interval[0],-self.peak,-self.speed/h)
@@ -49,6 +49,11 @@ class ScalarProgress:
                 actual_speed=max(0.,observed_speed+h*actual_acceleration)
                 violation=max(violation,actual_position+stopping_distance(actual_speed,self.peak,h)-end-position_tolerance)
             return violation
+        if allow_stronger_brake and (hi<lo-1e-10 or excess(lo)>1e-9):
+            # The trajectory's nominal deceleration is not an actuator limit.
+            # Use additional attainable braking when needed, without reversing.
+            # Future stopping distance still uses the conservative nominal brake.
+            lo=max(interval[0],-self.speed/h)
         if hi<lo-1e-10 or excess(lo)>1e-9:raise ValueError('path cannot preserve nominal stopping domain')
         hi=max(lo,hi)
         if excess(hi)>0.:

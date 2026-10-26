@@ -26,6 +26,7 @@ def check_opening_clearance(meta,shape,surfaces,path,obstacles, *, prepared_plan
     import mujoco
     from .mujoco_model import make_plant,numbers
     from .clearance import MotionBoundedClearance,PART_CLEARANCE,ENVIRONMENT_CLEARANCE
+    from .planning_memo import check_cancelled
     if prepared_plant is None:
         plant=make_plant(meta['modules'],meta['edges'],payload=shape.payload(),mesh_cache=meta.get('material_mesh_cache'),floor=True)
         doc=ET.fromstring(plant.xml)
@@ -58,6 +59,7 @@ def check_opening_clearance(meta,shape,surfaces,path,obstacles, *, prepared_plan
         tangent=pin.difference(plant.pin,first,last)
         pending=[(0.,1.,0)]
         while pending:
+            check_cancelled()
             low,high,depth=pending.pop();fraction=(low+high)/2;half=(high-low)/2
             q=pin.interpolate(plant.pin,first,last,float(fraction))
             qpos=plant.configuration(q);queries=check.queries
@@ -173,7 +175,9 @@ def plan_opening(model,meta,shape,q,reference,surfaces,points,normals,obstacles,
             avoid_pairs.append(pair);repairs.append(evidence)
             continue
         break
-    speeds=np.full(len(path.path)-1,.006)
+    # After supported unloading, opening uses a 2 cm/s reference. Actual
+    # motor, acceleration and collision limits are checked independently.
+    speeds=np.full(len(path.path)-1,.02)
     if translated:speeds[-1]=.06
     duration=sum(max(float(b-a)/speed,float(abs(last[gimbals]-first[gimbals]).max())/.3)
                  for a,b,first,last,speed in zip(path.distances[:-1],path.distances[1:],path.path[:-1],path.path[1:],speeds))

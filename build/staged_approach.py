@@ -11,6 +11,23 @@ from amsrr_det.release import check_opening_clearance
 from amsrr_det.numerics import quintic_reference
 
 
+class AcquisitionReference:
+    """Continue the approach smoothly when the contact controller takes over."""
+    def __init__(self, model, q, gaps, duration=4.):
+        self.model, self.first = model, q.copy()
+        self.gaps, self.duration, self.elapsed = np.asarray(gaps).copy(), duration, 0.
+
+    def update(self, target, compression, period):
+        from build.check_local_pickup import smooth
+        ratio = smooth(self.elapsed / self.duration)
+        self.elapsed += period
+        delta = np.empty(self.model.nv)
+        mujoco.mj_differentiatePos(self.model, delta, 1., self.first, target)
+        pose = self.first.copy()
+        mujoco.mj_integratePos(self.model, pose, delta, ratio)
+        return pose, ratio*np.asarray(compression)-(1-ratio)*self.gaps
+
+
 class StagedApproach:
     def prepared(self):
         """Transfer this newly calculated path, without transferring simulators."""

@@ -4,15 +4,28 @@ These are local velocity constraints, not a continuous collision certificate.
 The independent full-geometry audit still checks every executed physics step.
 No contact force or successful simulated trajectory enters these constraints.
 """
+import copy
 import numpy as np
 import mujoco
-from amsrr_det.clearance import MotionBoundedClearance
+from amsrr_det.clearance import MotionBoundedClearance, collision_query
 
 
 class SeparationRateConstraints:
-    def __init__(self,model,links,response_time=.5):
-        self.query=MotionBoundedClearance(model,links,halo=.02)
+    def __init__(self,model,links,response_time=.5,*,all_geometry=False,distance_tolerance=0.,distance_query=None):
+        if distance_query is None:
+            self.query=MotionBoundedClearance(model,links,halo=.02)
+        else:
+            if not all_geometry:
+                raise ValueError('shared distance model requires all geometry')
+            # Match the acceptance query's collision geometry and buffers.
+            # Different detection halos can change curved-shape CCD roundoff
+            # enough to strand an otherwise valid boundary correction.
+            self.query=copy.copy(distance_query)
+            self.query.data=mujoco.MjData(distance_query.model)
         self.response_time=response_time
+        self.distance_tolerance=distance_tolerance
+        if all_geometry:
+            return  # Preserve the full model's collision pairs and intended-contact exclusions.
         # This query protects robot/environment distances. Internal geometry
         # remains in the independent full-geometry execution audit; it need
         # not enter this additional environment velocity constraint.
@@ -29,7 +42,7 @@ class SeparationRateConstraints:
     def at(self,q,v):
         m,d=self.query.model,self.query.data
         d.qpos[:]=q;d.qvel[:]=v
-        mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d);mujoco.mj_collision(m,d)
+        mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d);collision_query(m,d)
         intended,limits=self.query.classifiers[True](d)
         rows=[];lower=[]
         for c,allowed,limit in zip(d.contact,intended,limits):
@@ -39,7 +52,7 @@ class SeparationRateConstraints:
             mujoco.mj_jac(m,d,ja,None,c.pos,int(m.geom_bodyid[a]))
             mujoco.mj_jac(m,d,jb,None,c.pos,int(m.geom_bodyid[b]))
             rows.append(c.frame[:3]@(jb-ja))
-            lower.append(-(c.dist-limit)/self.response_time)
+            lower.append(-(c.dist-limit+self.distance_tolerance)/self.response_time)
         return np.asarray(rows).reshape(-1,m.nv),np.asarray(lower)
 
 
@@ -76,7 +89,7 @@ class PreloadDomain:
         return np.vstack([rows,extra]),np.r_[bounds,limits]
 
 
-def preload_domain_rates(m,d,links,period):
+def preload_domain_rates(m,d,links,period,*,maintain_floor=False):
     # Recover the same conservative preload domain required at handoff.
     # Guide excessive compression down over the existing 0.5 s response
     # time; do not demand an instantaneous force drop from a bounded motor.
@@ -98,4 +111,11 @@ def preload_domain_rates(m,d,links,period):
     # Retain 5% interior room, as in the existing finite preload design.
     target=.95*limit
     rate=np.where(normal>target,(normal-target)/(7500.*.5),(normal-target)/(7500.*period))
+    if maintain_floor:
+        # Recover toward an interior normal load, using the same 5% room as
+        # the upper bound. Only established contacts have this local Jacobian.
+        present=normal>0.
+        floor=.5/.95
+        lower=(floor-normal[present])/(7500.*.5)
+        return np.vstack([derivative,-derivative[present]]),np.r_[rate,lower]
     return derivative,rate

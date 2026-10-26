@@ -42,3 +42,30 @@ def test_reused_bounds_match_independent_solves_across_directions_and_origins():
             np.testing.assert_allclose(actual,expected,rtol=1e-8,atol=1e-8)
         # Reusing a successful basis must not hide an infeasible slice.
         assert problem.bound(np.full(6,1e6),np.zeros(6)) is None
+
+
+def test_contact_constraints_shrink_the_same_wrench_slice():
+    # x0+x1 provides translation. Contact constraints consume part of each
+    # actuator's capability even though the actuator box alone permits more.
+    A=np.array([[1.,1.]])
+    constraints=(np.array([[1.,0.],[0.,1.]]),np.array([.3,-np.inf]),np.array([.7,.2]))
+    interval=scalar_interval(A,np.zeros(1),np.ones(1),[0.,0.],[1.,1.],linear_constraints=constraints)
+    np.testing.assert_allclose(interval,[.3,.9],atol=1e-9)
+    assert scalar_interval(A,np.zeros(1),np.ones(1),[0.,0.],[1.,1.],
+        linear_constraints=(np.array([[1.,1.]]),np.array([3.]),np.array([np.inf]))) is None
+
+def test_contact_slice_endpoints_match_independent_linear_program():
+    rng=np.random.default_rng(417)
+    for _ in range(12):
+        A=rng.normal(size=(3,8));direction=rng.normal(size=3)
+        extra=rng.normal(size=(6,8));lower=-rng.random(8);upper=rng.random(8)
+        witness=rng.uniform(lower,upper);base=A@witness
+        lo=extra@witness-rng.random(6);hi=extra@witness+rng.random(6)
+        result=scalar_interval(A,base,direction,lower,upper,linear_constraints=(extra,lo,hi))
+        assert result is not None
+        for index,sign in enumerate([1.,-1.]):
+            answer=linprog(np.r_[np.zeros(8),sign],A_eq=np.c_[A,-direction],b_eq=base,
+                A_ub=np.c_[np.vstack([extra,-extra]),np.zeros(12)],b_ub=np.r_[hi,-lo],
+                bounds=[*zip(lower,upper),(None,None)])
+            assert answer.success
+            assert abs(answer.x[-1]-result[index])<1e-7

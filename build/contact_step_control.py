@@ -30,7 +30,16 @@ def pad_gap_jacobians(m,d,links,groups=None):
                 # result. Tighten the query bound after each closer witness.
                 distance=mujoco.mj_geomDistance(m,d,a,obj,min(1.,gap)if gap>0 else 1.,segment)
                 if distance<gap:gap=distance;nearest=segment.copy();closest=a
-            if not np.isfinite(gap) or gap>=1.:raise ValueError('pad surface is outside geometry query')
+            if gap>=1. and geoms:
+                # One metre is only the fast query radius, not a physical
+                # distance limit. Retreat can move every pad beyond it. The
+                # centre separation plus both bounding radii encloses a witness.
+                gap=np.inf
+                for a in geoms:
+                    bound=np.linalg.norm(d.geom_xpos[a]-d.geom_xpos[obj])+m.geom_rbound[a]+m.geom_rbound[obj]+1.
+                    distance=mujoco.mj_geomDistance(m,d,a,obj,min(bound,gap),segment)
+                    if distance<gap:gap=distance;nearest=segment.copy();closest=a
+            if not np.isfinite(gap):raise ValueError('pad surface is outside geometry query')
             a,b=closest,obj;pa,pb=nearest[:3],nearest[3:]
             normal=(pb-pa)/np.linalg.norm(pb-pa)
         ja=np.zeros((3,m.nv));jb=ja.copy()
@@ -45,7 +54,7 @@ class ContactStepControl:
         self.separation=None
         if clearance_model is not None:
             from build.separation_rate_constraints import SeparationRateConstraints
-            self.separation=SeparationRateConstraints(clearance_model,links)
+            self.separation=SeparationRateConstraints(clearance_model,links,all_geometry=True)
         self.plant=plant;self.m=plant.mj;self.d=mujoco.MjData(self.m);self.links=links;self.h=period
         self.groups=[tuple(g for g in range(self.m.ngeom) if self.m.geom(g).name.startswith(link+'/'))for link in links]
         self.input_weight=input_weight
@@ -57,8 +66,12 @@ class ContactStepControl:
         self.distance_closing=distance_closing
         self.condensed_solve=condensed_solve
         self.object_velocity_bounds=None
+        self.object_velocity_norm_limits=None
         self.support_load_upper=None
         self.minimum_normal_load=0.
+        self.opening_speed=.0002
+        self.release_drift_horizon=None
+        self.release_branch_calls=0
         self.support_force_priority=False
         self.fixed_input=None
         self.project_input=False
@@ -81,7 +94,50 @@ class ContactStepControl:
             v=self.m.jnt_dofadr[j];self.speed[v:v+6]=[.02]*3+[.1]*3
 
     def update(self,q,v,reference,velocity=None,input_reference=None,normal_targets=None):
+        try:
+            return self._update(q,v,reference,velocity,input_reference,normal_targets)
+        except ValueError as error:
+            # A failed affine contact branch is not proof that a finite
+            # motion cannot make contact. Preserve supported-recovery bounds:
+            # the alternative below does not implement its object-speed box.
+            if (self.object_velocity_bounds is not None
+                    or self.object_velocity_norm_limits is not None or self.separation is None
+                    or not (str(error)=='constant constraint infeasible'
+                            or str(error).startswith('contact friction branches unresolved:'))):
+                raise
+            return self._held_response(q,v,reference,velocity,input_reference,normal_targets)
+
+    def _held_response(self,q,v,reference,velocity,input_reference,normal_targets):
+        if not hasattr(self,'response_fallback'):
+            import weakref
+            from build.response_contact_control import ResponseContactControl
+            from build.cached_response import CachedResponse
+            full=self.separation
+            while hasattr(full,'clearance'):full=full.clearance
+            steps=round(self.h/self.m.opt.timestep)
+            fallback=ResponseContactControl(self.plant,self.links,period=self.h,
+                iterations=2,prediction_steps=steps,objective='tracking',
+                clearance_model=full.query.model,fast_solve=True,
+                adaptive_damping=True,distance_closing=self.distance_closing)
+            fallback.predictor=CachedResponse(self.plant,self.links,period=self.h,steps=steps)
+            fallback.feasibility_tolerance=1e-8
+            self.response_fallback=fallback
+            self.response_cleanup=weakref.finalize(self,fallback.predictor.close)
+            self.response_fallback_count=0
+        fallback=self.response_fallback
+        fallback.minimum_normal_load=self.minimum_normal_load
+        command=fallback.update(q,v,reference,velocity,input_reference,normal_targets)
+        self.response_fallback_count+=1
+        from build.full_state_feedback import observed_tangent_speed
+        self.diagnostics=dict(fallback.diagnostics,
+            observed_tangent_speed=observed_tangent_speed(self.m,self.d,self.links),
+            response_fallback_count=self.response_fallback_count)
+        return command
+
+    def _update(self,q,v,reference,velocity=None,input_reference=None,normal_targets=None):
         m,d,h=self.m,self.d,self.h;nv,nu,nj=self.nv,self.nu,self.nj
+        self.release_branch_calls+=1
+        compare_separation=self.release_drift_horizon is not None or self.release_branch_calls%max(1,round(.01/h))==0
         d.qpos[:]=q;d.qvel[:]=v;mujoco.mj_fwdPosition(m,d);mujoco.mj_fwdVelocity(m,d)
         M=np.zeros((nv,nv));mujoco.mj_fullM(m,d,M)
         B=np.zeros((nv,nu));B[self.vi,np.arange(nj)]=1.
@@ -222,6 +278,16 @@ class ContactStepControl:
             target[nv:nv+nj]=np.where(self.dock,input_reference[:nj],self.kp*input_reference[:nj])-self.kp*q[self.qi]-self.kd*v[self.vi]
             target[nv+nj:nv+nu]=input_reference[nj:]
         objective=np.diag(weights);linear=-weights*target
+        if self.release_drift_horizon is not None:
+            # Height above a horizontal support cannot restore yaw about
+            # gravity. Penalize its constant-velocity drift over the task
+            # horizon, in units of the existing 0.2 rad final tolerance.
+            # This local objective is not a passive-motion safety certificate.
+            oi=int(m.jnt_qposadr[m.joint('object').id]);start=int(m.jnt_dofadr[m.joint('object').id])
+            rotation=np.empty(9);mujoco.mju_quat2Mat(rotation,q[oi+3:oi+7])
+            yaw=(-m.opt.gravity/np.linalg.norm(m.opt.gravity))@rotation.reshape(3,3)
+            task=np.zeros((1,size));task[0,start+3:start+6]=self.release_drift_horizon*yaw/.2
+            objective+=task.T@task;linear-=task.T@np.array([yaw@delta[start+3:start+6]/.2])
         if self.inertial_updates:
             if self.previous_input is None:raise ValueError('inertial update requires the last issued input')
             # Measure the input increment through the same finite contact,
@@ -238,13 +304,14 @@ class ContactStepControl:
         pad_gaps=None
         if normal_targets is not None:
             pad_gaps,jacobian=pad_gap_jacobians(m,d,self.links,self.groups)
-            scale=.0002
+            scale=max(.0002,self.opening_speed)
             # Away from contact, use the same 0.5 s geometric convergence
             # time instead of imposing the contact acquisition speed over
             # millimetres of empty space. Existing input/velocity/load bounds
-            # remain part of the same solve; near contact the old cap remains.
+            # remain part of the same solve; near contact use the configured
+            # acquisition/opening rate.
             cap=np.maximum(scale,np.maximum(pad_gaps,0.)/.5)if self.distance_closing else scale
-            rate=np.clip((-np.asarray(normal_targets)-pad_gaps)/.5,-cap,scale)
+            rate=np.clip((-np.asarray(normal_targets)-pad_gaps)/.5,-cap,self.opening_speed)
             task=np.zeros((len(rate),size));task[:,:nv]=jacobian/scale
             objective+=task.T@task;linear-=task.T@(rate/scale)
         # The force and moment limits concern each complete physical pad,
@@ -270,6 +337,17 @@ class ContactStepControl:
             for mapping,bias in zip(maps,biases):
                 matrix=np.vstack([matrix,np.zeros(size),-mapping*scaling]);bound=np.r_[bound,limit,bias]
                 cones.append(clarabel.SecondOrderConeT(4))
+        velocity_cone_rows=0
+        if self.object_velocity_norm_limits is not None and not free_object:
+            start=int(m.jnt_dofadr[m.joint('object').id])
+            # The recovery predicate limits the vector length, not each
+            # component independently. Preserve that same ball in the solve.
+            for offset,limit in zip((0,3),self.object_velocity_norm_limits):
+                mapping=np.zeros((3,size))
+                mapping[np.arange(3),start+offset+np.arange(3)]=1.
+                matrix=np.vstack([matrix,np.zeros(size),-mapping*scaling])
+                bound=np.r_[bound,limit,np.zeros(3)]
+                cones.append(clarabel.SecondOrderConeT(4));velocity_cone_rows+=4
         settings=clarabel.DefaultSettings();settings.verbose=False
         settings.tol_gap_abs=settings.tol_gap_rel=settings.tol_feas=1e-9
         solver_note=None;pressure_correction=np.zeros(ne)
@@ -306,18 +384,38 @@ class ContactStepControl:
             iterations=solver_note['iterations']
         elif self.condensed_solve:
             from build.contact_condensed_solver import solve
-            try:
-                z,solver_note=solve(objective*scaling[:,None]*scaling[None,:],linear*scaling,matrix,bound,cones,nv,nu,nt,
-                    fixed_zero_tail=ns if self.finite_support and self.support_load_upper==0. else 0)
-            except ValueError:
-                if not(ne and self.regularized_friction) or self.friction_reserve:raise
+            def boundary_solution(hint=None):
+                nonlocal pressure_rows
                 from build.contact_friction_modes import solve as solve_modes
                 pressure_rows=np.vstack([pressure_blocks.get(i,np.zeros((len(row),ne)))for i,row in enumerate(rows)])
                 pressure_matrix=np.vstack([pressure_rows[equal],pressure_rows[upper],-pressure_rows[lower]])
                 for maps in [pressure_force,pressure_moment]:
                     for mapping in maps:pressure_matrix=np.vstack([pressure_matrix,np.zeros(ne),-mapping])
-                z,pressure_correction,solver_note=solve_modes(objective*scaling[:,None]*scaling[None,:],linear*scaling,
-                    matrix,bound,cones,nv,nu,nt,pressure_matrix,Dn*scaling[:nv],p0,rn,m.opt.impratio,v/scaling[:nv])
+                pressure_matrix=np.vstack([pressure_matrix,np.zeros((velocity_cone_rows,ne))])
+                return solve_modes(objective*scaling[:,None]*scaling[None,:],linear*scaling,
+                    matrix,bound,cones,nv,nu,nt,pressure_matrix,Dn*scaling[:nv],p0,rn,m.opt.impratio,
+                    v/scaling[:nv],boundary_hint=hint,separate_all=compare_separation and hint is not None, progress_matrix=None if pad_gaps is None or self.release_drift_horizon is None else np.c_[jacobian,np.zeros((len(pad_gaps),size-nv))]*scaling, progress_lower=None if pad_gaps is None else np.where(pad_gaps<.0002,np.maximum(rate,0.),(.0002-pad_gaps)/h))
+            pressure_rows=None
+            try:
+                z,solver_note=solve(objective*scaling[:,None]*scaling[None,:],linear*scaling,matrix,bound,cones,nv,nu,nt,
+                    fixed_zero_tail=ns if self.finite_support and self.support_load_upper==0. else 0)
+            except ValueError:
+                if not(ne and self.regularized_friction) or self.friction_reserve:raise
+                z,pressure_correction,solver_note=boundary_solution()
+            if (self.release_drift_horizon is not None and ne and self.regularized_friction
+                    and not (solver_note and 'friction_modes' in solver_note)
+                    and (compare_separation or min(p0-Dn@(z[:nv]*scaling[:nv]))<=1e-5)):
+                # Compare full separation at the existing 10 ms motion rate,
+                # plus individual zero-force boundaries at every contact step.
+                # Keep the lower-cost solution
+                # of the same objective; all original physical checks follow.
+                P=objective*scaling[:,None]*scaling[None,:];c=linear*scaling
+                try:
+                    alternative,correction,note=boundary_solution(z)
+                    if .5*alternative@P@alternative+c@alternative < .5*z@P@z+c@z:
+                        z,pressure_correction,solver_note=alternative,correction,note
+                except ValueError:
+                    pass
             iterations=solver_note['iterations']
         elif self.fast_solve:
             from build.held_input_solver import solve
@@ -344,6 +442,10 @@ class ContactStepControl:
         predicted_moment=np.einsum('ijk,k->ij',moment,x)+moment_constant+pressure_moment@pressure_correction
         if np.max(np.linalg.norm(predicted_force,axis=1))>30.00001 or np.max(np.linalg.norm(predicted_moment,axis=1))>5.00001:
             raise ValueError('contact step pad load residual')
+        if velocity_cone_rows:
+            speed_norms=[np.linalg.norm(pred[start+offset:start+offset+3]) for offset in (0,3)]
+            if np.any(np.asarray(speed_norms)>np.asarray(self.object_velocity_norm_limits)+1e-7):
+                raise ValueError('contact step object speed norm residual')
         loss=.5*float(np.sum(weights*(x-target)**2))
         if self.inertial_updates:
             change=x[nv:nv+nu]-previous

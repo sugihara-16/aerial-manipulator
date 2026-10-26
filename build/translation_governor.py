@@ -5,9 +5,11 @@ from amsrr_det.path_progress import ScalarProgress
 
 
 class TranslationGovernor(ScalarProgress):
-    def __init__(self,model,start,displacement,duration,period=.01):
+    def __init__(self,model,start,displacement,duration,period=.01,*,landing=False):
         delta=np.asarray(displacement);distance=float(np.linalg.norm(delta))
         super().__init__(distance,duration,period)
+        self.landing=landing
+        self.info['landing_stopping']=landing
         self.m,self.start=model,start.copy();self.direction=delta/distance
         self.direction6=np.r_[self.direction,np.zeros(3)]
         self.free=np.flatnonzero(model.jnt_type==mujoco.mjtJoint.mjJNT_FREE)
@@ -24,4 +26,6 @@ class TranslationGovernor(ScalarProgress):
         return self.choose(interval,
             observed_position=float((q[self.oi:self.oi+3]-self.start[self.oi:self.oi+3])@self.direction),
             observed_speed=float(v[self.ov:self.ov+3]@self.direction),
-            feedback_acceleration=float(feedback[:3]@self.direction))
+            feedback_acceleration=float(feedback[:3]@self.direction),
+            position_tolerance=0. if self.landing else .03,
+            allow_stronger_brake=self.landing)

@@ -35,7 +35,7 @@ def project_force(affine, rn, ratio):
 
 
 def solve(P, c, A, b, cones, nv, nu, nt, pressure_matrix, Dn, p0, rn,
-          ratio, observed_velocity):
+          ratio, observed_velocity, boundary_hint=None, separate_all=False, progress_matrix=None, progress_lower=None):
     """Return the original variables and the coupled normal-force correction."""
     began = time.perf_counter()
     n, count = len(c), nt//2
@@ -59,12 +59,13 @@ def solve(P, c, A, b, cones, nv, nu, nt, pressure_matrix, Dn, p0, rn,
     residual_map = A[tangent_rows]/alpha[:, None]
     residual_target = b[tangent_rows]/alpha
     queue = []
-    try:
-        hint, _ = scaled_recovery(residual_map.T@residual_map,
-            -residual_map.T@residual_target, A[retained], b[retained], relaxed_cones)
-        queue.append(proposed_modes(np.asarray(hint.x)))
-    except ValueError:
-        pass
+    if boundary_hint is None:
+        try:
+            hint, _ = scaled_recovery(residual_map.T@residual_map,
+                -residual_map.T@residual_target, A[retained], b[retained], relaxed_cones)
+            queue.append(proposed_modes(np.asarray(hint.x)))
+        except ValueError:
+            pass
     queue.append(proposed_modes(np.r_[observed_velocity, np.zeros(n-nv)]))
     # Adjacent simpler branches are useful when a relaxed solution places
     # several contacts on a boundary but only one needs to slide.
@@ -73,6 +74,29 @@ def solve(P, c, A, b, cones, nv, nu, nt, pressure_matrix, Dn, p0, rn,
             if mode:
                 single = [()]*count; single[index] = mode
                 queue.append(tuple(single))
+    if boundary_hint is not None:
+        # A feasible interior solution may pin a zero-force contact at zero
+        # gap. Compare its unilateral, nonadhesive branch as well. The hint
+        # only proposes a branch; the original force projection is rechecked.
+        proposal=list(proposed_modes(boundary_hint))
+        for i in range(count):
+            if affine_at(boundary_hint,i)[0] <= 1e-5:
+                proposal[i]='apex'
+        queue.insert(0,tuple(proposal))
+        if separate_all:
+            queue.insert(0,('apex',)*count)
+    if boundary_hint is not None and separate_all:
+        # The relaxed task optimum proposes a mode only. Every force-law
+        # equation and original physical bound is restored before acceptance.
+        try:
+            if progress_matrix is not None:
+                seed_A=np.vstack([A[retained],-progress_matrix])
+                seed_b=np.r_[b[retained],-progress_lower]
+                seed_cones=[*relaxed_cones,clarabel.NonnegativeConeT(len(progress_lower))]
+                task_hint,_=scaled_recovery(residual_map.T@residual_map,-residual_map.T@residual_target,seed_A,seed_b,seed_cones)
+                queue.insert(0,proposed_modes(np.asarray(task_hint.x)))
+        except ValueError:
+            pass
     tried = []
     for selected in dict.fromkeys(queue):
         multipliers = sum(len(mode) for mode in selected if mode != 'apex')
@@ -129,6 +153,12 @@ def solve(P, c, A, b, cones, nv, nu, nt, pressure_matrix, Dn, p0, rn,
         if error > 1e-5:
             tried.append(dict(modes=selected, projection_error=error))
             continue
+        if boundary_hint is not None:
+            value=.5*x[:n]@P@x[:n]+c@x[:n]
+            previous=.5*boundary_hint@P@boundary_hint+c@boundary_hint
+            if value>=previous-1e-10:
+                tried.append(dict(modes=selected,reason='feasible but not better than current task input'))
+                continue
         note.update(friction_modes=selected, projection_error=error, iterations=int(answer.iterations),
                     trials=len(tried)+1, wall_s=time.perf_counter()-began)
         return x[:n], x[n:n+count], note

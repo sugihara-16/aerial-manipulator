@@ -1,6 +1,7 @@
 """Exact scalar slices of a linear actuator image, within numerical tolerance.
 
-These bounds concern one fixed matrix and input box. They do not certify future
+These bounds concern one fixed matrix, input box and optional linear constraints.
+They do not certify future
 geometry, contact stability, or the existence of a better robot structure.
 """
 import numpy as np
@@ -8,16 +9,24 @@ from scipy.sparse import csc_matrix
 from scipy.optimize._highspy import _core as highs
 
 
-def scalar_bound(matrix,base,direction,lower,upper,*,maximize=True,nonnegative=False):
+def scalar_bound(matrix,base,direction,lower,upper,*,maximize=True,nonnegative=False,linear_constraints=None):
     matrix,base,direction=map(np.asarray,(matrix,base,direction))
     equality=np.c_[matrix,-direction]
+    n=matrix.shape[1]
+    row_lower=row_upper=base
+    if linear_constraints is not None:
+        extra,extra_lower,extra_upper=map(np.asarray,linear_constraints)
+        if extra.ndim!=2 or extra.shape[1]!=n or extra_lower.shape!=(len(extra),) or extra_upper.shape!=(len(extra),):
+            raise ValueError('scalar slice constraint dimensions')
+        equality=np.vstack([equality,np.c_[extra,np.zeros(len(extra))]])
+        row_lower=np.r_[base,extra_lower];row_upper=np.r_[base,extra_upper]
     scale=np.maximum(np.linalg.norm(equality,axis=1),1e-12)
-    sparse=csc_matrix(equality/scale[:,None]);n=matrix.shape[1]
-    lp=highs.HighsLp();lp.num_col_=n+1;lp.num_row_=len(base)
+    sparse=csc_matrix(equality/scale[:,None])
+    lp=highs.HighsLp();lp.num_col_=n+1;lp.num_row_=len(row_lower)
     lp.col_cost_=np.r_[np.zeros(n),-1. if maximize else 1.]
     lp.col_lower_=np.r_[lower,0. if nonnegative else -np.inf];lp.col_upper_=np.r_[upper,np.inf]
-    lp.row_lower_=base/scale;lp.row_upper_=base/scale
-    lp.a_matrix_.num_col_=n+1;lp.a_matrix_.num_row_=len(base)
+    lp.row_lower_=row_lower/scale;lp.row_upper_=row_upper/scale
+    lp.a_matrix_.num_col_=n+1;lp.a_matrix_.num_row_=len(row_lower)
     lp.a_matrix_.format_=highs.MatrixFormat.kColwise
     lp.a_matrix_.start_=sparse.indptr;lp.a_matrix_.index_=sparse.indices;lp.a_matrix_.value_=sparse.data
     solver=highs._Highs();options=highs.HighsOptions()
@@ -27,13 +36,16 @@ def scalar_bound(matrix,base,direction,lower,upper,*,maximize=True,nonnegative=F
     if solver.getModelStatus()!=highs.HighsModelStatus.kOptimal:return None
     sol=np.asarray(solver.getSolution().col_value);x=sol[:-1];value=float(sol[-1])
     residual=max(float(abs(matrix@x-base-direction*value).max()),float((np.asarray(lower)-x).max()),float((x-np.asarray(upper)).max()))
+    if linear_constraints is not None:
+        values=extra@x
+        residual=max(residual,float(np.max(extra_lower-values,initial=0.)),float(np.max(values-extra_upper,initial=0.)))
     if not np.isfinite(residual) or residual>1e-7:return None
     return value
 
-def scalar_interval(matrix,base,direction,lower,upper):
-    low=scalar_bound(matrix,base,direction,lower,upper,maximize=False)
+def scalar_interval(matrix,base,direction,lower,upper,*,linear_constraints=None):
+    low=scalar_bound(matrix,base,direction,lower,upper,maximize=False,linear_constraints=linear_constraints)
     if low is None:return None
-    high=scalar_bound(matrix,base,direction,lower,upper)
+    high=scalar_bound(matrix,base,direction,lower,upper,linear_constraints=linear_constraints)
     return None if high is None else (low,high)
 
 

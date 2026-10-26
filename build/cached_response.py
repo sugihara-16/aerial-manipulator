@@ -12,7 +12,18 @@ class CachedResponse(FiniteDifferenceResponse):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.cached=None;self.origin=None;self.signature=None
-        self.counts=dict(refresh=0,reuse=0,inaccurate=0)
+        # Central differences balance truncation and roundoff at eps**(1/3).
+        # This is a numerical floor, not an accuracy guarantee at contact switches.
+        self.minimum_step=np.minimum(self.epsilon,np.cbrt(np.finfo(float).eps)*self.scale)
+        self.initial_step=self.epsilon.copy()
+        self.counts=dict(refresh=0,reuse=0,inaccurate=0,step_refinements=0)
+
+    def start_problem(self):
+        # Contact response can change between observations. A fine secant that
+        # helped the previous solve may miss a useful contact branch now.
+        # Refine within this solve; retain the original scale for the next one.
+        if not np.array_equal(self.epsilon,self.initial_step):
+            self.epsilon=self.initial_step.copy();self.cached=None
 
     def evaluate(self,q,v,command,linearize=False):
         base=self._response((q,v,command));d=self.thread.data;m=self.m
@@ -41,4 +52,7 @@ class CachedResponse(FiniteDifferenceResponse):
                 denominator=max(np.linalg.norm(actual_v/speed),np.linalg.norm(actual_load/30.),1e-6)
                 if numerator>.25*denominator:
                     self.cached=None;self.counts['inaccurate']+=1
+                    refined=np.maximum(self.minimum_step,.1*self.epsilon)
+                    if np.any(refined<self.epsilon):
+                        self.epsilon=refined;self.counts['step_refinements']+=1
         return base

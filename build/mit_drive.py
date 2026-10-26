@@ -8,7 +8,7 @@ This is a nominal actuator model, not a measured hardware response model.
 """
 from dataclasses import replace
 import copy
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 import numpy as np
 import mujoco
 from amsrr_det.mujoco_model import numbers
