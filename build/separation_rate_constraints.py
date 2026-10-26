@@ -40,6 +40,20 @@ class SeparationRateConstraints:
         mujoco.mj_setConst(m,mujoco.MjData(m))
 
     def at(self,q,v):
+        if getattr(self,'task_priority',False):
+            # Reuse the geometric proof of a non-colliding OBSERVED pose, not
+            # the extra 1 mm / 3 cm buffers. This is not a future-motion proof;
+            # actual collision remains audited at every physical step.
+            query=self.query
+            if query.anchor is not None and query.joint_motion is not None:
+                oldq,_,_,part,environment=query.anchor
+                movement=2.*float(query.joint_motion.maximum(q,oldq)[0])
+                if min(part,environment)>movement:
+                    query.reused+=1
+                    return np.empty((0,query.model.nv)),np.empty(0)
+            _,part,environment=query.check(q,True)
+            if min(part,environment)>0.:
+                return np.empty((0,query.model.nv)),np.empty(0)
         m,d=self.query.model,self.query.data
         d.qpos[:]=q;d.qvel[:]=v
         mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d);collision_query(m,d)

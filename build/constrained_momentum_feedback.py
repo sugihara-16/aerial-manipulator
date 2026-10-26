@@ -41,6 +41,9 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
         self.info.update(scope=__doc__,nominal_action_compensated=True,method='bounded_whole_momentum_geometry',normal_tracking=normal_tracking,internal_tracking=internal_tracking,contact_coupled=contact_coupled)
 
     def update(self,q,v,reference,velocity=None,input_reference=None,*,path=None):
+        if getattr(self,'task_priority',False):
+            # One native-backed instantaneous allocation. No rollout repair.
+            return self._update(q,v,reference,velocity,input_reference,path=path)
         self.last_request=dict(q=q.copy(),v=v.copy(),reference=reference.copy())
         self.last_request.update({key:value.copy() for key,value in
             [('velocity',velocity),('input_reference',input_reference)] if value is not None})
@@ -169,6 +172,10 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
             H=inverse.T@mass@inverse;gradient=-inverse.T@target
             floor=self.contact_response.instant_floor
             extra_lo=floor+(floor>0)*getattr(self,'normal_linearization_margin',0.)-constant;extra_hi=30.-constant
+            if getattr(self,'task_priority',False):
+                # No 30 N gate. The finite upper bound is implied by the drive
+                # box below, so it imposes no additional force restriction.
+                extra_hi=None
         wrench=T.T@act
         # Compare actual actuator+gravity action with the same nominal input
         # at its design geometry. Preserve the intentional supported LOAD
@@ -196,6 +203,8 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
         if np.any(nominal[gimbal]<lower[gimbal]-1e-9)or np.any(nominal[gimbal]>upper[gimbal]+1e-9):
             raise ValueError('bounded momentum fixed gimbal outside input domain')
         lo=(lower[ids]-nominal[ids])/self.scale[ids];hi=(upper[ids]-nominal[ids])/self.scale[ids]
+        if extra_hi is None:
+            extra_hi=np.maximum(extra*lo,extra*hi).sum(axis=1)+1.
         path_acceleration=None
         if path is not None:
             from amsrr_det.affine_bounds import scalar_interval

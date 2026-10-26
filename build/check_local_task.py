@@ -42,6 +42,7 @@ SOURCE_NAMES.append('minimum_input_lp.py')
 SOURCE_NAMES.extend(['select_structure.py','frozen_structure_trial.py'])
 SOURCE_NAMES.extend(['task_wrench_margin.py','task_gimbal_design.py','translation_governor.py'])
 SOURCE_NAMES.extend(['input_direction_refinement.py','held_contact_tracking.py','held_input_guard.py','object_tracking_domain.py'])
+SOURCE_NAMES.append('task_priority.py')
 LOADED_SOURCES={name:(Path('build')/name).read_bytes()for name in SOURCE_NAMES}
 
 _ROOT=Path(__file__).resolve().parents[1]
@@ -71,6 +72,7 @@ def main(argv=None, observer=None):
     src.add_argument('--plan');src.add_argument('--request')
     parser.add_argument('--goal');parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--duration',type=float,default=110.)
+    parser.add_argument('--task-priority-control',action='store_true',help='instantaneous allocation without safety-only rollout repair; auxiliary violations remain recorded')
     parser.add_argument('--execution-gate',type=Path,help='test bench only: wait for this file after planning and before physics')
     parser.add_argument('--steps',type=int,default=40)
     parser.add_argument('--fast-solve',action='store_true')
@@ -164,6 +166,18 @@ def main(argv=None, observer=None):
                   supported_load_transfer=args.supported_load_transfer,observed_handoff=args.observed_handoff,inertial_input_updates=args.inertial_input_updates,nearby_handoff=args.nearby_handoff,contact_coupled=args.contact_coupled,
                   constrained_load=args.constrained_load,interval_motion=args.interval_motion,interval_acquisition=args.interval_acquisition,constrained_motion=args.constrained_motion,staged_approach=args.staged_approach,planned_withdrawal=args.planned_withdrawal,hybrid_withdrawal=args.hybrid_withdrawal,background_withdrawal=args.background_withdrawal,
                   finite_acquisition_support=args.finite_acquisition_support,process_withdrawal=args.process_withdrawal,normal_tracking=args.normal_tracking,internal_tracking=args.internal_tracking,planned_preload_floor=args.planned_preload_floor)
+    settings['task_priority_control']=args.task_priority_control
+    contact_period=.01 if args.task_priority_control else .0025
+    if args.task_priority_control:
+        for key in ['transport_hold_guard','acquisition_hold_guard','constrained_contact_lookahead',
+                    'finite_allocation_recovery','fixed_gimbal_finite_recovery','finite_path_braking_recovery',
+                    'partial_contact_object_response_guard']:
+            settings[key]=False
+        settings.update(supported_release_preview_s=None,supported_release_prediction_workers=0,
+                        contact_lookahead_prediction_workers=0,contact_lookahead_fine_prefix_s=None,
+                        auxiliary_safety_policy='record_only',contact_load_upper_bound=False,
+                        contact_update_period_s=contact_period,supported_release_update_period_s=contact_period,
+                        release_method='empty_flight_withdrawal',clearance_rate_activation='at_contact')
     evidence=dict(scope='fresh_generation_spawn_task'if args.request else'saved_development_structure',method_scope=__doc__,
                   execution_entrypoint='fresh_task_input'if args.request else'saved_development_plan',engine='MuJoCo',
                   execution_configuration_sha256=hashlib.sha256(json.dumps(settings,sort_keys=True).encode()).hexdigest(),
@@ -249,7 +263,10 @@ def main(argv=None, observer=None):
         while not args.execution_gate.exists():time.sleep(.05)
         evidence['benchmark_execution_wait_s']=time.perf_counter()-waiting
     flight=coupled.CoupledFlightController(plan.plant.pin,plan.plant.meta,plan.open_q,track_vectoring=True,planned_input_reference=True)
-    control=ContactStepControl(plant,links,period=.0025,regularized_friction=True,finite_support=args.finite_acquisition_support,fast_solve=args.fast_solve,distance_closing=args.distance_closing,condensed_solve=args.condensed_solve,clearance_model=full.mj if args.momentum_feedback else None,inertial_updates=args.inertial_input_updates)
+    control=ContactStepControl(plant,links,period=contact_period,regularized_friction=True,finite_support=args.finite_acquisition_support,fast_solve=args.fast_solve,distance_closing=args.distance_closing,condensed_solve=args.condensed_solve,clearance_model=full.mj if args.momentum_feedback else None,inertial_updates=args.inertial_input_updates)
+    control.task_priority=args.task_priority_control
+    if args.task_priority_control and control.separation is not None:
+        control.separation.task_priority=True
     d=mujoco.MjData(m);d.qpos[:]=plant.configuration(plan.open_q);mujoco.mj_forward(m,d)
     audit=FastTaskAudit(plant,links,plan.shape.size,plan.support_top,shape=plan.shape,clearance_model=full.mj)
     from build.actuation_wrench_audit import ActuationWrenchAudit
@@ -259,6 +276,7 @@ def main(argv=None, observer=None):
     handoff_job=None;handoff_checked=not args.observed_handoff;handoff_attempts=[]
     air_job=None;load_transfer=None;last_air_attempt=-np.inf;air_attempts=[];basis_observation_time=None
     trace=[];times=[];phase_times={};planning=[];prediction_errors=dict(samples=0,object_position_m=0.,joint_position_rad=0.,object_linear_velocity_m_s=0.,joint_velocity_rad_s=0.,pad_normal_force_n=0.);delta=np.zeros(m.nv);start=time.perf_counter();previous_phase=None;transport_guard=None
+    rotor_clipped_calls=0;rotor_clip_peak=0.
     oi=int(m.jnt_qposadr[m.joint('object').id]);ov=int(m.jnt_dofadr[m.joint('object').id])
     groups=control.groups;governors={};descent_probe_start=None
     recovery=None;recovery_events=[]
@@ -267,8 +285,9 @@ def main(argv=None, observer=None):
     recent_inputs=deque(maxlen=40)
     for step in range(round(args.duration/.0025)):
         if d.time>=args.duration:break
-        period=release.control_period if phase=='UNLOAD' and hasattr(release,'control_period') else .005 if phase=='RECOVER' else (.0025 if phase in ['ACQUIRE','REFINE','LOAD','LIFT','CARRY','DESCEND'] else .01)
+        period=release.control_period if phase=='UNLOAD' and hasattr(release,'control_period') else .005 if phase=='RECOVER' else (contact_period if phase in ['ACQUIRE','REFINE','LOAD','LIFT','CARRY','DESCEND'] else .01)
         if full_feedback is not None:
+            full_feedback.task_priority=args.task_priority_control
             full_feedback.clearance_model=full.mj
             full_feedback.previous_issued_input=d.ctrl.copy()
         before=time.perf_counter();prediction=None;query.qpos[:]=d.qpos;query.qvel[:]=d.qvel;mujoco.mj_fwdPosition(m,query)
@@ -277,7 +296,7 @@ def main(argv=None, observer=None):
         try:
             if phase=='APPROACH' and (min(gaps+.01*(J@d.qvel))<=0 or
                     (approach is not None and approach.ready(d.qpos,d.qvel,float(d.time)))):
-                phase='ACQUIRE';anchor=d.ctrl.copy();period=.0025
+                phase='ACQUIRE';anchor=d.ctrl.copy();period=contact_period
             if phase=='APPROACH':
                 target,tv,ta,r=quintic_reference(plan.plant.pin,plan.plant.meta,plan.open_q,qgoal,d.time,4.)
                 q,v=plant.observation(d)
@@ -505,7 +524,7 @@ def main(argv=None, observer=None):
                         if phase not in governors:
                             if phase=='CARRY' and not governors['LIFT'].finished:raise ValueError('governed lift exceeded stage budget')
                             motion=lift if phase=='LIFT'else carry
-                            governors[phase]=TranslationGovernor(m,motion.q,motion.delta,motion.duration,period=.0025)
+                            governors[phase]=TranslationGovernor(m,motion.q,motion.delta,motion.duration,period=contact_period)
                         if governors[phase].finished:
                             reference,velocity=governors[phase].reference()
                         else:options['path']=governors[phase]
@@ -549,7 +568,10 @@ def main(argv=None, observer=None):
                 obj=m.geom('object').id
                 supported_now=any(obj in c.geom and any(m.geom(int(g)).name in ['support','destination_support','floor']for g in c.geom)and c.dist<=0 for c in query.contact)
                 if supported_now:
-                    if args.contact_coupled and args.hold_withdrawal_pose:
+                    if args.task_priority_control:
+                        from build.background_withdrawal_hold import HeldBackgroundWithdrawal
+                        release=HeldBackgroundWithdrawal(plan,plant,d.qpos.copy(),parallel_process=args.process_withdrawal)
+                    elif args.contact_coupled and args.hold_withdrawal_pose:
                         from build.contact_unload import ContactUnload
                         release=ContactUnload(plan,plant,d.qpos.copy(),task_duration=args.duration,
                                               parallel_process=args.process_withdrawal)
@@ -575,7 +597,7 @@ def main(argv=None, observer=None):
                         options={}
                         if args.governed_motion:
                             from build.translation_governor import TranslationGovernor
-                            if phase not in governors:governors[phase]=TranslationGovernor(m,descent.q,descent.delta,descent.duration,period=.0025,landing=True)
+                            if phase not in governors:governors[phase]=TranslationGovernor(m,descent.q,descent.delta,descent.duration,period=contact_period,landing=True)
                             path=governors[phase]
                             if not path.finished:options['path']=path
                             else:
@@ -604,7 +626,7 @@ def main(argv=None, observer=None):
                         np.linalg.norm(vel[:3])<.02 and np.linalg.norm(vel[3:])<.1 and min(gaps)>.02 and
                         audit.last_contact_time is not None and d.time-audit.last_contact_time>=2.):
                         reason='task_completed';break
-            if phase in ('ACQUIRE','REFINE','LOAD','LIFT','CARRY','DESCEND'):
+            if phase in ('ACQUIRE','REFINE','LOAD','LIFT','CARRY','DESCEND') and not args.task_priority_control:
                 if transport_guard is None:
                     from build.held_input_guard import HeldInputGuard
                     transport_guard=HeldInputGuard(plant,links,full.mj,period)
@@ -612,6 +634,13 @@ def main(argv=None, observer=None):
                 if phase in ('LOAD','LIFT','CARRY','DESCEND') and hasattr(full_feedback,'tracking_reference'):
                     tracking=dict(reference=full_feedback.tracking_reference,velocity=full_feedback.tracking_velocity)
                 command=transport_guard.update(d.qpos.copy(),d.qvel.copy(),command,**tracking)
+            if args.task_priority_control:
+                if not np.isfinite(command).all():raise ValueError('nonfinite actuator command')
+                rotor=command[control.nj:]
+                bounded=np.clip(rotor,0.,control.limit[control.nj:])
+                difference=float(np.max(abs(bounded-rotor),initial=0.))
+                rotor_clipped_calls+=difference>0.;rotor_clip_peak=max(rotor_clip_peak,difference)
+                command[control.nj:]=bounded
         except (ValueError,np.linalg.LinAlgError,mujoco.FatalError)as error:
             # Retain exact supplied inputs only when they belong to this failed
             # observation. Do not mislabel the previous cycle's request.
@@ -650,7 +679,11 @@ def main(argv=None, observer=None):
             else:actuation_audit.request=None
         for _ in range(round(period/m.opt.timestep)):
             try:
-                mujoco.mj_step(m,d);audit.update(d,carried=phase=='CARRY');reason=violation(audit)
+                mujoco.mj_step(m,d);audit.update(d,carried=phase=='CARRY')
+                if args.task_priority_control:
+                    from build.task_priority import violation as priority_violation
+                    reason=priority_violation(audit)
+                else:reason=violation(audit)
                 if actuation_audit is not None:actuation_audit.after_step(d)
             except mujoco.FatalError as error:
                 reason='physics_or_geometry_error:'+str(error);break
@@ -698,6 +731,10 @@ def main(argv=None, observer=None):
         contacts=len(links),modules=plant.meta['modules'],release=release.info if phase in ['UNLOAD','RETREAT']else None,
         control_timing_includes_failed_calls=True)
     result['response_numerical_search']=dict(NUMERICAL_SEARCH_STATISTICS)
+    if args.task_priority_control:
+        from build.task_priority import secondary_violations
+        result['secondary_safety_violations']=secondary_violations(audit)
+        result['rotor_command_saturation']=dict(calls=rotor_clipped_calls,maximum_change_n=rotor_clip_peak)
     result['distance_numerical_search']=dict(CCD_QUERY_STATISTICS)
     result['transport_hold_repairs']=0 if transport_guard is None else transport_guard.repairs
     result['supported_recovery']=recovery_events

@@ -97,6 +97,7 @@ class ContactStepControl:
         try:
             return self._update(q,v,reference,velocity,input_reference,normal_targets)
         except ValueError as error:
+            if getattr(self,'task_priority',False):raise
             # A failed affine contact branch is not proof that a finite
             # motion cannot make contact. Preserve supported-recovery bounds:
             # the alternative below does not implement its object-speed box.
@@ -333,7 +334,8 @@ class ContactStepControl:
         equal=np.isfinite(lo)&(lo==hi);upper=(~equal)&np.isfinite(hi);lower=(~equal)&np.isfinite(lo)
         matrix=np.vstack([A[equal],A[upper],-A[lower]]);bound=np.r_[hi[equal],hi[upper],-lo[lower]]
         cones=[clarabel.ZeroConeT(int(sum(equal))),clarabel.NonnegativeConeT(int(sum(upper)+sum(lower)))]
-        for maps,biases,limit in [(force,constant,30.),(moment,moment_constant,5.)]:
+        load_cones=[] if getattr(self,'task_priority',False) else [(force,constant,30.),(moment,moment_constant,5.)]
+        for maps,biases,limit in load_cones:
             for mapping,bias in zip(maps,biases):
                 matrix=np.vstack([matrix,np.zeros(size),-mapping*scaling]);bound=np.r_[bound,limit,bias]
                 cones.append(clarabel.SecondOrderConeT(4))
@@ -389,7 +391,7 @@ class ContactStepControl:
                 from build.contact_friction_modes import solve as solve_modes
                 pressure_rows=np.vstack([pressure_blocks.get(i,np.zeros((len(row),ne)))for i,row in enumerate(rows)])
                 pressure_matrix=np.vstack([pressure_rows[equal],pressure_rows[upper],-pressure_rows[lower]])
-                for maps in [pressure_force,pressure_moment]:
+                for maps in ([] if getattr(self,'task_priority',False) else [pressure_force,pressure_moment]):
                     for mapping in maps:pressure_matrix=np.vstack([pressure_matrix,np.zeros(ne),-mapping])
                 pressure_matrix=np.vstack([pressure_matrix,np.zeros((velocity_cone_rows,ne))])
                 return solve_modes(objective*scaling[:,None]*scaling[None,:],linear*scaling,
@@ -440,7 +442,7 @@ class ContactStepControl:
         if residual>1e-5:raise ValueError('contact step residual '+str(residual))
         predicted_force=np.einsum('ijk,k->ij',force,x)+constant+pressure_force@pressure_correction
         predicted_moment=np.einsum('ijk,k->ij',moment,x)+moment_constant+pressure_moment@pressure_correction
-        if np.max(np.linalg.norm(predicted_force,axis=1))>30.00001 or np.max(np.linalg.norm(predicted_moment,axis=1))>5.00001:
+        if not getattr(self,'task_priority',False) and (np.max(np.linalg.norm(predicted_force,axis=1))>30.00001 or np.max(np.linalg.norm(predicted_moment,axis=1))>5.00001):
             raise ValueError('contact step pad load residual')
         if velocity_cone_rows:
             speed_norms=[np.linalg.norm(pred[start+offset:start+offset+3]) for offset in (0,3)]
