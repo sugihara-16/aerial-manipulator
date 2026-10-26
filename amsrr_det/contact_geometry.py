@@ -70,7 +70,7 @@ def material_triangles(port,mesh_cache=None,*,use_cache=True):
     return triangles[selected]
 
 
-def close_material(shape,object_from_pad,triangles, *, band=.0002,max_points=12):
+def close_material(shape,object_from_pad,triangles, *, band=.0002,max_points=12,native=True):
     """Refine nearest points inside each triangle, then retain the close patch.
 
     Alternating projections are a numerical search, not a global contact proof.
@@ -87,22 +87,25 @@ def close_material(shape,object_from_pad,triangles, *, band=.0002,max_points=12)
     # Use the shape's quadratic metric as a second interior seed. Euclidean
     # projection toward a cylinder COM biases the result along its free axis;
     # alternating projection by a micrometre gap can then converge too slowly.
-    points=project_to_triangles(tri,np.zeros((len(tri),3)))
-    _,gaps,normals=shape.project_surface(points)
-    weights=(2/shape.size if shape.family=='ellipsoid' else
-             np.array([1.,1.,.001]) if shape.family=='cylinder' else None)
-    if weights is not None:
-        candidate=project_to_triangles(tri*weights,np.zeros((len(tri),3)))/weights
-        _,trial,trial_normals=shape.project_surface(candidate);better=trial<gaps
-        points[better]=candidate[better];gaps[better]=trial[better];normals[better]=trial_normals[better]
-    steps=np.full((len(tri),1),.25*min(shape.size)**2/max(shape.size))
-    for _ in range(8):
-        candidate=project_to_triangles(tri,points-steps*normals)
-        _,trial,trial_normals=shape.project_surface(candidate);better=trial<=gaps
-        improvement=np.maximum(gaps-trial,0.)
-        points[better]=candidate[better];gaps[better]=trial[better];normals[better]=trial_normals[better]
-        steps[~better]*=.5
-        if improvement.max(initial=0)<1e-10:break
+    from .native_grasp_geometry import refine_material_points
+    points=refine_material_points(shape,tri) if native else None
+    if points is None:
+        points=project_to_triangles(tri,np.zeros((len(tri),3)))
+        _,gaps,normals=shape.project_surface(points)
+        weights=(2/shape.size if shape.family=='ellipsoid' else
+                 np.array([1.,1.,.001]) if shape.family=='cylinder' else None)
+        if weights is not None:
+            candidate=project_to_triangles(tri*weights,np.zeros((len(tri),3)))/weights
+            _,trial,trial_normals=shape.project_surface(candidate);better=trial<gaps
+            points[better]=candidate[better];gaps[better]=trial[better];normals[better]=trial_normals[better]
+        steps=np.full((len(tri),1),.25*min(shape.size)**2/max(shape.size))
+        for _ in range(8):
+            candidate=project_to_triangles(tri,points-steps*normals)
+            _,trial,trial_normals=shape.project_surface(candidate);better=trial<=gaps
+            improvement=np.maximum(gaps-trial,0.)
+            points[better]=candidate[better];gaps[better]=trial[better];normals[better]=trial_normals[better]
+            steps[~better]*=.5
+            if improvement.max(initial=0)<1e-10:break
     points=np.vstack([points,np.unique(tri.reshape(-1,3),axis=0)])
     surface,gap,normals=shape.project_surface(points)
     nearest=gap.min();eligible=np.flatnonzero(gap<=nearest+band)

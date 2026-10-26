@@ -36,3 +36,22 @@ def test_dependent_pose_rows_match_independent_conic_solver():
     x=_dense_pose(H,g,A,b);reference=np.asarray(other.x)
     assert np.max(A@x-b)<1e-8
     assert abs((.5*x@H@x+g@x)-(.5*reference@H@reference+g@reference))<1e-6
+
+
+def test_large_preload_active_equations_retain_original_feasibility_and_cost():
+    # Captured from a five-module, 120 cm task. The unrefined active-set
+    # solution passed feasibility but missed the objective precision contract.
+    from pathlib import Path
+    import scipy.sparse as sp
+    import clarabel
+    p=np.load(Path(__file__).with_name('fixtures')/'preload_active_roundoff.npz')
+    H,g,A,b=[p[key] for key in ['H','g','A','b']]
+    options=clarabel.DefaultSettings();options.verbose=False;options.max_threads=1
+    options.tol_feas=options.tol_gap_abs=options.tol_gap_rel=1e-11
+    reference=clarabel.DefaultSolver(sp.csc_matrix(np.triu(H)),g,sp.csc_matrix(A),b,
+        [clarabel.NonnegativeConeT(len(b))],options).solve()
+    assert str(reference.status)=='Solved'
+    other=np.asarray(reference.x)
+    x=_dense_pose(H,g,A,b)
+    assert np.max(A@x-b)<1e-8
+    assert abs((.5*x@H@x+g@x)-(.5*other@H@other+g@other))<1e-5

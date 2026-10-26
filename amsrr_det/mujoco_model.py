@@ -6,7 +6,7 @@ from functools import lru_cache
 from copy import deepcopy
 import json
 from pathlib import Path
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 import numpy as np
 import pinocchio as pin
 import mujoco
@@ -25,7 +25,7 @@ def contact_dynamics_model(plant,selected_links, *, compact_frames=True):
     Body inertias, joints, actuators and all permitted task contacts stay.
     """
     doc=ET.fromstring(plant.xml)
-    for body in doc.find('worldbody').iter():
+    for body in list(doc.find('worldbody').iter()):
         for geom in list(body.findall('geom')):
             name=geom.get('name','')
             if name not in ['object','support','destination_support','floor'] and not any(name.startswith(link+'/') for link in selected_links):
@@ -34,7 +34,7 @@ def contact_dynamics_model(plant,selected_links, *, compact_frames=True):
         world=doc.find('worldbody')
         used_sites={value for element in doc if element.tag!='worldbody' for node in element.iter()
                     for key,value in node.attrib.items() if key in ['site','site1','site2','refsite']}
-        for parent in world.iter():
+        for parent in list(world.iter()):
             for site in list(parent.findall('site')):
                 if site.get('name') not in used_sites:parent.remove(site)
         removed=set()

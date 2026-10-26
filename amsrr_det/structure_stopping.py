@@ -1,15 +1,21 @@
-"""Fixed-sample evidence for one more independent structure-generation trial.
+"""Simultaneous evidence from fixed, aligned blocks of count-specific trials.
 
-For IID trial costs Y (failure = +infinity), an incumbent c <= min(Y_1..Y_n)
-satisfies P[P(Y_new < c) > epsilon] <= (1-epsilon)**n, including ties.
-This does not estimate whether an undiscovered better structure exists.
-Reference: https://arxiv.org/abs/0805.1569
+Let C[n,k] be the cost of the frozen generator at count n and trial index k,
+including failure (+infinity). The latent block costs Y[k] = min_n C[n,k]
+are IID across k. For the final COMMON incumbent B <= min_k Y[k],
+P[exists n: P(C[n,new] < B) > epsilon] <= (1-epsilon)**K.
+The count event is contained in the block-minimum event; no union bound over
+counts is needed. This is not a guarantee about each count's own incumbent,
+nor about the existence of an undiscovered better structure.
 
-The caller must freeze the generator, acceptance rules and per-trial work
-budget before sampling. Lists are indexed by preassigned independent trial
-number, NOT completion order. None means unfinished; infinity means a finished
-unsuccessful trial. Only the predetermined sample prefix certifies stopping,
-so repeated calls and faster parallel completions cannot change the sample.
+An auxiliary accepted candidate can only lower B. A count-wide physical lower
+bound L[n] > B permits skipping that count: its latent outputs cannot beat the
+final B. Individual observed/censored block minima need not remain IID; the
+proof uses outputs of the fixed procedures had no pruning occurred.
+
+Lists use preassigned trial indices, not completion order. None is unfinished;
++infinity is a completed unsuccessful trial. All needed aligned prefixes must
+finish. Numerical budgets, generation and acceptance rules are frozen first.
 """
 import math
 from .structure_bounds import compare_count_groups
@@ -19,7 +25,8 @@ def required_trials(improvement_probability=.05, total_error=.05, groups=8):
     if (not 0 < improvement_probability < 1 or not 0 < total_error < 1
             or not isinstance(groups, int) or not 1 <= groups <= 8):
         raise ValueError('invalid stopping probabilities or group count')
-    return math.ceil(math.log(total_error/groups)/math.log1p(-improvement_probability))
+    # groups validates the declared search scope; the block bound shares alpha.
+    return math.ceil(math.log(total_error)/math.log1p(-improvement_probability))
 
 
 def selection_evidence(bounds, outcomes, incumbent, *, protocol_id,
@@ -53,13 +60,21 @@ Incumbent must be a physically accepted candidate under that same criterion.
             row['one_more_trial_improvement_probability_upper']=0.
         elif completed==count:
             row.update(status='fixed_trial_probability_bound',
-                       one_more_trial_improvement_probability_upper=-math.expm1(math.log(total_error/groups)/count),
-                       allocated_error_probability=total_error/groups)
+                       one_more_trial_improvement_probability_upper=-math.expm1(math.log(total_error)/count),
+                       shared_error_probability=total_error)
         else:
             row['status']='incomplete_trials'
             row['one_more_trial_improvement_probability_upper']=None
-    return dict(protocol_id=protocol_id,complete=all(r['status']!='incomplete_trials' for r in rows),
-                scope='one additional independent run of the same frozen generator per module count',
+    complete=all(r['status']!='incomplete_trials' for r in rows)
+    if not complete:
+        for row in rows:
+            if row['status']!='excluded_by_weight':
+                row['one_more_trial_improvement_probability_upper']=None
+                row.pop('shared_error_probability',None)
+    return dict(protocol_id=protocol_id,complete=complete,
+                method='aligned_count_block_minimum',required_blocks=count,
+                scope='one additional fixed independent trial in every count; each count is contained in this block event',
+                block_improvement_probability_upper=(-math.expm1(math.log(total_error)/count) if complete else None),
                 undiscovered_structure_existence_probability_claimed=False,
                 improvement_probability_target=improvement_probability,
                 simultaneous_error_probability=total_error,groups=rows)

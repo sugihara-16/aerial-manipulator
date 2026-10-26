@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from collections import deque
 from pathlib import Path
 import time
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 import numpy as np
 from .clearance import ContactClassifier,forward_collision
 import pinocchio as pin
@@ -239,7 +239,7 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
     # a pad's real recess before touching its rim. Correct the frame targets from
     # closest material gaps; never fill the recess with an imagined plane.
     from .contact_geometry import close_material
-    for _ in range(6):
+    for iteration in range(12):
         pin.framesForwardKinematics(p.pin,pd,closed);obj=pd.oMf[p.meta['object']['frame']]
         patches=[close_material(shape,obj.inverse()*pd.oMf[frame],material_triangles(port,p.meta.get('material_mesh_cache')))
                  for (frame,_),(_,port) in zip(samples,surfaces)]
@@ -255,7 +255,8 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
         material_normals=np.array(material_normals)
         frame_normals=np.array([pd.oMf[frame].rotation[:,0] for frame,_ in samples])
         alignment=np.linalg.norm(frame_normals-material_normals,axis=1)
-        if np.max(abs(gap-NOMINAL_CONTACT_GAP))<.00001 and alignment.max()<.1:break
+        gap_tolerance=.00005 if iteration>=6 else .00001
+        if np.max(abs(gap-NOMINAL_CONTACT_GAP))<gap_tolerance and alignment.max()<.1:break
         centers=np.array([pd.oMf[frame].translation for frame,_ in samples])
         # Contact sites may move along a face. Do not sacrifice the actual gap
         # to restore an arbitrary patch centroid or improve an already allowed
@@ -264,8 +265,16 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
         # its normal, rather than the original numerical site's normal.
         preserve=alignment<.1
         fit_normals=np.where(preserve[:,None],frame_normals,material_normals)
-        closed,fit=fit_contacts(p.pin,p.meta,closed,surfaces,centers+(gap-NOMINAL_CONTACT_GAP)[:,None]*material_normals,fit_normals,
-                               floor_clearance=.03,base_rotation=base_rotation,obstacles=obstacles)
+        if iteration<6:
+            closed,fit=fit_contacts(p.pin,p.meta,closed,surfaces,centers+(gap-NOMINAL_CONTACT_GAP)[:,None]*material_normals,fit_normals,
+                                   floor_clearance=.03,base_rotation=base_rotation,obstacles=obstacles)
+        else:
+            # If point matching cannot close all pads together, let sites slide
+            # while correcting their individual real-material offsets.
+            _,frame_gaps,_=shape.project_surface(np.array([obj.actInv(center) for center in centers]))
+            closed,fit=fit_contacts(p.pin,p.meta,closed,surfaces,centers,fit_normals,
+                                   floor_clearance=.03,base_rotation=base_rotation,obstacles=obstacles,
+                                   object_shape=shape,contact_gap=frame_gaps-gap+NOMINAL_CONTACT_GAP)
     # Surface sites are search targets, not task-prescribed attachment points.
     # A valid material contact may slide along a face. Judge the resulting gap
     # and normal instead of rejecting a harmless tangent shift of the frame.
@@ -355,7 +364,7 @@ def prepare_static_trims(p,shape,opened,closed,surfaces,points,normals, *, loade
     if obstruction is not None:
         error=ValueError('material contact force directions cannot support this load')
         error.evidence=obstruction;raise error
-    trims=None;screen_attempts=[]
+    trims=None;screen_attempts=[];direction_repaired=False
     gimbals=[a for a in p.meta['actuators'] if a['role']=='vectoring']
     aimed=aim_rotors_up(p.pin,p.meta,closed)
     rng=np.random.default_rng(194)
@@ -368,6 +377,11 @@ def prepare_static_trims(p,shape,opened,closed,surfaces,points,normals, *, loade
         # unresolved loaded trim already rejects this posture, so evaluating
         # its two empty trims cannot change the decision or the next draw.
         loaded=static_balance(p.pin,p.meta,closed,contacts,minimum_pad_normal_force_n=.5) if loaded_trim is None else loaded_trim
+        if not direction_repaired and loaded.get('minimum_peak_effort_ratio',float('inf'))>1. and 'minimum_peak_effort_ratio' in loaded:
+            from .equilibrium import refine_gimbal_trim
+            closed,loaded=refine_gimbal_trim(p.pin,p.meta,closed,contacts,loaded)
+            for a in gimbals:opened[a['q']]=closed[a['q']]
+            direction_repaired=True
         candidate=[None,None,loaded]
         if loaded['status'] in ['static_screen_pass','coupled_point_pass']:
             candidate[0]=static_balance(p.pin,p.meta,opened,payload_fraction=0.)

@@ -14,6 +14,15 @@ import pickle
 active = None
 
 
+class PlanningCancelled(RuntimeError):
+    """Unobserved work stopped after the selector has made its decision."""
+
+
+def check_cancelled():
+    if active is not None:
+        active.check_cancelled()
+
+
 def evaluate(inputs, calculate):
     return active.evaluate(inputs, calculate)[0] if active is not None else calculate()
 
@@ -22,12 +31,18 @@ class PlanningMemo:
     def __init__(self, directory):
         self.directory = Path(directory)
 
+    def check_cancelled(self):
+        if (self.directory / 'cancelled').exists():
+            raise PlanningCancelled('unobserved planning work cancelled')
+
     def evaluate(self, inputs, calculate):
+        self.check_cancelled()
         raw = json.dumps(inputs, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
         key = hashlib.sha256(raw).hexdigest()
         target = self.directory / (key + '.pickle')
         with (self.directory / (key + '.lock')).open('wb') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
+            self.check_cancelled()
             if target.exists():
                 with target.open('rb') as stream:
                     saved_input, result = pickle.load(stream)

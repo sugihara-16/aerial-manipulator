@@ -39,7 +39,54 @@ def contact_normal_obstruction(contacts, required_force, minimum_pad_normal_forc
     return None
 
 
-def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fraction=1., balance_thrust=False,object_wrench=None,base_load=None,base_acceleration=None,peak_slack=None,minimum_pad_normal_force_n=0.):
+def object_wrench_obstruction(contacts,required_force,rotation,minimum_normal=.5):
+    """A dual lower bound for an object-only relaxation of the trim screen.
+
+    Rotor directions cannot repair unbalanced object force/torque. Dropping
+    robot equilibrium and relaxing pad L1 caps to normal caps only enlarges
+    the original feasible set. A positive certified residual rejects this
+    fixed contact geometry, never the graph or other contact positions.
+    """
+    if not contacts or any(not c.get('target_frame') for c in contacts):return None
+    columns=[];pads={};upper=[]
+    for i,c in enumerate(contacts):
+        n=np.asarray(c['normal']);axis=np.eye(3)[np.argmin(abs(n))]
+        t=np.cross(n,axis);t/=np.linalg.norm(t);b=np.cross(n,t)
+        forces=np.array([n+c['mu']*t,n-c['mu']*t,n+c['mu']*b,n-c['mu']*b]).T
+        arm=np.asarray(rotation)@np.asarray(c['target_point'])
+        columns.append(np.vstack([forces,np.cross(arm,forces.T).T]))
+        upper.extend([float(c['max_force'])]*4)
+        pads.setdefault(c['frame'],[]).append(i)
+    W=np.concatenate(columns,axis=1);target=np.r_[required_force,np.zeros(3)]
+    # Scale only the residual objective; force constraints keep their units.
+    scale=np.maximum(np.linalg.norm(W,axis=1),1.)
+    width=W.shape[1]+1
+    A=[np.c_[W/scale[:,None],-np.ones(6)],np.c_[-W/scale[:,None],-np.ones(6)]]
+    rhs=[target/scale,-target/scale]
+    for i,c in enumerate(contacts):
+        row=np.zeros(width);row[4*i:4*i+4]=1.
+        A.append(row[None]);rhs.append([c['max_force']])
+    for ids in pads.values():
+        row=np.zeros(width)
+        for i in ids:row[4*i:4*i+4]=1.
+        A.append(-row[None]);rhs.append([-minimum_normal])
+        limits=[contacts[i]['pad_force_limit'] for i in ids if 'pad_force_limit' in contacts[i]]
+        if limits:A.append(row[None]);rhs.append([min(limits)])
+    A=np.vstack(A);rhs=np.concatenate(rhs);cost=np.zeros(width);cost[-1]=1.
+    result=linprog(cost,A_ub=A,b_ub=rhs,bounds=[(0,u) for u in upper]+[(0,None)])
+    if not result.success or result.fun<1e-7:return None
+    dual=np.maximum(-result.ineqlin.marginals,0.)
+    # Feasible dual weights plus exact minimization of the Lagrangian over
+    # finite force-variable boxes certify a lower bound even after rounding.
+    dual/=max(float(dual[:12].sum()),1.)*(1.+1e-12)
+    gradient=cost+A.T@dual
+    if gradient[-1]<0:return None
+    bound=float(-dual@rhs+np.minimum(gradient[:-1],0.)@np.asarray(upper))
+    if not np.isfinite(bound) or bound<=1e-6:return None
+    return dict(scope='fixed_material_object_wrench_relaxation',residual_lower_bound=bound)
+
+
+def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fraction=1., balance_thrust=False,object_wrench=None,base_load=None,base_acceleration=None,peak_slack=None,minimum_pad_normal_force_n=0.,gimbal_gradient=False):
     """Contacts give force on the robot; the opposite force acts on the object.
 
     normal, point and target_point are expressed in world/each local frame as
@@ -143,6 +190,25 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
         result['status']='unresolved_or_inner_model_infeasible';return result
     x=solution.x
     result['minimum_peak_effort_ratio']=float(x[-1])
+    if gimbal_gradient:
+        # Envelope derivative of the solved force LP. Contact geometry is
+        # independent of the rotor-only gimbal joints. Original constraints
+        # and a fresh LP are still used to accept every changed posture.
+        dual=np.zeros(nv);dual[unactuated]=solution.eqlin.marginals
+        marginals=solution.ineqlin.marginals
+        for i,a in enumerate(meta['actuators']):dual[a['v']]=-marginals[2*i]+marginals[2*i+1]
+        gravity_derivative=pin.computeGeneralizedGravityDerivatives(model,data,q).copy()
+        gradient=[]
+        for i,rotor in enumerate(meta['rotors']):
+            a=meta['actuators'][rotor['gimbal']];frame=rotor['frame'];columns=[]
+            for sign in [1.,-1.]:
+                moved=q.copy();moved[a['q']]+=sign*1e-6
+                pin.framesForwardKinematics(model,data,moved)
+                J=pin.computeFrameJacobian(model,data,moved,frame,pin.LOCAL_WORLD_ALIGNED)
+                columns.append(J[:3].T@data.oMf[frame].rotation[:,2])
+            gradient.append(float(dual@(gravity_derivative[:,a['v']]-x[i]*(columns[0]-columns[1])/2e-6)))
+        result['gimbal_peak_gradient']=gradient
+
     if balance_thrust:
         # Keep the verified LP constraints, then choose a less concentrated
         # rotor trim. This plans a reference; it does not set contact forces.
@@ -249,3 +315,26 @@ def restoring_screen(model,meta,q,contacts,angular_acceleration=.3, *, minimum_p
             results.append(dict(axis=axis.tolist(),sign=sign,required_moment_nm=moment.tolist(),
                 status=result['status'],max_normalized_joint_effort=result.get('max_normalized_joint_effort')))
     return dict(scope='sampled_static_restoring_load_screen',passed=all(r['status']=='static_screen_pass' for r in results),directions=results)
+
+
+def refine_gimbal_trim(model,meta,q,contacts,initial,*,minimum_normal=.5):
+    """Use the force LP's envelope gradient, accepting only freshly solved trims."""
+    q=q.copy();indices=np.array([meta['actuators'][r['gimbal']]['q']for r in meta['rotors']])
+    low=np.array([meta['actuators'][r['gimbal']]['lower']+.02 for r in meta['rotors']])
+    high=np.array([meta['actuators'][r['gimbal']]['upper']-.02 for r in meta['rotors']])
+    records=[];current=initial
+    for iteration in range(12):
+        current=static_balance(model,meta,q,contacts,minimum_pad_normal_force_n=minimum_normal,gimbal_gradient=True)
+        peak=current.get('minimum_peak_effort_ratio',np.inf)
+        records.append(dict(peak_effort_ratio=peak))
+        if peak<=.95 or 'gimbal_peak_gradient' not in current:break
+        gradient=np.array(current['gimbal_peak_gradient']);gradient/=max(abs(gradient).max(),1e-12)
+        for step in [.3,.15,.075,.0375]:
+            moved=q.copy();moved[indices]=np.clip(q[indices]-step*gradient,low,high)
+            trial=static_balance(model,meta,moved,contacts,minimum_pad_normal_force_n=minimum_normal)
+            if trial.get('minimum_peak_effort_ratio',np.inf)<peak-1e-5:
+                q,current=moved,trial;break
+        else:break
+    current.pop('gimbal_peak_gradient',None)
+    current['gimbal_refinement']=records
+    return q,current

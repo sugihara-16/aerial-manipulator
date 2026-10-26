@@ -45,8 +45,10 @@ def refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,fi
     from build.sticking_design import LocalGrasp
     from build.task_gimbal_design import GimbalWrenchDesign
     from build.finite_slip_preload import construct_finite_slip
+    from amsrr_det.planning_memo import check_cancelled
     records=[]
     for iteration in range(4):
+        check_cancelled()
         local=LocalGrasp(plant,q,links)
         margin=task_wrench_margin(local,q,u,displacement,measure_feedback=False)
         if margin['nominal_feasible']:
@@ -63,6 +65,7 @@ def refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,fi
 
 
 def refine_task_reference(plant,full_model,q,u,velocity,links,displacement,finite):
+    from amsrr_det.planning_memo import check_cancelled
     from amsrr_det.clearance import MotionBoundedClearance
     clearance=MotionBoundedClearance(full_model,links)
     from build.sticking_design import LocalGrasp
@@ -72,6 +75,7 @@ def refine_task_reference(plant,full_model,q,u,velocity,links,displacement,finit
     (q,u,velocity),finite,info=refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,finite)
     began=time.perf_counter();records=[];selected=[np.zeros(6)]
     for iteration in range(12):
+        check_cancelled()
         local=LocalGrasp(plant,q,links);feedback=MomentumFeedback(local,q,u,period=.01)
         margin=task_wrench_margin(local,q,u,displacement,feedback=feedback,measure_feedback=False)
         record=dict(before=margin);records.append(record)

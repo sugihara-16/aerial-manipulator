@@ -12,7 +12,7 @@ from scipy.optimize import minimize,LinearConstraint
 from amsrr_det.linear_program import linprog
 
 
-def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserve, *, method='hybrid'):
+def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserve, *, method='hybrid',_eliminate=False):
     started=time.perf_counter()
     A=np.asarray(problem['A_ub']);b=np.asarray(problem['b_ub'])
     E=np.asarray(problem['A_eq']);rhs=np.asarray(problem['b_eq'])
@@ -25,10 +25,17 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
         raise ValueError('rotor coordinates must be normalized to [0,1] with positive scales')
     lo[-1]=max(lo[-1],minimum_reserve)
     fixed=lo==hi;free=~fixed;origin=np.where(fixed,lo,0.)
-    U,s,V=np.linalg.svd(E[:,free],full_matrices=True)
-    rank=np.count_nonzero(s>s[0]*1e-14)
-    origin[free]=feasible[free]+V[:rank].T@((U[:,:rank].T@(rhs-E@origin))/s[:rank]-V[:rank]@feasible[free])
-    null=np.zeros((len(origin),len(V)-rank));null[free]=V[rank:].T
+    direct=method in ('conic','piecewise') and not _eliminate
+    if direct:
+        # Retain physical equalities. Projecting onto the numerical null space
+        # of these stiff contact equations can move a feasible LP far outside
+        # its force bounds before the cone solver has even started.
+        null=np.eye(len(origin))[:,free]
+    else:
+        U,s,V=np.linalg.svd(E[:,free],full_matrices=True)
+        rank=np.count_nonzero(s>s[0]*1e-14)
+        origin[free]=feasible[free]+V[:rank].T@((U[:,:rank].T@(rhs-E@origin))/s[:rank]-V[:rank]@feasible[free])
+        null=np.zeros((len(origin),len(V)-rank));null[free]=V[rank:].T
     nz=null.shape[1];nr=len(rotor_columns);width=nz+nr
     ids_hi=np.flatnonzero(np.isfinite(hi));ids_lo=np.flatnonzero(np.isfinite(lo))
     C=np.vstack([A,np.eye(len(lo))[ids_hi],-np.eye(len(lo))[ids_lo]])
@@ -50,11 +57,16 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
             rows[start:end,nz+i]=-1.
             bounds[start:end]=-intercepts-slopes*origin[col]
         weights=np.asarray(rotor_scales)**1.5
+        equality_options={}
+        if direct:
+            equality=E@null;target=rhs-E@origin
+            equality_scale=np.maximum(np.linalg.norm(equality,axis=1),1e-12)
+            equality_options=dict(A_eq=sp.csr_matrix(np.c_[equality/equality_scale[:,None],np.zeros((len(E),nr))]),b_eq=target/equality_scale)
         answer=linprog(np.r_[np.zeros(nz),weights/weights.max()],
             A_ub=sp.csr_matrix(np.vstack([matrix,rows])),b_ub=np.r_[bound,bounds],
             bounds=[(None,None)]*nz+[(0,None)]*nr,
             options=dict(primal_feasibility_tolerance=1e-10,dual_feasibility_tolerance=1e-10,
-                         small_matrix_value=1e-12))
+                         small_matrix_value=1e-12),**equality_options)
         x=origin+null@answer.x[:nz] if answer.success else feasible.copy()
         residual=max(float(abs(E@x-rhs).max()),float((C@x-d).max()))
         force=np.maximum(0,x[rotor_columns]*rotor_scales)
@@ -87,6 +99,11 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
         report['accepted']=(residual<1e-8 and report['burden']<=report['initial_burden']+1e-5)
         return x,report
     blocks=[matrix];values=[bound];cones=[clarabel.NonnegativeConeT(len(bound))]
+    if direct:
+        equality=E@null;target=rhs-E@origin
+        row_scale=np.maximum(np.linalg.norm(equality,axis=1),1e-12)
+        blocks.insert(0,np.c_[equality/row_scale[:,None],np.zeros((len(E),nr))])
+        values.insert(0,target/row_scale);cones.insert(0,clarabel.ZeroConeT(len(E)))
     for i,col in enumerate(rotor_columns):
         # (t_i,1,normalized_thrust_i) in power cone with exponent 2/3.
         block=np.zeros((3,width));block[0,nz+i]=-1.;block[2,:nz]=-null[col]
@@ -109,4 +126,10 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
                 wall_s=time.perf_counter()-started,iterations=answer.iterations)
     report['accepted']=(str(answer.status) in ['Solved','AlmostSolved'] and residual<1e-8
                         and np.min(force)>=-1e-8 and report['burden']<=report['initial_burden']+1e-5)
+    report['equality_form']='original' if direct else 'null_space'
+    if direct and not report['accepted']:
+        result,retry=minimum_input(problem,feasible,rotor_columns,rotor_scales,minimum_reserve,
+                                   method=method,_eliminate=True)
+        retry.update(original_retry_reason=report['status'],wall_s=time.perf_counter()-started)
+        return result,retry
     return result,report

@@ -22,7 +22,21 @@ def _dense_pose(H,g,A,b):
         # Whitening can magnify nearly dependent constraint rows. Solve the
         # identical positive-definite QP in its original coordinates before
         # falling back to the slower general optimizer.
-        x,_,_,_,dual,_=quadprog.solve_qp(H,-g,-A.T,-b)
+        x,_,_,_,dual,active=quadprog.solve_qp(H,-g,-A.T,-b)
+        # Refine the active equations before abandoning this fast solve. The
+        # stiff preload problem can have an accurate primal point but lose
+        # enough stationarity digits to fail the unchanged objective check.
+        rows=A[active-1]
+        system=np.block([[H,rows.T],[rows,np.zeros((len(rows),len(rows)))]])
+        rhs=np.r_[-g,b[active-1]]
+        factors=la.lu_factor(system,check_finite=False)
+        answer=np.r_[x,dual[active-1]]
+        precise_system=system.astype(np.longdouble)
+        precise_rhs=rhs.astype(np.longdouble)
+        for _ in range(4):
+            residual=np.asarray(precise_rhs-precise_system@answer.astype(np.longdouble),dtype=float)
+            answer+=la.lu_solve(factors,residual,check_finite=False)
+        x=answer[:len(g)];dual=np.zeros(len(b));dual[active-1]=answer[len(g):]
         dual=np.maximum(dual,0.)
         gradient=H@x+g+A.T@dual
         gap=.5*gradient@np.linalg.solve(H,gradient)+dual@np.maximum(b-A@x,0.)
@@ -254,12 +268,15 @@ def construct_finite_slip(plant,full_model,q,links,duration, *, minimize_input=F
     """Refine geometry, then solve the same law again at the actual pose."""
     from build.sticking_design import LocalGrasp
     from amsrr_det.clearance import MotionBoundedClearance
+    from amsrr_det.planning_memo import check_cancelled
+    check_cancelled()
     clearance=clearance or MotionBoundedClearance(full_model,links);records=[]
     fixed,check=finite_slip_preload(LocalGrasp(plant,q,links),q,duration,move_pose=False,minimize_input=minimize_input,travel_budget=travel_budget)
     if fixed is not None and check['feasible']:
         if clearance.check(q,True)[0]:raise ValueError('finite-slip initial pose clearance')
         return fixed,dict(scope=__doc__,initial_fixed=check,iterations=records)
     for iteration in range(12):
+        check_cancelled()
         local=LocalGrasp(plant,q,links)
         answer,step=finite_slip_preload(local,q,duration,move_pose=True,travel_budget=travel_budget)
         if answer is None or not step['feasible']:raise ValueError('finite-slip pose '+str(step))

@@ -39,3 +39,19 @@ def test_two_elements_require_relief_even_if_each_is_below_force_bound():
     assert after<before
     target=.95*30./np.sqrt(1+4.5**2)
     assert after==pytest.approx(before-(before-target)*.0025/.5,abs=1e-10)
+
+
+def test_recovery_guide_brings_a_lightly_loaded_pad_into_existing_domain():
+    m,d=scene(.2/15000.)
+    assert not preload_in_physical_domain(m,d,['pad'])
+    for _ in range(100):
+        rows,bounds=preload_domain_rates(m,d,['pad'],.02,maintain_floor=True)
+        # In this one-axis scene choose the least motion meeting both limits.
+        lo=max((b/a for a,b in zip(rows[:,0],bounds) if a>0),default=-np.inf)
+        hi=min((b/a for a,b in zip(rows[:,0],bounds) if a<0),default=np.inf)
+        assert lo<=hi
+        velocity=np.array([np.clip(0.,lo,hi)])
+        mujoco.mj_integratePos(m,d.qpos,velocity,.02);mujoco.mj_fwdPosition(m,d)
+    assert preload_in_physical_domain(m,d,['pad'])
+    load=sum(-7500*c.dist for c in d.contact)
+    assert .5<load<.5/.95

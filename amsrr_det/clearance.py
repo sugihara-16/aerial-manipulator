@@ -6,13 +6,35 @@ import mujoco
 
 PART_CLEARANCE = .001
 ENVIRONMENT_CLEARANCE = .03
+CLEARANCE_TOLERANCE = 1e-6
 SUPPORT_NAMES = ('floor', 'support', 'destination_support')
+CCD_QUERY_STATISTICS = dict(retries=0, recovered=0)
+
+
+def collision_query(model, data):
+    """Retry an exhausted EPA query with more work, never less accuracy.
+
+    Only use on the independent distance model. A private model keeps shared
+    query options unchanged; other collision errors propagate unchanged.
+    """
+    iterations = model.opt.ccd_iterations
+    try:
+        mujoco.mj_collision(model, data)
+    except mujoco.FatalError as error:
+        exhausted = f'ccdValidated: EPA inconsistency iterations {iterations} '
+        if not str(error).startswith(exhausted):
+            raise
+        CCD_QUERY_STATISTICS['retries'] += 1
+        extended = copy.copy(model)
+        extended.opt.ccd_iterations = max(2000, 4 * iterations)
+        mujoco.mj_collision(extended, data)
+        CCD_QUERY_STATISTICS['recovered'] += 1
 
 
 def forward_collision(model,data):
     """Refresh rigid geometry without constructing unused force constraints."""
     if not model.nflex and not (model.opt.enableflags & mujoco.mjtEnableBit.mjENBL_SLEEP):
-        mujoco.mj_kinematics(model,data);mujoco.mj_collision(model,data)
+        mujoco.mj_kinematics(model,data);collision_query(model,data)
     else:
         mujoco.mj_fwdPosition(model,data)
 
@@ -141,7 +163,7 @@ class MotionBoundedClearance:
             oldq,_,_,part,environment=self.anchor
             bound=2*self.joint_motion.maximum(states,oldq)
             worst=float(bound.max(initial=0.))
-            if min(part-PART_CLEARANCE,environment-ENVIRONMENT_CLEARANCE)-worst>=-1e-6:
+            if min(part-PART_CLEARANCE,environment-ENVIRONMENT_CLEARANCE)-worst>=-CLEARANCE_TOLERANCE:
                 self.reused+=len(states)
                 return [],part-worst,environment-worst
         part,environment=np.inf,np.inf
@@ -160,7 +182,7 @@ class MotionBoundedClearance:
                 mujoco.mj_kinematics(m,d)
                 movement=np.linalg.norm(d.xpos[self.bodies]-pos,axis=1)+self.radius*np.linalg.norm(d.xmat[self.bodies]-mat,axis=1)
                 bound=2*movement.max(initial=0)
-            if min(part-PART_CLEARANCE,environment-ENVIRONMENT_CLEARANCE)-bound>=-1e-6:
+            if min(part-PART_CLEARANCE,environment-ENVIRONMENT_CLEARANCE)-bound>=-CLEARANCE_TOLERANCE:
                 self.reused+=1
                 return [],part-bound,environment-bound
         # Rigid distance queries need poses and collision detection, not
@@ -175,5 +197,5 @@ class MotionBoundedClearance:
         self.anchor=(qpos.copy(),d.xpos[self.bodies].copy(),d.xmat[self.bodies].copy(),part,environment)
         self.last_allowed=grasp_contact_allowed
         violations=[tuple(sorted((self.names[c.geom1],self.names[c.geom2])))
-                    for c,limit,allowed in zip(d.contact,limits,intended) if not allowed and c.dist<limit-1e-6]
+                    for c,limit,allowed in zip(d.contact,limits,intended) if not allowed and c.dist<limit-CLEARANCE_TOLERANCE]
         return violations,part,environment

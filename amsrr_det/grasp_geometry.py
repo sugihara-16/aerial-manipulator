@@ -85,7 +85,7 @@ def opposed_contact_terms(points,normals,friction,point_jac=None,normal_jac=None
     return error,derivative*(raw>0)[:,None]
 
 
-def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None):
+def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False):
     if not set(surfaces)<=set(free_surfaces(meta)):
         raise ValueError('contact surface is occupied or does not exist')
     active=[a for a in meta['actuators'] if a['role']=='dock']
@@ -121,11 +121,22 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
     if analytic_jacobian and not avoid_pairs and normal_moment_axis is None and library() is not None:
         kernel=GeometryKernel(model,frames+([meta['object']['frame']] if object_shape is not None else []),
                               bounds,obstacles,floor_clearance,len(x0))
+    samples=None
+    if avoid_object:
+        if object_shape is None:raise ValueError('object avoidance needs a known shape')
+        from .object_overlap import part_samples
+        allowed={f'm{i}/'+('pitch_dock_mech' if port.startswith('pitch') else 'yaw_dock_mech')+port[-1] for i,port in surfaces}
+        entries=[(meta['frames'][f'm{i}/{link}'],p)for i in range(meta['modules']) for link,p in part_samples() if f'm{i}/{link}' not in allowed]
+        samples=(np.concatenate([np.full(len(p),f)for f,p in entries]),np.vstack([p for f,p in entries]))
     def configuration(x):
         q=q0.copy();q[:3]=x[:3];q[qi]=x[3+nr:]
         if base_rotation:q[3:7]=pin.Quaternion(pin.exp3(x[3:6])@R0).coeffs()
         return q
     def residual(x,want_jac=False):
+        # A planning worker can stop an unobserved fit between iterations.
+        # Ordinary execution has no active planning memo and is unaffected.
+        from .planning_memo import check_cancelled
+        check_cancelled()
         q=configuration(x)
         if want_jac:
             lift=np.zeros((model.nv,len(x)));rotation=pin.Quaternion(q[3:7]).matrix()
@@ -137,7 +148,10 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
             lift[[a['v'] for a in active],3+nr+np.arange(len(active))]=1
             if kernel is not None:
                 fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0,opposed_friction)
-                if fused is not None:return fused
+                if fused is not None:
+                    if samples is None:return fused
+                    extra,extra_jac=kernel.object_avoidance(lift,meta['object']['frame'],samples,object_shape,grouped=True)
+                    return np.r_[fused[0],extra],np.vstack([fused[1],extra_jac])
                 poses,J,br,bj=kernel.evaluate(q,lift)
                 count=len(frames);position=poses[:count,:3];normal=poses[:count,3:].reshape(-1,3,3)[:,:,0]
                 linear=J[:count,:3];angular=J[:count,3:]
@@ -190,7 +204,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 if want_jac:
                     J=jac(f);rows.extend(J[:3]);rows.extend(-.15*pin.skew(T.rotation[:,0])@J[3:])
             else:
-                r.append(gaps[pad]-contact_gap)
+                r.append(gaps[pad]-(contact_gap[pad] if np.ndim(contact_gap) else contact_gap))
                 r.extend(.15*(T.rotation[:,0]+obj.rotation@outwards[pad]))
                 r.extend(.03*(T.translation-p))
                 if want_jac:
@@ -283,6 +297,14 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                             point_jacs.append(J[:3]-pin.skew(np.asarray(point)-data.oMf[frame].translation)@J[3:])
                         rows.append(-2*np.asarray(result.normal)@(point_jacs[1]-point_jacs[0]))
                     else:rows.append(np.zeros(len(x)))
+        if samples is not None:
+            for f,material in entries:
+                T=data.oMf[f]
+                local=(material@T.rotation.T+T.translation-obj.translation)@obj.rotation
+                _,gaps,outwards=object_shape.project_surface(local);worst=int(np.argmin(gaps))
+                r.append(2*max(0.,.03-gaps[worst]))
+                if want_jac:
+                    J=jac(f);rows.append(-2*outwards[worst]@obj.rotation.T@(J[:3]-pin.skew(T.rotation@material[worst])@J[3:]) if gaps[worst]<.03 else np.zeros(len(x)))
         r.extend(.0001*(x-x0))
         if want_jac:
             rows.extend(.0001*np.eye(len(x)));return np.asarray(r),np.asarray(rows)

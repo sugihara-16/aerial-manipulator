@@ -12,7 +12,7 @@ import mujoco
 
 
 @lru_cache(maxsize=32)
-def _gimbal_solver(influenced,ns):
+def _gimbal_solver(influenced,ns,minimize_input=False):
     import casadi as ca
     ng=len(influenced);nr=sum(map(len,influenced));width=ng+ns*nr
     x=ca.SX.sym('x',width);parameters=[]
@@ -37,6 +37,9 @@ def _gimbal_solver(influenced,ns):
         con.append((A@(x[ng+k*nr:ng+(k+1)*nr]*fmax)-target)/scale)
     weights=np.r_[np.ones(ng),np.full(ns*nr,1e-8)]
     obj=.5*ca.dot(weights*(x-initial),x-initial)
+    if minimize_input:
+        relative_force=x[ng:]*ca.repmat(fmax/ca.mmax(fmax),ns,1)
+        obj=ca.sum1((relative_force+1e-8)**1.5)/ns+1e-6*ca.sumsqr(x[:ng]-initial[:ng])
     return ca.nlpsol('repair','ipopt',dict(x=x,p=ca.vertcat(*parameters),f=obj,g=ca.vertcat(*con)),
         {'print_time':False,'ipopt.print_level':0,'ipopt.sb':'yes','ipopt.max_iter':80,
          'ipopt.tol':1e-10,'ipopt.constr_viol_tol':1e-10,'ipopt.bound_relax_factor':0.})
@@ -62,6 +65,12 @@ class GimbalWrenchDesign:
                 while ancestor and ancestor!=body:ancestor=int(self.m.body_parentid[ancestor])
                 if ancestor==body:indices.append(i)
             self.influenced.append(indices)
+        # Joint traversal order depends on the connection tree. Canonicalize
+        # it by rotor indices so equivalent equation layouts share one program;
+        # all geometry, bounds and initial angles follow the same permutation.
+        order=sorted(range(self.ng),key=lambda j:tuple(self.influenced[j]))
+        self.gimbals=self.gimbals[order];self.joints=self.joints[order];self.qi=self.qi[order]
+        self.influenced=[self.influenced[j] for j in order]
 
     def geometry(self,angles):
         m,d=self.m,self.d;d.qpos[:]=self.q;d.qpos[self.qi]=angles
@@ -85,7 +94,7 @@ class GimbalWrenchDesign:
             target_derivative[j,:,3:]=np.cross(dm,specific)
         return matrix,targets,derivative,target_derivative
 
-    def solve(self,u,reserve=0.):
+    def solve(self,u,reserve=0.,*,_capacity=None,minimize_input=False):
         began=time.perf_counter();ng,nr=self.ng,self.nr;ns=len(self.accelerations)
         angles=self.q[self.qi];fmax=self.local.rotor_max
         low=np.r_[self.m.jnt_range[self.joints,0],np.tile(self.local.rotor_min/fmax+reserve,ns)]
@@ -99,16 +108,32 @@ class GimbalWrenchDesign:
         axes=self.d.xaxis[self.joints].T;anchors=(self.d.xanchor[self.joints]-origin).T
         bodies=self.m.jnt_bodyid[self.joints]
         moving_mass=(self.m.body_subtreemass[bodies,None]*(self.d.subtree_com[bodies]-self.d.xanchor[self.joints])).T
+        # Recovery adds one scenario per iteration. Reserve the full workspace
+        # once; unused forces are fixed to zero and their constraints disabled.
+        # IPOPT removes those fixed variables, preserving the active problem.
+        capacity=max(18 if _capacity is None else _capacity,ns);extra=capacity-ns
+        padded_initial=np.r_[initial,np.zeros(extra*nr)]
+        specific=np.pad((self.accelerations-self.m.opt.gravity).T,((0,0),(0,extra)))
+        corrections=np.zeros((6,ns)) if self.corrections is None else self.corrections.T
         values=[angles,axes,anchors,A0[:3],(self.d.site_xpos[self.local.sites]-origin).T,
             moving_mass,np.sum(self.m.body_mass[:,None]*(self.d.xipos-origin),axis=0),
-            (self.accelerations-self.m.opt.gravity).T,
-            np.zeros((6,ns)) if self.corrections is None else self.corrections.T,
-            np.array([self.mass]),fmax,scale,initial]
+            specific,np.pad(corrections,((0,0),(0,extra))),
+            np.array([self.mass]),fmax,scale,padded_initial]
         parameters=np.concatenate([np.asarray(v).ravel(order='F') for v in values])
-        solver=_gimbal_solver(tuple(tuple(ids) for ids in self.influenced),ns)
-        answer=solver(x0=initial,p=parameters,lbx=low,ubx=high,lbg=0,ubg=0);result=np.asarray(answer['x']).ravel()
+        solver=_gimbal_solver(tuple(tuple(ids) for ids in self.influenced),capacity,minimize_input)
+        answer=solver(x0=padded_initial,p=parameters,lbx=np.r_[low,np.zeros(extra*nr)],
+            ubx=np.r_[high,np.zeros(extra*nr)],lbg=np.r_[np.zeros(6*ns),np.full(6*extra,-np.inf)],
+            ubg=np.r_[np.zeros(6*ns),np.full(6*extra,np.inf)])
+        result=np.asarray(answer['x']).ravel()[:len(initial)]
         A,b,_,_=self.geometry(result[:ng]);forces=result[ng:].reshape(ns,nr)*fmax
         residual=float(abs(forces@A.T-b).max());pose=self.q.copy();pose[self.qi]=result[:ng]
         accepted=bool(np.isfinite(residual)and residual<1e-6 and np.all(result>=low-1e-9)and np.all(result<=high+1e-9))
+        if not accepted and extra:
+            # Removing fixed variables can leave a numerically singular padded
+            # formulation. Retry the original-sized, identical physical problem.
+            pose,info=self.solve(u,reserve,_capacity=ns,minimize_input=minimize_input)
+            info.update(unpadded_retry=True,wall_s=time.perf_counter()-began)
+            return pose,info
         return pose,dict(scope=__doc__,accepted=accepted,solver_status=solver.stats()['return_status'],iterations=solver.stats()['iter_count'],
+            mean_scenario_thrust_burden=float(np.mean(np.sum(np.maximum(forces,0.)**1.5,axis=1))),
             external_wrench_residual=residual,retained_rotor_fraction=reserve,maximum_angle_change_rad=float(abs(result[:ng]-angles).max()),wall_s=time.perf_counter()-began)

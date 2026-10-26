@@ -5,6 +5,52 @@ from amsrr_det.clearance import detection_buffers,classify_contacts,proximity_mo
 from amsrr_det.clearance import MotionBoundedClearance,ContactClassifier
 
 
+def test_response_distance_constraint_matches_existing_audit_tolerance():
+    from amsrr_det.clearance import CLEARANCE_TOLERANCE, ENVIRONMENT_CLEARANCE
+    from build.separation_rate_constraints import SeparationRateConstraints
+    model=mujoco.MjModel.from_xml_string('''<mujoco><worldbody>
+      <geom name="floor" type="plane" size="1 1 .1"/>
+      <body pos="0 0 .13"><freejoint/><geom name="robot" type="sphere" size=".1" mass="1"/></body>
+      <geom name="object" type="sphere" size=".1" pos="3 0 3"/>
+    </worldbody></mujoco>''')
+    checker=MotionBoundedClearance(model,[])
+    constraint=SeparationRateConstraints(model,[],response_time=1.,all_geometry=True,
+        distance_tolerance=CLEARANCE_TOLERANCE)
+    exact=SeparationRateConstraints(model,[],response_time=1.,all_geometry=True)
+    for error in [.5*CLEARANCE_TOLERANCE,1.5*CLEARANCE_TOLERANCE]:
+        q=model.qpos0.copy();q[2]=.1+ENVIRONMENT_CLEARANCE-error
+        zero=np.zeros(model.nv)
+        J,b=constraint.at(q,zero)
+        _,strict=exact.at(q,zero)
+        assert len(b)==1 and strict[0]>0
+        # Staying still is admissible iff the independent unchanged audit
+        # accepts this pose. A genuinely unsafe gap still requires separation.
+        assert bool(np.all(J@zero>=b)) == (not bool(checker.check(q)[0]))
+
+
+def test_response_distance_proposal_and_acceptance_use_identical_curved_geometry():
+    from amsrr_det.clearance import CLEARANCE_TOLERANCE, forward_collision
+    from build.separation_rate_constraints import SeparationRateConstraints
+    model=mujoco.MjModel.from_xml_string('''<mujoco><worldbody>
+      <geom name="support" type="box" size=".3 .2 .1"/>
+      <body pos=".2 .1 .23"><freejoint/>
+        <geom name="robot" type="ellipsoid" size=".12 .08 .1" mass="1"/></body>
+      <geom name="object" type="sphere" size=".1" pos="3 0 3"/>
+    </worldbody></mujoco>''')
+    checker=MotionBoundedClearance(model,[])
+    constraint=SeparationRateConstraints(model,[],response_time=1.,all_geometry=True,
+        distance_tolerance=CLEARANCE_TOLERANCE,distance_query=checker)
+    assert constraint.query.data is not checker.data
+    for displacement in np.linspace(-2e-6,2e-6,7):
+        q=model.qpos0.copy();q[2]+=displacement
+        J,b=constraint.at(q,np.zeros(model.nv))
+        checker.data.qpos[:]=q;forward_collision(checker.model,checker.data)
+        permitted,limits=checker.classifiers[True](checker.data)
+        expected=limits[~permitted]-np.asarray(checker.data.contact.dist)[~permitted]-CLEARANCE_TOLERANCE
+        np.testing.assert_array_equal(b,expected)
+        assert np.all(J[:,2]>.99)
+
+
 def test_geometry_query_keeps_all_contacts_without_unused_constraint_memory():
     from amsrr_det.clearance import forward_collision
     geoms=''.join('<geom type="sphere" size=".1" mass=".01"/>' for _ in range(32))
@@ -159,3 +205,49 @@ def test_batched_clearance_checks_intermediate_poses_and_permission_changes():
     assert checker.check_many([start,collision,start],False)[0]
     assert not checker.check_many([start,collision,start],True)[0]
     assert checker.check_many([start,collision,start],False)[0]
+
+
+def test_exhausted_distance_query_retries_same_accuracy_on_private_model(monkeypatch):
+    from amsrr_det.clearance import collision_query
+    model=mujoco.MjModel.from_xml_string('''<mujoco><worldbody>
+        <geom type="ellipsoid" size=".2 .1 .1"/>
+        <body pos=".1 0 .1"><freejoint/><geom type="ellipsoid" size=".2 .1 .1"/></body>
+        </worldbody></mujoco>''')
+    model.opt.ccd_iterations=500
+    data=mujoco.MjData(model);calls=[];original=mujoco.mj_collision
+    mujoco.mj_kinematics(model,data);original(model,data)
+    expected_distance=data.contact.dist.copy();expected_position=data.contact.pos.copy()
+    assert data.ncon>0
+    def query(m,d):
+        calls.append(m)
+        assert m.opt.ccd_tolerance==model.opt.ccd_tolerance
+        np.testing.assert_array_equal(m.geom_size,model.geom_size)
+        if len(calls)==1:
+            raise mujoco.FatalError('ccdValidated: EPA inconsistency iterations 500 geoms 0 1')
+        assert m.opt.ccd_iterations==2000
+        original(m,d)
+    monkeypatch.setattr(mujoco,'mj_collision',query)
+    collision_query(model,data)
+    assert len(calls)==2 and calls[1] is not model
+    np.testing.assert_array_equal(data.contact.dist,expected_distance)
+    np.testing.assert_array_equal(data.contact.pos,expected_position)
+    assert model.opt.ccd_iterations==500
+
+
+def test_distance_query_does_not_hide_other_errors_or_failed_retry(monkeypatch):
+    import pytest
+    from amsrr_det.clearance import collision_query
+    model=mujoco.MjModel.from_xml_string('<mujoco/>');data=mujoco.MjData(model)
+    model.opt.ccd_iterations=500
+    for message,expected in [('another collision error',1),
+        ('ccdValidated: EPA inconsistency iterations 499 geoms 0 1',1),
+        ('ccdValidated: EPA inconsistency iterations 500 geoms 0 1',2)]:
+        calls=[]
+        def fail(m,d):
+            calls.append(m)
+            raise mujoco.FatalError(message)
+        monkeypatch.setattr(mujoco,'mj_collision',fail)
+        with pytest.raises(mujoco.FatalError,match='collision error|EPA inconsistency'):
+            collision_query(model,data)
+        assert len(calls)==expected
+        assert model.opt.ccd_iterations==500

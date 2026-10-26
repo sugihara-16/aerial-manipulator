@@ -1,5 +1,6 @@
 """Check task forces and incremental kinematics independently of selection."""
 import numpy as np
+import pytest
 import pinocchio as pin
 from amsrr_det.model import build_model, DockEdge, validate_graph
 from amsrr_det.grasp_geometry import grasp_frame
@@ -10,6 +11,75 @@ from amsrr_det.task_contacts import ContactRequirements
 def request():
     return dict(payload=dict(shape='box',size=[.3,.2,.2],mass=.7),
                 source=[0,0,.3,0,0,0,1],destination=[.3,0,.3,0,0,0,1],support_top=.2)
+
+
+def test_compact_role_memo_preserves_direct_force_solve(tmp_path,monkeypatch):
+    from amsrr_det import planning_memo
+    requirements=ContactRequirements(request())
+    keys=[[0],[0,1],[2,3,4]]
+    expected=[requirements._cost(np.concatenate([requirements.columns[i] for i in key],axis=1),len(key))
+              for key in keys]
+    monkeypatch.setattr(planning_memo,'active',planning_memo.PlanningMemo(tmp_path))
+    for key,answer in zip(keys,expected):
+        np.testing.assert_array_equal(requirements.cost(key),answer)
+    other=ContactRequirements(request())
+    monkeypatch.setattr(other,'_cost',lambda *args:pytest.fail('identical role solve was not reused'))
+    for key,answer in zip(keys,expected):
+        np.testing.assert_array_equal(other.cost(key[::-1]),answer)
+    changed=request();changed['payload']['mass']=.8
+    assert ContactRequirements(changed).basis_digest!=requirements.basis_digest
+
+
+def test_separate_force_scenarios_match_joint_linear_program(monkeypatch):
+    import amsrr_det.task_contacts as contact
+    from amsrr_det.linear_program import linprog
+    solve=contact._role_program
+    checked=[]
+    def compare(A,b,scenarios):
+        width=A.shape[1];objective=np.zeros(width);objective[-2]=1.
+        bounds=[(0,None)]*(width-1)+[(0,0)]
+        first=linprog(objective,A_ub=A,b_ub=b,bounds=bounds)
+        assert first.success
+        expected=[first.x[-2],0.]
+        if expected[0]<1e-7:
+            objective[-2]=0.;objective[-1]=-1.
+            bounds[-2]=(0,expected[0]+1e-9);bounds[-1]=(0,None)
+            second=linprog(objective,A_ub=A,b_ub=b,bounds=bounds)
+            assert second.success
+            expected[1]=-second.x[-1]
+        actual=solve(A,b,scenarios)
+        np.testing.assert_allclose(actual,expected,atol=1e-8,rtol=0)
+        checked.append(actual)
+        return actual
+    monkeypatch.setattr(contact,'_role_program',compare)
+    rng=np.random.default_rng(1825)
+    for mass in [.7,3.,5.]:
+        task=request();task['payload']['mass']=mass
+        requirements=ContactRequirements(task)
+        for count in [1,2,3,5,8]:
+            for _ in range(3):
+                requirements.cost(rng.choice(len(requirements.points),count,replace=False))
+    assert any(r>1e-7 for r,m in checked)
+    assert any(r<1e-7 and m<0 for r,m in checked)
+
+
+def test_growth_local_geometry_reuse_preserves_every_seeded_choice(monkeypatch):
+    import amsrr_det.task_structure as growth
+    points=np.array([[0.,0.,.5],[.6,0.,.5],[.3,.4,.5]])
+    normals=np.array([[1.,0.,0.],[-1.,0.,0.],[0.,-1.,0.]])
+    original=growth._port_geometry;calls=[]
+    def counted(*args):
+        calls.append(1)
+        return original(*args)
+    monkeypatch.setattr(growth,'_port_geometry',counted)
+    reused=growth.grow_to_contacts(6,points,normals,np.random.default_rng(91))
+    reused_calls=len(calls);calls.clear()
+    choices=growth._expansion_choices
+    monkeypatch.setattr(growth,'_expansion_choices',lambda *args:choices(*args[:7]))
+    reference=growth.grow_to_contacts(6,points,normals,np.random.default_rng(91))
+    assert reused_calls<len(calls)
+    assert reused[:2]==reference[:2] and reused[3:]==reference[3:]
+    np.testing.assert_array_equal(reused[2],reference[2])
 
 
 def test_contact_roles_must_balance_force_and_moment_for_all_task_vertices():
@@ -33,8 +103,8 @@ def test_contact_force_margin_matches_symmetric_grasp_analytic_limit():
     # The optimum equates the normal-force cap distance to the nearest
     # friction-plane distance. This independent force-space expression does
     # not use the ray coefficients of the implementation.
-    normal_cap=30./5.5
-    distance=(4.5*normal_cap-peak_tangent)/(4.5+np.sqrt(4.5**2+2))
+    normal_cap=30./3.25
+    distance=(2.25*normal_cap-peak_tangent)/(2.25+np.sqrt(2.25**2+2))
     assert normal_cap-distance-.5>=distance
     assert residual<1e-7
     np.testing.assert_allclose(-negative_margin,distance/30.,atol=1e-8)
@@ -83,6 +153,22 @@ def test_contact_separation_changes_discrete_production_with_same_randomness():
     assert short[0]!=long[0]
 
 
+def test_heavy_task_count_lower_bound_uses_ideal_pad_capacity():
+    task=request();task['payload']['mass']=12.
+    requirements=ContactRequirements(task)
+    class Endpoint:
+        def __init__(self,last):self.last=last;self.rng=np.random.default_rng(22)
+        def integers(self,low,high):
+            assert (low,high)==(6,9)
+            return high-1 if self.last else low
+        def choice(self,*args,**kwargs):return self.rng.choice(*args,**kwargs)
+    for last,expected in [(False,6),(True,8)]:
+        points,_,report=requirements.choose(8,Endpoint(last))
+        assert len(points)==expected
+        assert report['necessary_contact_count']==4
+        assert report['preferred_contact_count']==6
+
+
 def test_variable_count_auxiliary_attempts_three_role_candidates_below_eight(monkeypatch):
     import build.select_structure as selector
     seen=[]
@@ -120,3 +206,37 @@ def test_opposed_pair_can_slide_and_its_compressive_forces_obey_friction():
             assert compression>0 and np.linalg.norm(f-compression*n)<=mu*compression
         np.testing.assert_allclose(np.cross(points[0],force)+np.cross(points[1],-force),0.,atol=1e-12)
     assert opposed_contact_terms(np.array([[-.15,0.,0.],[-.15,.05,0.]]),np.array([[1.,0,0],[1.,0,0]]),mu).min()>0
+
+
+def test_reused_role_solver_matches_independent_scipy_two_stage_program():
+    from amsrr_det.linear_program import linprog
+    requirements=ContactRequirements(request());rng=np.random.default_rng(328)
+    for count in range(1,9):
+        for _ in range(3):
+            ids=rng.choice(len(requirements.points),size=count,replace=False)
+            matrix=np.concatenate([requirements.columns[i] for i in ids],axis=1)
+            answer=requirements._cost(matrix,count)
+            template,b=requirements.programs[count];A=template.copy();k=4*count;width=A.shape[1]
+            for i in range(len(requirements.wrenches)):
+                off=i*(12+6*count);A[off:off+6,i*k:(i+1)*k]=-matrix;A[off+6:off+12,i*k:(i+1)*k]=matrix
+            c=np.zeros(width);c[-2]=1.;bounds=[(0,None)]*(width-1)+[(0,0)]
+            result=linprog(c,A_ub=A,b_ub=b,bounds=bounds)
+            assert result.success
+            expected=(result.x[-2],0.)
+            if result.x[-2]<1e-7:
+                bounds[-2]=(0,result.x[-2]+1e-9);bounds[-1]=(0,None);c[-2]=0.;c[-1]=-1.
+                second=linprog(c,A_ub=A,b_ub=b,bounds=bounds);assert second.success
+                expected=(result.x[-2],-second.x[-1])
+            np.testing.assert_allclose(answer,expected,atol=1e-8,rtol=1e-8)
+
+
+def test_capacity_rejection_is_only_for_the_one_pad_per_module_generator():
+    from build.frozen_structure_trial import generate_candidate, screen_candidate
+    task=request();task['payload']['mass']=12.
+    candidate=generate_candidate(task,3,np.random.default_rng(0),generator='task')
+    assert candidate['generation']['insufficient_pad_capacity']
+    assert candidate['generation']['required_force_n']>90.
+    assert candidate['generation']['scope']=='one-contact-per-module generator only'
+    row,plan,prepared=screen_candidate(task,candidate,task_wrench=True)
+    assert not row['accepted'] and plan is None and prepared is None
+    assert row['reason']=='task force exceeds pad capacity of this generator'

@@ -65,6 +65,9 @@ def test_empty_frame_removal_preserves_dynamics_and_actual_rotor_actuation():
     original=contact_dynamics_model(plant,[],compact_frames=False)
     compact=contact_dynamics_model(plant,[])
     assert compact.mj.nbody<original.mj.nbody and compact.mj.nsite<original.mj.nsite
+    # Removing nodes during XML traversal must not skip empty sibling frames.
+    import xml.etree.ElementTree as ET
+    assert all(len(body)>0 for body in ET.fromstring(compact.xml).iter('body'))
     rng=np.random.default_rng(194)
     q=pin.integrate(plant.pin,pin.neutral(plant.pin),rng.uniform(-.2,.2,plant.pin.nv))
     q[2]=2.;data=[]

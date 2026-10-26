@@ -2,6 +2,7 @@
 import multiprocessing as mp
 from pathlib import Path
 from amsrr_det.planning_memo import PlanningMemo
+import pytest
 
 
 def _evaluate(directory):
@@ -28,6 +29,40 @@ def test_exact_input_change_and_new_task_directory_recompute(tmp_path):
     assert (a, b, hit, hit2) == ('first', 'second', False, False)
     other = tmp_path/'next_task'; other.mkdir()
     assert PlanningMemo(other).evaluate({'x': 1.}, lambda: 'third') == ('third', False)
+
+
+def test_cancelled_work_is_not_returned_as_an_evaluation_or_reused_by_next_task(tmp_path):
+    from amsrr_det.planning_memo import PlanningCancelled
+    memo = PlanningMemo(tmp_path)
+    assert memo.evaluate({'x': 1}, lambda: 7) == (7, False)
+    (tmp_path/'cancelled').touch()
+    for value in [1, 2]:
+        with pytest.raises(PlanningCancelled):
+            memo.evaluate({'x': value}, lambda: pytest.fail('cancelled calculation ran'))
+    other = tmp_path/'next'; other.mkdir()
+    assert PlanningMemo(other).evaluate({'x': 1}, lambda: 9) == (9, False)
+
+
+def _cancel_at_checkpoint(directory, index):
+    import time
+    from amsrr_det import planning_memo
+    planning_memo.active = PlanningMemo(directory)
+    planning_memo.check_cancelled()
+    time.sleep(.02)
+    planning_memo.check_cancelled()
+    return index
+
+
+def test_process_workers_drain_cancelled_jobs_without_turning_them_into_failures(tmp_path):
+    from amsrr_det.planning_memo import PlanningCancelled
+    with mp.get_context('spawn').Pool(2) as pool:
+        completed = pool.apply_async(_cancel_at_checkpoint, (str(tmp_path), 0))
+        assert completed.get(timeout=10) == 0
+        (tmp_path/'cancelled').touch()
+        pending = [pool.apply_async(_cancel_at_checkpoint, (str(tmp_path), i)) for i in range(1, 12)]
+        pool.close(); pool.join()
+        for future in pending:
+            with pytest.raises(PlanningCancelled):future.get(timeout=1)
 
 
 def test_reused_physical_models_preserve_dynamics_and_do_not_share_mutations(tmp_path,monkeypatch):

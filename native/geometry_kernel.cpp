@@ -254,9 +254,48 @@ void primitive_surface(int shape,const V3& x,const V3& a,double& gap,V3& normal,
 }
 }
 
+// Fuse the unchanged eight-step triangle/material projection loop. This
+// removes small Python/NumPy temporaries, not triangles or convergence checks.
+extern "C" void refine_material_points(int count,const double* triangles,int shape,
+    const double* half_size,int ne,const double* equations,int nt,const double* object_triangles,
+    double zero,double* output) {
+  V3 axes=Eigen::Map<const V3>(half_size),weight=V3::Ones();
+  if(shape==3)weight=axes.cwiseInverse();
+  else if(shape==2)weight=V3(1.,1.,.001);
+  std::vector<V3> points(count),normals(count);std::vector<double> gaps(count),steps(count);
+  auto project=[&](int i,const V3& x) {return closest_triangle(x,
+      Eigen::Map<const V3>(triangles+9*i),Eigen::Map<const V3>(triangles+9*i+3),
+      Eigen::Map<const V3>(triangles+9*i+6),zero);};
+  for(int i=0;i<count;++i) {
+    points[i]=project(i,V3::Zero());
+    primitive_surface(shape,points[i],axes,gaps[i],normals[i],ne,equations,nt,object_triangles,zero);
+    if(shape==2||shape==3) {
+      V3 a=Eigen::Map<const V3>(triangles+9*i).cwiseProduct(weight);
+      V3 b=Eigen::Map<const V3>(triangles+9*i+3).cwiseProduct(weight);
+      V3 c=Eigen::Map<const V3>(triangles+9*i+6).cwiseProduct(weight);
+      V3 candidate=closest_triangle(V3::Zero(),a,b,c,zero).cwiseQuotient(weight),normal;
+      double gap;primitive_surface(shape,candidate,axes,gap,normal,ne,equations,nt,object_triangles,zero);
+      if(gap<gaps[i]) {points[i]=candidate;gaps[i]=gap;normals[i]=normal;}
+    }
+    steps[i]=.5*axes.minCoeff()*axes.minCoeff()/axes.maxCoeff();
+  }
+  for(int iteration=0;iteration<8;++iteration) {
+    double improvement=0.;
+    for(int i=0;i<count;++i) {
+      V3 candidate=project(i,points[i]-steps[i]*normals[i]),normal;double gap;
+      primitive_surface(shape,candidate,axes,gap,normal,ne,equations,nt,object_triangles,zero);
+      improvement=std::max(improvement,gaps[i]-gap);
+      if(gap<=gaps[i]) {points[i]=candidate;gaps[i]=gap;normals[i]=normal;}
+      else steps[i]*=.5;
+    }
+    if(improvement<1e-10)break;
+  }
+  for(int i=0;i<count;++i)Eigen::Map<V3>(output+3*i)=points[i];
+}
+
 extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
     const double* tangent_map,int nx,int count,const double* target_points,
-    const double* target_normals,int shape,const double* half_size,double contact_gap,
+    const double* target_normals,int shape,const double* half_size,const double* contact_gaps,
     int ne,const double* equations,int nt,const double* triangles,double triangle_zero,double opposed_friction,
     const double* delta,double* residuals,double* derivatives) {
   try {
@@ -293,7 +332,7 @@ extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
           gradient[axis]=(gp-gm)/2e-6;dn.col(axis)=(np-nm)/2e-6;
         }
         Mat local_jac=R.transpose()*J.topRows(3);
-        r[7*i]=gap-contact_gap;r.segment<3>(7*i+1)=.15*(normal+R*outward);
+        r[7*i]=gap-contact_gaps[i];r.segment<3>(7*i+1)=.15*(normal+R*outward);
         r.segment<3>(7*i+4)=.03*(position-target);
         D.row(7*i)=gradient.transpose()*local_jac;
         D.middleRows(7*i+1,3)=.15*(normal_jac+R*dn*local_jac);
@@ -323,6 +362,120 @@ extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
     D.middleRows(rows,nb)=Eigen::Map<RowMat>(bj.data(),nb,nx);
     r.tail(nx)=.0001*Eigen::Map<const Vec>(delta,nx);
     D.bottomRows(nx).diagonal().setConstant(.0001);
+    return 0;
+  } catch(const std::exception& e) {last_error=e.what();return -1;}
+}
+// The same box overlap score as task_structure._clearance_cost, without
+// allocating a joint-grid x pad-grid x part x axis tensor for every expansion.
+extern "C" void growth_clearance(int k,int parts,int incoming,int pad,int moving,
+    int obstacles,const double* bases,const double* boxes,const double* rotation,
+    const double* source,const double* size,const double* obstacle,double* output) {
+  using M3=Eigen::Matrix<double,3,3,Eigen::RowMajor>;
+  using M4=Eigen::Matrix<double,4,4,Eigen::RowMajor>;
+  Eigen::Map<const M3> R(rotation);
+  Eigen::Map<const Eigen::Vector3d> origin(source),extent(size);
+  for(int a=0;a<k*k;++a) {
+    Eigen::Map<const M4> pose(bases+16*a);
+    Eigen::Matrix3d B=pose.topLeftCorner<3,3>();
+    Eigen::Matrix3d absolute=B.cwiseAbs(),relative=(R.transpose()*B).cwiseAbs();
+    for(int angle=0;angle<k;++angle) {
+      double cost=0.;
+      for(int part=0;part<parts;++part) {
+        int port=part==moving?pad:incoming,joint=part==moving?angle:a%k;
+        const double* box=boxes+((port*k+joint)*parts+part)*6;
+        Eigen::Map<const Eigen::Vector3d> center(box),half(box+3);
+        Eigen::Vector3d world=B*center+pose.topRightCorner<3,1>();
+        Eigen::Vector3d local=R.transpose()*(world-origin);
+        double depth=(.5*extent+relative*half-local.cwiseAbs()).minCoeff();
+        double violation=std::max(0.,depth+(part==moving?-.002:.03));
+        cost+=violation*violation;
+        Eigen::Vector3d world_half=absolute*half;
+        for(int i=0;i<obstacles;++i) {
+          Eigen::Map<const Eigen::Vector3d> c(obstacle+6*i),h(obstacle+6*i+3);
+          double d=(world_half+h+Eigen::Vector3d::Constant(.035)-(world-c).cwiseAbs()).minCoeff();
+          double v=std::max(0.,d);cost+=v*v;
+        }
+      }
+      output[a*k+angle]=4.*cost;
+    }
+  }
+}
+
+// Keep authored non-contact collision samples outside the manipulated object.
+// A smooth fitting preference only; the complete receiver still checks meshes.
+static void avoidance_bounds(int shape,const V3& axes,int nt,const double* triangles,V3& lo,V3& hi) {
+  lo=-axes;hi=axes;
+  if(shape==4 && nt>0) {
+    lo=hi=Eigen::Map<const V3>(triangles);
+    for(int i=1;i<3*nt;++i) {
+      V3 vertex=Eigen::Map<const V3>(triangles+3*i);
+      lo=lo.cwiseMin(vertex);hi=hi.cwiseMax(vertex);
+    }
+  }
+}
+static bool outside_avoidance_band(const V3& point,const V3& lo,const V3& hi) {
+  // The enclosing box is a superset of the shape. Distance to it is a
+  // lower bound on exterior distance; a point beyond 3 cm has zero residual
+  // and zero derivative. Widen the band for transform rounding.
+  V3 distance=(lo-point).cwiseMax(point-hi).cwiseMax(0.);
+  return distance.squaredNorm()>(.03+1e-12)*(.03+1e-12);
+}
+extern "C" int geometry_object_avoidance(void* pointer,const double* tangent_map,int nx,
+    int object_frame,int count,const int* frames,const double* points,int shape,
+    const double* half_size,int ne,const double* equations,int nt,const double* triangles,
+    double triangle_zero,double* residuals,double* derivatives) {
+  try {
+    auto& c=*static_cast<Context*>(pointer);auto& data=*c.data;
+    Eigen::Map<const RowMat> lift(tangent_map,c.model.nv,nx);
+    Eigen::Map<Vec> r(residuals,count);Eigen::Map<RowMat> D(derivatives,count,nx);D.setZero();
+    const auto& object=data.oMf[object_frame];V3 axes=Eigen::Map<const V3>(half_size);
+    V3 lo,hi;avoidance_bounds(shape,axes,nt,triangles,lo,hi);
+    Mat J(6,c.model.nv),mapped;int previous=-1;
+    for(int i=0;i<count;++i) {
+      const auto& T=data.oMf[frames[i]];V3 point=Eigen::Map<const V3>(points+3*i),world=T.act(point),normal;double gap;
+      V3 local=object.actInv(world);
+      if(outside_avoidance_band(local,lo,hi)) {r[i]=0.;continue;}
+      primitive_surface(shape,local,axes,gap,normal,ne,equations,nt,triangles,triangle_zero);
+      r[i]=2.*std::max(0.,.03-gap);
+      if(r[i]<=0.)continue;
+      if(previous!=frames[i]) {
+        J.setZero();pinocchio::getFrameJacobian(c.model,data,frames[i],pinocchio::LOCAL_WORLD_ALIGNED,J);
+        mapped=J*lift;previous=frames[i];
+      }
+      D.row(i)=-2.*normal.transpose()*object.rotation().transpose()*(mapped.topRows(3)-pinocchio::skew(T.rotation()*point)*mapped.bottomRows(3));
+    }
+    return 0;
+  } catch(const std::exception& e) {last_error=e.what();return -1;}
+}
+
+// Same maximum-sample penalty, with a Jacobian only for each active sample.
+extern "C" int geometry_object_avoidance_grouped(void* pointer,const double* tangent_map,int nx,
+    int object_frame,int groups,const int* starts,const int* frames,const double* points,int shape,
+    const double* half_size,int ne,const double* equations,int nt,const double* triangles,
+    double triangle_zero,double* residuals,double* derivatives) {
+  try {
+    auto& c=*static_cast<Context*>(pointer);auto& data=*c.data;
+    Eigen::Map<const RowMat> lift(tangent_map,c.model.nv,nx);
+    Eigen::Map<Vec> r(residuals,groups);Eigen::Map<RowMat> D(derivatives,groups,nx);D.setZero();
+    const auto& object=data.oMf[object_frame];V3 axes=Eigen::Map<const V3>(half_size);
+    V3 lo,hi;avoidance_bounds(shape,axes,nt,triangles,lo,hi);
+    Mat J(6,c.model.nv),mapped;
+    for(int g=0;g<groups;++g) {
+      int first=starts[g],last=starts[g+1];const auto& T=data.oMf[frames[first]];
+      double maximum=0.;V3 active_point=V3::Zero(),active_normal=V3::Zero();
+      for(int i=first;i<last;++i) {
+        V3 point=Eigen::Map<const V3>(points+3*i),normal;double gap;
+        V3 local=object.actInv(T.act(point));
+        if(outside_avoidance_band(local,lo,hi))continue;
+        primitive_surface(shape,local,axes,gap,normal,ne,equations,nt,triangles,triangle_zero);
+        double value=2.*std::max(0.,.03-gap);
+        if(value>maximum) {maximum=value;active_point=point;active_normal=normal;}
+      }
+      r[g]=maximum;if(maximum<=0.)continue;
+      J.setZero();pinocchio::getFrameJacobian(c.model,data,frames[first],pinocchio::LOCAL_WORLD_ALIGNED,J);
+      mapped=J*lift;
+      D.row(g)=-2.*active_normal.transpose()*object.rotation().transpose()*(mapped.topRows(3)-pinocchio::skew(T.rotation()*active_point)*mapped.bottomRows(3));
+    }
     return 0;
   } catch(const std::exception& e) {last_error=e.what();return -1;}
 }

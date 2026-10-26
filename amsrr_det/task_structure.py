@@ -11,6 +11,7 @@ import pinocchio as pin
 from .model import build_model, PORTS
 from .grasp_geometry import grasp_frame, fit_contacts, part_bounds
 from .planning_memo import evaluate as memoized
+from .native_grasp_geometry import growth_clearance
 
 
 @lru_cache(maxsize=1)
@@ -52,6 +53,8 @@ def _frame(normal):
 def _clearance_cost(base, incoming, pad, shape, source, obstacles):
     """Bounding-box overlap guides partial growth; final exact checks remain."""
     _,angles,_,_,_,boxes,moving=part_frames(); k=len(angles)
+    fast=growth_clearance(base,boxes,incoming,pad,moving[pad],pin.Quaternion(source[3:]).matrix(),source[:3],shape.size,obstacles)
+    if fast is not None:return fast
     parts=np.broadcast_to(boxes[incoming,np.tile(np.arange(k),k),None],(k*k,k,*boxes.shape[2:])).copy()
     parts[:,:,moving[pad]]=boxes[pad,:,moving[pad]][None]
     centers=np.einsum('bij,bcpj->bcpi',base[:,:3,:3],parts[:,:,:,0])+base[:,None,None,:3,3]
@@ -86,18 +89,25 @@ def _port_geometry(pose, out, shape, source, obstacles):
     return rows
 
 
-def _expansion_choices(poses, occupied, target, normal, shape, source, obstacles):
+def _expansion_choices(poses, occupied, target, normal, shape, source, obstacles, geometry_cache=None):
     """All expansions from this exact partial geometry, before a random draw."""
     ports, angles, _, _, _, _, _ = part_frames(); choices = []
     for parent in range(len(poses)):
         for out in range(4):
             if (parent, out) in occupied:
                 continue
-            inputs=dict(operation='port_expansion_geometry',pose=poses[parent].tolist(),out=out,
-                        shape=None if shape is None else shape.payload(),
-                        source=None if source is None else np.asarray(source).tolist(),
-                        obstacles=np.asarray(obstacles).tolist())
-            geometry=memoized(inputs,lambda:_port_geometry(poses[parent],out,shape,source,obstacles))
+            # A growth call never changes an existing module pose or its
+            # environment. Reuse each port's geometry across target roles
+            # without repeatedly deserializing the same shared memo entry.
+            key=(parent,out)
+            geometry=None if geometry_cache is None else geometry_cache.get(key)
+            if geometry is None:
+                inputs=dict(operation='port_expansion_geometry',pose=poses[parent].tolist(),out=out,
+                            shape=None if shape is None else shape.payload(),
+                            source=None if source is None else np.asarray(source).tolist(),
+                            obstacles=np.asarray(obstacles).tolist())
+                geometry=memoized(inputs,lambda:_port_geometry(poses[parent],out,shape,source,obstacles))
+                if geometry_cache is not None:geometry_cache[key]=geometry
             for incoming,pad,base,position,direction,clearance in geometry:
                 error = np.sum((position-target)**2, axis=-1) + .15**2*np.sum((direction-normal)**2, axis=-1)
                 error += .15**2*(1-base[:, 2, 2, None])**2
@@ -125,15 +135,20 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
     root[:3, 3] = points[0] - root[:3, :3] @ pads[first, middle, :3, 3]
     poses = [root]; values = [{}]; occupied = {(0, first)}
     surfaces = [(0, ports[first])]; edges = []; trace = []
+    remaining = list(range(1, len(points)));geometry_cache={}
     for child in range(1, modules):
-        role = min(len(surfaces), len(points)-1)
-        target, normal = points[role], normals[role]
-        inputs=dict(operation='expansion',poses=np.asarray(poses).tolist(),occupied=sorted(occupied),
-                    target=target.tolist(),normal=normal.tolist(),
-                    shape=None if shape is None else shape.payload(),
-                    source=None if source is None else np.asarray(source).tolist(),
-                    obstacles=np.asarray(obstacles).tolist())
-        choices = memoized(inputs,lambda:_expansion_choices(poses,occupied,target,normal,shape,source,obstacles))
+        choices = []
+        # Contact-force selection fixes a set, not a required connection order.
+        # Use actual seam reachability to assign the next uncovered role.
+        for role in remaining or [len(points)-1]:
+            target, normal = points[role], normals[role]
+            inputs=dict(operation='expansion',poses=np.asarray(poses).tolist(),occupied=sorted(occupied),
+                        target=target.tolist(),normal=normal.tolist(),
+                        shape=None if shape is None else shape.payload(),
+                        source=None if source is None else np.asarray(source).tolist(),
+                        obstacles=np.asarray(obstacles).tolist())
+            expansions = memoized(inputs,lambda:_expansion_choices(poses,occupied,target,normal,shape,source,obstacles,geometry_cache))
+            choices.extend((*choice,role) for choice in expansions)
         if not choices:
             raise ValueError('no unoccupied seam for contact-directed growth')
         choices.sort(key=lambda row: row[0])
@@ -141,17 +156,20 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
         costs = np.array([c[0] for c in choices])
         weight = np.exp(-(costs-costs[0])/.02**2)
         chosen = choices[int(rng.choice(len(choices), p=weight/weight.sum()))]
-        cost, parent, out, incoming, pad, a, b, c, pose = chosen
+        cost, parent, out, incoming, pad, a, b, c, pose, role = chosen
         edges.append(dict(a=parent, port_a=ports[out], b=child, port_b=ports[incoming]))
         occupied.update([(parent, out), (child, incoming)])
         values[parent][names[out]] = float(angles[a])
         values.append({names[incoming]:float(angles[b])})
         poses.append(pose)
         # Reserve enough remaining modules for all still-unassigned roles.
-        if modules-child <= len(points)-len(surfaces) or (len(surfaces)<len(points) and cost<.01**2):
+        assigned = bool(remaining) and (modules-child <= len(remaining) or cost<.01**2)
+        if assigned:
             surfaces.append((child, ports[pad])); occupied.add((child, pad))
             values[child][names[pad]] = float(angles[c])
+            remaining.remove(role)
         trace.append(dict(module=child, target_role=role, residual_m2=cost,
+                          contact_assigned=assigned,
                           parent=parent, port_a=ports[out], port_b=ports[incoming]))
     return edges, surfaces, root, values, trace
 
@@ -164,6 +182,9 @@ def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fi
     wn = np.asarray(normals) @ R.T
     edges, surfaces, root, values, trace = grow_to_contacts(modules, world+.001*wn, wn, rng,
                                                          shape=shape,source=source,obstacles=obstacles)
+    order = [0]+[item['target_role'] for item in trace if item['contact_assigned']]
+    world, wn = world[order], wn[order]
+    points, normals = np.asarray(points)[order], np.asarray(normals)[order]
     generated=dict(method='contact_directed_growth', expansion_trace=trace,
                    target_points=np.asarray(points).tolist(),target_normals=np.asarray(normals).tolist())
     if not fit_pose:
@@ -180,7 +201,7 @@ def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fi
                 obstacles=np.asarray(obstacles).tolist())
     closed, fit = memoized(inputs,lambda:fit_contacts(model, meta, q, surfaces, world+.001*wn, wn,
         object_shape=shape, floor_clearance=.03, base_rotation=True, obstacles=obstacles, max_evaluations=45,
-        opposed_friction=4.5 if len(points)==2 else None))
+        opposed_friction=4.5 if len(points)==2 else None,avoid_object=True))
     if len(points)==2:fit['initial_object_points']=np.asarray(points).tolist()
     return dict(group='task_growth', modules=modules, edges=edges, surfaces=surfaces,
                 q=closed.tolist(), fit=fit, wall_s=time.perf_counter()-started,

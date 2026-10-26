@@ -16,7 +16,7 @@ from amsrr_det.structure_groups import skeleton_groups
 from amsrr_det.structure_proposal import proposal
 from amsrr_det.grasp_task import support_obstacles,refine_material_posture,open_material_posture,finish_plan,material_force_contacts,prepare_static_trims
 from amsrr_det.model import build_model
-from amsrr_det.equilibrium import contact_normal_obstruction
+from amsrr_det.equilibrium import contact_normal_obstruction,object_wrench_obstruction
 from amsrr_det.mujoco_model import make_plant,CONTACT_CACHE,contact_dynamics_model
 from amsrr_det.structure_bounds import hover_input_burden
 from build.mit_drive import dock_mit_model
@@ -24,6 +24,7 @@ from build.preload_endpoint import construct
 from build.finite_slip_preload import construct_finite_slip
 from build.staged_approach import StagedApproach
 from amsrr_det.planning_memo import evaluate as memoized
+from amsrr_det.planning_memo import check_cancelled
 
 
 _screen_memo = None
@@ -37,6 +38,7 @@ def initialize_screen_memo(directory):
 
 def prepare(plan,*,task_wrench=False):
     """Common acceptance and cost of one constructed posture, without rollout."""
+    check_cancelled()
     started=time.perf_counter()
     links=[f'm{a}/'+('yaw_dock_mech' if b.startswith('yaw') else 'pitch_dock_mech')+b[-1]
            for a,b in plan.surfaces]
@@ -54,7 +56,7 @@ def prepare(plan,*,task_wrench=False):
     endpoint,report=construct(plant,full.mj,q,links)
     if endpoint is None:raise ValueError('finite reference: '+report['reason'])
     (qair,u,velocity),finite=construct_finite_slip(plant,full.mj,endpoint[0],links,23.,minimize_input=True)
-    wrench_info=None
+    wrench_info=None;direction_info=None
     if task_wrench:
         from build.task_wrench_margin import refine_task_reference
         (qair,u,velocity),finite,wrench_info=refine_task_reference(plant,full.mj,qair,u,velocity,links,
@@ -64,11 +66,13 @@ def prepare(plan,*,task_wrench=False):
     final=finite['iterations'][-1]['recheck'] if finite['iterations'] else finite['initial_fixed']
     return dict(burden=hover_input_burden(u[-len(plant.meta['rotors']):]),reserve=final['reserve'],
                 qair=qair,goal=goal,input=u,velocity=velocity,finite=finite,task_wrench=wrench_info,
+                input_direction_refinement=direction_info,
                 approach=approach.info,approach_path=approach.prepared(),wall_s=time.perf_counter()-started)
 
 
 def generate_candidate(request,modules,rng,*,generator='legacy',descriptor=None,common_initialization=False,retain_task_pose=False):
     """A task-conditioned generator is fixed before any independent trials."""
+    check_cancelled()
     payload=request['payload'];shape=ObjectShape(payload['shape'],payload['size'],payload['mass'])
     source=np.array(request['source']);destination=np.array(request['destination'])
     obstacles=support_obstacles(shape,source,destination,request['support_top'])
@@ -83,7 +87,26 @@ def generate_candidate(request,modules,rng,*,generator='legacy',descriptor=None,
         from amsrr_det.structure_proposal import fit_assignment
         abstract=descriptor or request
         requirements=task_requirements(abstract)
+        required=float(np.max(np.linalg.norm(requirements.wrenches[:,:3],axis=1)))
+        if required>30.*modules+1e-8:
+            # This generator assigns at most one contact pad to each module.
+            # Even perfectly aligned forces cannot exceed their total budget.
+            # Other multi-pad grammars are not claimed physically impossible.
+            return dict(group='task_growth',modules=modules,edges=[],surfaces=[],q=[],
+                fit=dict(position_error_m=0.,normal_error=0.),wall_s=0.,
+                generation=dict(method='contact_directed_growth',insufficient_pad_capacity=True,
+                    required_force_n=required,capacity_n=30.*modules,
+                    scope='one-contact-per-module generator only'))
         points,normals,roles=requirements.choose(modules,rng)
+        if roles['role_trace'][-1]['residual']>1e-7:
+            # This fixed generator constructs structures for a load-capable
+            # coarse contact set. Failure here is not physical impossibility:
+            # another set or continuously moved contacts may still work.
+            return dict(group='task_growth',modules=modules,edges=[],surfaces=[],q=[],
+                fit=dict(position_error_m=0.,normal_error=0.),wall_s=0.,
+                generation=dict(method='contact_directed_growth',requirements=roles,
+                    proposal_rejected='selected coarse contact set leaves task wrench unmet',
+                    scope='fixed generator only; movable-contact structures not excluded'))
         abstract_obstacles=support_obstacles(requirements.shape,np.array(abstract['source']),
                                             np.array(abstract['destination']),abstract['support_top'])
         discrete_only=(common_initialization and not retain_task_pose) or descriptor is not None
@@ -115,7 +138,16 @@ def generate_candidate(request,modules,rng,*,generator='legacy',descriptor=None,
 
 def screen_candidate(request,candidate,*,task_wrench=False):
     """Common physical acceptance for independent and auxiliary generation."""
+    check_cancelled()
     started=time.perf_counter()
+    if candidate['generation'].get('proposal_rejected'):
+        return dict(group=candidate['group'],edges=[],surfaces=[],generation=candidate['generation'],
+            geometry=candidate['fit'],geometry_s=0.,accepted=False,
+            reason=candidate['generation']['proposal_rejected']),None,None
+    if candidate['generation'].get('insufficient_pad_capacity'):
+        return dict(group=candidate['group'],edges=[],surfaces=[],generation=candidate['generation'],
+            geometry=candidate['fit'],geometry_s=0.,accepted=False,
+            reason='task force exceeds pad capacity of this generator'),None,None
     if _screen_memo is None:
         return _screen_candidate(request,candidate,task_wrench=task_wrench)
     physical={k:request[k] for k in ('payload','source','destination','support_top')}
@@ -151,8 +183,11 @@ def _screen_candidate(request,candidate,*,task_wrench=False):
     points=np.array(fit['object_points']);normals=np.array(fit['inward_normals'])
     stage='material';stage_started=time.perf_counter();row['stage_wall_s']={}
     try:
+        from amsrr_det.object_overlap import object_overlap
         opened,closed,fit=refine_material_posture(geometry,shape,source,np.array(candidate['q']),
                                                   surfaces,points,normals,obstacles=obstacles,open_posture=False)
+        overlap=object_overlap(model,meta,closed,shape,source,surfaces)
+        if overlap is not None:raise ValueError('collision-piece point inside object: '+overlap)
         if len(surfaces)==2 and 'opposed_friction' in candidate['fit']:
             from amsrr_det.grasp_geometry import opposed_contact_terms
             error=float(opposed_contact_terms(points,normals,4.5).max())
@@ -161,12 +196,22 @@ def _screen_candidate(request,candidate,*,task_wrench=False):
         contacts=material_force_contacts(geometry,shape,closed,surfaces)
         if contact_normal_obstruction(contacts,shape.mass*model.gravity.linear,.5) is not None:
             raise ValueError('material contact force directions cannot support this load')
+        import pinocchio as pin
+        obstruction=object_wrench_obstruction(contacts,shape.mass*model.gravity.linear,
+                                             pin.Quaternion(source[3:]).matrix())
+        if obstruction is not None:
+            row['object_wrench_obstruction']=obstruction
+            raise ValueError('material object wrench cannot balance this load')
         opened=open_material_posture(geometry,shape,source,closed,surfaces,normals,fit,obstacles=obstacles)
+        overlap=object_overlap(model,meta,opened,shape,source,surfaces)
+        if overlap is not None:raise ValueError('collision-piece point inside object: '+overlap)
         row['stage_wall_s'][stage]=time.perf_counter()-stage_started
         stage='static';stage_started=time.perf_counter()
+        check_cancelled()
         statics=prepare_static_trims(geometry,shape,opened,closed,surfaces,points,normals,contacts=contacts)
         row['stage_wall_s'][stage]=time.perf_counter()-stage_started
         stage='model_and_clearance';stage_started=time.perf_counter()
+        check_cancelled()
         p=make_plant(modules,candidate['edges'],shape.payload(),mesh_cache=CONTACT_CACHE,floor=True)
         plan=finish_plan(p,shape,source,destination,request['support_top'],
                          opened,closed,surfaces,points,normals,fit,started,static_preparation=statics)
@@ -184,7 +229,7 @@ def _screen_candidate(request,candidate,*,task_wrench=False):
     return row,plan,prepared
 
 
-def trial(request,modules,trial_index,seed, *, starts=4,task_wrench=False,generator='legacy',descriptor=None,common_initialization=False,retain_task_pose=False):
+def trial(request,modules,trial_index,seed, *, starts=1,task_wrench=False,generator='legacy',descriptor=None,common_initialization=False,retain_task_pose=False):
     started=time.perf_counter()
     rng=np.random.default_rng(np.random.SeedSequence([seed,modules,trial_index]))
     payload=request['payload'];shape=ObjectShape(payload['shape'],payload['size'],payload['mass'])

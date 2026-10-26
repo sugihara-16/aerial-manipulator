@@ -47,6 +47,7 @@ class TrialPool:
         if fn is trial:return _TrialFuture(self.pool,args,kwds)
         return self.pool.apply_async(fn,args,kwds or {})
     def terminate(self):self.pool.terminate()
+    def close(self):self.pool.close()
     def join(self):self.pool.join()
 
 
@@ -61,7 +62,15 @@ def planning_context():
     from .mujoco_model import CONTACT_CACHE,_part_templates
     from .grasp_control import _surface_source
     from .model import PORTS
+    from .object_overlap import part_samples
+    from .task_structure import part_frames
+    from .interval_bounds import _library as interval_library
+    from .native_grasp_geometry import library as geometry_library
     skeleton_groups();part_bounds();_part_templates(str(CONTACT_CACHE.resolve()))
+    part_samples();part_frames()
+    # Read and verify these immutable libraries once before workers fork.
+    # Each process still creates its own numerical models and query data.
+    interval_library();geometry_library()
     for port in PORTS:material_triangles(port,str(CONTACT_CACHE.resolve()))
     for link in ('pitch_dock_mech1','pitch_dock_mech2','yaw_dock_mech1','yaw_dock_mech2'):_surface_source(link)
     return mp.get_context('fork')
