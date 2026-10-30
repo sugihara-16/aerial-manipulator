@@ -1,5 +1,5 @@
 """Equivalent evaluator reduction in native code; no control inputs added."""
-import ctypes,hashlib,os,subprocess
+import ctypes,hashlib,os,subprocess,math
 from pathlib import Path
 import numpy as np
 import mujoco
@@ -7,7 +7,8 @@ from amsrr_det.task_audit import TaskAudit
 from .model import ROOT
 
 class FastTaskAudit(TaskAudit):
-    def __init__(self,*args,**kwargs):
+    def __init__(self,*args,clearance_period=0.,**kwargs):
+        self.clearance_period=float(clearance_period);self.next_clearance=0.
         super().__init__(*args,**kwargs)
         root=Path(mujoco.__file__).parent;source=Path(__file__).with_suffix('.cc')
         version=mujoco.mj_versionString();digest=hashlib.sha256(source.read_bytes()+version.encode()).hexdigest()[:16]
@@ -39,6 +40,9 @@ class FastTaskAudit(TaskAudit):
             address(self._stats),address(self.saturated_time),address(self.gap_time),
             address(self._anchors),address(self.last_normal_loads))
         self._unexpected=np.empty((16,2),dtype=np.int32)
+        self.batch=self.library.audit_advance;self.batch.restype=ctypes.c_int
+        self.batch.argtypes=self.call.argtypes[:2]+[ctypes.c_int]+self.call.argtypes[2:-1]+[ctypes.c_int,ctypes.c_void_p,ctypes.c_void_p]
+        self.batch_pairs=np.empty((4096,2),np.int32);self.batch_count=np.zeros(1,np.int32)
         if self.proximity.joint_motion is not None:
             self.proximity.joint_motion=_NativeMotionBound(self.proximity.joint_motion,self.library)
 
@@ -51,8 +55,30 @@ class FastTaskAudit(TaskAudit):
         self.other_contacts.update(tuple(sorted([self.names[a],self.names[b]]))for a,b in self._unexpected[:count])
         (self.max_force,self.max_moment,self.max_penetration,self.max_joint_speed,self.max_effort_ratio,self.max_joint_limit_violation,self.max_clearance,self.min_clearance_carried,self.max_raw_effort_ratio,self.max_servo_error,self.max_slip,self.max_material_displacement,self.longest_gap,last)=self._stats
         self.last_contact_time=None if np.isnan(last) else float(last);self.time=float(data.time)
-        violations,part,environment=self.proximity.check(data.qpos,grasp_contact_allowed)
-        self.minimum_part_gap=min(self.minimum_part_gap,part);self.minimum_environment_gap=min(self.minimum_environment_gap,environment);self.clearance_violations.update(violations)
+        if data.time+1e-10>=self.next_clearance:
+            violations,part,environment=self.proximity.check(data.qpos,grasp_contact_allowed)
+            self.minimum_part_gap=min(self.minimum_part_gap,part);self.minimum_environment_gap=min(self.minimum_environment_gap,environment);self.clearance_violations.update(violations)
+            self.next_clearance=float(data.time)+self.clearance_period
+
+    def advance(self,data,steps,*,carried=False,grasp_contact_allowed=True):
+     while steps>0:
+      until=max(1,math.ceil((self.next_clearance-data.time-1e-10)/self.plant.mj.opt.timestep));n=min(steps,until)
+      reason=self.batch(self.plant.mj._address,data._address,n,carried,grasp_contact_allowed,*self._arguments,4096,self.batch_pairs.ctypes.data,self.batch_count.ctypes.data)
+      self.other_contacts.update(tuple(sorted([self.names[a],self.names[b]]))for a,b in self.batch_pairs[:self.batch_count[0]])
+      (self.max_force,self.max_moment,self.max_penetration,self.max_joint_speed,self.max_effort_ratio,self.max_joint_limit_violation,self.max_clearance,self.min_clearance_carried,self.max_raw_effort_ratio,self.max_servo_error,self.max_slip,self.max_material_displacement,self.longest_gap,last)=self._stats
+      self.last_contact_time=None if np.isnan(last)else float(last);self.time=float(data.time)
+      if data.time+1e-10>=self.next_clearance:
+       violations,part,environment=self.proximity.check(data.qpos,grasp_contact_allowed);self.minimum_part_gap=min(self.minimum_part_gap,part);self.minimum_environment_gap=min(self.minimum_environment_gap,environment);self.clearance_violations.update(violations);self.next_clearance=float(data.time)+self.clearance_period
+      if reason>4:raise ValueError('batch audit contract '+str(reason))
+      if reason:return {1:'nonfinite_physical_state',2:'motor_effort_limit',3:'extreme_control_instability',4:'extreme_collision'}[reason]
+      steps-=n
+     return None
+
+    def result(self):
+        result=super().result()
+        result['clearance_sampling_period_s']=self.clearance_period
+        return result
+
 
 
 class _NativeMotionBound:

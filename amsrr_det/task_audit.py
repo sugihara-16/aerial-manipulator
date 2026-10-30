@@ -23,8 +23,8 @@ class TaskAudit:
         self.ai=np.array([mujoco.mj_name2id(plant.mj,mujoco.mjtObj.mjOBJ_ACTUATOR,a['name']) for a in plant.meta['actuators']])
         self.jids=np.array([mujoco.mj_name2id(plant.mj,mujoco.mjtObj.mjOBJ_JOINT,a['name']) for a in plant.meta['actuators']])
         self.qadr=plant.mj.jnt_qposadr[self.jids];self.vadr=plant.mj.jnt_dofadr[self.jids]
-        self.limits=np.array([[a['lower'],a['upper']] for a in plant.meta['actuators']])
-        self.effort=np.array([a['effort'] for a in plant.meta['actuators']])
+        self.limits=np.array([[a['lower'],a['upper']] for a in plant.meta['actuators']],dtype=float)
+        self.effort=np.array([a['effort'] for a in plant.meta['actuators']],dtype=float)
         self.saturated_time=np.zeros(len(self.ai));self.max_raw_effort_ratio=0.;self.max_servo_error=0.
         self.groups=np.array([next((j for j,n in enumerate(self.links) if name.startswith(n+'/')),-1) for name in self.names])
         self.object_geom=mujoco.mj_name2id(plant.mj,mujoco.mjtObj.mjOBJ_GEOM,'object')
@@ -123,3 +123,18 @@ class TaskAudit:
                     contact_center_displacement_m=self.max_slip,
                     contact_material_displacement_m=self.max_material_displacement,
                     longest_carried_contact_gap_s=self.longest_gap,unexpected_contacts=sorted(self.other_contacts))
+
+
+def task_checks(plant,plan,data,audit):
+    """Observe actual lift, delivery and release; reaching a phase proves none."""
+    import pinocchio as pin
+    from build.contact_step_control import pad_gap_jacobians
+    m=plant.mj;oi=int(m.jnt_qposadr[m.joint('object').id]);ov=int(m.jnt_dofadr[m.joint('object').id])
+    check=mujoco.MjData(m);check.qpos[:]=data.qpos;mujoco.mj_fwdPosition(m,check)
+    gaps,_=pad_gap_jacobians(m,check,audit.links)
+    angle=float(np.linalg.norm(pin.log3(pin.Quaternion(data.qpos[oi+3:oi+7][[1,2,3,0]]).matrix()@pin.Quaternion(plan.destination[3:]).matrix().T)))
+    return dict(position=bool(np.linalg.norm(data.qpos[oi:oi+3]-plan.destination[:3])<.03),
+        orientation=bool(angle<.2),linear_velocity=bool(np.linalg.norm(data.qvel[ov:ov+3])<.02),
+        angular_velocity=bool(np.linalg.norm(data.qvel[ov+3:ov+6])<.1),released=bool(len(gaps)>0 and min(gaps)>.02),
+        release_settled=bool(audit.last_contact_time is not None and data.time-audit.last_contact_time>=2.),
+        lifted=bool(audit.max_clearance>=.10),transport_clearance=bool(audit.min_clearance_carried>=.10))

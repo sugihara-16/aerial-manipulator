@@ -7,7 +7,7 @@ from amsrr_det.task_audit import TaskAudit
 from amsrr_det.fast_task_audit import FastTaskAudit
 
 
-@pytest.mark.parametrize('audit_type',[TaskAudit,FastTaskAudit])
+@pytest.mark.parametrize('audit_type',[TaskAudit,FastTaskAudit,lambda *a,**kw:FastTaskAudit(*a,clearance_period=.1,**kw)])
 def test_pressure_center_shift_does_not_count_as_slip_but_material_motion_does(audit_type):
     m=mujoco.MjModel.from_xml_string('''<mujoco><option cone="elliptic"/>
     <worldbody><body name="pad" pos="0 0 .4"><joint name="pad_joint" type="hinge" axis="0 0 1"/>
@@ -29,3 +29,21 @@ def test_pressure_center_shift_does_not_count_as_slip_but_material_motion_does(a
     mujoco.mj_forward(m,d);d.efc_force[np.array([c.efc_address for c in d.contact])]=5.
     audit.update(d,carried=True)
     np.testing.assert_allclose(audit.result()['contact_material_displacement_m'],.01,atol=1e-10)
+
+
+def test_sampled_clearance_does_not_skip_physical_actuator_audit():
+    # The sampled check is geometry-only. Actuator forces are still inspected
+    # at every physics step, including between consecutive clearance queries.
+    m=mujoco.MjModel.from_xml_string('''<mujoco><option cone="elliptic"/>
+      <worldbody><body name="pad"><joint name="motor"/>
+      <geom name="pad/g" type="sphere" size=".01"/></body>
+      <body name="object" pos="0 0 1"><freejoint/><geom name="object" type="sphere" size=".1"/></body></worldbody>
+      <actuator><motor name="motor" joint="motor"/></actuator></mujoco>''')
+    p=SimpleNamespace(mj=m,meta=dict(actuators=[dict(name='motor',lower=-1,upper=1,effort=1)]))
+    d=mujoco.MjData(m);mujoco.mj_forward(m,d)
+    audit=FastTaskAudit(p,['pad'],[.2,.2,.2],0.,clearance_period=.1)
+    audit.update(d);queries=audit.proximity.queries
+    d.time=.01;d.actuator_force[0]=1.5;audit.update(d)
+    assert audit.proximity.queries==queries
+    assert audit.max_effort_ratio==1.5
+    assert audit.result()['clearance_sampling_period_s']==.1

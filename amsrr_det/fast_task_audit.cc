@@ -78,3 +78,25 @@ extern "C" void motion_maximum(int states,int nq,int rows,int hinges,const int* 
   }
  }
 }
+
+extern "C" int audit_advance(const mjModel* m,mjData* d,int steps,int carried,int grasp,
+ int object,int pads,const int* bodies,const int* group,const int* support,
+ int na,const int* ai,const int* qi,const int* vi,const double* limits,const double* effort,
+ int shape,const double* size,int nv,const double* vertices,double top,
+ double* stats,double* saturation,double* gaps,double* anchors,double* normal,int capacity,int* unexpected,int* count_out){
+ std::vector<int> all;int failure=0;
+ for(int step=0;step<steps;++step){
+  mj_step(m,d);std::vector<int> pairs(2*d->ncon);
+  int n=audit_step(m,d,carried,grasp,object,pads,bodies,group,support,na,ai,qi,vi,limits,effort,shape,size,nv,vertices,top,stats,saturation,gaps,anchors,normal,pairs.data());
+  if(n<0){failure=5;break;}
+  for(int k=0;k<n;++k){int a=pairs[2*k],b=pairs[2*k+1];if(a>b)std::swap(a,b);bool found=false;for(unsigned j=0;j<all.size();j+=2)if(all[j]==a&&all[j+1]==b){found=true;break;}if(!found){all.push_back(a);all.push_back(b);}}
+  for(int k=0;k<m->nq;++k)if(!std::isfinite(d->qpos[k]))failure=1;
+  for(int k=0;k<m->nv;++k)if(!std::isfinite(d->qvel[k]))failure=1;
+  if(!failure&&stats[4]>1.000001)failure=2;
+  for(int k=0;k<m->nv;++k)if(!failure&&std::abs(d->qvel[k])>100.)failure=3;
+  if(!failure&&stats[2]>.05)failure=4;
+  if(failure)break;
+ }
+ if(all.size()>unsigned(2*capacity))return 6;
+ std::copy(all.begin(),all.end(),unexpected);*count_out=int(all.size()/2);return failure;
+}
