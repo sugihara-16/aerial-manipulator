@@ -1,0 +1,7 @@
+{
+  "project": "https://github.com/quadprog/quadprog",
+  "version": "0.1.13",
+  "distribution": "quadprog-0.1.13.tar.gz",
+  "sha256": "9d6dd32f2762f29b840fb83741d11e527ddf48745f63b79caad0e530b4a6a0ff",
+  "changes": "Replace three dense matrix/vector loops with SciPy-prefixed BLAS dgemv. Add an optional thread-local CLOCK_MONOTONIC deadline that returns status 3 at iteration boundaries, leaving the current iterate for the caller to check. Without a deadline, the algorithm, pivot rule and feasibility tolerances are unchanged. GPL-2.0 license retained."
+}

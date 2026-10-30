@@ -55,3 +55,23 @@ def test_large_preload_active_equations_retain_original_feasibility_and_cost():
     x=_dense_pose(H,g,A,b)
     assert np.max(A@x-b)<1e-8
     assert abs((.5*x@H@x+g@x)-(.5*other@H@other+g@other))<1e-5
+
+
+def test_identical_direct_input_problem_reuses_answer_but_changed_rhs_does_not(monkeypatch):
+    import build.minimum_input_lp as module
+    factory=module.clarabel.DefaultSolver;calls=[]
+    def counted(*args,**kwargs):
+        calls.append(True);return factory(*args,**kwargs)
+    monkeypatch.setattr(module.clarabel,'DefaultSolver',counted)
+    problem=dict(A_ub=np.zeros((0,3)),b_ub=np.empty(0),A_eq=np.array([[1.,1.,0.]]),
+                 b_eq=np.array([1.]),bounds=[(0.,1.),(0.,1.),(.2,.3)])
+    cache={}
+    for feasible in [np.array([.8,.2,.25]),np.array([.7,.3,.25])]:
+        x,note=module.minimum_input(problem,feasible,np.array([0,1]),np.array([20.,20.]),.2,method='conic',_direct_cache=cache)
+        assert note['accepted'] and note['normalized_residual']<1e-8
+        np.testing.assert_allclose(x[:2],[.5,.5],atol=1e-5)
+    assert len(calls)==1
+    problem['b_eq'][0]=1.1
+    x,note=module.minimum_input(problem,np.array([.7,.4,.25]),np.array([0,1]),np.array([20.,20.]),.2,method='conic',_direct_cache=cache)
+    assert len(calls)==2 and note['accepted']
+    np.testing.assert_allclose(x[:2],[.55,.55],atol=1e-5)

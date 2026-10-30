@@ -37,6 +37,14 @@ def align_reference_to_object(model,reference,observation):
 def generate(plant,clearance_model,observed_q,links,plan,*,momentum_feedback=False,finite_slip_preload=False,bounded_allocation=False,
              airborne_observation=False,material_travel_used=0.,normal_tracking=False,internal_tracking=False,minimize_input=False,governed_motion=False,planned_reference=None,fixed_observation=False,nearby_observation=False,contact_coupled=False):
     m=plant.mj
+    # One private geometry query per design; every new pose is still checked.
+    clearance_query=None
+    def clearance():
+        nonlocal clearance_query
+        if clearance_query is None:
+            from amsrr_det.clearance import MotionBoundedClearance
+            clearance_query=MotionBoundedClearance(clearance_model,links)
+        return clearance_query
     if fixed_observation and not finite_slip_preload:
         raise ValueError('fixed observation requires the finite contact law')
     z=m.jnt_qposadr[np.flatnonzero(m.jnt_type==mujoco.mjtJoint.mjJNT_FREE)]+2
@@ -55,7 +63,7 @@ def generate(plant,clearance_model,observed_q,links,plan,*,momentum_feedback=Fal
     if nearby_observation and observed_finite is None:
         from build.finite_slip_preload import construct_finite_slip
         try:
-            observed_finite,nearby_check=construct_finite_slip(plant,clearance_model,qair,links,23.,minimize_input=minimize_input,travel_budget=.03-material_travel_used)
+            observed_finite,nearby_check=construct_finite_slip(plant,clearance_model,qair,links,23.,minimize_input=minimize_input,travel_budget=.03-material_travel_used,clearance=clearance())
             observed_check=nearby_check
             qair=observed_finite[0].copy()
         except ValueError as error:
@@ -70,11 +78,11 @@ def generate(plant,clearance_model,observed_q,links,plan,*,momentum_feedback=Fal
         from build.finite_slip_preload import construct_finite_slip
         seed=align_reference_to_object(m,planned_reference,qair)
         try:
-            observed_finite,reference_info=construct_finite_slip(plant,clearance_model,seed,links,23.,minimize_input=minimize_input)
+            observed_finite,reference_info=construct_finite_slip(plant,clearance_model,seed,links,23.,minimize_input=minimize_input,clearance=clearance())
         except ValueError:
             observed_finite=None
     if observed_finite is None:
-        endpoint,info=construct(plant,clearance_model,qair,links)
+        endpoint,info=construct(plant,clearance_model,qair,links,clearance=clearance())
         if endpoint is None:
             if not finite_slip_preload:
                 raise ValueError('acquired_static_endpoint_not_found:'+info['reason'])
@@ -91,10 +99,10 @@ def generate(plant,clearance_model,observed_q,links,plan,*,momentum_feedback=Fal
         from build.finite_slip_preload import construct_finite_slip
         # LOAD 3 + LIFT 5 + CARRY 8 + DESCEND 6 + ordinary unload .3 s.
         if observed_finite is None:
-            (qair,finite_input,finite_velocity),finite_info=construct_finite_slip(plant,clearance_model,qair,links,23.,minimize_input=minimize_input)
+            (qair,finite_input,finite_velocity),finite_info=construct_finite_slip(plant,clearance_model,qair,links,23.,minimize_input=minimize_input,clearance=clearance())
         else:
             from amsrr_det.clearance import MotionBoundedClearance
-            if MotionBoundedClearance(clearance_model,links).check(qair,True)[0]:raise ValueError('observed finite pose clearance')
+            if clearance().check(qair,True)[0]:raise ValueError('observed finite pose clearance')
             qair,finite_input,finite_velocity=observed_finite
             finite_info=reference_info if reference_info is not None else (observed_check if nearby_observation and "iterations" in observed_check else dict(initial_fixed=observed_check,iterations=[]))
         if governed_motion and fixed_observation and not nearby_observation:
@@ -109,7 +117,7 @@ def generate(plant,clearance_model,observed_q,links,plan,*,momentum_feedback=Fal
             try:
                 (qair,finite_input,finite_velocity),finite_info,wrench_info=refine_task_reference(
                     plant,clearance_model,qair,finite_input,finite_velocity,links,
-                    plan.destination[:3]-plan.source[:3],finite_info)
+                    plan.destination[:3]-plan.source[:3],finite_info,clearance=clearance())
             except ValueError as error:
                 if not fixed_observation:raise
                 # This optional replacement must pass the full design check.

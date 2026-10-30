@@ -251,3 +251,73 @@ def test_distance_query_does_not_hide_other_errors_or_failed_retry(monkeypatch):
             collision_query(model,data)
         assert len(calls)==expected
         assert model.opt.ccd_iterations==500
+
+
+def test_permitted_pad_pairs_can_be_omitted_without_losing_other_distances():
+    import pytest
+    xml='''<mujoco><worldbody>
+      <body pos="0 0 .2"><freejoint/><geom name="object" type="sphere" size=".1"/></body>
+      <body pos=".19 0 .2"><freejoint/><geom name="pad/one" type="sphere" size=".1"/></body>
+      <body pos="-.19 0 .2"><freejoint/><geom name="arm/one" type="sphere" size=".1"/></body>
+      <geom name="floor" type="plane" size="1 1 .1"/>
+      </worldbody></mujoco>'''
+    model=mujoco.MjModel.from_xml_string(xml)
+    regular=MotionBoundedClearance(model,['pad'],halo=.02)
+    reduced=MotionBoundedClearance(model,['pad'],halo=.02,always_allow_selected=True)
+    for shift in [0.,.01,.025,-.02]:
+        q=model.qpos0.copy();q[0]+=shift
+        a=regular.check(q);b=reduced.check(q)
+        assert sorted(a[0])==sorted(b[0])
+        np.testing.assert_allclose(a[1:],b[1:],atol=1e-12)
+        ids=np.asarray(reduced.data.contact.geom)
+        assert not any(model.geom('object').id in pair and model.geom('pad/one').id in pair for pair in ids)
+    with pytest.raises(ValueError):reduced.check(q,False)
+
+
+def test_common_motion_does_not_change_internal_distance_bound():
+    model=mujoco.MjModel.from_xml_string('''<mujoco><worldbody>
+      <geom name="floor" type="plane" size="5 5 .1"/>
+      <body pos="0 0 1"><freejoint/>
+        <geom name="robot" type="sphere" size=".1" mass="1"/>
+        <body pos=".2 0 0"><joint axis="0 0 1"/><geom name="arm" type="box" size=".1 .02 .02"/></body>
+      </body>
+      <body pos=".5 0 1"><freejoint/><geom name="object" type="sphere" size=".1" mass="1"/></body>
+    </worldbody></mujoco>''')
+    checker=MotionBoundedClearance(model,[]);bound=checker.joint_motion
+    assert bound.relative_enabled
+    q=model.qpos0.copy();moved=q.copy();rotation=np.array([np.cos(.3),0,0,np.sin(.3)]);R=np.empty(9);mujoco.mju_quat2Mat(R,rotation)
+    for k in bound.roots:
+        moved[k:k+3]=R.reshape(3,3)@q[k:k+3]+[1,2,3]
+        mujoco.mju_mulQuat(moved[k+3:k+7],rotation,q[k+3:k+7])
+    assert bound.maximum(moved,q)[0]>1.
+    assert bound.internal_maximum(moved,q)[0]<1e-14
+    moved[7]+=.1
+    assert bound.internal_maximum(moved,q)[0]>.01
+    # A fixed obstacle is not carried by the common transform: disable this shortcut.
+    fixed=mujoco.MjModel.from_xml_string('''<mujoco><worldbody>
+      <geom name="object" type="sphere" pos=".5 0 1" size=".1"/>
+      <body pos="0 0 1"><freejoint/><geom name="robot" type="sphere" size=".1" mass="1"/></body>
+    </worldbody></mujoco>''')
+    bound=MotionBoundedClearance(fixed,[]).joint_motion
+    assert not bound.relative_enabled
+    q=fixed.qpos0.copy();moved=q.copy();moved[0]+=.5
+    np.testing.assert_array_equal(bound.internal_maximum(moved,q),bound.maximum(moved,q))
+
+
+def test_smaller_task_priority_cache_halo_does_not_change_collision_detection():
+    from build.separation_rate_constraints import SeparationRateConstraints
+    model=mujoco.MjModel.from_xml_string('''<mujoco><worldbody>
+      <geom name="floor" type="plane" size="5 5 .1"/>
+      <body pos="0 0 .2"><freejoint/><geom name="robot" type="sphere" size=".1" mass="1"/></body>
+      <body pos=".4 0 .2"><freejoint/><geom name="object" type="sphere" size=".1" mass="1"/></body>
+    </worldbody></mujoco>''')
+    standard=SeparationRateConstraints(model,[],all_geometry=True)
+    fast=SeparationRateConstraints(model,[],all_geometry=True);fast.task_priority=True
+    assert fast.query.halo==.003
+    for x in np.linspace(0,.25,40):
+        q=model.qpos0.copy();q[0]=x
+        actual,_,_=standard.query.check(q)
+        J,b=fast.at(q,np.zeros(model.nv))
+        if x>.201:assert len(b)>0 and np.any(b>0)
+        fast_bad,_,_=fast.query.check(q)
+        assert set(actual)==set(fast_bad)

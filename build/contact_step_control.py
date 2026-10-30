@@ -12,6 +12,12 @@ import clarabel
 
 
 def pad_gap_jacobians(m,d,links,groups=None):
+    from amsrr_det.native_observed_geometry import pad_gap_rows
+    if groups is None:groups=[tuple(g for g in range(m.ngeom) if m.geom(g).name.startswith(link+'/'))for link in links]
+    return pad_gap_rows(m,d,groups)
+
+
+def _python_pad_gap_jacobians(m,d,links,groups=None):
     """Closest physical surface gap and its instantaneous relative Jacobian."""
     obj=m.geom('object').id;gaps=[];rows=[]
     if groups is None:groups=[tuple(g for g in range(m.ngeom) if m.geom(g).name.startswith(link+'/'))for link in links]
@@ -51,6 +57,8 @@ def pad_gap_jacobians(m,d,links,groups=None):
 
 class ContactStepControl:
     def __init__(self,plant,links,period=.01,input_weight=1e-6,regularized_friction=False,finite_support=False,fast_solve=False,distance_closing=False,condensed_solve=False,clearance_model=None,inertial_updates=False):
+        from amsrr_det.native_observed_geometry import library
+        library()  # Compilation is outside control timing.
         self.separation=None
         if clearance_model is not None:
             from build.separation_rate_constraints import SeparationRateConstraints
@@ -71,7 +79,9 @@ class ContactStepControl:
         self.minimum_normal_load=0.
         self.opening_speed=.0002
         self.release_drift_horizon=None
+        self.compare_release=False
         self.release_branch_calls=0
+        self.friction_modes=None;self.friction_contact_key=None
         self.support_force_priority=False
         self.fixed_input=None
         self.project_input=False
@@ -84,6 +94,11 @@ class ContactStepControl:
         self.effort=np.array([a['effort'] for a in meta['actuators']]);self.dock=np.array([a['role']=='dock' for a in meta['actuators']])
         self.qlo=np.array([a['lower'] for a in meta['actuators']]);self.qhi=np.array([a['upper'] for a in meta['actuators']])
         self.sites=[self.m.site(plant.pin.frames[r['frame']].name).id for r in meta['rotors']]
+        self.native_geometry=library();self.site_indices=np.array(self.sites,dtype=np.int32)
+        self.velocity_indices=np.array(self.vi,dtype=np.int32)
+        self.geom_pad=np.full(self.m.ngeom,-1,dtype=int)
+        for i,group in enumerate(self.groups):self.geom_pad[list(group)]=i
+        self.support_geom=np.array([self.m.geom(g).name in ['support','destination_support','floor'] for g in range(self.m.ngeom)])
         self.limit=np.r_[self.effort,[r['maximum'] for r in meta['rotors']]]
         self.speed=np.full(self.nv,3.)
         # Track joint errors in units of one rated servo effort, restored
@@ -138,27 +153,26 @@ class ContactStepControl:
     def _update(self,q,v,reference,velocity=None,input_reference=None,normal_targets=None):
         m,d,h=self.m,self.d,self.h;nv,nu,nj=self.nv,self.nu,self.nj
         self.release_branch_calls+=1
-        compare_separation=self.release_drift_horizon is not None or self.release_branch_calls%max(1,round(.01/h))==0
-        d.qpos[:]=q;d.qvel[:]=v;mujoco.mj_fwdPosition(m,d);mujoco.mj_fwdVelocity(m,d)
-        M=np.zeros((nv,nv));mujoco.mj_fullM(m,d,M)
-        B=np.zeros((nv,nu));B[self.vi,np.arange(nj)]=1.
-        for i,site in enumerate(self.sites):
-            J=np.zeros((3,nv));mujoco.mj_jacSite(m,d,J,None,site);B[:,nj+i]=J.T@d.site_xmat[site].reshape(3,3)[:,2]
-        normals=[];gaps=[];tangents=[];supports=[];mus=[];contact_geometry=[];normal_regularization=[];support_response=[]
+        release_search=self.compare_release or self.release_drift_horizon is not None
+        compare_separation=release_search or self.release_branch_calls%max(1,round(.01/h))==0
+        d.qpos[:]=q;d.qvel[:]=v;M=np.empty((nv,nv));B=np.empty((nv,nu))
+        self.native_geometry.contact_mechanics(m._address,d._address,nj,self.velocity_indices.ctypes.data,
+            len(self.sites),self.site_indices.ctypes.data,M.ctypes.data,B.ctypes.data)
+        normals=[];gaps=[];tangents=[];supports=[];mus=[];contact_geometry=[];normal_regularization=[];support_response=[];contact_key=[]
         obj=m.geom('object').id
         for c in d.contact:
             ga,gb=map(int,c.geom)
             if obj not in (ga,gb) or c.dist>1e-9:continue
-            other=gb if ga==obj else ga;name=m.geom(other).name
-            pad=next((i for i,link in enumerate(self.links) if name.startswith(link+'/')),None)
-            selected=pad is not None
-            supported=name in ['support','destination_support','floor']
+            other=gb if ga==obj else ga;pad=self.geom_pad[other]
+            selected=pad>=0
+            supported=self.support_geom[other]
             if not selected and not supported:continue
             ja=np.zeros((3,nv));jb=ja.copy()
             mujoco.mj_jac(m,d,ja,None,c.pos,int(m.geom_bodyid[ga]))
             mujoco.mj_jac(m,d,jb,None,c.pos,int(m.geom_bodyid[gb]))
             J=c.frame.reshape(3,3)@(jb-ja)
             if selected:
+                contact_key.append((ga,gb))
                 normals.append(J[0]);tangents.extend(J[1:]);gaps.append(c.dist)
                 contact_geometry.append((pad,c.frame.reshape(3,3).copy()*(1. if ga==obj else -1.),
                                          c.pos-d.xpos[int(m.geom_bodyid[other])]))
@@ -317,18 +331,19 @@ class ContactStepControl:
             objective+=task.T@task;linear-=task.T@(rate/scale)
         # The force and moment limits concern each complete physical pad,
         # not each collision element separately. Use exact norm cones.
-        force=np.zeros((len(self.links),3,size));constant=np.zeros((len(self.links),3))
-        moment=force.copy();moment_constant=constant.copy()
-        pressure_force=np.zeros((len(self.links),3,ne));pressure_moment=pressure_force.copy()
-        for i,(pad,frame,arm) in enumerate(contact_geometry):
-            action=np.zeros((3,size));action[0,:nv]=-Dn[i]
-            action[1:,nv+nu+2*i:nv+nu+2*i+2]=np.eye(2)
-            action=frame.T@action;bias=frame[0]*p0[i]
-            force[pad]+=action;constant[pad]+=bias
-            pressure_force[pad,:,i]=frame[0]
-            cross=np.array([[0.,-arm[2],arm[1]],[arm[2],0.,-arm[0]],[-arm[1],arm[0],0.]])
-            moment[pad]+=cross@action;moment_constant[pad]+=cross@bias
-            pressure_moment[pad,:,i]=cross@frame[0]
+        if not getattr(self,'task_priority',False):
+            force=np.zeros((len(self.links),3,size));constant=np.zeros((len(self.links),3))
+            moment=force.copy();moment_constant=constant.copy()
+            pressure_force=np.zeros((len(self.links),3,ne));pressure_moment=pressure_force.copy()
+            for i,(pad,frame,arm) in enumerate(contact_geometry):
+                action=np.zeros((3,size));action[0,:nv]=-Dn[i]
+                action[1:,nv+nu+2*i:nv+nu+2*i+2]=np.eye(2)
+                action=frame.T@action;bias=frame[0]*p0[i]
+                force[pad]+=action;constant[pad]+=bias
+                pressure_force[pad,:,i]=frame[0]
+                cross=np.array([[0.,-arm[2],arm[1]],[arm[2],0.,-arm[0]],[-arm[1],arm[0],0.]])
+                moment[pad]+=cross@action;moment_constant[pad]+=cross@bias
+                pressure_moment[pad,:,i]=cross@frame[0]
         scaling=np.r_[self.speed,self.limit,np.full(nt+ns,1.)]
         A=np.vstack(rows)*scaling;lo=np.concatenate(low);hi=np.concatenate(high)
         equal=np.isfinite(lo)&(lo==hi);upper=(~equal)&np.isfinite(hi);lower=(~equal)&np.isfinite(lo)
@@ -353,6 +368,53 @@ class ContactStepControl:
         settings=clarabel.DefaultSettings();settings.verbose=False
         settings.tol_gap_abs=settings.tol_gap_rel=settings.tol_feas=1e-9
         solver_note=None;pressure_correction=np.zeros(ne)
+        def checked_command(z,pressure_correction,solver_note,iterations):
+            x=z*scaling;pred=x[:nv];effort=x[nv:nv+nu]
+            evaluated=A@z;check_rows=np.ones(len(lo),dtype=bool)
+            if solver_note and 'friction_modes' in solver_note:
+                evaluated+=pressure_rows@pressure_correction
+                # The boundary solve independently rechecked the replacement
+                # constitutive equations and weighted force projection.
+                equal_ids=np.flatnonzero(equal);tangent_ids=equal_ids[nv:nv+nt]
+                check_rows[tangent_ids]=False
+            residual=max(float(np.max((lo-evaluated)[check_rows])),float(np.max((evaluated-hi)[check_rows])))
+            if residual>1e-5:raise ValueError('contact step residual '+str(residual))
+            if getattr(self,'task_priority',False):
+                # Telemetry needs only the final loads, not a dense load map for
+                # every optimization variable. No force/moment cone is imposed
+                # in this policy; motor and task constraints remain unchanged.
+                predicted_force=np.zeros((len(self.links),3));predicted_moment=predicted_force.copy()
+                normal=p0-Dn@pred+pressure_correction
+                for i,(pad,frame,arm) in enumerate(contact_geometry):
+                    load=frame.T@np.r_[normal[i],x[nv+nu+2*i:nv+nu+2*i+2]]
+                    predicted_force[pad]+=load;predicted_moment[pad]+=np.cross(arm,load)
+            else:
+                predicted_force=np.einsum('ijk,k->ij',force,x)+constant+pressure_force@pressure_correction
+                predicted_moment=np.einsum('ijk,k->ij',moment,x)+moment_constant+pressure_moment@pressure_correction
+            if not getattr(self,'task_priority',False) and (np.max(np.linalg.norm(predicted_force,axis=1))>30.00001 or np.max(np.linalg.norm(predicted_moment,axis=1))>5.00001):
+                raise ValueError('contact step pad load residual')
+            if velocity_cone_rows:
+                speed_norms=[np.linalg.norm(pred[start+offset:start+offset+3]) for offset in (0,3)]
+                if np.any(np.asarray(speed_norms)>np.asarray(self.object_velocity_norm_limits)+1e-7):
+                    raise ValueError('contact step object speed norm residual')
+            loss=.5*float(np.sum(weights*(x-target)**2))
+            if self.inertial_updates:
+                change=x[nv:nv+nu]-previous
+                loss+=.5*float(change@metric@change)
+            if normal_targets is not None:loss+=.5*float(np.sum(((jacobian@pred-rate)/scale)**2))
+            cmd=(effort[:nj]+self.kp*q[self.qi]+self.kd*v[self.vi])/np.where(self.dock,1.,self.kp)
+            self.diagnostics=dict(gripper_elements=ne,support_elements=len(mus),free_object_velocity_observation=free_object,iterations=iterations,solver_note=solver_note,
+                                  predicted_support_normal_load=float(x[nv+nu+nt:nv+nu+nt+ns:3].sum()),
+                                  constraint_error=residual,objective_loss=loss,observed_tangent_speed=float(np.max(np.linalg.norm((Ct@v).reshape(-1,2),axis=1),initial=0.)),normal_force=(p0-Dn@pred+pressure_correction).tolist(),
+                                  pad_force=predicted_force.tolist(),pad_moment=predicted_moment.tolist(),
+                                  pad_gaps=None if pad_gaps is None else pad_gaps.tolist(),
+                                  velocity_error=float(np.linalg.norm((pred-goal)/self.speed)),
+                                  target_velocity=goal.tolist(),predicted_velocity=pred.tolist())
+            result=np.r_[cmd,effort[nj:]]
+            from build.deadline_context import publish
+            publish(result,loss)
+            return result
+
         if self.fixed_input is not None:
             # A fixed actual command determines the one-period velocity and
             # contact response. Solve those equations, then check every
@@ -394,17 +456,34 @@ class ContactStepControl:
                 for maps in ([] if getattr(self,'task_priority',False) else [pressure_force,pressure_moment]):
                     for mapping in maps:pressure_matrix=np.vstack([pressure_matrix,np.zeros(ne),-mapping])
                 pressure_matrix=np.vstack([pressure_matrix,np.zeros((velocity_cone_rows,ne))])
-                return solve_modes(objective*scaling[:,None]*scaling[None,:],linear*scaling,
+                preferred=self.friction_modes if self.friction_contact_key==tuple(contact_key) else None
+                result=solve_modes(objective*scaling[:,None]*scaling[None,:],linear*scaling,
                     matrix,bound,cones,nv,nu,nt,pressure_matrix,Dn*scaling[:nv],p0,rn,m.opt.impratio,
-                    v/scaling[:nv],boundary_hint=hint,separate_all=compare_separation and hint is not None, progress_matrix=None if pad_gaps is None or self.release_drift_horizon is None else np.c_[jacobian,np.zeros((len(pad_gaps),size-nv))]*scaling, progress_lower=None if pad_gaps is None else np.where(pad_gaps<.0002,np.maximum(rate,0.),(.0002-pad_gaps)/h))
+                    v/scaling[:nv],boundary_hint=hint,separate_all=compare_separation and hint is not None, progress_matrix=None if pad_gaps is None or not release_search else np.c_[jacobian,np.zeros((len(pad_gaps),size-nv))]*scaling, progress_lower=None if pad_gaps is None else np.where(pad_gaps<.0002,np.maximum(rate,0.),(.0002-pad_gaps)/h), preferred_modes=preferred, workspace=self)
+                self.friction_modes=result[2]['friction_modes'];self.friction_contact_key=tuple(contact_key)
+                return result
             pressure_rows=None
+            can_branch=bool(ne and self.regularized_friction and not self.friction_reserve)
+            def interior(recovery):
+                return solve(objective*scaling[:,None]*scaling[None,:],linear*scaling,matrix,bound,cones,nv,nu,nt,
+                    fixed_zero_tail=ns if self.finite_support and self.support_load_upper==0. else 0,
+                    workspace=self,recovery=recovery)
             try:
-                z,solver_note=solve(objective*scaling[:,None]*scaling[None,:],linear*scaling,matrix,bound,cones,nv,nu,nt,
-                    fixed_zero_tail=ns if self.finite_support and self.support_load_upper==0. else 0)
+                z,solver_note=interior(not can_branch)
             except ValueError:
-                if not(ne and self.regularized_friction) or self.friction_reserve:raise
-                z,pressure_correction,solver_note=boundary_solution()
-            if (self.release_drift_horizon is not None and ne and self.regularized_friction
+                if not can_branch:raise
+                try:
+                    z,pressure_correction,solver_note=boundary_solution()
+                except ValueError as branch_error:
+                    # A failed fast solve is not an infeasibility proof.
+                    # Keep numerical recovery if no physical branch succeeded.
+                    try:z,solver_note=interior(True)
+                    except ValueError:raise branch_error
+            from build.deadline_context import active,available
+            if active():
+                incumbent=checked_command(z,pressure_correction,solver_note,solver_note['iterations'])
+                if not available(.002):return incumbent
+            if (release_search and ne and self.regularized_friction
                     and not (solver_note and 'friction_modes' in solver_note)
                     and (compare_separation or min(p0-Dn@(z[:nv]*scaling[:nv]))<=1e-5)):
                 # Compare full separation at the existing 10 ms motion rate,
@@ -430,35 +509,4 @@ class ContactStepControl:
             if solution.status not in [clarabel.SolverStatus.Solved,clarabel.SolverStatus.AlmostSolved]:
                 raise ValueError('contact step '+str(solution.status))
             z=np.array(solution.x);iterations=int(solution.iterations)
-        x=z*scaling;pred=x[:nv];effort=x[nv:nv+nu]
-        evaluated=A@z;check_rows=np.ones(len(lo),dtype=bool)
-        if solver_note and 'friction_modes' in solver_note:
-            evaluated+=pressure_rows@pressure_correction
-            # The boundary solve independently rechecked the replacement
-            # constitutive equations and weighted force projection.
-            equal_ids=np.flatnonzero(equal);tangent_ids=equal_ids[nv:nv+nt]
-            check_rows[tangent_ids]=False
-        residual=max(float(np.max((lo-evaluated)[check_rows])),float(np.max((evaluated-hi)[check_rows])))
-        if residual>1e-5:raise ValueError('contact step residual '+str(residual))
-        predicted_force=np.einsum('ijk,k->ij',force,x)+constant+pressure_force@pressure_correction
-        predicted_moment=np.einsum('ijk,k->ij',moment,x)+moment_constant+pressure_moment@pressure_correction
-        if not getattr(self,'task_priority',False) and (np.max(np.linalg.norm(predicted_force,axis=1))>30.00001 or np.max(np.linalg.norm(predicted_moment,axis=1))>5.00001):
-            raise ValueError('contact step pad load residual')
-        if velocity_cone_rows:
-            speed_norms=[np.linalg.norm(pred[start+offset:start+offset+3]) for offset in (0,3)]
-            if np.any(np.asarray(speed_norms)>np.asarray(self.object_velocity_norm_limits)+1e-7):
-                raise ValueError('contact step object speed norm residual')
-        loss=.5*float(np.sum(weights*(x-target)**2))
-        if self.inertial_updates:
-            change=x[nv:nv+nu]-previous
-            loss+=.5*float(change@metric@change)
-        if normal_targets is not None:loss+=.5*float(np.sum(((jacobian@pred-rate)/scale)**2))
-        cmd=(effort[:nj]+self.kp*q[self.qi]+self.kd*v[self.vi])/np.where(self.dock,1.,self.kp)
-        self.diagnostics=dict(gripper_elements=ne,support_elements=len(mus),free_object_velocity_observation=free_object,iterations=iterations,solver_note=solver_note,
-                              predicted_support_normal_load=float(x[nv+nu+nt:nv+nu+nt+ns:3].sum()),
-                              constraint_error=residual,objective_loss=loss,observed_tangent_speed=float(np.max(np.linalg.norm((Ct@v).reshape(-1,2),axis=1),initial=0.)),normal_force=(p0-Dn@pred+pressure_correction).tolist(),
-                              pad_force=predicted_force.tolist(),pad_moment=predicted_moment.tolist(),
-                              pad_gaps=None if pad_gaps is None else pad_gaps.tolist(),
-                              velocity_error=float(np.linalg.norm((pred-goal)/self.speed)),
-                              target_velocity=goal.tolist(),predicted_velocity=pred.tolist())
-        return np.r_[cmd,effort[nj:]]
+        return checked_command(z,pressure_correction,solver_note,iterations)

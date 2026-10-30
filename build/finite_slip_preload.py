@@ -6,7 +6,7 @@ The evaluator's forces and completed simulation outcomes are never inputs.
 """
 import numpy as np
 import scipy.linalg as la
-import quadprog
+from amsrr_det import native_qp as quadprog
 import scipy.sparse as sp
 from scipy.optimize import minimize,LinearConstraint
 from amsrr_det.linear_program import linprog
@@ -66,9 +66,7 @@ def _whitened_pose(H,g,A,b):
 
 
 def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.03,minimize_input=False):
-    local.at(q)
-    gap, tangent, Jn, Ct = local.contact()
-    mass, act, _ = local.matrices()
+    local.d.qpos[:]=q;local.d.qvel[:]=0.
     m = local.m; nv, nu, nj = m.nv, m.nu, local.nj
     if duration <= 0 or local.support:
         raise ValueError('positive airborne duration required')
@@ -78,12 +76,12 @@ def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.0
         return None,dict(feasible=False,message='remaining material travel exhausted')
     # Variables: displacement, actual effort/thrust, velocity, shared reserve.
     width = 2*nv+nu+1; vs = slice(nv+nu, width-1)
-    B = act/np.r_[local.gain, np.ones(nu-nj)]
     # Obtain coefficients of the authored discrete contact law at this pose.
     # The query is private, has zero velocity, and is not advanced in time.
     # No computed reaction is read: only geometry and constitutive coefficients.
     local.d.ctrl[:]=np.r_[np.where(local.dock,local.kp*q[local.qi],q[local.qi]),np.zeros(nu-nj)]
     mujoco.mj_forward(m,local.d)
+    mass,act,_=local.matrices();B=act/np.r_[local.gain,np.ones(nu-nj)]
     contact_rows=[]
     for contact in local.d.contact:
         if contact.dist>1e-7 or contact.efc_address<0:continue
@@ -205,9 +203,8 @@ def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.0
         if null.shape[1]:
             objective=null.T@(weights[free,None]*null);linear=null.T@(weights[free]*origin[free])
             constraints=matrix@null;solution=None
-            if move_pose:
-                try:solution=_dense_pose(objective,linear,constraints,bound)
-                except (ValueError,np.linalg.LinAlgError):pass
+            try:solution=_dense_pose(objective,linear,constraints,bound)
+            except (ValueError,np.linalg.LinAlgError):pass
             if move_pose and solution is None:
                 # The LP origin is feasible. A dense active-set solve avoids the
                 # large sparse factorization of these dense null-space rows.
@@ -238,8 +235,9 @@ def finite_slip_preload(local, q, duration, *, move_pose=False, travel_budget=.0
         # directly, avoiding a piecewise LP followed by dense SLSQP iterations.
         # Try the final thrust objective directly from the feasible reserve LP.
         # The intermediate quadratic objective is only a numerical fallback.
+        direct_cache={}
         for attempt in range(2):
-            refined,input_refinement=minimum_input(problem,normalized,indices,local.rotor_max,lo[-1],method='conic')
+            refined,input_refinement=minimum_input(problem,normalized,indices,local.rotor_max,lo[-1],method='conic',_direct_cache=direct_cache)
             # Keep the original physical-unit check, beyond the normalized solve.
             candidate=refined*scale
             physical_residual=max(float(abs(E@candidate-rhs).max()),float((A@refined-b).max()),

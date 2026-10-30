@@ -5,6 +5,7 @@ never reset during acquisition/refinement. This is displacement of the saved
 material pairs, not a measurement of an individual contact force or stick mode.
 """
 import numpy as np
+import mujoco
 from build.sticking_design import LocalGrasp
 
 
@@ -20,7 +21,8 @@ class MaterialTravel:
             if self.local is None:
                 self.local=current;self.local.elements=[]
             self.local.elements.extend(added);self.captured.update(e[0]for e in added)
-        self.local.at(q);values=self.local.contact()[1].reshape(-1,2)
+        local=self.local;local.d.qpos[:]=q;mujoco.mj_kinematics(local.m,local.d)
+        values=local.material_values()[:,1:]
         if self.previous is None:self.previous=np.zeros_like(values);self.path=np.zeros(len(values))
         if len(self.previous)<len(values):
             count=len(values)-len(self.previous)

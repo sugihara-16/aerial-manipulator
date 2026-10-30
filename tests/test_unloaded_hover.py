@@ -24,3 +24,15 @@ def test_refinement_does_not_accept_impossible_gravity_balance():
     with pytest.raises(ValueError,match='unloaded gravity allocation unresolved'):
         _closest_input(np.array([[1.,1.]]),np.array([3.]),
                        np.zeros(2),np.ones(2),np.zeros(2))
+
+
+def test_reused_closest_input_tracks_changed_equilibrium_and_bounds():
+    from types import SimpleNamespace
+    workspace=SimpleNamespace()
+    A=np.array([[1.,1.,0.],[0.,1.,1.]])
+    for b in [np.array([.3,.5]),np.array([.8,.1]),np.array([-.4,.2])]:
+        target=np.array([.4,-.3,.9]);lo=np.full(3,-1.);hi=np.full(3,1.)
+        actual,residual=_closest_input(A,b,lo,hi,target,workspace)
+        expected,_=_closest_input(A,b,lo,hi,target)
+        np.testing.assert_allclose(actual,expected,atol=1e-7)
+        assert residual<1e-7

@@ -46,10 +46,13 @@ class NativeDriveInterval(DrivePrediction):
             return super().interval(q,v,command,force,period,step,linearize=linearize,history=history,generalized_load=generalized_load)
         samples=[];torque_start=nq+nv;acc_start=torque_start+na;jac_start=acc_start+nv
         for row in output if history else output[-1:]:
-            sample=dict(q=row[:nq].copy(),v=row[nq:nq+nv].copy())
+            # Each result owns its output buffer; views keep it alive and
+            # later calls allocate independent storage. Avoid copying every
+            # derivative matrix across ten intermediate states.
+            sample=dict(q=row[:nq],v=row[nq:nq+nv])
             if linearize:
-                sample.update(position_wrt_input=row[jac_start:jac_start+nv*nu].reshape(nv,nu).copy(),
-                              velocity_wrt_input=row[jac_start+nv*nu:].reshape(nv,nu).copy())
+                sample.update(position_wrt_input=row[jac_start:jac_start+nv*nu].reshape(nv,nu),
+                              velocity_wrt_input=row[jac_start+nv*nu:].reshape(nv,nu))
             samples.append(sample)
         last=samples[-1]
         info=dict(torque=output[-1,torque_start:acc_start].copy(),acceleration=output[-1,acc_start:jac_start].copy(),

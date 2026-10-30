@@ -35,3 +35,17 @@ def test_well_scaled_solution_and_objective_are_unchanged():
         [clarabel.ZeroConeT(1),clarabel.NonnegativeConeT(2)])
     np.testing.assert_allclose(result.x,[0.,1.],atol=1e-5)
     assert note['original_residual']<=1e-7
+
+
+def test_fast_failure_can_defer_but_does_not_remove_numerical_recovery(monkeypatch):
+    import build.contact_active_solver as active
+    from build.contact_condensed_solver import solve
+    def fail(*args,**kwargs):raise ValueError('synthetic fast solve failure')
+    monkeypatch.setattr(active,'solve',fail)
+    args=(np.eye(2),np.array([0.,-2.]),np.array([[1.,0.],[0.,1.],[0.,-1.]]),
+          np.array([0.,1.,1.]),[clarabel.ZeroConeT(1),clarabel.NonnegativeConeT(2)],1,1,0)
+    with pytest.raises(ValueError,match='synthetic'):
+        solve(*args,recovery=False)
+    x,note=solve(*args,recovery=True)
+    np.testing.assert_allclose(x,[0.,1.],atol=1e-7)
+    assert note['original_residual']<=1e-7

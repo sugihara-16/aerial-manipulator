@@ -39,7 +39,7 @@ def forward_collision(model,data):
         mujoco.mj_fwdPosition(model,data)
 
 
-def proximity_model(model, *, omit_permitted_support=False):
+def proximity_model(model, *, omit_permitted_support=False,omit_permitted_links=()):
     """Separate model: mesh CCD with a gap can change active-contact results."""
     result=copy.copy(model)
     # Buffered curved shapes need more EPA refinements than physical contact
@@ -59,9 +59,12 @@ def proximity_model(model, *, omit_permitted_support=False):
     # pair and all original body exclusions.
     used=int(np.bitwise_or.reduce(result.geom_contype|result.geom_conaffinity,initial=0))
     bit=next((1<<i for i in range(31) if not used&(1<<i)),None)
-    if omit_permitted_support and object_id is not None and supports and bit is not None:
+    if object_id is not None and bit is not None and (omit_permitted_support or omit_permitted_links):
         eligible=((result.geom_contype&result.geom_conaffinity[object_id])!=0)|((result.geom_conaffinity&result.geom_contype[object_id])!=0)
-        eligible[object_id]=False;eligible[supports]=False
+        eligible[object_id]=False
+        if omit_permitted_support:eligible[supports]=False
+        for i in range(result.ngeom):
+            if any(result.geom(i).name.startswith(link+'/')for link in omit_permitted_links):eligible[i]=False
         result.geom_contype[object_id]=bit;result.geom_conaffinity[object_id]=0
         result.geom_conaffinity[eligible]|=bit
     # Broad/mid-phase collision bounds cache each body's detection margin.
@@ -123,6 +126,27 @@ class JointMotionBound:
                     reach+=2*np.linalg.norm(model.jnt_pos[joint])
                 reach+=np.linalg.norm(model.body_pos[body]);body=model.body_parentid[body]
         self.roots={key:(np.array([x[0] for x in values]),np.array([x[1] for x in values])) for key,values in self.roots.items()}
+        # Relative part distances are invariant under a common rigid motion.
+        # This is usable only if every non-environment shape has a free root.
+        rooted=set(row for rows,_ in self.roots.values() for row in rows)
+        body_rows={int(body):i for i,body in enumerate(bodies)}
+        self.relative_enabled=bool(self.roots) and all(
+            model.geom(i).name in SUPPORT_NAMES or body_rows[int(model.geom_bodyid[i])] in rooted
+            for i in range(model.ngeom))
+
+    def in_root_frame(self,states):
+        states=np.atleast_2d(states);result=states.copy();root=min(self.roots)
+        for source,target in zip(states,result):
+            rotation=np.empty(9);mujoco.mju_quat2Mat(rotation,source[root+3:root+7]);R=rotation.reshape(3,3)
+            inverse=source[root+3:root+7].copy();inverse[1:]*=-1
+            for k in self.roots:
+                target[k:k+3]=R.T@(source[k:k+3]-source[root:root+3])
+                mujoco.mju_mulQuat(target[k+3:k+7],inverse,source[k+3:k+7])
+        return result
+
+    def internal_maximum(self,states,anchor):
+        if not self.relative_enabled:return self.maximum(states,anchor)
+        return self.maximum(self.in_root_frame(states),self.in_root_frame(anchor)[0])
 
     def maximum(self,states,anchor):
         states=np.atleast_2d(states)
@@ -143,8 +167,10 @@ class MotionBoundedClearance:
     covers both bodies of every pair. The extra halo supplies known distance
     for pairs absent from the previous query; it changes no physical model.
     """
-    def __init__(self,model,selected_links,halo=.003, *, omit_permitted_support=True):
-        self.model=proximity_model(model,omit_permitted_support=omit_permitted_support);self.model.geom_gap+=halo/2
+    def __init__(self,model,selected_links,halo=.003, *, omit_permitted_support=True,always_allow_selected=False):
+        self.always_allow_selected=always_allow_selected
+        self.model=proximity_model(model,omit_permitted_support=omit_permitted_support,
+            omit_permitted_links=selected_links if always_allow_selected else ());self.model.geom_gap+=halo/2
         mujoco.mj_setConst(self.model,mujoco.MjData(self.model))
         self.data=mujoco.MjData(self.model);self.halo=halo
         self.names=[model.geom(i).name for i in range(model.ngeom)]
@@ -158,6 +184,8 @@ class MotionBoundedClearance:
 
     def check_many(self,states,grasp_contact_allowed=True):
         """Check every supplied pose, batching the same conservative bound."""
+        if self.always_allow_selected and not grasp_contact_allowed:
+            raise ValueError('query was prepared with selected grasp contacts permitted')
         states=np.atleast_2d(states)
         if self.anchor is not None and self.joint_motion is not None and grasp_contact_allowed==self.last_allowed:
             oldq,_,_,part,environment=self.anchor
@@ -174,6 +202,8 @@ class MotionBoundedClearance:
         return [],part,environment
 
     def check(self,qpos,grasp_contact_allowed=True):
+        if self.always_allow_selected and not grasp_contact_allowed:
+            raise ValueError('query was prepared with selected grasp contacts permitted')
         m,d=self.model,self.data;d.qpos[:]=qpos
         if self.anchor is not None and grasp_contact_allowed==self.last_allowed:
             oldq,pos,mat,part,environment=self.anchor

@@ -86,6 +86,9 @@ def opposed_contact_terms(points,normals,friction,point_jac=None,normal_jac=None
 
 
 def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False):
+    # Repeated matrix/quaternion conversions can amplify roundoff along a
+    # retreat path. Dynamics and Jacobians require unit quaternions.
+    q0=pin.normalize(model,q0)
     if not set(surfaces)<=set(free_surfaces(meta)):
         raise ValueError('contact surface is occupied or does not exist')
     active=[a for a in meta['actuators'] if a['role']=='dock']
@@ -130,7 +133,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
         samples=(np.concatenate([np.full(len(p),f)for f,p in entries]),np.vstack([p for f,p in entries]))
     def configuration(x):
         q=q0.copy();q[:3]=x[:3];q[qi]=x[3+nr:]
-        if base_rotation:q[3:7]=pin.Quaternion(pin.exp3(x[3:6])@R0).coeffs()
+        if base_rotation:q[3:7]=pin.Quaternion(pin.exp3(x[3:6])@R0).normalized().coeffs()
         return q
     def residual(x,want_jac=False):
         # A planning worker can stop an unobserved fit between iterations.

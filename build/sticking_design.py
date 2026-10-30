@@ -55,6 +55,12 @@ class LocalGrasp:
         self.d.qpos[:]=q;self.d.qvel[:]=0 if v is None else v
         mujoco.mj_fwdPosition(self.m,self.d);mujoco.mj_fwdVelocity(self.m,self.d)
 
+    def mechanical_state(self,q,v=None):
+        """Only rigid kinematics, inertia and bias; no unused contact solve."""
+        m,d=self.m,self.d;d.qpos[:]=q;d.qvel[:]=0 if v is None else v
+        mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d);mujoco.mj_crb(m,d)
+        mujoco.mj_comVel(m,d);mujoco.mj_rne(m,d,0,d.qfrc_bias)
+
     def contact(self):
         gap=[];tangent=[];Jn=[];Ct=[]
         for pad,bp,bo,lp,lo,local_frame in self.elements:
@@ -69,6 +75,15 @@ class LocalGrasp:
             values=frame@delta
             gap.append(values[0]);tangent.extend(values[1:]);Jn.append(derivative[0]);Ct.extend(derivative[1:])
         return np.array(gap),np.array(tangent),np.array(Jn).reshape(-1,self.m.nv),np.array(Ct).reshape(-1,self.m.nv)
+
+    def material_values(self):
+        """The same material displacements, without unused Jacobians."""
+        if not self.elements:return np.empty((0,3))
+        d=self.d;mat=d.xmat.reshape(-1,3,3)
+        _,bp,bo,lp,lo,frame=map(np.asarray,zip(*self.elements))
+        pp=d.xpos[bp]+np.einsum('nij,nj->ni',mat[bp],lp)
+        po=d.xpos[bo]+np.einsum('nij,nj->ni',mat[bo],lo)
+        return np.einsum('nij,nj->ni',frame,np.einsum('nji,nj->ni',mat[bo],po-pp))
 
     def support_matrix(self):
         from build.support_contacts import support_jacobian

@@ -94,3 +94,20 @@ class ScalarBounds:
         sol=np.asarray(self.solver.getSolution().col_value);x=sol[:-1];value=float(sol[-1])
         residual=max(float(abs(self.matrix@x-base-direction*value).max()),float((self.lower-x).max()),float((x-self.upper).max()))
         return value if np.isfinite(residual)and residual<=1e-7 else None
+
+
+class RepeatedScalarInterval:
+    """The same two LP endpoints, sharing setup and the previous simplex basis."""
+    def __init__(self):
+        from .repeated_lp import RepeatedLinearProgram
+        self.problem=RepeatedLinearProgram()
+
+    def __call__(self,matrix,base,direction,lower,upper):
+        n=matrix.shape[1];problem=self.problem
+        problem.load(np.r_[np.zeros(n),1.],np.c_[matrix,-direction],base,base,
+                     np.r_[lower,-np.inf],np.r_[upper,np.inf])
+        low=problem.solve()
+        if low is None:return None
+        problem.change_cost(n,-1.)
+        high=problem.solve()
+        return None if high is None else (float(low[-1]),float(high[-1]))

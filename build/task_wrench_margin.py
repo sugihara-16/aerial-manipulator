@@ -40,7 +40,7 @@ def task_wrench_margin(local,q,u,displacement,*,feedback=None,measure_feedback=T
         neighborhood_robustness_certified=False,contact_maintenance_certified=False)
 
 
-def refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,finite):
+def refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,finite,*,clearance=None):
     """Repair direction only when needed, then recheck the actual contact pose."""
     from build.sticking_design import LocalGrasp
     from build.task_gimbal_design import GimbalWrenchDesign
@@ -58,21 +58,21 @@ def refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,fi
         pose,change=GimbalWrenchDesign(local,q,displacement).solve(u,.95*last['reserve'])
         records.append(dict(before=margin,angle_design=change))
         if not change['accepted']:break
-        (q,u,velocity),finite=construct_finite_slip(plant,full_model,pose,links,23.,minimize_input=True)
+        (q,u,velocity),finite=construct_finite_slip(plant,full_model,pose,links,23.,minimize_input=True,clearance=clearance)
     error=ValueError('task acceleration unavailable after fixed direction refinement')
     error.evidence=dict(margin=margin,repairs=records)
     raise error
 
 
-def refine_task_reference(plant,full_model,q,u,velocity,links,displacement,finite):
+def refine_task_reference(plant,full_model,q,u,velocity,links,displacement,finite,*,clearance=None):
     from amsrr_det.planning_memo import check_cancelled
     from amsrr_det.clearance import MotionBoundedClearance
-    clearance=MotionBoundedClearance(full_model,links)
+    clearance=clearance or MotionBoundedClearance(full_model,links)
     from build.sticking_design import LocalGrasp
     from build.task_gimbal_design import GimbalWrenchDesign
     from build.finite_slip_preload import construct_finite_slip
     from amsrr_det.affine_bounds import ScalarBounds
-    (q,u,velocity),finite,info=refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,finite)
+    (q,u,velocity),finite,info=refine_nominal_reference(plant,full_model,q,u,velocity,links,displacement,finite,clearance=clearance)
     began=time.perf_counter();records=[];selected=[np.zeros(6)]
     for iteration in range(12):
         check_cancelled()

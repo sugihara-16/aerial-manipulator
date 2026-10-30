@@ -33,6 +33,8 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
         self.solver.settings.eps_abs=self.solver.settings.eps_rel=1e-11
         self.solver.settings.max_iter=100
         self.initialized=False;self.diagnostics={}
+        from amsrr_det.affine_bounds import RepeatedScalarInterval
+        self.path_interval=RepeatedScalarInterval()
         reference_q=self.nominal
         self.local.at(reference_q);_,reference_B,_=self.local.matrices()
         reference_T=rigid_motion_map(self.m,reference_q)
@@ -133,10 +135,12 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
         angle=np.empty(3);rotation=np.empty(9)
         mujoco.mju_subQuat(angle,q[oi+3:oi+7],reference[oi+3:oi+7]);mujoco.mju_quat2Mat(rotation,reference[oi+3:oi+7])
         error[3:]=rotation.reshape(3,3)@angle
-        actual_momentum=self.momentum(q,v)
+        if self.normal_tracking:l.at(q,v)
+        else:l.mechanical_state(q,v)
+        mass,B,_=l.matrices();T=rigid_motion_map(m,q)
+        actual_momentum=T.T@mass@v
         momentum=actual_momentum-self.momentum(reference,velocity)
         desired=-self.outer_gain@np.r_[error,np.linalg.solve(self.inertia,momentum)]
-        l.at(q,v);mass,B,_=l.matrices();T=rigid_motion_map(m,q)
         act=B[:,ids]*self.scale[ids];target=mass@T@desired
         normal_error=0.
         if self.internal_tracking:
@@ -207,9 +211,8 @@ class ConstrainedMomentumFeedback(MomentumFeedback):
             extra_hi=np.maximum(extra*lo,extra*hi).sum(axis=1)+1.
         path_acceleration=None
         if path is not None:
-            from amsrr_det.affine_bounds import scalar_interval
             nd=int(np.count_nonzero(l.dock));direction=T.T@mass@T@path.direction6
-            interval=scalar_interval(wrench[:,nd:],requested,direction,lo[nd:],hi[nd:])
+            interval=self.path_interval(wrench[:,nd:],requested,direction,lo[nd:],hi[nd:])
             path_acceleration=path.observed_choice(interval,q,v,desired)
             target+=mass@T@path.direction6*path_acceleration
             gradient-=inverse.T@(mass@T@path.direction6*path_acceleration)

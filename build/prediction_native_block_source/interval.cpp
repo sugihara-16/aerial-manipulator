@@ -59,7 +59,7 @@ struct Prediction {
           bias[i]=active[i]?active[i]*drives[i].limit:bias0[i];
           model.armature[drives[i].v]+=coefficient[i];torque[drives[i].v]+=bias[i];
         }
-        acceleration=pin::aba(model,data,q,v,torque,external);velocity=v+h*acceleration;
+        acceleration=pin::aba(model,data,q,v,torque,external,pin::Convention::WORLD);velocity=v+h*acceleration;
         for(int i=0;i<na;++i){const auto& a=drives[i];
           raw[i]=a.kp*(command[i]-q[a.q]-h*velocity[a.v])-a.kd*velocity[a.v];
           needed[i]=raw[i]>a.limit?1:(raw[i]<-a.limit?-1:0);
@@ -78,7 +78,8 @@ struct Prediction {
           throw std::runtime_error("drive_prediction_torque_inconsistent");
       }
       if(linearize){
-        pin::computeABADerivatives(model,data,q,v,torque,external);
+        // Reuse the just-computed world-frame ABA intermediates.
+        pin::computeABADerivatives(model,data,external);
         Mat aq=data.ddq_dq,av=data.ddq_dv,inverse=data.Minv.selfadjointView<Eigen::Upper>();
         Mat input=Mat::Zero(nv,nu);
         for(int i=0;i<na;++i){const auto& a=drives[i];double free=active[i]==0?1.:0.;
@@ -86,9 +87,11 @@ struct Prediction {
           av.col(a.v)-=inverse.col(a.v)*((a.kp*h+a.kd)*free);
           input.col(i)=inverse.col(a.v)*(a.kp*free);
         }
-        pin::computeJointJacobians(model,data,q);pin::updateFramePlacements(model,data);
+        // computeABADerivatives already filled data.J and world joint poses.
+        // Only rotor frame poses are needed for the force columns below.
         Mat action(nv,nr),jacobian=Mat::Zero(6,nv);
         for(int i=0;i<nr;++i){
+          pin::updateFramePlacement(model,data,rotors[i]);
           jacobian.setZero();pin::getFrameJacobian(model,data,rotors[i],pin::LOCAL,jacobian);
           action.col(i)=jacobian.row(2).transpose();
         }

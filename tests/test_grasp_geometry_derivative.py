@@ -71,3 +71,38 @@ def test_object_collision_repair_derivative_in_active_constraint(monkeypatch,fix
     transform=data.oMf[meta['object']['frame']] if fixed_world else pin.SE3.Identity()
     geometry.fit_contacts(m,meta,q,surfaces,points,normals,base_rotation=True,
         avoid_pairs=[('m0/main_body',name)],avoid_shapes={name:(transform,coal.Box(*shape.size))})
+
+
+@pytest.mark.parametrize('analytic',[False,True])
+def test_repeated_contact_fit_preserves_unit_orientation_and_dynamics(analytic):
+    from amsrr_det.free_flight_trim import check_fixed_thrust
+    model,meta=build_model()
+    q=pin.neutral(model);q[:3]=[.2,-.1,.8]
+    q[3:7]=pin.Quaternion(pin.rpy.rpyToMatrix(.2,-.3,2.7)).coeffs()
+    data=model.createData();pin.framesForwardKinematics(model,data,q)
+    surfaces=[(0,'yaw1'),(0,'yaw2')]
+    frames=[meta['frames'][geometry.grasp_frame(*s)] for s in surfaces]
+    points=np.array([data.oMf[f].translation for f in frames])
+    normals=np.array([data.oMf[f].rotation[:,0] for f in frames])
+    # Reproduce drift accumulated by repeated rotation conversions. A fit
+    # must restore the same represented orientation, not change mechanics.
+    q[3:7]*=1.00005
+    original=q.copy()
+    for _ in range(10):
+        q,_=geometry.fit_contacts(model,meta,q,surfaces,points,normals,
+                                  base_rotation=True,max_evaluations=3,analytic_jacobian=analytic)
+        assert abs(np.linalg.norm(q[3:7])-1.)<3e-16
+    assert np.linalg.norm(original[3:7])>1.00004
+    pin.framesForwardKinematics(model,data,q)
+    gravity=pin.computeGeneralizedGravity(model,data,q).copy()
+    forces=np.full(len(meta['rotors']),7.)
+    columns=[]
+    for rotor in meta['rotors']:
+        frame=rotor['frame']
+        J=pin.computeFrameJacobian(model,data,q,frame,pin.LOCAL_WORLD_ALIGNED)
+        columns.append(J[:3].T@data.oMf[frame].rotation[:,2])
+    residual=gravity-np.array(columns).T@forces
+    check=check_fixed_thrust(model,meta,q,forces)
+    assert abs(check['equilibrium_residual']-np.max(abs(residual[:6])))<1e-12
+    np.testing.assert_allclose([j['effort_nm'] for j in check['joints']],
+                               residual[[a['v'] for a in meta['actuators']]],atol=1e-12)

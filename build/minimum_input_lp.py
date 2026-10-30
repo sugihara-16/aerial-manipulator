@@ -12,7 +12,7 @@ from scipy.optimize import minimize,LinearConstraint
 from amsrr_det.linear_program import linprog
 
 
-def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserve, *, method='hybrid',_eliminate=False):
+def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserve, *, method='hybrid',_eliminate=False,_direct_cache=None):
     started=time.perf_counter()
     A=np.asarray(problem['A_ub']);b=np.asarray(problem['b_ub'])
     E=np.asarray(problem['A_eq']);rhs=np.asarray(problem['b_eq'])
@@ -40,7 +40,11 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
     ids_hi=np.flatnonzero(np.isfinite(hi));ids_lo=np.flatnonzero(np.isfinite(lo))
     C=np.vstack([A,np.eye(len(lo))[ids_hi],-np.eye(len(lo))[ids_lo]])
     d=np.r_[b,hi[ids_hi],-lo[ids_lo]]
-    matrix=np.c_[C@null,np.zeros((len(C),nr))];bound=d-C@origin
+    # In the direct formulation null only selects free columns. Preserve the
+    # row-major layout used by the old product so row-norm reductions retain
+    # their numerical order, without multiplying by a mostly-zero identity.
+    reduced=np.ascontiguousarray(C[:,free]) if direct else C@null
+    matrix=np.c_[reduced,np.zeros((len(C),nr))];bound=d-C@origin
     initial_z=np.zeros(nz)
     if method in ('piecewise','hybrid'):
         # Convex secants on [0,1] bound normalized f**1.5 from above.
@@ -59,7 +63,7 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
         weights=np.asarray(rotor_scales)**1.5
         equality_options={}
         if direct:
-            equality=E@null;target=rhs-E@origin
+            equality=np.ascontiguousarray(E[:,free]);target=rhs-E@origin
             equality_scale=np.maximum(np.linalg.norm(equality,axis=1),1e-12)
             equality_options=dict(A_eq=sp.csr_matrix(np.c_[equality/equality_scale[:,None],np.zeros((len(E),nr))]),b_eq=target/equality_scale)
         answer=linprog(np.r_[np.zeros(nz),weights/weights.max()],
@@ -100,7 +104,7 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
         return x,report
     blocks=[matrix];values=[bound];cones=[clarabel.NonnegativeConeT(len(bound))]
     if direct:
-        equality=E@null;target=rhs-E@origin
+        equality=np.ascontiguousarray(E[:,free]);target=rhs-E@origin
         row_scale=np.maximum(np.linalg.norm(equality,axis=1),1e-12)
         blocks.insert(0,np.c_[equality/row_scale[:,None],np.zeros((len(E),nr))])
         values.insert(0,target/row_scale);cones.insert(0,clarabel.ZeroConeT(len(E)))
@@ -113,8 +117,22 @@ def minimum_input(problem, feasible, rotor_columns, rotor_scales, minimum_reserv
     objective/=np.max(objective)
     settings=clarabel.DefaultSettings();settings.verbose=False;settings.max_threads=1
     settings.tol_feas=settings.tol_gap_abs=settings.tol_gap_rel=1e-11
-    answer=clarabel.DefaultSolver(sp.csc_matrix((width,width)),objective,
-        sp.csc_matrix(np.vstack(blocks)),np.concatenate(values),cones,settings).solve()
+    packed_matrix=np.vstack(blocks);packed_bound=np.concatenate(values)
+    signature=(width,nr,len(E),len(bound))
+    reusable=(direct and _direct_cache is not None and _direct_cache.get('signature')==signature
+              and np.array_equal(_direct_cache['matrix'],packed_matrix)
+              and np.array_equal(_direct_cache['bound'],packed_bound)
+              and np.array_equal(_direct_cache['objective'],objective))
+    if reusable:
+        answer=_direct_cache['answer']
+    else:
+        answer=clarabel.DefaultSolver(sp.csc_matrix((width,width)),objective,
+            sp.csc_matrix(packed_matrix),packed_bound,cones,settings).solve()
+        if direct and _direct_cache is not None:
+            # This formulation is independent of the feasible initializer.
+            # Recheck acceptance below against the CURRENT feasible input.
+            _direct_cache.update(signature=signature,matrix=packed_matrix,
+                bound=packed_bound,objective=objective,answer=answer)
     result=origin+null@np.asarray(answer.x)[:nz]
     residual=max(float(abs(E@result-rhs).max()),float((C@result-d).max()))
     force=result[rotor_columns]*rotor_scales

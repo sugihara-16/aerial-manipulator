@@ -11,8 +11,8 @@ from build.contact_step_control import pad_gap_jacobians
 from amsrr_det.clearance import MotionBoundedClearance
 
 
-def construct(plant, full_model, q, links, iterations=12):
-    clearance=MotionBoundedClearance(full_model,links)
+def construct(plant, full_model, q, links, iterations=12, *, clearance=None):
+    clearance=clearance or MotionBoundedClearance(full_model,links)
     records=[]
     for iteration in range(iterations):
         local=LocalGrasp(plant,q,links)

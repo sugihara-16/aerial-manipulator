@@ -69,3 +69,16 @@ def test_contact_slice_endpoints_match_independent_linear_program():
                 bounds=[*zip(lower,upper),(None,None)])
             assert answer.success
             assert abs(answer.x[-1]-result[index])<1e-7
+
+
+def test_changing_interval_reuses_workspace_without_stale_bounds():
+    from amsrr_det.affine_bounds import RepeatedScalarInterval
+    problem=RepeatedScalarInterval();rng=np.random.default_rng(20261027)
+    for n in [8,8,12,12]:
+        for _ in range(8):
+            matrix=rng.normal(size=(3,n));lo=-rng.random(n);hi=rng.random(n)
+            base=matrix@rng.uniform(lo,hi);direction=rng.normal(size=3)
+            np.testing.assert_allclose(problem(matrix,base,direction,lo,hi),
+                scalar_interval(matrix,base,direction,lo,hi),rtol=1e-8,atol=1e-8)
+        assert problem(matrix,np.full(3,1e6),np.zeros(3),lo,hi) is None
+        assert problem(matrix,base,direction,lo,hi) is not None

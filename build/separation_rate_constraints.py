@@ -12,8 +12,9 @@ from amsrr_det.clearance import MotionBoundedClearance, collision_query
 
 class SeparationRateConstraints:
     def __init__(self,model,links,response_time=.5,*,all_geometry=False,distance_tolerance=0.,distance_query=None):
+        self._task_priority=False;self.private_query=distance_query is None
         if distance_query is None:
-            self.query=MotionBoundedClearance(model,links,halo=.02)
+            self.query=MotionBoundedClearance(model,links,halo=.02,always_allow_selected=True)
         else:
             if not all_geometry:
                 raise ValueError('shared distance model requires all geometry')
@@ -39,6 +40,21 @@ class SeparationRateConstraints:
         np.bitwise_or.at(m.body_conaffinity,m.geom_bodyid,m.geom_conaffinity)
         mujoco.mj_setConst(m,mujoco.MjData(m))
 
+    @property
+    def task_priority(self):return self._task_priority
+
+    @task_priority.setter
+    def task_priority(self,value):
+        self._task_priority=bool(value)
+        if self.private_query:
+            # This halo is a cache horizon, not a required physical gap.
+            # The task-priority path only needs observed non-penetration;
+            # asking CCD for every pair within an extra 2 cm dominates time.
+            halo=.003 if value else .02
+            query=self.query;query.model.geom_gap+=(halo-query.halo)/2
+            query.halo=halo;query.anchor=None
+            mujoco.mj_setConst(query.model,mujoco.MjData(query.model))
+
     def at(self,q,v):
         if getattr(self,'task_priority',False):
             # Reuse the geometric proof of a non-colliding OBSERVED pose, not
@@ -48,7 +64,8 @@ class SeparationRateConstraints:
             if query.anchor is not None and query.joint_motion is not None:
                 oldq,_,_,part,environment=query.anchor
                 movement=2.*float(query.joint_motion.maximum(q,oldq)[0])
-                if min(part,environment)>movement:
+                internal=2.*float(query.joint_motion.internal_maximum(q,oldq)[0])
+                if part>internal and environment>movement:
                     query.reused+=1
                     return np.empty((0,query.model.nv)),np.empty(0)
             _,part,environment=query.check(q,True)

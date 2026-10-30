@@ -4,6 +4,7 @@ Objective and every force/input cone are unchanged. Reconstruction is checked
 against the original constraints; failed numerical solves use the original QP.
 """
 import time
+from build.deadline_context import available,remaining
 from types import SimpleNamespace
 import numpy as np
 import scipy.sparse as sp
@@ -14,6 +15,7 @@ STATISTICS=dict(active_calls=0,active_accepted=0,active_fallbacks=0,calls=0,fall
 
 
 def _scaled_solve(P,c,A,b,cones):
+    if not available(.001):raise ValueError('contact observation time budget exhausted')
     rows=np.maximum(1.,np.maximum(np.max(abs(A),axis=1),abs(b)));offset=0
     for cone in cones:
         # A norm cone must be scaled as a whole to preserve its geometry.
@@ -23,6 +25,7 @@ def _scaled_solve(P,c,A,b,cones):
     settings=clarabel.DefaultSettings();settings.verbose=False;settings.max_threads=1
     settings.tol_feas=1e-11;settings.tol_gap_abs=1e-14;settings.tol_gap_rel=1e-10
     settings.reduced_tol_feas=1e-9;settings.reduced_tol_gap_abs=1e-13;settings.reduced_tol_gap_rel=1e-8
+    settings.time_limit=remaining()
     solver=clarabel.DefaultSolver(sp.csc_matrix(np.triu(P/cost)),c/cost,
         sp.csc_matrix(A/rows[:,None]),b/rows,cones,settings)
     answer=solver.solve()
@@ -31,10 +34,12 @@ def _scaled_solve(P,c,A,b,cones):
 
 def scaled_recovery(P,c,A,b,cones):
     """Recheck original units; eliminate equalities if row scaling fails."""
+    if not available(.002):raise ValueError('contact recovery time budget exhausted')
     answer,gap=_scaled_solve(P,c,A,b,cones)
     x=np.asarray(answer.x);residual=violation(A,b,cones,x);rank=0
     def accepted():
         return str(answer.status) in ['Solved','AlmostSolved'] and np.isfinite(residual) and residual<=1e-7
+    if not accepted() and not available(.002):raise ValueError('contact recovery time budget exhausted')
     if not accepted() and cones and isinstance(cones[0],clarabel.ZeroConeT) and cones[0].dim:
         ne=cones[0].dim;E=A[:ne]
         rows=np.maximum(np.linalg.norm(E,axis=1),1e-30)
@@ -57,7 +62,7 @@ def scaled_recovery(P,c,A,b,cones):
                        eliminated_equalities=rank)
 
 
-def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
+def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0,workspace=None,recovery=True):
     if fixed_zero_tail:
         # A zero support-normal sum plus nonnegative pressure and friction
         # implies every support reaction is exactly zero. Remove this face
@@ -73,7 +78,7 @@ def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
                 if not np.all(valid):raise ValueError('inconsistent zero-support constraint')
                 ids=ids[~zero]
             selected.extend(ids);reduced_cones.append(type(cone)(len(ids)))
-        x,note=solve(P[:cut,:cut],c[:cut],reduced[selected],b[selected],reduced_cones,nv,nu,nt)
+        x,note=solve(P[:cut,:cut],c[:cut],reduced[selected],b[selected],reduced_cones,nv,nu,nt,workspace=workspace,recovery=recovery)
         x=np.r_[x,np.zeros(fixed_zero_tail)]
         residual=violation(A,b,cones,x)
         if not np.isfinite(residual) or residual>1e-5:raise ValueError('zero-support reconstruction residual')
@@ -82,11 +87,19 @@ def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
     from build.contact_active_solver import solve as active_solve
     STATISTICS['active_calls']+=1
     try:
-        x,note=active_solve(P,c,A,b,cones)
+        try:
+            x,note=active_solve(P,c,A,b,cones,mechanical_partition=(nv,nu),workspace=workspace)
+        except (ValueError,ArithmeticError):
+            # Elimination can magnify roundoff near redundant contact rows.
+            # Retry the original orthogonal coordinates before a cone solve.
+            x,note=active_solve(P,c,A,b,cones,workspace=workspace)
+            note['orthogonal_retry']=True
         STATISTICS['active_accepted']+=1
         return x,dict(**note,active_set=True,fallback=False)
     except (ValueError,ArithmeticError):
         STATISTICS['active_fallbacks']+=1
+        if not recovery:raise
+    if not available(.002):raise ValueError('contact observation time budget exhausted')
     begin=time.perf_counter();size=len(c)
     columns=np.arange(nv+nu,nv+nu+nt);rows=np.arange(nv,nv+nt)
     keep=np.r_[np.arange(nv+nu),np.arange(nv+nu+nt,size)]
@@ -103,6 +116,7 @@ def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
     H*=scale[:,None]*scale[None,:];f*=scale
     settings=clarabel.DefaultSettings();settings.verbose=False
     settings.tol_gap_abs=settings.tol_gap_rel=settings.tol_feas=1e-9
+    settings.time_limit=remaining()
     reduced_cones=[clarabel.ZeroConeT(cones[0].dim-nt),*cones[1:]]
     answer=clarabel.DefaultSolver(sp.csc_matrix(np.triu(H)),f,
         sp.csc_matrix(A[retained_rows]@transform),b[retained_rows]-A[retained_rows]@origin,
@@ -117,6 +131,8 @@ def solve(P,c,A,b,cones,nv,nu,nt,*,fixed_zero_tail=0):
     fallback=(status not in ['Solved','AlmostSolved'] or not np.isfinite(residual) or residual>1e-5)
     recovery=None
     if fallback:
+        if not available(.002):raise ValueError('contact observation time budget exhausted')
+        settings.time_limit=remaining()
         STATISTICS['fallbacks']+=1
         answer=clarabel.DefaultSolver(sp.csc_matrix(np.triu(P)),c,sp.csc_matrix(A),b,cones,settings).solve()
         x=np.asarray(answer.x);residual=violation(A,b,cones,x)
