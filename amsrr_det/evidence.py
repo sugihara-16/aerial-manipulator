@@ -10,6 +10,11 @@ _paths=[*ROOT.glob('amsrr_det/*.py'),*ROOT.glob('amsrr_det/*.cc'),*ROOT.glob('sc
         ROOT/'build/load_saved_plan.py',ROOT/'build/physx_minimal.kit',ROOT/'build/physics_diagnostics.py',
         ROOT/'requirements.lock.txt',ROOT/'requirements.txt',ROOT/'requirements-physx-local.txt']
 _paths.append(ROOT/'build/run_mujoco_task.py')
+_paths.append(ROOT/'native/observed_geometry.cpp')
+_paths.append(ROOT/'native/contact_algebra.c')
+_paths.append(ROOT/'native/task_geometry.cpp')
+_paths.extend((ROOT/'third_party/quadprog').glob('*'))
+_paths.extend(ROOT/'build/prediction_native_block_source'/name for name in ['CMakeLists.txt','interval.cpp'])
 _paths.extend(ROOT/p for p in ['CMakeLists.txt','native/geometry_kernel.cpp',
     'third_party/mujoco/contact.patch','third_party/mujoco/manifest.json',
     'build/geometry_kernel/libgeometry_kernel.so','build/geometry_kernel/identity.json',

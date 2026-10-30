@@ -1,0 +1,23 @@
+{
+  "policy": "shape-pairs",
+  "criteria": "Select by independently checked geometry and support behavior, not task score or ID.",
+  "sources": [
+    "pro_round24.json",
+    "collision_normals101.json",
+    "support98.json",
+    "cap_support101.json",
+    "coast101_cylinder.json",
+    "coast98_prism.json"
+  ],
+  "description": [
+    "Use native engine face contacts for polyhedra.",
+    "Cylinder side uses one reliable native witness. On cylinder cap (axial normal component dominates radial), use native multiple witnesses only if all normals agree with the single witness.",
+    "Cylinder detection is by geometric type and current contact normal. No case, mass, or outcome branches.",
+    "Plane-cylinder and other specialized analytic colliders retain their standard multipoint result."
+  ],
+  "limits": [
+    "This changes the evaluated contact approximation, not mass, friction, actuators or task thresholds.",
+    "No real-world contact identification or general all-shape accuracy claim.",
+    "A cap with an inconsistent native manifold falls back to one point."
+  ]
+}
