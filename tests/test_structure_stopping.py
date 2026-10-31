@@ -82,3 +82,29 @@ def test_data_dependent_physical_pruning_retains_the_global_latent_minimum():
                 if lower[group]>best:continue
                 best=min(best,values[i][group])
         assert best==min(5.,min(min(values[i]) for i in sample))
+
+
+def test_finalized_component_pruning_preserves_fixed_generator_minimum():
+    # The first component is costly but the second may improve. Pruning is
+    # valid for a maximum over finalized components, not an interim optimizer.
+    outputs=[(3.,8.),(6.,2.),(1.,4.),(12.,math.inf)]
+    for order in product(range(len(outputs)),repeat=5):
+        best=10.;bounded=[]
+        for index in order:
+            components=outputs[index]
+            if components[0]>best:
+                bounded.append(components[0]);continue
+            best=min(best,max(components))
+        assert best==min(10.,min(max(outputs[i]) for i in order))
+        assert all(lower>best for lower in bounded)
+
+
+def test_bounded_trials_are_complete_evidence_but_not_feasible_candidates():
+    bounds=[dict(modules=1,lower_bound=1.)]
+    report=selection_evidence(bounds,{1:[8.]+[9.]*58},8.,protocol_id='fixed',
+        censored_bounds={1:{i:9. for i in range(1,59)}})
+    assert report['complete']
+    assert report['groups'][0]['successful_prefix_trials']==1
+    assert report['groups'][0]['bounded_nonimprovement_trials']==58
+    with pytest.raises(ValueError,match='nonimproving'):
+        selection_evidence(bounds,{1:[7.]*59},8.,protocol_id='fixed',censored_bounds={1:{0:7.}})

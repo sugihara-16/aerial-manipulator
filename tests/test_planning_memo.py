@@ -88,3 +88,13 @@ def test_reused_physical_models_preserve_dynamics_and_do_not_share_mutations(tmp
         mujoco.mj_step(plant.mj,d,nstep=10);states.append(d)
     for name in ['qpos','qvel','qfrc_actuator']:
         np.testing.assert_array_equal(getattr(states[0],name),getattr(states[1],name))
+
+
+def test_excluded_count_cancels_only_that_count_without_returning_a_cost(tmp_path):
+    import pytest
+    from amsrr_det.planning_memo import PlanningCancelled
+    memo=PlanningMemo(tmp_path);memo.task_group=3
+    (tmp_path/'excluded_3').touch()
+    with pytest.raises(PlanningCancelled):memo.evaluate({'x':1},lambda: 7)
+    memo.task_group=2
+    assert memo.evaluate({'x':1},lambda: 7)==(7,False)

@@ -18,6 +18,23 @@ class PlanningCancelled(RuntimeError):
     """Unobserved work stopped after the selector has made its decision."""
 
 
+class FixedOutputDominated(RuntimeError):
+    """A finalized component bounds this frozen procedure's eventual output."""
+    def __init__(self, lower_bound, incumbent, component):
+        self.evidence=dict(lower_bound=float(lower_bound),incumbent=float(incumbent),
+                           component=component,scope='fixed_procedure_output_not_physical_optimum')
+        super().__init__('fixed procedure output cannot improve incumbent')
+
+
+def check_output_bound(lower_bound, component):
+    if active is None:return
+    target=active.directory/'incumbent.json'
+    if not target.exists():return
+    incumbent=float(json.loads(target.read_text()))
+    if lower_bound > incumbent + 1e-6*(1+incumbent):
+        raise FixedOutputDominated(lower_bound,incumbent,component)
+
+
 def check_cancelled():
     if active is not None:
         active.check_cancelled()
@@ -30,9 +47,10 @@ def evaluate(inputs, calculate):
 class PlanningMemo:
     def __init__(self, directory):
         self.directory = Path(directory)
+        self.task_group = None
 
     def check_cancelled(self):
-        if (self.directory / 'cancelled').exists():
+        if (self.directory / 'cancelled').exists() or (self.task_group is not None and (self.directory / ('excluded_'+str(self.task_group))).exists()):
             raise PlanningCancelled('unobserved planning work cancelled')
 
     def evaluate(self, inputs, calculate):

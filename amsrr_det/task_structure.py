@@ -14,12 +14,14 @@ from .planning_memo import evaluate as memoized
 from .native_grasp_geometry import growth_clearance
 
 
-@lru_cache(maxsize=1)
-def part_frames():
+@lru_cache(maxsize=2)
+def part_frames(support=False):
     model, meta = build_model()
     data = model.createData()
     ports = tuple(PORTS)
-    angles = np.linspace(-1.2, 1.2, 5)
+    # A support branch can need near-right-angle folds to keep the added
+    # body's rotors upright. Stay inside the authored +/- pi/2 Dock range.
+    angles = np.linspace(-np.pi/2+.02, np.pi/2-.02, 5) if support else np.linspace(-1.2,1.2,5)
     seams = np.empty((4, len(angles), 4, 4))
     pads = np.empty_like(seams)
     parts = part_bounds()
@@ -50,9 +52,9 @@ def _frame(normal):
     return np.column_stack([x, np.cross(z, x), z])
 
 
-def _clearance_cost(base, incoming, pad, shape, source, obstacles):
+def _clearance_cost(base, incoming, pad, shape, source, obstacles,support=False):
     """Bounding-box overlap guides partial growth; final exact checks remain."""
-    _,angles,_,_,_,boxes,moving=part_frames(); k=len(angles)
+    _,angles,_,_,_,boxes,moving=part_frames(support); k=len(angles)
     fast=growth_clearance(base,boxes,incoming,pad,moving[pad],pin.Quaternion(source[3:]).matrix(),source[:3],shape.size,obstacles)
     if fast is not None:return fast
     parts=np.broadcast_to(boxes[incoming,np.tile(np.arange(k),k),None],(k*k,k,*boxes.shape[2:])).copy()
@@ -71,9 +73,9 @@ def _clearance_cost(base, incoming, pad, shape, source, obstacles):
     return 4*cost
 
 
-def _port_geometry(pose, out, shape, source, obstacles):
+def _port_geometry(pose, out, shape, source, obstacles,support=False):
     """Geometry of one parent port, independent of the next contact target."""
-    ports, angles, seams, pads, _, _, _ = part_frames()
+    ports, angles, seams, pads, _, _, _ = part_frames(support)
     mate = np.diag([-1., -1., 1., 1.]); rows = []
     for incoming in range(4):
         if ports[out][:3] == ports[incoming][:3]:
@@ -84,7 +86,7 @@ def _port_geometry(pose, out, shape, source, obstacles):
             if pad == incoming:
                 continue
             frames = base[:, None] @ pads[pad][None]
-            clearance = None if shape is None else _clearance_cost(base,incoming,pad,shape,source,obstacles)
+            clearance = None if shape is None else _clearance_cost(base,incoming,pad,shape,source,obstacles,support)
             rows.append((incoming,pad,base,frames[..., :3, 3],frames[..., :3, 0],clearance))
     return rows
 
@@ -120,7 +122,27 @@ def _expansion_choices(poses, occupied, target, normal, shape, source, obstacles
     return choices
 
 
-def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,obstacles=()):
+def _support_choices(poses,occupied,shape,source,obstacles):
+    """Unused branches need clearance and load transmission, not another pad."""
+    ports,angles,*_=part_frames(True);middle=len(angles)//2;choices=[]
+    for parent,pose in enumerate(poses):
+        for out in range(4):
+            if (parent,out) in occupied:continue
+            seen=set()
+            for incoming,pad,base,_,_,clearance in _port_geometry(pose,out,shape,source,obstacles,True):
+                if incoming in seen:continue
+                seen.add(incoming)
+                cost=.15**2*(1-base[:,2,2])**2
+                if clearance is not None:cost+=clearance[:,middle]
+                distance=np.linalg.norm(base[:,None,:3,3]-np.asarray(poses)[None,:,:3,3],axis=-1)
+                cost+=4*np.sum(np.maximum(.25-distance,0.)**2,axis=1)
+                for k,value in enumerate(cost):
+                    a,b=divmod(k,len(angles))
+                    choices.append((float(value),parent,out,incoming,pad,a,b,middle,base[k]))
+    return choices
+
+
+def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,obstacles=(),motion_axis=None,root_score=None,root_scores=None,support_score=None):
     """Choose each seam from its progress towards uncovered contact frames.
 
     Returns a connected tree, contact roles and actual joint-grid seeds. No
@@ -132,15 +154,69 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
     points, normals = np.asarray(points), np.asarray(normals)
     first = int(rng.integers(4)); middle = len(angles)//2
     root = np.eye(4); root[:3, :3] = _frame(normals[0]) @ _frame(pads[first, middle, :3, 0]).T
+    if motion_axis is not None:
+        # A turning task needs changing contact normals. Orient a candidate
+        # Dock's hinge along the requested rotation, before any tree exists.
+        # Prefer an upright module over using body roll for the same sweep.
+        model,meta=build_model();q=pin.neutral(model);data=model.createData()
+        pin.forwardKinematics(model,data,q)
+        axis=np.asarray(motion_axis);axis=axis/np.linalg.norm(axis)
+        n=normals[0];axis=axis-n*(axis@n);axis/=np.linalg.norm(axis)
+        world=np.column_stack([n,np.cross(axis,n),axis]);choices=[]
+        for port in range(4):
+            a=next(a for a in meta['actuators'] if a['name']=='m0/'+names[port])
+            joint_axis=data.oMi[a['joint']].rotation@pin.computeJointJacobian(model,data,q,a['joint'])[3:,a['v']]
+            for angle_index in range(len(angles)):
+                local=pads[port,angle_index,:3,0]
+                for sign in [-1.,1.]:
+                    z=sign*joint_axis;basis=np.column_stack([local,np.cross(z,local),z])
+                    rotation=world@basis.T
+                    choices.append((float((1-rotation[2,2])**2),port,angle_index,rotation,sign))
+        # Upright is a preference, not a flight constraint: vectoring rotors
+        # can support tilted modules. Keep those physically screened options.
+        if root_score is not None:
+            # A fixed random shortlist of single-part configurations, not
+            # assembled structures. Task physics directs the very first
+            # port/orientation before any connection graph is constructed.
+            choices=[choices[i] for i in rng.choice(len(choices),size=4,replace=False)]
+            costs=[]
+            for _,port,k,rotation,sign in choices:
+                report=root_score(port,k,sign,rotation)
+                costs.append(report['score'])
+                if root_scores is not None:root_scores.append(dict(port=ports[port],angle=float(angles[k]),axis_sign=sign,**report))
+            cost=np.asarray(costs)
+        else:cost=np.array([c[0] for c in choices])
+        weight=np.maximum(np.exp(-(cost-cost.min())/1.),1e-8)
+        selected=int(rng.choice(len(choices),p=weight/weight.sum()))
+        _,first,middle,root[:3,:3],_=choices[selected]
+        if root_scores:root_scores[selected]['selected']=True
     root[:3, 3] = points[0] - root[:3, :3] @ pads[first, middle, :3, 3]
-    poses = [root]; values = [{}]; occupied = {(0, first)}
+    poses = [root]; values = [{names[first]:float(angles[middle])}]; occupied = {(0, first)}
     surfaces = [(0, ports[first])]; edges = []; trace = []
     remaining = list(range(1, len(points)));geometry_cache={}
     for child in range(1, modules):
         choices = []
+        support_reports=None
+        if not remaining and support_score is not None:
+            support_angles=part_frames(True)[1]
+            expansions=_support_choices(poses,occupied,shape,source,obstacles)
+            geometric=np.array([c[0] for c in expansions])
+            weight=np.maximum(np.exp(-(geometric-geometric.min())/.1**2),1e-8)
+            shortlist=rng.choice(len(expansions),min(2,len(expansions)),replace=False,p=weight/weight.sum())
+            support_reports=[]
+            for index in shortlist:
+                choice=expansions[index];cost,parent,out,incoming,pad,a,b,c,pose=choice
+                proposed=edges+[dict(a=parent,port_a=ports[out],b=child,port_b=ports[incoming])]
+                angles0=[dict(v) for v in values]+[{names[incoming]:float(support_angles[b])}]
+                angles0[parent][names[out]]=float(support_angles[a])
+                report=support_score(proposed,surfaces,root,angles0)
+                support_reports.append(report)
+                # Finite preferences retain every shortlisted legal option.
+                score=report['score']+cost/.1**2
+                choices.append((score,*choice[1:],len(points)-1))
         # Contact-force selection fixes a set, not a required connection order.
         # Use actual seam reachability to assign the next uncovered role.
-        for role in remaining or [len(points)-1]:
+        for role in ([] if support_reports is not None else remaining or [len(points)-1]):
             target, normal = points[role], normals[role]
             inputs=dict(operation='expansion',poses=np.asarray(poses).tolist(),occupied=sorted(occupied),
                         target=target.tolist(),normal=normal.tolist(),
@@ -151,16 +227,18 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
             choices.extend((*choice,role) for choice in expansions)
         if not choices:
             raise ValueError('no unoccupied seam for contact-directed growth')
-        choices.sort(key=lambda row: row[0])
+        order=np.argsort([c[0] for c in choices],kind='stable');choices=[choices[i] for i in order]
+        if support_reports is not None:support_reports=[support_reports[i] for i in order]
         # Randomness only diversifies equally useful grammatical expansions.
         costs = np.array([c[0] for c in choices])
-        weight = np.exp(-(costs-costs[0])/.02**2)
-        chosen = choices[int(rng.choice(len(choices), p=weight/weight.sum()))]
+        weight = np.maximum(np.exp(-(costs-costs[0])/(.2 if support_reports is not None else .02**2)),1e-8 if support_reports is not None else 0.)
+        selected=int(rng.choice(len(choices), p=weight/weight.sum()));chosen=choices[selected]
         cost, parent, out, incoming, pad, a, b, c, pose, role = chosen
         edges.append(dict(a=parent, port_a=ports[out], b=child, port_b=ports[incoming]))
         occupied.update([(parent, out), (child, incoming)])
-        values[parent][names[out]] = float(angles[a])
-        values.append({names[incoming]:float(angles[b])})
+        joint_angles=angles if support_reports is None else support_angles
+        values[parent][names[out]] = float(joint_angles[a])
+        values.append({names[incoming]:float(joint_angles[b])})
         poses.append(pose)
         # Reserve enough remaining modules for all still-unassigned roles.
         assigned = bool(remaining) and (modules-child <= len(remaining) or cost<.01**2)
@@ -171,22 +249,29 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
         trace.append(dict(module=child, target_role=role, residual_m2=cost,
                           contact_assigned=assigned,
                           parent=parent, port_a=ports[out], port_b=ports[incoming]))
+        if support_reports is not None:
+            trace[-1].update(criterion='task_load_support',support_scores=support_reports,selected=selected)
+            trace[-1]['support_score']=trace[-1].pop('residual_m2')
     return edges, surfaces, root, values, trace
 
 
-def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fit_pose=True):
+def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fit_pose=True, opposed=True,motion_axis=None,root_score=None,support_score=None):
     """Materialize a task-generated tree and use the original continuous fit."""
     started = time.perf_counter()
     R = pin.Quaternion(source[3:]).matrix()
     world = np.asarray(points) @ R.T + source[:3]
     wn = np.asarray(normals) @ R.T
+    root_scores=[]
     edges, surfaces, root, values, trace = grow_to_contacts(modules, world+.001*wn, wn, rng,
-                                                         shape=shape,source=source,obstacles=obstacles)
+                                                         shape=shape,source=source,obstacles=obstacles,motion_axis=motion_axis,
+                                                         root_score=root_score,root_scores=root_scores,support_score=support_score)
     order = [0]+[item['target_role'] for item in trace if item['contact_assigned']]
     world, wn = world[order], wn[order]
     points, normals = np.asarray(points)[order], np.asarray(normals)[order]
     generated=dict(method='contact_directed_growth', expansion_trace=trace,
                    target_points=np.asarray(points).tolist(),target_normals=np.asarray(normals).tolist())
+    if motion_axis is not None:generated['contact_normal_rotation_axis']=np.asarray(motion_axis).tolist()
+    if root_scores:generated['root_task_scores']=root_scores
     if not fit_pose:
         return dict(group='task_growth',modules=modules,edges=edges,surfaces=surfaces,
                     wall_s=time.perf_counter()-started,generation=generated)
@@ -198,10 +283,10 @@ def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fi
         q[actuator['q']] = values[int(module[1:])].get(name, 0.)
     inputs=dict(operation='fit_task_growth',modules=modules,edges=edges,surfaces=surfaces,
                 shape=shape.payload(),q=q.tolist(),points=(world+.001*wn).tolist(),normals=wn.tolist(),
-                obstacles=np.asarray(obstacles).tolist())
+                obstacles=np.asarray(obstacles).tolist(),opposed=opposed)
     closed, fit = memoized(inputs,lambda:fit_contacts(model, meta, q, surfaces, world+.001*wn, wn,
         object_shape=shape, floor_clearance=.03, base_rotation=True, obstacles=obstacles, max_evaluations=45,
-        opposed_friction=4.5 if len(points)==2 else None,avoid_object=True))
+        opposed_friction=4.5 if len(points)==2 and opposed else None,avoid_object=True))
     if len(points)==2:fit['initial_object_points']=np.asarray(points).tolist()
     return dict(group='task_growth', modules=modules, edges=edges, surfaces=surfaces,
                 q=closed.tolist(), fit=fit, wall_s=time.perf_counter()-started,

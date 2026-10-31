@@ -13,6 +13,11 @@ bound L[n] > B permits skipping that count: its latent outputs cannot beat the
 final B. Individual observed/censored block minima need not remain IID; the
 proof uses outputs of the fixed procedures had no pruning occurred.
 
+A censored per-trial value may also be a finalized component of the fixed
+procedure's eventual maximum cost. It is accepted only above the complete
+incumbent; it counts as nonimprovement evidence, never as a feasible output.
+The bound concerns the frozen numerical procedure, not physical optimality.
+
 Lists use preassigned trial indices, not completion order. None is unfinished;
 +infinity is a completed unsuccessful trial. All needed aligned prefixes must
 finish. Numerical budgets, generation and acceptance rules are frozen first.
@@ -30,7 +35,7 @@ def required_trials(improvement_probability=.05, total_error=.05, groups=8):
 
 
 def selection_evidence(bounds, outcomes, incumbent, *, protocol_id,
-                       improvement_probability=.05, total_error=.05):
+                       improvement_probability=.05, total_error=.05,censored_bounds=None):
     """Combine count-wide physical bounds and fixed-prefix statistical evidence.
 
 This reports conditional statistical evidence, not a test of IID sampling.
@@ -44,8 +49,13 @@ Incumbent must be a physically accepted candidate under that same criterion.
             or set(outcomes)-set(range(1,groups+1))):
         raise ValueError('all module groups and a frozen protocol are required')
     rows=compare_count_groups(bounds,incumbent)
+    censored_bounds={} if censored_bounds is None else censored_bounds
     for row in rows:
         values=outcomes.get(row['modules'],[])
+        censored=censored_bounds.get(row['modules'],{})
+        for index,lower in censored.items():
+            if not 0<=index<len(values) or values[index]!=lower or lower<=incumbent:
+                raise ValueError('censored trial needs a nonimproving fixed-output lower bound')
         for value in values:
             if value is None:continue
             if math.isnan(value) or value < 0:
@@ -55,7 +65,8 @@ Incumbent must be a physically accepted candidate under that same criterion.
         prefix=values[:count]
         completed=sum(value is not None for value in prefix)
         row.update(required_trials=count,completed_prefix_trials=completed,
-                   successful_prefix_trials=sum(value is not None and math.isfinite(value) for value in prefix))
+                   successful_prefix_trials=sum(value is not None and math.isfinite(value) and i not in censored for i,value in enumerate(prefix)),
+                   bounded_nonimprovement_trials=sum(i in censored for i in range(len(prefix))))
         if row['status']=='excluded_by_weight':
             row['one_more_trial_improvement_probability_upper']=0.
         elif completed==count:
