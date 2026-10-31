@@ -1,0 +1,94 @@
+{
+  "panel": "final36_v269",
+  "evidence": [
+    "audit_summary.json",
+    "failure_observations.json",
+    "contact_role_audit.json",
+    "release_response_review.json",
+    "structure_breadth.jpg"
+  ],
+  "quantitative_requirements_pass": true,
+  "mechanical_review_completed": true,
+  "conclusion_ja": "固定36条件で31成功。実行・成功した台数は1,2,4,5,7,8。計画2件、回転中2件、離脱1件の失敗を含めて評価し、今回の幅・成功率・発行周期の要求を満たす。",
+  "failure_mechanisms": [
+    {
+      "id": "low_tilt_up_t0.75_a2",
+      "reason": "terminal_conditions_failed",
+      "failed_checks": [
+        "angle",
+        "retreat_flight"
+      ]
+    },
+    {
+      "id": "middle_down_t24_a0",
+      "reason": "planning_timeout",
+      "failed_checks": []
+    },
+    {
+      "id": "high_up_t60_a1",
+      "reason": "no_candidate",
+      "failed_checks": []
+    },
+    {
+      "id": "high_down_t48_a1",
+      "reason": "terminal_conditions_failed",
+      "failed_checks": [
+        "released",
+        "settled"
+      ]
+    },
+    {
+      "id": "high_down_t60_a0",
+      "reason": "extreme_control_instability",
+      "failed_checks": [
+        "angle",
+        "settled",
+        "retreat_flight"
+      ]
+    }
+  ],
+  "mechanical_assessment_ja": "回転追従の不調は低負荷1機と高負荷7機の2件。高負荷の別1件は回転後の離脱であり、3件を同じ根本原因と特定していない。下向きは9/12、高負荷は9/12で弱さが残る。事前群比較で集中は検出されず、現時点の保存観測から特定条件群に共通する失敗原因を立証していない。これは失敗率の等しさや共通原因の不存在の証明ではない。",
+  "sampled_contact_role": {
+    "cases": 31,
+    "selected_dock_bar_fraction_min": 1.0,
+    "maximum_work_weighted_anchor_plane_distance_m": 0.0023447517450515066,
+    "maximum_anchor_plane_distance_m": 0.004369133151384324,
+    "scope": "Offline sampled contact work grouped by selected Dock link, not individual mesh triangles or continuous-time integral. Contact position distance to the authored anchor plane is also measured; these values are not controller inputs."
+  },
+  "release_response": {
+    "successful_cases": 31,
+    "recontact_samples": 0,
+    "maximum_speed_m_s": 0.14360140399135088,
+    "maximum_angular_speed_rad_s": 0.2053028646792456,
+    "maximum_absolute_integral_world": [
+      0.1818698570127364,
+      0.20511585604218255,
+      0.054412903897216425,
+      0.06003461304647277,
+      0.15,
+      0.0406321344222887
+    ],
+    "scope": "Physical states sampled every 0.1 s; separation threshold 2 mm is a diagnostic event, not the unchanged 2 cm success criterion"
+  },
+  "limitations_ja": [
+    "開発で再利用した入力・乱数系列での同一版確認。未知条件への成功率推定ではない。",
+    "鉛直27条件、非鉛直9条件。非鉛直は6Nm以下、高負荷48/60Nmは鉛直のみ。",
+    "3・6機は最終版で実行していない。旧版・保存構造の成功を合算しない。",
+    "10ms発行と新しい観測結果の到着は別。後者は最大31.875ms、遅延を物理へ反映した。",
+    "成功計画は15秒以内だが、1件は15.329秒超過で失敗。",
+    "把持150条件、VIM4、実機の検証は今回行っていない。"
+  ],
+  "pro_final_review": {
+    "record": "../pro_round70.txt",
+    "screenshot": "../pro_round70.png",
+    "assessment_ja": "提示した証拠と事前基準の間に終了判断を覆す根本矛盾なし。高負荷9/12、観測結果到着の遅延、標本監査の範囲、未検証条件を明示する。Proによるコード・ログの独立再実行ではなく、提示結果の整合レビュー。"
+  },
+  "verification": {
+    "related_tests_passed": 96,
+    "test_log": "../tests268.log",
+    "runtime_manifest_files_checked": 1544,
+    "runtime_manifest_mismatches": [],
+    "git_diff_check_passed": true,
+    "documentation_missing_links": []
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "failures": [
+    {
+      "id": "low_tilt_up_t0.75_a2",
+      "reason": "terminal_conditions_failed",
+      "modules": 1,
+      "contacts": 1,
+      "planning_s": 10.509374445769936,
+      "failed_checks": [
+        "angle",
+        "retreat_flight"
+      ],
+      "final_angle_deg": 144.62827407218478,
+      "first_large_pose_error": {
+        "time_s": 31.800000000106333,
+        "phase": "TURN",
+        "angle": 2.524126290045137,
+        "relative_position_error_m": 0.12615258386881575,
+        "relative_angle_error_rad": 0.30846617607780696,
+        "pad_gaps": [
+          -3.483465857053763e-05
+        ]
+      },
+      "first_contact_gap_over_1cm": {
+        "time_s": 32.200000000102555,
+        "phase": "TURN",
+        "angle": 2.5242395740363714,
+        "relative_position_error_m": 0.27449457181680653,
+        "relative_angle_error_rad": 0.6711219375390646,
+        "pad_gaps": [
+          0.0271979021215308
+        ]
+      },
+      "numerical_fallback_samples": 0,
+      "work_samples": 455,
+      "publication": {
+        "calls": 6057,
+        "mean_ms": 0.7012626075487051,
+        "p99_ms": 0.9673403762280941,
+        "max_ms": 1.3173501938581467,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 6054,
+        "errors": 0,
+        "max_ms": 7.71690160036087
+      }
+    },
+    {
+      "id": "middle_down_t24_a0",
+      "reason": "planning_timeout",
+      "modules": null,
+      "contacts": null,
+      "planning_s": 15.329022369347513,
+      "failed_checks": []
+    },
+    {
+      "id": "high_up_t60_a1",
+      "reason": "no_candidate",
+      "modules": null,
+      "contacts": null,
+      "planning_s": 11.754336395766586,
+      "failed_checks": []
+    },
+    {
+      "id": "high_down_t48_a1",
+      "reason": "terminal_conditions_failed",
+      "modules": 4,
+      "contacts": 2,
+      "planning_s": 11.87181904213503,
+      "failed_checks": [
+        "released",
+        "settled"
+      ],
+      "final_angle_deg": 179.99878883968626,
+      "first_large_pose_error": null,
+      "first_contact_gap_over_1cm": null,
+      "numerical_fallback_samples": 0,
+      "work_samples": 331,
+      "publication": {
+        "calls": 4814,
+        "mean_ms": 0.7789248157962755,
+        "p99_ms": 1.0694161150604486,
+        "max_ms": 1.7345678061246872,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 4813,
+        "errors": 0,
+        "max_ms": 10.143167339265347
+      }
+    },
+    {
+      "id": "high_down_t60_a0",
+      "reason": "extreme_control_instability",
+      "modules": 7,
+      "contacts": 4,
+      "planning_s": 11.307459031231701,
+      "failed_checks": [
+        "angle",
+        "settled",
+        "retreat_flight"
+      ],
+      "final_angle_deg": 144.8383824267619,
+      "first_large_pose_error": {
+        "time_s": 23.800000000068135,
+        "phase": "TURN",
+        "angle": 2.4532886798785043,
+        "relative_position_error_m": 0.1028583955410559,
+        "relative_angle_error_rad": 0.33255993892027996,
+        "pad_gaps": [
+          -0.003953898880171479,
+          -0.0023333581014486765,
+          0.001463898138728446,
+          -0.0007379532988323056
+        ]
+      },
+      "first_contact_gap_over_1cm": {
+        "time_s": 23.60000000006718,
+        "phase": "TURN",
+        "angle": 2.451827074704776,
+        "relative_position_error_m": 0.07960311794025077,
+        "relative_angle_error_rad": 0.2545463291879066,
+        "pad_gaps": [
+          -0.003971195127500334,
+          -0.0010285837065390074,
+          0.010237854672231303,
+          -0.000327254596820259
+        ]
+      },
+      "numerical_fallback_samples": 82,
+      "work_samples": 223,
+      "publication": {
+        "calls": 2631,
+        "mean_ms": 0.901544917054851,
+        "p99_ms": 1.1557389050722116,
+        "max_ms": 1.676903571933508,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 2623,
+        "errors": 0,
+        "max_ms": 13.182243797928095
+      }
+    }
+  ],
+  "by_contacts": {
+    "1": {
+      "successes": 20,
+      "executed": 21
+    },
+    "2": {
+      "successes": 9,
+      "executed": 10
+    },
+    "4": {
+      "successes": 1,
+      "executed": 2
+    },
+    "3": {
+      "successes": 1,
+      "executed": 1
+    }
+  },
+  "scope": "Recorded observations and event order, not an identified common physical cause"
+}

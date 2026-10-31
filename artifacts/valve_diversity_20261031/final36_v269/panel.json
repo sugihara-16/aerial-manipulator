@@ -1,0 +1,689 @@
+{
+  "purpose": "Balanced task bands for naturally selected module breadth; fixed before final execution; nonvertical mounting limited to 6 Nm in this panel",
+  "acceptance": {
+    "minimum_success_fraction": 0.8,
+    "planning_seconds": 15,
+    "publication_seconds": 0.01,
+    "breadth_engineering_rule": {
+      "minimum_successes_in_each_module_band": 3,
+      "module_bands": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          6,
+          8
+        ]
+      ],
+      "minimum_distinct_executed_module_counts": 5
+    },
+    "no_clear_failure_concentration": true,
+    "failure_concentration_rule": {
+      "groups": [
+        "axis",
+        "torque",
+        "initial_angle",
+        "axis_torque",
+        "load_band"
+      ],
+      "method": "one-sided Fisher exact; Holm across all input group comparisons",
+      "alpha": 0.05,
+      "mechanical_failure_review": true
+    }
+  },
+  "cases": [
+    {
+      "id": "low_up_t0.75_a0",
+      "seed": 5313689863701577007,
+      "load_band": "low",
+      "torque": 0.75,
+      "axis_group": "up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 0.75
+      }
+    },
+    {
+      "id": "low_up_t3_a1",
+      "seed": 3909180228395266683,
+      "load_band": "low",
+      "torque": 3,
+      "axis_group": "up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 3
+      }
+    },
+    {
+      "id": "low_up_t6_a2",
+      "seed": 4003510508463197038,
+      "load_band": "low",
+      "torque": 6,
+      "axis_group": "up",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 6
+      }
+    },
+    {
+      "id": "low_horizontal_t0.75_a1",
+      "seed": 376610989874945176,
+      "load_band": "low",
+      "torque": 0.75,
+      "axis_group": "horizontal",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 0.75
+      }
+    },
+    {
+      "id": "low_horizontal_t3_a2",
+      "seed": 2602936752827748364,
+      "load_band": "low",
+      "torque": 3,
+      "axis_group": "horizontal",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 3
+      }
+    },
+    {
+      "id": "low_horizontal_t6_a0",
+      "seed": 8494900721042235357,
+      "load_band": "low",
+      "torque": 6,
+      "axis_group": "horizontal",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 6
+      }
+    },
+    {
+      "id": "low_tilt_up_t0.75_a2",
+      "seed": 8420113180726825953,
+      "load_band": "low",
+      "torque": 0.75,
+      "axis_group": "tilt_up",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0.6,
+          0,
+          0.8
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 0.75
+      }
+    },
+    {
+      "id": "low_tilt_up_t3_a0",
+      "seed": 3257206765103599583,
+      "load_band": "low",
+      "torque": 3,
+      "axis_group": "tilt_up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0.6,
+          0,
+          0.8
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 3
+      }
+    },
+    {
+      "id": "low_tilt_up_t6_a1",
+      "seed": 6912296137749497243,
+      "load_band": "low",
+      "torque": 6,
+      "axis_group": "tilt_up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0.6,
+          0,
+          0.8
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 6
+      }
+    },
+    {
+      "id": "low_tilt_down_t0.75_a0",
+      "seed": 8288661085856080398,
+      "load_band": "low",
+      "torque": 0.75,
+      "axis_group": "tilt_down",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0.6,
+          0,
+          -0.8
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 0.75
+      }
+    },
+    {
+      "id": "low_tilt_down_t3_a1",
+      "seed": 2283170363467410983,
+      "load_band": "low",
+      "torque": 3,
+      "axis_group": "tilt_down",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0.6,
+          0,
+          -0.8
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 3
+      }
+    },
+    {
+      "id": "low_tilt_down_t6_a2",
+      "seed": 3782222912498566169,
+      "load_band": "low",
+      "torque": 6,
+      "axis_group": "tilt_down",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0.6,
+          0,
+          -0.8
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 6
+      }
+    },
+    {
+      "id": "middle_up_t12_a0",
+      "seed": 8573268923086247345,
+      "load_band": "middle",
+      "torque": 12,
+      "axis_group": "up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 12
+      }
+    },
+    {
+      "id": "middle_up_t12_a1",
+      "seed": 4272172535684559715,
+      "load_band": "middle",
+      "torque": 12,
+      "axis_group": "up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 12
+      }
+    },
+    {
+      "id": "middle_up_t24_a0",
+      "seed": 699717842162630885,
+      "load_band": "middle",
+      "torque": 24,
+      "axis_group": "up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 24
+      }
+    },
+    {
+      "id": "middle_up_t24_a1",
+      "seed": 7501536684698236,
+      "load_band": "middle",
+      "torque": 24,
+      "axis_group": "up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 24
+      }
+    },
+    {
+      "id": "middle_up_t36_a0",
+      "seed": 490934753090818693,
+      "load_band": "middle",
+      "torque": 36,
+      "axis_group": "up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 36
+      }
+    },
+    {
+      "id": "middle_up_t36_a1",
+      "seed": 7033096362108809473,
+      "load_band": "middle",
+      "torque": 36,
+      "axis_group": "up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 36
+      }
+    },
+    {
+      "id": "middle_down_t12_a0",
+      "seed": 6824932892449459654,
+      "load_band": "middle",
+      "torque": 12,
+      "axis_group": "down",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 12
+      }
+    },
+    {
+      "id": "middle_down_t12_a1",
+      "seed": 9020380698631537160,
+      "load_band": "middle",
+      "torque": 12,
+      "axis_group": "down",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 12
+      }
+    },
+    {
+      "id": "middle_down_t24_a0",
+      "seed": 8740235905591935510,
+      "load_band": "middle",
+      "torque": 24,
+      "axis_group": "down",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 24
+      }
+    },
+    {
+      "id": "middle_down_t24_a1",
+      "seed": 947634086809810125,
+      "load_band": "middle",
+      "torque": 24,
+      "axis_group": "down",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 24
+      }
+    },
+    {
+      "id": "middle_down_t36_a0",
+      "seed": 4262028616946303020,
+      "load_band": "middle",
+      "torque": 36,
+      "axis_group": "down",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 36
+      }
+    },
+    {
+      "id": "middle_down_t36_a1",
+      "seed": 266827296177642783,
+      "load_band": "middle",
+      "torque": 36,
+      "axis_group": "down",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 36
+      }
+    },
+    {
+      "id": "high_up_t48_a0",
+      "seed": 3910363343167734037,
+      "load_band": "high",
+      "torque": 48,
+      "axis_group": "up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 48
+      }
+    },
+    {
+      "id": "high_up_t48_a1",
+      "seed": 4442402201323105649,
+      "load_band": "high",
+      "torque": 48,
+      "axis_group": "up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 48
+      }
+    },
+    {
+      "id": "high_up_t48_a2",
+      "seed": 2305174573325165111,
+      "load_band": "high",
+      "torque": 48,
+      "axis_group": "up",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 48
+      }
+    },
+    {
+      "id": "high_up_t60_a0",
+      "seed": 4230262668479220975,
+      "load_band": "high",
+      "torque": 60,
+      "axis_group": "up",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 60
+      }
+    },
+    {
+      "id": "high_up_t60_a1",
+      "seed": 6089524062230851943,
+      "load_band": "high",
+      "torque": 60,
+      "axis_group": "up",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 60
+      }
+    },
+    {
+      "id": "high_up_t60_a2",
+      "seed": 7881202649935175921,
+      "load_band": "high",
+      "torque": 60,
+      "axis_group": "up",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 60
+      }
+    },
+    {
+      "id": "high_down_t48_a0",
+      "seed": 5993098580854045278,
+      "load_band": "high",
+      "torque": 48,
+      "axis_group": "down",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 48
+      }
+    },
+    {
+      "id": "high_down_t48_a1",
+      "seed": 1560572929636917881,
+      "load_band": "high",
+      "torque": 48,
+      "axis_group": "down",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 48
+      }
+    },
+    {
+      "id": "high_down_t48_a2",
+      "seed": 3266540315726725986,
+      "load_band": "high",
+      "torque": 48,
+      "axis_group": "down",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 48
+      }
+    },
+    {
+      "id": "high_down_t60_a0",
+      "seed": 1327201998036833316,
+      "load_band": "high",
+      "torque": 60,
+      "axis_group": "down",
+      "initial_angle_group": 0,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 0.0,
+        "target_angle": 3.141592653589793,
+        "torque": 60
+      }
+    },
+    {
+      "id": "high_down_t60_a1",
+      "seed": 6960696703938561483,
+      "load_band": "high",
+      "torque": 60,
+      "axis_group": "down",
+      "initial_angle_group": 1,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 1.0471975511965976,
+        "target_angle": 3.141592653589793,
+        "torque": 60
+      }
+    },
+    {
+      "id": "high_down_t60_a2",
+      "seed": 5508970362279217436,
+      "load_band": "high",
+      "torque": 60,
+      "axis_group": "down",
+      "initial_angle_group": 2,
+      "request": {
+        "axis": [
+          0,
+          0,
+          -1
+        ],
+        "initial_angle": 2.0943951023931953,
+        "target_angle": 3.141592653589793,
+        "torque": 60
+      }
+    }
+  ]
+}
