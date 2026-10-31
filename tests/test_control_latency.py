@@ -91,3 +91,15 @@ def test_ideal_mode_is_explicit_legacy_comparison():
     advance(cycle.remaining_steps())
     assert d.time == pytest.approx(.01)
     assert d.qvel[0] == pytest.approx(-.01)
+
+
+def test_sampling_audit_detects_one_physics_step_of_lateness():
+    from build.control_latency import sampling_intervals
+    _,late=sampling_intervals([{'observation_s':t} for t in [0.,.01,.020125]])
+    assert late
+
+
+def test_sampling_audit_accepts_floating_point_time_accumulation():
+    from build.control_latency import sampling_intervals
+    _,late=sampling_intervals([{'observation_s':t} for t in [30.,30.01000000000005,30.0200000000001]])
+    assert not late

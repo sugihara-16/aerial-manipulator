@@ -87,6 +87,39 @@ def test_gravity_compensation_excludes_free_payload_before_contact():
     np.testing.assert_allclose(command[1], 1.1*9.80665, atol=1e-4)
 
 
+def test_optional_free_flight_feedback_rejects_a_constant_unmodelled_load():
+    errors=[]
+    for enabled in [False,True]:
+        p=plant();q=p.mj.qpos0.copy();q[0]-=.2
+        target=q.copy();v=np.zeros(p.mj.nv)
+        controller=ObjectRelativeControl(p,p.mj.qpos0,['pad'],free_flight_integral=enabled)
+        oi=controller.drive.oi
+        # Independent vertical plant: 1.1 kg, authored gravity, plus an
+        # unobserved 1 N downward load. The controller only observes q/v.
+        for _ in range(1600):
+            command=controller.update(q,v,target,target[oi:oi+7],payload_fraction=0.,
+                tracking_fraction=0.,squeeze=0.,track_object=False)
+            assert 0.<=command[1]<=50.
+            acceleration=(command[1]-1.)/1.1-9.80665
+            v[2]+=.01*acceleration;q[2]+=.01*v[2]
+        errors.append(abs(q[2]-target[2]))
+    assert errors[0]>.04
+    assert errors[1]<.002
+
+
+def test_free_flight_integral_uses_observation_time_when_updates_are_skipped():
+    commands=[]
+    for times in [np.linspace(0.,.1,11),[0.,.05,.1]]:
+        p=plant();closed=p.mj.qpos0.copy();q=closed.copy();q[0]-=.2
+        target=q.copy();target[2]+=.1
+        controller=ObjectRelativeControl(p,closed,['pad'],free_flight_integral=True)
+        for time in times:
+            command=controller.update(q,np.zeros(p.mj.nv),target,target[controller.drive.oi:controller.drive.oi+7],
+                payload_fraction=0.,tracking_fraction=0.,squeeze=0.,observation_time=time)
+        commands.append(command)
+    np.testing.assert_allclose(commands[0],commands[1],atol=1e-4)
+
+
 def test_top_face_at_box_edge_is_not_reinterpreted_as_sideways_pressure():
     from amsrr_det.objects import ObjectShape
     p = plant()
@@ -139,3 +172,55 @@ def test_symmetric_grasp_frame_keeps_full_object_orientation_task():
     # full object orientation error must still demand a correcting torque.
     np.testing.assert_allclose(controller.delta[:6], 0., atol=1e-14)
     assert np.linalg.norm(controller.last['requested_object_wrench'][3:]) > .01
+
+
+def test_material_octagon_contains_planning_diamond_inside_physical_friction():
+    from build.relative_task_control import CurrentContactLoad
+    from amsrr_det.equilibrium import contact_basis
+    from scipy.spatial.transform import Rotation
+    p = plant()
+    q = p.mj.qpos0.copy()
+    drive = RobotDrive(p)
+    mu = 2.25
+    for cls in (DesiredContactLoad, CurrentContactLoad):
+        load = cls(p, q, ['pad'], material_friction_basis=True)
+        for angle in (0., .43, 1.7):
+            R = Rotation.from_rotvec([0., 0., angle]).as_matrix()
+            rotated = q.copy()
+            rotated[:3] = R@q[:3]
+            quat = Rotation.from_matrix(R).as_quat()[[3, 0, 1, 2]]
+            rotated[3:7] = quat
+            rotated[drive.oi+3:drive.oi+7] = quat
+            drive.observe(rotated, np.zeros(p.mj.nv))
+            c = load.prepare(drive, np.zeros(6), active_only=True)
+            assert c['active'].any()
+            for k in np.flatnonzero(c['active']):
+                axes = c['G'][:3, 3*k:3*k+3]
+                expected = R@contact_basis(dict(normal=R.T@axes[:, 0]))
+                np.testing.assert_allclose(axes[:, 0], expected[:, 0], atol=1e-12)
+                # Axis-aligned normals can switch tied reference axes under
+                # roundoff; signed 90-degree swaps preserve both polygons.
+                change = expected[:, 1:].T@axes[:, 1:]
+                np.testing.assert_allclose(np.max(abs(change), axis=0), 1., atol=1e-12)
+                for theta in np.arange(8)*np.pi/4:
+                    local_force = np.r_[1., mu*np.cos(theta), mu*np.sin(theta)]
+                    assert np.min(load.constraints[3*k:3*k+3, 9*k:9*k+9].T@local_force) >= -1e-12
+                    np.testing.assert_allclose(np.linalg.norm(local_force[1:]), mu)
+                    # Even vertices are precisely the four planning vertices.
+                    force = axes@local_force
+                    assert np.linalg.norm(force-axes[:, 0]) <= mu+1e-12
+
+
+def test_contact_warm_start_keeps_material_force_when_tangent_coordinates_switch():
+    p=plant();drive=RobotDrive(p);q=p.mj.qpos0.copy()
+    load=DesiredContactLoad(p,q,['pad'],material_friction_basis=True)
+    drive.observe(q,np.zeros(p.mj.nv));c=load.prepare(drive,np.zeros(6))
+    force=np.tile([2.,.3,-.7],load.n);load.record(force,np.zeros(6))
+    old_world=(c['G']@force).copy()
+    # The same normal admits two signed tangent charts. Changing chart must
+    # not turn yesterday's tangential force into a different physical force.
+    change=np.array([[1.,0.,0.],[0.,0.,-1.],[0.,1.,0.]])
+    for k in range(load.n):c['G'][:,3*k:3*k+3]=c['G'][:,3*k:3*k+3]@change
+    new_force=load.force_incumbent()
+    assert not np.allclose(new_force,force)
+    np.testing.assert_allclose(c['G']@new_force,old_world,atol=1e-14)

@@ -65,3 +65,8 @@ class ControlCycle:
                     skipped_ticks=self.skipped_ticks, wait_failure=self.failure,
                     configuration_change_norm=self.position_change,
                     velocity_change_norm=self.velocity_change)
+
+
+def sampling_intervals(calls,period=.01):
+    intervals=np.diff([c['observation_s'] for c in calls])
+    return intervals, bool(np.any(intervals>period+1e-8))

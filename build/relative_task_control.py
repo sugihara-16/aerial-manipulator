@@ -24,8 +24,9 @@ class DesiredContactLoad:
     residual establishes that the physical robot has realized those forces.
     """
 
-    def __init__(self, plant, reference, links, friction=2.25, object_shape=None):
+    def __init__(self, plant, reference, links, friction=2.25, object_shape=None,material_friction_basis=False):
         from build.sticking_design import LocalGrasp
+        self.material_friction_basis=material_friction_basis
         self.planar = object_shape is not None and object_shape.family in (
             'box', 'elongated_box', 'triangular_prism', 'tapered_box')
         local = LocalGrasp(plant, reference, links,
@@ -48,6 +49,9 @@ class DesiredContactLoad:
                 candidates = [candidates[i] for i in ids]
             self.elements.extend(candidates)
         self.links = links
+        if material_friction_basis:
+            from amsrr_det.equilibrium import contact_basis
+            self.elements=[(*e[:-1],contact_basis(dict(normal=e[-1][0])).T) for e in self.elements]
         self.m = plant.mj
         self.object_body = self.m.body('object').id
         self.mass_body = int(self.m.jnt_bodyid[self.m.joint('object').id])
@@ -55,7 +59,8 @@ class DesiredContactLoad:
         self.n = len(self.elements)
         self.pad = np.array([e[0] for e in self.elements])
         self.count = np.bincount(self.pad, minlength=len(links))
-        directions = np.c_[np.cos(np.arange(8)*np.pi/4), np.sin(np.arange(8)*np.pi/4)]
+        angles=np.arange(8)*np.pi/4+(np.pi/8 if material_friction_basis else 0.)
+        directions = np.c_[np.cos(angles), np.sin(angles)]
         constraints = np.zeros((9*self.n, 3*self.n))
         for k in range(self.n):
             constraints[9*k, 3*k] = 1.
@@ -65,6 +70,7 @@ class DesiredContactLoad:
         self.bounds = np.zeros(9*self.n)
         self.nominal_normal = max(1.5, 1.5*self.mass*9.80665/(friction*len(links)))
         self.previous = np.zeros(3*self.n)
+        self.previous_material_force = None
         self.jac = np.zeros((3, self.m.nv))
         self.last = {}
 
@@ -93,7 +99,11 @@ class DesiredContactLoad:
         nominal = np.zeros(3*self.n)
         for k, e in enumerate(self.elements):
             normal = -outward[k]
-            tangent = e[5][1]-normal*(normal@e[5][1])
+            if self.material_friction_basis:
+                from amsrr_det.equilibrium import contact_basis
+                tangent = contact_basis(dict(normal=normal))[:, 1]
+            else:
+                tangent = e[5][1]-normal*(normal@e[5][1])
             if np.linalg.norm(tangent) < 1e-8:
                 axis = np.eye(3)[np.argmin(abs(normal))]
                 tangent = axis-normal*(normal@axis)
@@ -110,12 +120,28 @@ class DesiredContactLoad:
         cols = np.flatnonzero(np.repeat(active, 3))
         constraints = np.flatnonzero(np.repeat(active, 9))
         self.current = dict(G=G, reaction=reaction, nominal=nominal, scale=scale,
-                            active=active, cols=cols, constraints=constraints, gaps=np.asarray(gaps))
+                            active=active, cols=cols, constraints=constraints, gaps=np.asarray(gaps),
+                            object_rotation=rotation.copy())
         return self.current
+
+    def force_incumbent(self):
+        """Re-express the numerical seed when contact coordinates change.
+
+        This transports a warm start, not an observed contact force. Slot
+        correspondence is only approximate when the collision points change.
+        """
+        if not self.material_friction_basis or self.previous_material_force is None:
+            return self.previous
+        c=self.current
+        axes=(c['object_rotation'].T@c['G'][:3]).reshape(3,self.n,3).transpose(1,0,2)
+        return np.einsum('nji,nj->ni',axes,self.previous_material_force).ravel()
 
     def record(self, force, wrench, fallback=False):
         c = self.current
         self.previous = force.copy()
+        if self.material_friction_basis:
+            axes=(c['object_rotation'].T@c['G'][:3]).reshape(3,self.n,3).transpose(1,0,2)
+            self.previous_material_force=np.einsum('nij,nj->ni',axes,force.reshape(self.n,3))
         self.last = dict(wrench_error=(c['G']@force-wrench).tolist(),
                          normal_targets=np.bincount(self.pad, force[::3], minlength=len(self.links)).tolist(),
                          numerical_fallback=fallback, active_points=int(c['active'].sum()),
@@ -170,8 +196,8 @@ class RobotDrive:
 
 
 class CurrentContactLoad(DesiredContactLoad):
-    def __init__(self, plant, reference, links, friction=2.25, object_shape=None):
-        super().__init__(plant, reference, links, friction, object_shape)
+    def __init__(self, plant, reference, links, friction=2.25, object_shape=None,material_friction_basis=False):
+        super().__init__(plant, reference, links, friction, object_shape,material_friction_basis)
         self.reference_elements = list(self.elements)
         self.object_geom = self.m.geom('object').id
         self.geom_pad = {}
@@ -206,7 +232,8 @@ class CurrentContactLoad(DesiredContactLoad):
         self.n = len(self.elements)
         self.pad = np.repeat(np.arange(len(links)), 4)
         self.count = np.full(len(links), 4)
-        directions = np.c_[np.cos(np.arange(8)*np.pi/4), np.sin(np.arange(8)*np.pi/4)]
+        angles=np.arange(8)*np.pi/4+(np.pi/8 if material_friction_basis else 0.)
+        directions = np.c_[np.cos(angles), np.sin(angles)]
         constraints = np.zeros((9*self.n, 3*self.n))
         for k in range(self.n):
             constraints[9*k, 3*k] = 1.
@@ -237,7 +264,11 @@ class CurrentContactLoad(DesiredContactLoad):
             pp = contact.pos-.5*contact.dist*normal
             po = contact.pos+.5*contact.dist*normal
             Rp, Ro = d.xmat[bp].reshape(3, 3), d.xmat[bo].reshape(3, 3)
-            groups[pad].append((pad, bp, bo, Rp.T@(pp-d.xpos[bp]), Ro.T@(po-d.xpos[bo]), frame@Ro))
+            local_frame=frame@Ro
+            if self.material_friction_basis:
+                from amsrr_det.equilibrium import contact_basis
+                local_frame=contact_basis(dict(normal=local_frame[0])).T
+            groups[pad].append((pad, bp, bo, Rp.T@(pp-d.xpos[bp]), Ro.T@(po-d.xpos[bo]), local_frame))
             distances[pad].append(float(contact.dist))
         self.elements = list(self.reference_elements)
         active = np.zeros(self.n, bool)
@@ -279,18 +310,44 @@ class CurrentContactLoad(DesiredContactLoad):
         return c
 
 class ObjectRelativeControl:
-    def __init__(self, plant, contact_reference, links, period=.01, object_shape=None):
+    def __init__(self, plant, contact_reference, links, period=.01, object_shape=None, task_projection=None, vector_directions=False,material_friction_basis=False,free_flight_integral=False):
         self.drive=RobotDrive(plant,period)
-        self.load=CurrentContactLoad(plant,contact_reference,links,object_shape=object_shape)
+        self.load=CurrentContactLoad(plant,contact_reference,links,object_shape=object_shape,material_friction_basis=material_friction_basis)
         self.m=plant.mj;self.h=period;self.relative_feedback=True;self.last={}
         initial_rotation=np.empty((3,3));mujoco.mju_quat2Mat(initial_rotation.ravel(),contact_reference[self.drive.oi+3:self.drive.oi+7]);self.grasp_frame=GraspFrame(object_shape,initial_rotation)
         self.delta=np.zeros(self.m.nv);self.angle=np.zeros(3);self.integral=np.zeros(6);self.last_command=None
+        self.free_flight_integral=free_flight_integral;self.flight_error_integral=np.zeros(6)
+        self.flight_observation_time=None
+        self.flight_integral_limit=np.array([.25,.25,.25,.15,.15,.15])
+        self.flight_integral_gain=np.array([4.,4.,4.,8.,8.,8.])
+        self.task_projection=None if task_projection is None else np.asarray(task_projection,dtype=float)
+        self.direction=None
+        if vector_directions:
+            from amsrr_det.rotor_direction import RotorDirection
+            self.direction=RotorDirection(self.drive)
+        self.reference_geometry=mujoco.MjData(self.load.geometry_model)
+        self.reference_groups=[tuple(g for g in self.load.geom_pad if self.load.geom_pad[g]==i) for i in range(len(links))]
+        if self.task_projection is not None and (self.task_projection.ndim!=2 or self.task_projection.shape[1]!=6):
+            raise ValueError('task projection maps six-dimensional wrenches to permitted motions')
 
-    def update(self,q,v,shape_reference,object_reference,*,object_velocity=None,object_acceleration=None,shape_velocity=None,squeeze=1.,payload_fraction=1.,tracking_fraction=None,damping_scale=1.,active_only=True,deadline=None,track_object=False):
+    def update(self,q,v,shape_reference,object_reference,*,object_velocity=None,object_acceleration=None,shape_velocity=None,squeeze=1.,payload_fraction=1.,tracking_fraction=None,damping_scale=1.,active_only=True,deadline=None,track_object=False,wrench_bias=None,shape_contact_depth=None,motion_derivative=None,motion_curvature=None,observation_time=None):
         if deadline is None:
             deadline=time.perf_counter()+.008
         tracking_fraction=payload_fraction if tracking_fraction is None else tracking_fraction
         dr,load,m=self.drive,self.load,self.m;dr.observe(q,v);d=dr.d;oi,ov=dr.oi,dr.ov
+        if shape_contact_depth is not None:
+            # Correct interpolation error in a declared contact path using
+            # surface geometry only. No physical force or future dynamics.
+            from build.contact_step_control import pad_gap_jacobians
+            shape_reference=shape_reference.copy();gm=load.geometry_model;gd=self.reference_geometry
+            indices=np.r_[np.arange(3),dr.vi[dr.dock]];weights=np.r_[np.ones(3),np.full(np.count_nonzero(dr.dock),.2)]
+            for _ in range(2):
+                gd.qpos[:]=shape_reference;mujoco.mj_fwdPosition(gm,gd)
+                gaps,J=pad_gap_jacobians(gm,gd,load.links,self.reference_groups)
+                step=np.linalg.lstsq(J[:,indices]*weights,gaps+shape_contact_depth,rcond=1e-8)[0]
+                delta=np.zeros(m.nv);delta[indices]=-weights*step
+                delta*=min(1.,.003/max(np.max(abs(delta[:3])),1e-9),.03/max(np.max(abs(delta[dr.vi])),1e-9))
+                mujoco.mj_integratePos(m,shape_reference,delta,1.)
         R=d.xmat[load.object_body].reshape(3,3);twist=np.r_[v[ov:ov+3],R@v[ov+3:ov+6]]
         tv=np.zeros(6) if object_velocity is None else object_velocity
         acc=np.zeros(6) if object_acceleration is None else object_acceleration.copy()
@@ -302,6 +359,7 @@ class ObjectRelativeControl:
         objacc+=tracking_fraction*np.r_[[2.]*3,[8.]*3]*self.integral
         Ri=d.ximat[load.mass_body].reshape(3,3);Io=Ri@np.diag(m.body_inertia[load.mass_body])@Ri.T
         wrench=np.r_[load.mass*(tracking_fraction*objacc[:3]-payload_fraction*m.opt.gravity),tracking_fraction*(Io@objacc[3:]+np.cross(twist[3:],Io@twist[3:]))]
+        if wrench_bias is not None:wrench+=wrench_bias
         c=load.prepare(dr,wrench,squeeze,active_only)
         if payload_fraction == 0. and squeeze == 0. and tracking_fraction == 0.:
             # Opening is free flight: do not allocate support to the object.
@@ -336,7 +394,34 @@ class ObjectRelativeControl:
         target=align_reference_to_object(m,shape_reference,target)
         world_delta=np.zeros(m.nv);mujoco.mj_differentiatePos(m,world_delta,1.,q,target)
         target_acc[:6]=(T@(tracking_fraction*grasp_acc)+relative)[:6] if track_object else (T@acc+16*world_delta+8*(T@tv+shape_rate-v))[:6]
-        if symmetry:
+        if self.free_flight_integral:
+            dt=self.h if observation_time is None or self.flight_observation_time is None else max(0.,observation_time-self.flight_observation_time)
+            self.flight_observation_time=observation_time
+            free=not track_object and payload_fraction==0. and tracking_fraction==0. and squeeze==0.
+            if free:
+                # Bounded integral action removes persistent free-flight pose
+                # error left by constrained input allocation. Motor bounds
+                # still apply to the complete acceleration request below.
+                # Store angular error in world coordinates so an intervening
+                # base rotation does not rotate the accumulated correction.
+                error=world_delta[:6].copy();error[3:]=Ra@error[3:]
+                self.flight_error_integral=np.clip(self.flight_error_integral+dt*error,
+                    -self.flight_integral_limit,self.flight_integral_limit)
+                correction=self.flight_integral_gain*self.flight_error_integral
+                correction[3:]=Ra.T@correction[3:]
+                target_acc[:6]+=correction
+            else:self.flight_error_integral.fill(0.)
+        if motion_derivative is not None:
+            if self.task_projection is None or self.task_projection.shape!=(1,6):
+                raise ValueError('path motion currently needs one permitted task coordinate')
+            axis=self.task_projection[0];rate=float(axis@twist);acceleration=float(axis@objacc)
+            first=np.array(motion_derivative,copy=True);second=np.array(motion_curvature,copy=True)
+            first[3:6]=Ra.T@Rd@first[3:6];second[3:6]=Ra.T@Rd@second[3:6]
+            # Chain rule along the generated deforming path. A rigid-motion
+            # map would incorrectly rotate the base when Dock joints supply
+            # part of the requested bar rotation.
+            target_acc=tracking_fraction*(first*acceleration+second*rate**2)+relative
+        elif symmetry or (track_object and self.task_projection is not None):
             arm=aligned[:3]-q[oi:oi+3]
             target_acc[:3]+=tracking_fraction*(np.cross(grasp_acc[3:],aligned[:3]-q[:3])+np.cross(grasp_twist[3:],np.cross(grasp_twist[3:],arm)))
         force=dr.mass@target_acc+d.qfrc_bias
@@ -347,11 +432,31 @@ class ObjectRelativeControl:
         force+=c['reaction']@approach
         cols,ci=c['cols'],c['constraints'];nc=len(cols);nu=m.nu;rows=dr.robot
         scale=np.zeros(m.nv);scale[:6]=4/np.maximum(np.diag(dr.mass)[:6],.01);scale[dr.vi]=1/dr.limit[:dr.nj]
-        A=np.c_[dr.B[rows]*dr.limit,-c['reaction'][np.ix_(rows,cols)]]*scale[rows,None]
+        B=dr.B
+        current_force=force.copy()
+        if self.direction is not None:
+            thrust=dr.previous[dr.nj:]*dr.limit[dr.nj:]
+            if self.last_command is not None:thrust=self.last_command[dr.nj:]
+            B,drift=self.direction.linearize(q,v,thrust)
+            force-=drift
+            scale[dr.vi[~dr.dock]]*=.03
+        A=np.c_[B[rows]*dr.limit,-c['reaction'][np.ix_(rows,cols)]]*scale[rows,None]
         b=force[rows]*scale[rows]
+        if self.direction is not None:
+            # Present support uses observed rotor angles. Anticipated direction
+            # action above is a separate frozen-geometry target over the local
+            # servo horizon, never force already available at this instant.
+            current=np.c_[dr.B[:6]*dr.limit,-c['reaction'][np.ix_(np.arange(6),cols)]]*scale[:6,None]
+            A=np.vstack([A,current]);b=np.r_[b,current_force[:6]*scale[:6]]
         oscale=np.r_[np.full(3,4/max(load.mass,.01)),4/np.maximum(np.diag(Io),.01)]
-        A=np.vstack([A,np.c_[np.zeros((6,nu)),c['G'][:,cols]]*oscale[:,None]])
-        b=np.r_[b,wrench*oscale]
+        task_G=c['G'][:,cols];task_wrench=wrench
+        if self.task_projection is not None:
+            projection=self.task_projection
+            task_G=projection@task_G;task_wrench=projection@wrench
+            inertia=np.zeros((6,6));inertia[:3,:3]=load.mass*np.eye(3);inertia[3:,3:]=Io
+            oscale=4/np.maximum(np.diag(projection@inertia@projection.T),.01)
+        A=np.vstack([A,np.c_[np.zeros((len(task_wrench),nu)),task_G]*oscale[:,None]])
+        b=np.r_[b,task_wrench*oscale]
         lower=-np.ones(nu);lower[dr.nj:]=0;upper=np.ones(nu)
         gi=np.flatnonzero(~dr.dock);ranges=m.jnt_range[[m.joint(dr.actuators[i]['name']).id for i in gi]]
         offset=dr.kp[gi]*q[dr.qi[gi]]+dr.kd[gi]*v[dr.vi[gi]]
@@ -367,18 +472,22 @@ class ObjectRelativeControl:
             effort=self.last_command*dr.gain
             effort[:dr.nj]-=dr.kp*q[dr.qi]+dr.kd*v[dr.vi]
             held=effort/dr.limit
-        incumbent=np.r_[held,load.previous[cols]]
-        if nc:
+        incumbent=np.r_[held,load.force_incumbent()[cols]]
+        if nc and self.task_projection is None:
             G=c['G'][:,cols]*c['scale'][:,None]
             _,sigma,Vt=np.linalg.svd(G,full_matrices=False)
             rank=int(np.count_nonzero(sigma>max(sigma[0],1e-20)*1e-10))
             P=np.eye(nc)-Vt[:rank].T@Vt[:rank]
             A=np.vstack([A,np.c_[np.zeros((nc,nu)),P]])
             b=np.r_[b,P@c['nominal'][cols]]
+        # With environmental support, forces outside the object's permitted
+        # motion can unload the robot's joints. They are not internal squeeze
+        # and must not be assigned a strong zero-force target.
         x,fallback,iterations=bounded_qp(A.T@A+np.diag(regularization),A.T@b+regularization*nominal,constraints,np.r_[lower,-upper,load.bounds[ci]],lower,upper,incumbent,deadline=deadline)
         x[:nu]=np.clip(x[:nu],lower,upper);dr.previous=x[:nu].copy()
         f=np.zeros(3*load.n);f[cols]=x[nu:];load.record(f,wrench,fallback)
         u=x[:nu]*dr.limit;u[:dr.nj]=(u[:dr.nj]+dr.kp*q[dr.qi]+dr.kd*v[dr.vi])/dr.gain[:dr.nj];u[gi]=np.clip(u[gi],ranges[:,0],ranges[:,1])
         self.last=dict(object_position_error_m=float(np.linalg.norm(object_reference[:3]-q[oi:oi+3])),relative_position_error_m=float(np.linalg.norm(self.delta[:3])),relative_angle_error_rad=float(np.linalg.norm(self.delta[3:6])),joint_error_rad=float(np.max(abs(self.delta[dr.vi]))),object_twist=twist.tolist(),requested_object_wrench=wrench.tolist(),**load.last,allocation=dict(velocity_error=float(np.linalg.norm(A@x-b)),saturated_inputs=int(np.count_nonzero(abs(x[:nu])>.999)),numerical_fallback=fallback,qp_iterations=iterations))
         self.last_command=u.copy()
+        if self.free_flight_integral:self.last['flight_error_integral_world']=self.flight_error_integral.tolist()
         return u
