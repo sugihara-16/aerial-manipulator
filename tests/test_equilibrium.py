@@ -4,6 +4,47 @@ from amsrr_det.model import build_model,DockEdge
 from amsrr_det.equilibrium import static_balance
 
 
+def test_fast_lp_matches_hover_optimum_and_unsupported_payload_failure():
+    for modules,edges in [(1,[]),(3,[DockEdge(0,'pitch1',1,'yaw2'),DockEdge(1,'pitch1',2,'yaw2')])]:
+        model,meta=build_model(modules,edges);q=pin.neutral(model)
+        expected=static_balance(model,meta,q,minimize_burden=True)
+        actual=static_balance(model,meta,q,minimize_burden=True,fast_lp=True)
+        assert actual['status']==expected['status']=='static_screen_pass'
+        assert abs(actual['minimum_peak_effort_ratio']-expected['minimum_peak_effort_ratio'])<1e-7
+        assert actual['equilibrium_residual']<1e-7
+        assert actual['inequality_residual']<1e-7
+        assert abs(sum(np.array(actual['thrust'])**1.5)-sum(np.array(expected['thrust'])**1.5))<1e-5
+    model,meta=build_model(payload=dict(mass=1.,size=[.3,.4,.15]))
+    assert static_balance(model,meta,pin.neutral(model),fast_lp=True)['status']=='unresolved_or_inner_model_infeasible'
+
+
+def test_burden_objective_respects_physical_balance_and_convex_weight_bound():
+    model,meta=build_model();q=pin.neutral(model)
+    plain=static_balance(model,meta,q)
+    result=static_balance(model,meta,q,minimize_burden=True)
+    assert result['status']=='static_screen_pass' and result['burden_refinement_success']
+    thrust=np.array(result['thrust'])
+    cost=np.sum(thrust**1.5)
+    lower=(meta['mass']*9.80665)**1.5/np.sqrt(len(thrust))
+    assert lower-1e-7<=cost<1.001*lower
+    assert cost<np.sum(np.array(plain['thrust'])**1.5)
+    assert result['equilibrium_residual']<1e-7
+    assert np.min(thrust)>=0. and np.max(thrust)<=20.
+
+
+def test_quadratic_force_proposal_and_power_proposal_do_not_share_solver_cache():
+    from amsrr_det.equilibrium import _minimum_burden
+    # Same nonnegative force contract, distinct strictly convex objectives.
+    # For T0+2*T1=6, the QP gives (1.2,2.4); power 1.5 gives (2/3,8/3).
+    E=np.array([[1.,2.,0.]]);bounds=[(0.,20.),(0.,20.)];cache={}
+    for power,expected in [(2.,[1.2,2.4]),(1.5,[2/3,8/3]),(2.,[1.2,2.4])]:
+        result=_minimum_burden(E,np.array([6.]),np.empty((0,3)),np.empty(0),bounds,2,1.,reusable=cache,power=power,strict=True)
+        assert result.success
+        np.testing.assert_allclose(result.x[:2],expected,atol=2e-5)
+        assert abs(E@result.x-6)<1e-8
+    assert len(cache)==2
+
+
 def test_shared_pad_budget_allows_unequal_load_and_is_invariant_to_sampling():
     model,meta=build_model(payload=dict(size=[.2,.2,.2],mass=.2))
     q=pin.neutral(model);q[meta['object']['q']+1]=.09
@@ -60,6 +101,26 @@ def test_contact_on_object_adds_equal_opposite_load_to_robot():
     assert r['status']=='static_screen_pass'
     assert abs(r['contacts'][0]['normal_force']+.2*model.gravity.linear[2])<1e-9
     assert abs(sum(r['thrust'])+meta['mass']*model.gravity.linear[2])<1e-9
+
+
+def test_contact_without_auxiliary_force_cap_still_respects_motor_limits():
+    # Algebraic load at the root: remove only the optional 30 N contact cap.
+    # The independently known 4 kg load fits total rotor capacity; 8 kg does not.
+    for mass in [4.,8.]:
+        model,meta=build_model(payload=dict(mass=mass,size=[.3,.4,.15]));q=pin.neutral(model)
+        contact=dict(frame='m0/root',point=[0,0,0],target_frame='object',
+                     target_point=[0,0,0],normal=[0,0,-1],mu=.6,max_force=None)
+        for direct in [False,True]:
+            result=static_balance(model,meta,q,[contact],fast_lp=True,direct_burden=direct)
+            if mass==4.:
+                assert result['status']=='static_screen_pass'
+                assert abs(result['contacts'][0]['normal_force']-mass*9.80665)<1e-7
+                assert max(result['thrust'])<=20.+1e-8
+                assert max(j['normalized'] for j in result['joints'])<=1.+1e-8
+            else:
+                assert result['status']!='static_screen_pass'
+        capped=static_balance(model,meta,q,[dict(contact,max_force=30.,pad_force_limit=30.)])
+        assert capped['status']!='static_screen_pass'
 
 
 def test_collinear_point_supports_do_not_gain_torque_about_their_line():
@@ -123,3 +184,20 @@ def test_free_support_distribution_preserves_commanded_wrench_without_object_for
     for a,record in zip(meta['actuators'],result['joints']):
         np.testing.assert_allclose(record['effort_nm'],required[a['v']]-after[a['v']],atol=1e-9)
         assert abs(record['effort_nm'])<=a['effort']+1e-8
+
+
+def test_direct_burden_solves_same_force_contract_and_rejects_overload():
+    from amsrr_det.structure_bounds import hover_input_burden
+    model,meta=build_model();q=pin.neutral(model)
+    for load in [.8,1.,1.2]:
+        wanted=[0,0,meta['mass']*9.80665*load,0,0,0]
+        old=static_balance(model,meta,q,minimize_burden=True,fast_lp=True,base_load=wanted)
+        new=static_balance(model,meta,q,direct_burden=True,base_load=wanted)
+        assert old['status']==new['status']=='static_screen_pass'
+        assert new['equilibrium_residual']<1e-7
+        assert new['inequality_residual']<1e-7
+        assert new['max_normalized_joint_effort']<=1.+1e-7
+        assert hover_input_burden(new['thrust'])<=hover_input_burden(old['thrust'])+1e-5
+        assert 'minimum_peak_effort_ratio' not in new
+    overload=static_balance(model,meta,q,base_load=[0,0,10000,0,0,0],direct_burden=True)
+    assert overload['status']!='static_screen_pass'

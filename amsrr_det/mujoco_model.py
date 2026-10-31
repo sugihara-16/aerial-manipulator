@@ -122,18 +122,18 @@ class PlantModel:
 
 
 def make_plant(n=1, edges=(), payload=None, *, timestep=.001,
-               meshes=True, mesh_cache=None, floor=False):
+               meshes=True, mesh_cache=None, floor=False,compile_model=True):
     # Different postures of the same generated structure share this immutable
     # construction within one planning call. Loading returns an independent
     # model: later option, support and actuator changes must not leak.
     inputs=dict(operation='make_plant',modules=n,edges=edges,payload=payload,
                 timestep=timestep,meshes=meshes,
-                mesh_cache=None if mesh_cache is None else str(Path(mesh_cache).resolve()),floor=floor)
+                mesh_cache=None if mesh_cache is None else str(Path(mesh_cache).resolve()),floor=floor,compile_model=compile_model)
     return memoized(inputs,lambda:_make_plant(n,edges,payload,timestep=timestep,
-                    meshes=meshes,mesh_cache=mesh_cache,floor=floor))
+                    meshes=meshes,mesh_cache=mesh_cache,floor=floor,compile_model=compile_model))
 
 
-def _make_plant(n,edges,payload,*,timestep,meshes,mesh_cache,floor):
+def _make_plant(n,edges,payload,*,timestep,meshes,mesh_cache,floor,compile_model=True):
     model, meta = build_model(n, edges, payload)
     meta['material_mesh_cache']=str(Path(mesh_cache or ROOT/'build/collision_meshes').resolve()) if meshes else None
     doc = ET.Element('mujoco', model='amsrr_det')
@@ -205,6 +205,7 @@ def _make_plant(n,edges,payload,*,timestep,meshes,mesh_cache,floor):
         ET.SubElement(world, 'geom', name='floor', type='plane', size='10 10 .1',
                       friction='.8 0 0', rgba='.8 .8 .8 1')
     xml = ET.tostring(doc, encoding='unicode')
+    if not compile_model:return PlantModel(model,meta,None,xml,[])
     mj = mujoco.MjModel.from_xml_string(xml)
     joints = [(i, mujoco.mj_name2id(mj, mujoco.mjtObj.mjOBJ_JOINT, model.names[i]))
               for i in range(1, model.njoints)]

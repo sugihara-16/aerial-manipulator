@@ -10,6 +10,32 @@ from scipy.optimize import minimize, LinearConstraint
 from .linear_program import linprog
 
 
+def rotor_action_basis(model,meta,q):
+    """Exact constant/cosine/sine force maps of independent terminal hinges.
+
+    Dock and floating-body coordinates stay fixed. Each rotor's force and
+    moment rotate about its own gimbal pivot, including its constant axial
+    moment. No small-angle or massless-link approximation is made here.
+    """
+    q=np.asarray(q).copy();gimbals=[meta['actuators'][r['gimbal']] for r in meta['rotors']]
+    q[[a['q'] for a in gimbals]]=0.;data=model.createData()
+    pin.computeJointJacobians(model,data,q);pin.updateFramePlacements(model,data)
+    basis=np.empty((3,model.nv,len(gimbals)))
+    for i,(rotor,a) in enumerate(zip(meta['rotors'],gimbals)):
+        J=pin.getJointJacobian(model,data,a['joint'],pin.LOCAL_WORLD_ALIGNED)
+        axis=J[3:,a['v']];frame=data.oMf[rotor['frame']]
+        force=frame.rotation[:,2];moment=np.cross(frame.translation-data.oMi[a['joint']].translation,force)
+        fp=axis*(axis@force);mp=axis*(axis@moment)
+        basis[0,:,i]=J[:3].T@fp+J[3:].T@mp
+        basis[1,:,i]=J[:3].T@(force-fp)+J[3:].T@(moment-mp)
+        basis[2,:,i]=J[:3].T@np.cross(axis,force)+J[3:].T@np.cross(axis,moment)
+    return basis
+
+
+def rotor_basis_actions(basis,angles):
+    return basis[0]+basis[1]*np.cos(angles)+basis[2]*np.sin(angles)
+
+
 def rotor_actions(model, meta, q):
     data = model.createData()
     pin.computeJointJacobians(model, data, q)

@@ -7,6 +7,33 @@ import numpy as np
 import pinocchio as pin
 from scipy.optimize import least_squares
 from .equilibrium import static_balance
+from .rotor_distribution import rotor_actions
+
+
+def _free_flight_objective(model,meta,q,x0):
+    """Exact inverse-dynamics residual and its angle/force derivatives."""
+    data=model.createData();rotors=meta['rotors'];nr=len(rotors)
+    act=np.array([a['v'] for a in meta['actuators']]);limits=np.array([a['effort'] for a in meta['actuators']])
+    floating=np.array([b['v']+i for b in meta['bases'] for i in range(6)])
+    gimbal=[meta['actuators'][r['gimbal']] for r in rotors]
+    qi=[a['q'] for a in gimbal];vi=[a['v'] for a in gimbal]
+    zero=np.zeros(model.nv);cached=None;pair=None
+    def evaluate(x):
+        nonlocal cached,pair
+        if cached is not None and np.array_equal(x,cached):return pair
+        pose=q.copy();pose[qi]=x[nr:];ext=[pin.Force.Zero() for _ in range(model.njoints)]
+        for r,f in zip(rotors,x[:nr]):
+            frame=model.frames[r['frame']]
+            ext[frame.parentJoint]+=frame.placement.act(pin.Force(np.array([0.,0.,f]),np.zeros(3)))
+        tau=pin.rnea(model,data,pose,zero,zero,ext).copy()
+        angle_derivative=pin.computeRNEADerivatives(model,data,pose,zero,zero,ext)[0][:,vi].copy()
+        J=np.column_stack([-rotor_actions(model,meta,pose),angle_derivative])
+        excess=np.maximum(abs(tau[act])/limits-.85,0.)
+        residual=np.r_[tau[floating],excess,1e-6*(x-x0)]
+        jac=np.vstack([J[floating],J[act]*(np.sign(tau[act])*(excess>0)/limits)[:,None],1e-6*np.eye(len(x))])
+        cached=x.copy();pair=residual,jac
+        return pair
+    return evaluate
 
 
 def check_fixed_thrust(model,meta,q,forces):
@@ -26,27 +53,34 @@ def check_fixed_thrust(model,meta,q,forces):
                 pd_reference_in_range=refs_valid,joints=joints,thrust=np.asarray(forces).tolist())
 
 
-def free_flight_trim(model,meta,q, *, maximum_evaluations=60):
+def free_flight_trim(model,meta,q, *, maximum_evaluations=60,physical_check_interval=0):
     initial=static_balance(model,meta,q,payload_fraction=0.,balance_thrust=True)
     if initial['status']=='static_screen_pass':return q.copy(),initial
-    d=model.createData();rotors=meta['rotors'];nr=len(rotors)
-    actuated=np.array([a['v'] for a in meta['actuators']]);limits=np.array([a['effort'] for a in meta['actuators']])
-    floating=np.array([b['v']+i for b in meta['bases'] for i in range(6)])
+    rotors=meta['rotors'];nr=len(rotors)
     gimbal=[meta['actuators'][r['gimbal']] for r in rotors];indices=np.array([a['q'] for a in gimbal])
     low=np.r_[np.zeros(nr),[a['lower']+.03 for a in gimbal]]
     high=np.r_[[r['maximum'] for r in rotors],[a['upper']-.03 for a in gimbal]]
     force=(meta['mass']-(meta['object'] or {}).get('mass',0))*9.80665/nr
     x0=np.r_[np.full(nr,force),q[indices]]
+    objective=_free_flight_objective(model,meta,q,x0)
+    evaluations=0
+    class Feasible(Exception):
+        def __init__(self,pose,report):self.pose=pose;self.report=report
     def residual(x):
-        pose=q.copy();pose[indices]=x[nr:];ext=[pin.Force.Zero() for _ in range(model.njoints)]
-        for r,f in zip(rotors,x[:nr]):
-            frame=model.frames[r['frame']]
-            ext[frame.parentJoint]+=frame.placement.act(pin.Force(np.array([0.,0.,f]),np.zeros(3)))
-        torque=pin.rnea(model,d,pose,np.zeros(model.nv),np.zeros(model.nv),ext)
-        excess=np.maximum(abs(torque[actuated])/limits-.85,0.)
-        return np.r_[torque[floating],excess,.000001*(x-x0)]
-    result=least_squares(residual,np.clip(x0,low,high),bounds=(low,high),max_nfev=maximum_evaluations,
-                         ftol=1e-10,xtol=1e-10,gtol=1e-10)
+        nonlocal evaluations
+        value=objective(x)[0];evaluations+=1
+        if physical_check_interval and evaluations%physical_check_interval==0:
+            pose=q.copy();pose[indices]=x[nr:]
+            checked=static_balance(model,meta,pose,payload_fraction=0.,balance_thrust=True)
+            if checked['status']=='static_screen_pass':
+                checked['direction_fit_evaluations']=evaluations
+                raise Feasible(pose,checked)
+        return value
+    try:
+        result=least_squares(residual,np.clip(x0,low,high),jac=lambda x:objective(x)[1],bounds=(low,high),max_nfev=maximum_evaluations,
+                             tr_solver='lsmr' if physical_check_interval else 'exact',
+                             ftol=1e-10,xtol=1e-10,gtol=1e-10)
+    except Feasible as accepted:return accepted.pose,accepted.report
     pose=q.copy();pose[indices]=result.x[nr:]
     checked=static_balance(model,meta,pose,payload_fraction=0.,balance_thrust=True)
     checked['direction_fit_evaluations']=result.nfev

@@ -85,7 +85,7 @@ def opposed_contact_terms(points,normals,friction,point_jac=None,normal_jac=None
     return error,derivative*(raw>0)[:,None]
 
 
-def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False):
+def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False,base_upright_weight=0.,position_metric=None,frame_tangents=None):
     # Repeated matrix/quaternion conversions can amplify roundoff along a
     # retreat path. Dynamics and Jacobians require unit quaternions.
     q0=pin.normalize(model,q0)
@@ -150,7 +150,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 lift[3:6,3:6]=rotation.T@left
             lift[[a['v'] for a in active],3+nr+np.arange(len(active))]=1
             if kernel is not None:
-                fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0,opposed_friction)
+                fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0,opposed_friction) if frame_tangents is None else None
                 if fused is not None:
                     if samples is None:return fused
                     extra,extra_jac=kernel.object_avoidance(lift,meta['object']['frame'],samples,object_shape,grouped=True)
@@ -181,8 +181,16 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 if opposed_friction is not None:
                     sj=(np.eye(3)-outward[:,:,None]*gap_gradient[:,None,:]-gaps[:,None,None]*normal_gradient)@local_jac
                     extra,extra_jac=opposed_contact_terms(surface,-outward,opposed_friction,sj,-normal_gradient@local_jac,opposition_limit)
-                return (np.r_[contact.ravel(),.15*extra,br,.0001*(x-x0)],
-                        np.vstack([derivative.reshape(-1,len(x)),.15*extra_jac,bj,.0001*np.eye(len(x))]))
+                tail=np.empty(0);tail_jac=np.empty((0,len(x)))
+                if samples is not None:
+                    tail,tail_jac=kernel.object_avoidance(lift,meta['object']['frame'],samples,object_shape,grouped=True)
+                if frame_tangents is not None:
+                    tangents=poses[:count,3:].reshape(-1,3,3)[:,:,1]
+                    tangent_jac=np.cross(angular.transpose(0,2,1),tangents[:,None,:]).transpose(0,2,1)
+                    tail=np.r_[tail,.5*(tangents-frame_tangents).ravel()]
+                    tail_jac=np.vstack([tail_jac,.5*tangent_jac.reshape(-1,len(x))])
+                return (np.r_[contact.ravel(),.15*extra,br,.0001*(x-x0),tail],
+                        np.vstack([derivative.reshape(-1,len(x)),.15*extra_jac,bj,.0001*np.eye(len(x)),tail_jac]))
             pin.computeJointJacobians(model,data,q);pin.updateFramePlacements(model,data)
         else:pin.framesForwardKinematics(model,data,q)
         r=[];rows=[];jacobians={}
@@ -315,12 +323,53 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
     # The solver requests the residual and derivative at the same posture.
     # Share that evaluation, retaining only the last posture within this fit.
     cached_x=None;cached_pair=None
+    if position_metric is not None:
+        position_metric=np.asarray(position_metric)
+        if object_shape is not None or not analytic_jacobian or position_metric.shape!=(3,3):
+            raise ValueError('position metric requires point targets and analytic derivatives')
+    def upright(x):
+        rotation=pin.Quaternion(configuration(x)[3:7]).matrix();up=rotation[:,2]
+        error=base_upright_weight*(up-np.array([0.,0.,1.]))
+        J=np.zeros((3,len(x)))
+        if nr:
+            phi=x[3:6];theta=np.linalg.norm(phi);S=pin.skew(phi)
+            left=np.eye(3)+(.5 if theta<1e-7 else (1-np.cos(theta))/theta**2)*S+(1/6 if theta<1e-7 else (theta-np.sin(theta))/theta**3)*(S@S)
+            J[:,3:6]=-base_upright_weight*pin.skew(up)@left
+        return error,J
+    def tangent_alignment(x):
+        q=configuration(x);pin.computeJointJacobians(model,data,q);pin.updateFramePlacements(model,data)
+        lift=np.zeros((model.nv,len(x)));rotation=pin.Quaternion(q[3:7]).matrix()
+        lift[:3,:3]=rotation.T
+        if nr:
+            phi=x[3:6];theta=np.linalg.norm(phi);S=pin.skew(phi)
+            left=np.eye(3)+(.5 if theta<1e-7 else (1-np.cos(theta))/theta**2)*S+(1/6 if theta<1e-7 else (theta-np.sin(theta))/theta**3)*(S@S)
+            lift[3:6,3:6]=rotation.T@left
+        lift[[a['v'] for a in active],3+nr+np.arange(len(active))]=1.
+        error=[];rows=[]
+        for frame,target in zip(frames,frame_tangents):
+            tangent=data.oMf[frame].rotation[:,1]
+            error.extend(.5*(tangent-target))
+            J=pin.getFrameJacobian(model,data,frame,pin.LOCAL_WORLD_ALIGNED)@lift
+            rows.extend(-.5*pin.skew(tangent)@J[3:])
+        return np.asarray(error),np.asarray(rows)
+    if frame_tangents is not None:
+        frame_tangents=np.asarray(frame_tangents)
+        if not analytic_jacobian or frame_tangents.shape!=normals.shape:raise ValueError('full contact frames require analytic tangent targets')
     def evaluate(x):
         nonlocal cached_x,cached_pair
         if cached_x is None or not np.array_equal(x,cached_x):
             cached_pair=residual(x,True);cached_x=x.copy()
+            if position_metric is not None:
+                r,J=cached_pair;r=r.copy();J=J.copy()
+                for i in range(len(frames)):
+                    block=slice(6*i,6*i+3);r[block]=position_metric@r[block];J[block]=position_metric@J[block]
+                cached_pair=(r,J)
+            if frame_tangents is not None and kernel is None:
+                e,J=tangent_alignment(x);cached_pair=(np.r_[cached_pair[0],e],np.vstack([cached_pair[1],J]))
+            if base_upright_weight:
+                e,J=upright(x);cached_pair=(np.r_[cached_pair[0],e],np.vstack([cached_pair[1],J]))
         return cached_pair
-    objective=(lambda x:evaluate(x)[0]) if analytic_jacobian else residual
+    objective=(lambda x:evaluate(x)[0]) if analytic_jacobian else (lambda x:np.r_[residual(x),upright(x)[0]]) if base_upright_weight else residual
     jacobian=(lambda x:evaluate(x)[1]) if analytic_jacobian else '2-point'
     result=least_squares(objective,np.clip(x0,lo,hi),bounds=(lo,hi),max_nfev=max_evaluations,
                          jac=jacobian,ftol=1e-9,xtol=1e-9,gtol=1e-9)
@@ -328,6 +377,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
     report=dict(position_error_m=max(np.linalg.norm(data.oMf[f].translation-p) for f,p in zip(frames,points)),
                 normal_error=max(np.linalg.norm(data.oMf[f].rotation[:,0]-n) for f,n in zip(frames,normals)),
                 evaluations=result.nfev,scope='kinematic_fit_only',task_success=False)
+    if frame_tangents is not None:report['tangent_error']=max(np.linalg.norm(data.oMf[f].rotation[:,1]-t) for f,t in zip(frames,frame_tangents))
     if object_shape is not None:
         obj=data.oMf[meta['object']['frame']]
         surface,gaps,outward=object_shape.project_surface(np.array([obj.actInv(data.oMf[f].translation) for f in frames]))
@@ -344,18 +394,17 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
 def aim_rotors_up(model,meta,q):
     """Choose allowed gimbal angles that best align each rotor with world up."""
     q=q.copy();data=model.createData();pin.framesForwardKinematics(model,data,q)
-    up=np.array([0.,0.,1.])
-    for rotor in meta['rotors']:
-        a=meta['actuators'][rotor['gimbal']]
-        direction=data.oMf[rotor['frame']].rotation[:,2]
-        axis=data.oMi[a['joint']].rotation@pin.computeJointJacobian(model,data,q,a['joint'])[3:,a['v']]
-        # Every gimbal belongs to its own rotor branch; updating one does not
-        # change any other rotor's placement used in this pass.
-        theta=np.arctan2(up@np.cross(axis,direction),up@direction-(up@axis)*(axis@direction))
-        candidates=[np.clip(q[a['q']]+theta+turn*2*np.pi,a['lower']+.02,a['upper']-.02) for turn in [-1,0,1]]
-        def score(angle):
-            delta=angle-q[a['q']]
-            rotated=direction*np.cos(delta)+np.cross(axis,direction)*np.sin(delta)+axis*(axis@direction)*(1-np.cos(delta))
-            return up@rotated
-        q[a['q']]=max(candidates,key=score)
+    actuators=[meta['actuators'][r['gimbal']] for r in meta['rotors']]
+    directions=np.array([data.oMf[r['frame']].rotation[:,2].copy() for r in meta['rotors']])
+    axes=np.array([data.oMi[a['joint']].rotation@pin.computeJointJacobian(model,data,q,a['joint'])[3:,a['v']]
+                   for a in actuators])
+    indices=np.array([a['q'] for a in actuators]);origin=q[indices]
+    cross_z=np.cross(axes,directions)[:,2];parallel=np.einsum('ij,ij->i',axes,directions)*axes[:,2]
+    theta=np.arctan2(cross_z,directions[:,2]-parallel)
+    candidates=np.clip(origin[:,None]+theta[:,None]+2*np.pi*np.array([-1.,0.,1.]),
+        np.array([a['lower']+.02 for a in actuators])[:,None],
+        np.array([a['upper']-.02 for a in actuators])[:,None])
+    delta=candidates-origin[:,None]
+    scores=directions[:,2,None]*np.cos(delta)+cross_z[:,None]*np.sin(delta)+parallel[:,None]*(1-np.cos(delta))
+    q[indices]=candidates[np.arange(len(indices)),np.argmax(scores,axis=1)]
     return q

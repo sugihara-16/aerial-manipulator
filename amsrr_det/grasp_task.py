@@ -14,7 +14,7 @@ import pinocchio as pin
 import mujoco
 from .model import build_model,ROOT
 from .mujoco_model import make_plant,coat_grippers,numbers,CONTACT_CACHE
-from .grasp_geometry import fit_contacts,aim_rotors_up,robot_bottom,separating_translation
+from .grasp_geometry import fit_contacts,aim_rotors_up,robot_bottom,separating_translation,grasp_frame
 from .grasp_control import GraspReferences,surface_points
 from .equilibrium import static_balance,restoring_screen
 from .flight import FlightController
@@ -233,7 +233,7 @@ def support_obstacles(shape,source,destination,support_top):
 def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, base_rotation=True,obstacles=(),open_posture=True):
     from .contact_geometry import material_triangles,close_material
     R=pin.Quaternion(source[3:]).matrix();world=points@R.T+source[:3];world_normals=normals@R.T
-    pd=p.pin.createData();samples=[surface_points(p.pin,p.meta,closed,s) for s in surfaces]
+    pd=p.pin.createData();frames=[p.meta["frames"][grasp_frame(*s)] for s in surfaces]
     fit=dict(position_error_m=0.,normal_error=0.,scope='material_contact_fit',task_success=False)
     # Contact frames lie at authored coordinates, but a curved object can enter
     # a pad's real recess before touching its rim. Correct the frame targets from
@@ -242,7 +242,7 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
     for iteration in range(12):
         pin.framesForwardKinematics(p.pin,pd,closed);obj=pd.oMf[p.meta['object']['frame']]
         patches=[close_material(shape,obj.inverse()*pd.oMf[frame],material_triangles(port,p.meta.get('material_mesh_cache')))
-                 for (frame,_),(_,port) in zip(samples,surfaces)]
+                 for frame,(_,port) in zip(frames,surfaces)]
         gap=np.array([patch[2].min() for patch in patches])
         patch_centers=[];material_normals=[]
         for _,targets,gaps,outward in patches:
@@ -253,11 +253,11 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
         error=world-np.array(patch_centers)
         tangent=error-np.sum(error*world_normals,axis=1)[:,None]*world_normals
         material_normals=np.array(material_normals)
-        frame_normals=np.array([pd.oMf[frame].rotation[:,0] for frame,_ in samples])
+        frame_normals=np.array([pd.oMf[frame].rotation[:,0] for frame in frames])
         alignment=np.linalg.norm(frame_normals-material_normals,axis=1)
         gap_tolerance=.00005 if iteration>=6 else .00001
         if np.max(abs(gap-NOMINAL_CONTACT_GAP))<gap_tolerance and alignment.max()<.1:break
-        centers=np.array([pd.oMf[frame].translation for frame,_ in samples])
+        centers=np.array([pd.oMf[frame].translation for frame in frames])
         # Contact sites may move along a face. Do not sacrifice the actual gap
         # to restore an arbitrary patch centroid or improve an already allowed
         # normal alignment. The resulting points are screened for loads below.
@@ -280,10 +280,10 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
     # and normal instead of rejecting a harmless tangent shift of the frame.
     pin.framesForwardKinematics(p.pin,pd,closed);obj=pd.oMf[p.meta['object']['frame']]
     patches=[close_material(shape,obj.inverse()*pd.oMf[frame],material_triangles(port,p.meta.get('material_mesh_cache')))
-             for (frame,_),(_,port) in zip(samples,surfaces)]
+             for frame,(_,port) in zip(frames,surfaces)]
     gap=np.array([patch[2].min() for patch in patches])
     actual_points=[];actual_normals=[];alignment=[]
-    for (frame,_),(_,targets,gaps,outward) in zip(samples,patches):
+    for frame,(_,targets,gaps,outward) in zip(frames,patches):
         weights=np.maximum(0,.00015-(gaps-gaps.min()));weights/=weights.sum()
         n=-(weights@outward);n/=np.linalg.norm(n)
         actual_points.append(weights@targets);actual_normals.append(n)
@@ -305,14 +305,14 @@ def open_material_posture(p,shape,source,closed,surfaces,normals,fit, *, base_ro
     """Construct the unchanged open posture after closed-contact screening."""
     from .contact_geometry import material_triangles,close_material
     world_normals=normals@pin.Quaternion(source[3:]).matrix().T
-    pd=p.pin.createData();samples=[surface_points(p.pin,p.meta,closed,s) for s in surfaces]
+    pd=p.pin.createData();frames=[p.meta["frames"][grasp_frame(*s)] for s in surfaces]
     pin.framesForwardKinematics(p.pin,pd,closed)
-    centers=np.array([pd.oMf[frame].translation for frame,_ in samples])
+    centers=np.array([pd.oMf[frame].translation for frame in frames])
     opened,openfit=fit_contacts(p.pin,p.meta,closed,surfaces,centers-.045*world_normals,world_normals,
                                floor_clearance=.03,base_rotation=base_rotation,obstacles=obstacles)
     pin.framesForwardKinematics(p.pin,pd,opened);obj=pd.oMf[p.meta['object']['frame']]
     open_gaps=[close_material(shape,obj.inverse()*pd.oMf[frame],material_triangles(port,p.meta.get('material_mesh_cache')))[2].min()
-               for (frame,_),(_,port) in zip(samples,surfaces)]
+               for frame,(_,port) in zip(frames,surfaces)]
     fit['opening_method']='joint_fit'
     if min(open_gaps)<.025:
         # Matching offset contact points can unnecessarily prohibit tangential
@@ -322,7 +322,7 @@ def open_material_posture(p,shape,source,closed,surfaces,normals,fit, *, base_ro
             trial=closed.copy();trial[:3]+=displacement
             pin.framesForwardKinematics(p.pin,pd,trial);obj=pd.oMf[p.meta['object']['frame']]
             trial_gaps=[close_material(shape,obj.inverse()*pd.oMf[frame],material_triangles(port,p.meta.get('material_mesh_cache')))[2].min()
-                        for (frame,_),(_,port) in zip(samples,surfaces)]
+                        for frame,(_,port) in zip(frames,surfaces)]
             if min(trial_gaps)>=.025:
                 opened=trial;open_gaps=trial_gaps;fit['opening_method']='separating_translation'
     fit['open_material_gap_m']=list(map(float,open_gaps))
@@ -330,21 +330,28 @@ def open_material_posture(p,shape,source,closed,surfaces,normals,fit, *, base_ro
     return opened
 
 
-def material_force_contacts(p,shape,closed,surfaces):
+def material_force_contacts(p,shape,closed,surfaces,*,force_limit=30.,material_tangents=False):
     """The same finite material points, usable before compiling dynamics."""
     from .contact_geometry import material_triangles,close_material
     pd=p.pin.createData();pin.framesForwardKinematics(p.pin,pd,closed)
     obj=pd.oMf[p.meta['object']['frame']];contacts=[]
     for surface in surfaces:
-        frame,_=surface_points(p.pin,p.meta,closed,surface);port=surface[1]
+        # Only the authored frame is needed here. Do not decode a second CAD
+        # vertex representation that is discarded before triangle sampling.
+        frame=p.meta['frames'][grasp_frame(*surface)];port=surface[1]
         vertices,targets,gaps,outward=close_material(shape,obj.inverse()*pd.oMf[frame],material_triangles(port,p.meta.get('material_mesh_cache')))
         for point,target,normal in zip(vertices,targets,outward):
             # Equal/opposite forces share one world point, including soft
             # reference overlap, so no fictitious internal couple is added.
             world_point=(pd.oMf[frame].act(point)+obj.act(target))/2
-            contacts.append(dict(frame=p.pin.frames[frame].name,point=pd.oMf[frame].actInv(world_point),target_frame='object',
+            contact=dict(frame=p.pin.frames[frame].name,point=pd.oMf[frame].actInv(world_point),target_frame='object',
                 target_point=obj.actInv(world_point),normal=obj.rotation@normal,mu=2.25,
-                max_force=30.,pad_force_limit=30.))
+                max_force=None if force_limit is None else float(force_limit))
+            if force_limit is not None:contact['pad_force_limit']=float(force_limit)
+            if material_tangents:
+                tangent=np.cross(normal,np.eye(3)[np.argmin(abs(normal))]);tangent/=np.linalg.norm(tangent)
+                contact['tangent']=obj.rotation@tangent
+            contacts.append(contact)
     return contacts
 
 

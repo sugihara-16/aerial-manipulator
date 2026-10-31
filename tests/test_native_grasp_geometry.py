@@ -12,7 +12,8 @@ import amsrr_det.native_grasp_geometry as native
 @pytest.mark.parametrize('family',[None,'box','elongated_box','cylinder','ellipsoid','triangular_prism','tapered_box'])
 @pytest.mark.parametrize('rotate',[False,True])
 @pytest.mark.parametrize('opposed',[False,True])
-def test_residual_and_derivative_match_python(monkeypatch,family,rotate,opposed):
+@pytest.mark.parametrize('full_frame',[False,True])
+def test_residual_and_derivative_match_python(monkeypatch,family,rotate,opposed,full_frame):
     if opposed and family is None:return
     library=native.library()
     if library is None:pytest.skip('optional geometry kernel not built')
@@ -26,6 +27,7 @@ def test_residual_and_derivative_match_python(monkeypatch,family,rotate,opposed)
     surfaces=[(0,'yaw1'),(1,'pitch1')];data=model.createData();pin.framesForwardKinematics(model,data,q)
     frames=[meta['frames'][geometry.grasp_frame(*s)] for s in surfaces]
     points=np.array([data.oMf[f].translation for f in frames]);normals=np.array([data.oMf[f].rotation[:,0] for f in frames])
+    tangents=np.array([data.oMf[f].rotation[:,1] for f in frames]) if full_frame else None
     evaluations=[]
     def inspect(fun,x0,*,jac,**kwargs):
         x=x0.copy();x[:3]+=[.03,-.04,.06]
@@ -38,6 +40,7 @@ def test_residual_and_derivative_match_python(monkeypatch,family,rotate,opposed)
         geometry.fit_contacts(model,meta,q,surfaces,points,normals,base_rotation=rotate,
             object_shape=shape if family else None,floor_clearance=1.,
             opposed_friction=4.5 if opposed else None,
+            frame_tangents=tangents,position_metric=np.diag([1.,2.,3.]) if family is None else None,
             obstacles=[([.1,.2,.3],[.8,.7,.6]),([1.,-.3,.1],[.3,.2,.3])])
     np.testing.assert_allclose(evaluations[0][0],evaluations[1][0],atol=2e-14,rtol=2e-13)
     np.testing.assert_allclose(evaluations[0][1],evaluations[1][1],atol=5e-10,rtol=1e-9)
