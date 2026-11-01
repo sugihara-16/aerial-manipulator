@@ -7,8 +7,9 @@ from amsrr_det.task_audit import TaskAudit
 from .model import ROOT
 
 class FastTaskAudit(TaskAudit):
-    def __init__(self,*args,clearance_period=0.,**kwargs):
+    def __init__(self,*args,clearance_period=0.,face_axis=None,**kwargs):
         self.clearance_period=float(clearance_period);self.next_clearance=0.
+        self.face_axis=face_axis;self.face_active=False;self.face_stats=np.zeros(15)
         super().__init__(*args,**kwargs)
         root=Path(mujoco.__file__).parent;source=Path(__file__).with_suffix('.cc')
         version=mujoco.mj_versionString();digest=hashlib.sha256(source.read_bytes()+version.encode()).hexdigest()[:16]
@@ -41,7 +42,7 @@ class FastTaskAudit(TaskAudit):
             address(self._anchors),address(self.last_normal_loads))
         self._unexpected=np.empty((16,2),dtype=np.int32)
         self.batch=self.library.audit_advance;self.batch.restype=ctypes.c_int
-        self.batch.argtypes=self.call.argtypes[:2]+[ctypes.c_int]+self.call.argtypes[2:-1]+[ctypes.c_int,ctypes.c_void_p,ctypes.c_void_p]
+        self.batch.argtypes=self.call.argtypes[:2]+[ctypes.c_int]+self.call.argtypes[2:-1]+[ctypes.c_int,ctypes.c_void_p,ctypes.c_void_p,ctypes.c_int,ctypes.c_void_p]
         self.batch_pairs=np.empty((4096,2),np.int32);self.batch_count=np.zeros(1,np.int32)
         if self.proximity.joint_motion is not None:
             self.proximity.joint_motion=_NativeMotionBound(self.proximity.joint_motion,self.library)
@@ -63,7 +64,8 @@ class FastTaskAudit(TaskAudit):
     def advance(self,data,steps,*,carried=False,grasp_contact_allowed=True):
      while steps>0:
       until=max(1,math.ceil((self.next_clearance-data.time-1e-10)/self.plant.mj.opt.timestep));n=min(steps,until)
-      reason=self.batch(self.plant.mj._address,data._address,n,carried,grasp_contact_allowed,*self._arguments,4096,self.batch_pairs.ctypes.data,self.batch_count.ctypes.data)
+      reason=self.batch(self.plant.mj._address,data._address,n,carried,grasp_contact_allowed,*self._arguments,4096,self.batch_pairs.ctypes.data,self.batch_count.ctypes.data,
+          self.face_axis if self.face_active and self.face_axis is not None else -1,self.face_stats.ctypes.data)
       self.other_contacts.update(tuple(sorted([self.names[a],self.names[b]]))for a,b in self.batch_pairs[:self.batch_count[0]])
       (self.max_force,self.max_moment,self.max_penetration,self.max_joint_speed,self.max_effort_ratio,self.max_joint_limit_violation,self.max_clearance,self.min_clearance_carried,self.max_raw_effort_ratio,self.max_servo_error,self.max_slip,self.max_material_displacement,self.longest_gap,last)=self._stats
       self.last_contact_time=None if np.isnan(last)else float(last);self.time=float(data.time)
@@ -77,6 +79,15 @@ class FastTaskAudit(TaskAudit):
     def result(self):
         result=super().result()
         result['clearance_sampling_period_s']=self.clearance_period
+        if self.face_axis is not None:
+            s=self.face_stats
+            result['contact_faces']=dict(axis=self.face_axis,integration_steps=int(s[0]),violating_steps=int(s[1]),
+                maximum_non_side_normal_force_n=float(s[2]),non_side_normal_impulse_ns=float(s[3]),
+                maximum_non_side_axis_torque_nm=float(s[4]),first_violation_s=float(s[5]) if s[1] else None,
+                last_violation_s=float(s[6]) if s[1] else None,
+                worst_geom=self.plant.mj.geom(int(s[7])).name if s[14] else None,
+                worst_point_local=s[8:11].tolist(),worst_normal_local=s[11:14].tolist(),
+                normal_force_zero_tolerance_n=1e-6,passes=bool(s[0]>0 and s[1]==0))
         return result
 
 

@@ -65,6 +65,12 @@ def summarize(root):
             settle=result['audit']['time_since_gripper_contact_s']
             expected=dict(angle=bool(angle_error<np.deg2rad(5)),speed=bool(abs(d.qvel[ov])<.02),
                 released=bool(len(gaps) and min(gaps)>.02),settled=bool(settle is not None and settle>=2.),retreat_flight=retreat)
+            if 'side_faces' in result['checks']:
+                from amsrr_det.valve_audit import side_face_evidence
+                face_evidence=side_face_evidence(json.loads((folder/'physical_trace.json').read_text()))
+                continuous=result['audit'].get('contact_faces')
+                expected['side_faces']=bool(continuous['integration_steps']>0 and continuous['violating_steps']==0) if continuous else face_evidence['passes']
+                row['side_faces']=dict(continuous or {},sampled=face_evidence)
             if expected!=result['checks']:issues.append(['endpoint_check_mismatch',name,expected,result['checks']])
             if result['task_success'] and (not all(expected.values()) or result['audit']['peak_effort_ratio']>1.000001):issues.append(['invalid_success',name])
             calls=json.loads((folder/'control_calls.json').read_text());values=[c['publication_cpu_s'] for c in calls];times.extend(values)

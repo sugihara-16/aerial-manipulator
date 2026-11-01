@@ -3,7 +3,7 @@
 Contact forces here are allocation targets, not measured or predicted forces.
 The physical plant and measured command delay remain independent of this model.
 """
-from amsrr_det.task_geometry import GraspFrame
+from amsrr_det.task_geometry import GraspFrame,box_face_mask
 import time
 import copy
 import numpy as np
@@ -24,13 +24,20 @@ class DesiredContactLoad:
     residual establishes that the physical robot has realized those forces.
     """
 
-    def __init__(self, plant, reference, links, friction=2.25, object_shape=None,material_friction_basis=False):
+    def __init__(self, plant, reference, links, friction=2.25, object_shape=None,material_friction_basis=False,object_face_axis=None):
         from build.sticking_design import LocalGrasp
         self.material_friction_basis=material_friction_basis
+        if object_face_axis is not None and (object_shape is None or object_shape.family not in ('box','elongated_box') or object_face_axis not in (0,1,2)):
+            raise ValueError('contact face restriction needs a box axis')
+        self.object_face_axis=object_face_axis
         self.planar = object_shape is not None and object_shape.family in (
             'box', 'elongated_box', 'triangular_prism', 'tapered_box')
         local = LocalGrasp(plant, reference, links,
                            object_shape=None if self.planar else object_shape)
+        if object_face_axis is not None:
+            distances=local.material_values()[:,0]
+            local.elements=[e for e,gap in zip(local.elements,distances)
+                if box_face_mask(e[4],object_shape.size,object_face_axis,e[5][0],gap)]
         self.shape = object_shape
         if not local.elements:
             raise ValueError('task reference has no contact material points')
@@ -196,8 +203,8 @@ class RobotDrive:
 
 
 class CurrentContactLoad(DesiredContactLoad):
-    def __init__(self, plant, reference, links, friction=2.25, object_shape=None,material_friction_basis=False):
-        super().__init__(plant, reference, links, friction, object_shape,material_friction_basis)
+    def __init__(self, plant, reference, links, friction=2.25, object_shape=None,material_friction_basis=False,object_face_axis=None):
+        super().__init__(plant, reference, links, friction, object_shape,material_friction_basis,object_face_axis)
         self.reference_elements = list(self.elements)
         self.object_geom = self.m.geom('object').id
         self.geom_pad = {}
@@ -265,10 +272,13 @@ class CurrentContactLoad(DesiredContactLoad):
             po = contact.pos+.5*contact.dist*normal
             Rp, Ro = d.xmat[bp].reshape(3, 3), d.xmat[bo].reshape(3, 3)
             local_frame=frame@Ro
+            object_point=Ro.T@(po-d.xpos[bo])
+            if self.object_face_axis is not None and not box_face_mask(object_point,self.shape.size,self.object_face_axis,local_frame[0],contact.dist):
+                continue
             if self.material_friction_basis:
                 from amsrr_det.equilibrium import contact_basis
                 local_frame=contact_basis(dict(normal=local_frame[0])).T
-            groups[pad].append((pad, bp, bo, Rp.T@(pp-d.xpos[bp]), Ro.T@(po-d.xpos[bo]), local_frame))
+            groups[pad].append((pad, bp, bo, Rp.T@(pp-d.xpos[bp]), object_point, local_frame))
             distances[pad].append(float(contact.dist))
         self.elements = list(self.reference_elements)
         active = np.zeros(self.n, bool)
@@ -310,9 +320,9 @@ class CurrentContactLoad(DesiredContactLoad):
         return c
 
 class ObjectRelativeControl:
-    def __init__(self, plant, contact_reference, links, period=.01, object_shape=None, task_projection=None, vector_directions=False,material_friction_basis=False,free_flight_integral=False):
+    def __init__(self, plant, contact_reference, links, period=.01, object_shape=None, task_projection=None, vector_directions=False,material_friction_basis=False,free_flight_integral=False,object_face_axis=None):
         self.drive=RobotDrive(plant,period)
-        self.load=CurrentContactLoad(plant,contact_reference,links,object_shape=object_shape,material_friction_basis=material_friction_basis)
+        self.load=CurrentContactLoad(plant,contact_reference,links,object_shape=object_shape,material_friction_basis=material_friction_basis,object_face_axis=object_face_axis)
         self.m=plant.mj;self.h=period;self.relative_feedback=True;self.last={}
         initial_rotation=np.empty((3,3));mujoco.mju_quat2Mat(initial_rotation.ravel(),contact_reference[self.drive.oi+3:self.drive.oi+7]);self.grasp_frame=GraspFrame(object_shape,initial_rotation)
         self.delta=np.zeros(self.m.nv);self.angle=np.zeros(3);self.integral=np.zeros(6);self.last_command=None

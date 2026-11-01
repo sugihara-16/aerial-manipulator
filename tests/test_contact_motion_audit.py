@@ -47,3 +47,35 @@ def test_sampled_clearance_does_not_skip_physical_actuator_audit():
     assert audit.proximity.queries==queries
     assert audit.max_effort_ratio==1.5
     assert audit.result()['clearance_sampling_period_s']==.1
+
+
+@pytest.mark.parametrize('include_wheel',[False,True])
+def test_face_audit_detects_top_contact_between_saved_samples(include_wheel):
+    wheel='<geom name="valve_wheel" type="sphere" pos="0 .1099 -.0199" size=".01" mass="0" condim="3"/>' if include_wheel else ''
+    m=mujoco.MjModel.from_xml_string(f'''<mujoco><option cone="elliptic" gravity="0 0 0" timestep=".001"/>
+      <worldbody><body name="m0/pad" pos="0 .1099 1"><joint name="motor"/>
+      <geom name="m0/pad/g" type="sphere" size=".01" mass=".1" condim="3"/></body>
+      <body name="object" pos="0 0 1"><freejoint name="object_joint"/>
+      <geom name="object" type="box" size=".1 .1 .1" mass="1" condim="3"/>{wheel}</body></worldbody>
+      <actuator><motor name="motor" joint="motor"/></actuator></mujoco>''')
+    p=SimpleNamespace(mj=m,meta=dict(actuators=[dict(name='motor',lower=-1,upper=1,effort=1)]))
+    d=mujoco.MjData(m);mujoco.mj_forward(m,d)
+    audit=FastTaskAudit(p,['m0/pad'],[.2,.2,.2],0.,clearance_period=.1,face_axis=1)
+    audit.face_active=True
+    assert audit.advance(d,1) is None
+    if include_wheel:
+        assert not audit.result()['contact_faces']['passes']
+        assert audit.result()['contact_faces']['maximum_non_side_normal_force_n']>0.
+        return
+    assert audit.result()['contact_faces']['passes']
+    oq=int(m.jnt_qposadr[m.joint('object_joint').id])
+    d.qpos[oq:oq+3]=[0.,.1099,.8901];d.qvel[:]=0.
+    assert audit.advance(d,1) is None  # diagnostic violation is not a stop
+    d.qpos[oq:oq+3]=[0.,0.,1.];d.qvel[:]=0.
+    assert audit.advance(d,1) is None
+    result=audit.result()['contact_faces']
+    assert result['integration_steps']==3 and result['violating_steps']==1
+    assert result['first_violation_s']==pytest.approx(.001)
+    assert result['maximum_non_side_normal_force_n']>0.
+    assert abs(result['worst_normal_local'][2])>.99
+    assert not result['passes']

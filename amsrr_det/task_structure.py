@@ -255,7 +255,7 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
     return edges, surfaces, root, values, trace
 
 
-def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fit_pose=True, opposed=True,motion_axis=None,root_score=None,support_score=None):
+def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fit_pose=True, opposed=True,motion_axis=None,root_score=None,support_score=None,preserve_box_faces=False):
     """Materialize a task-generated tree and use the original continuous fit."""
     started = time.perf_counter()
     R = pin.Quaternion(source[3:]).matrix()
@@ -283,10 +283,10 @@ def fit_generated(modules, shape, source, obstacles, points, normals, rng, *, fi
         q[actuator['q']] = values[int(module[1:])].get(name, 0.)
     inputs=dict(operation='fit_task_growth',modules=modules,edges=edges,surfaces=surfaces,
                 shape=shape.payload(),q=q.tolist(),points=(world+.001*wn).tolist(),normals=wn.tolist(),
-                obstacles=np.asarray(obstacles).tolist(),opposed=opposed)
+                obstacles=np.asarray(obstacles).tolist(),opposed=opposed,preserve_box_faces=preserve_box_faces)
     closed, fit = memoized(inputs,lambda:fit_contacts(model, meta, q, surfaces, world+.001*wn, wn,
         object_shape=shape, floor_clearance=.03, base_rotation=True, obstacles=obstacles, max_evaluations=45,
-        opposed_friction=4.5 if len(points)==2 and opposed else None,avoid_object=True))
+        opposed_friction=4.5 if len(points)==2 and opposed else None,avoid_object=True,preserve_box_faces=preserve_box_faces))
     if len(points)==2:fit['initial_object_points']=np.asarray(points).tolist()
     return dict(group='task_growth', modules=modules, edges=edges, surfaces=surfaces,
                 q=closed.tolist(), fit=fit, wall_s=time.perf_counter()-started,

@@ -115,6 +115,15 @@ def run(args):
     if selection.get('plan') is None:raise ValueError('saved input has no complete candidate')
     if plan is None:plan=unpack(spec,selection['plan'])
     system=plan.system
+    from amsrr_det.valve_contacts import require_side_contacts,require_side_geometry
+    require_side_contacts(system.control,spec.shape,plan.closed,plan.surfaces)
+    if args.plan:
+        # Old saved plans may predate the side-only contract. Check their
+        # full geometry before replay, without changing collision physics.
+        query=mujoco.MjData(system.control.mj)
+        for pose in plan.reference_path:
+            query.qpos[:]=pose;mujoco.mj_fwdPosition(system.control.mj,query)
+            require_side_geometry(system.control.mj,query,spec.shape)
     if args.plan:(out/'selection.json').write_text(json.dumps(selection,default=json_value))
     links=[f'm{n}/'+('yaw_dock_mech' if port.startswith('yaw') else 'pitch_dock_mech')+port[-1] for n,port in plan.surfaces]
     plant=system.control;m=system.m
@@ -122,7 +131,7 @@ def run(args):
     closed=path[0].copy()
     opened=plant.configuration(np.asarray(plan.opened))
     controller=ObjectRelativeControl(plant,closed,links,object_shape=spec.shape,
-        task_projection=np.r_[np.zeros(3),spec.axis][None,:],vector_directions=True,material_friction_basis=True,free_flight_integral=True)
+        task_projection=np.r_[np.zeros(3),spec.axis][None,:],vector_directions=True,material_friction_basis=True,free_flight_integral=True,object_face_axis=1)
     controller.load.nominal_normal=max(.5,spec.torque/(.4*spec.length*len(links)))
     refs=ValveReferences(system,closed,opened,angles,path,final_open,plan.surfaces,plan.normals,
         plan.geometry_angles,plan.geometry_path,plan.curve_record)
@@ -132,7 +141,7 @@ def run(args):
     d.ctrl[dr.nj:]=plan.empty_trim['thrust'];controller.last_command=d.ctrl.copy()
     mujoco.mj_forward(m,d)
     physical=SimpleNamespace(mj=m,meta=plant.meta)
-    audit=FastTaskAudit(physical,links,spec.shape.size,0.,shape=spec.shape,clearance_period=.1)
+    audit=FastTaskAudit(physical,links,spec.shape.size,0.,shape=spec.shape,clearance_period=.1,face_axis=1)
     allocation=AsyncAllocation(controller,args.worker_cpu)
     planning=time.perf_counter()-began
     if args.plan is None and planning>15.:
@@ -191,6 +200,7 @@ def run(args):
         while d.time<(sum(refs.durations)+3.) and not refs.complete:
             start=time.perf_counter();cycle=ControlCycle(m,d,.01);poll_cpu=0.
             q,v=system.observation(d);a,k=refs.update(float(d.time),q,v,float(d.qpos[system.oi]))
+            audit.face_active=refs.phase in ('LOAD','TURN','SETTLE','UNLOAD')
             command=allocation.update(float(d.time),refs.phase,a,k,observed_wall=start)
             elapsed=time.perf_counter()-start;cycle.wait_for_result(elapsed,plain)
             if not failure:
@@ -218,11 +228,14 @@ def run(args):
         mujoco.mj_differentiatePos(plant.mj,retreat_error,1.,free_q,refs.release[1])
     checks['retreat_flight']=bool(refs.release is not None and np.linalg.norm(retreat_error[:3])<.05
         and np.linalg.norm(retreat_error[3:6])<.2 and np.linalg.norm(free_v[:3])<.1 and np.linalg.norm(free_v[3:6])<.2)
+    from amsrr_det.valve_audit import side_face_evidence
+    side_faces=dict(audit.result()['contact_faces'],sampled=side_face_evidence(physical_audit.rows))
+    checks['side_faces']=side_faces['passes']
     times=np.array([r['publication_cpu_s'] for r in calls])*1000
     result=dict(task_success=bool(not failure and all(checks.values())),reason=failure or ('completed' if all(checks.values()) else 'terminal_conditions_failed'),checks=checks,
         angle_rad=float(d.qpos[system.oi]),speed_rad_s=float(d.qvel[system.ov]),modules=plant.meta['modules'],contacts=len(links),
         planning_s=planning,fresh_structure_generation=args.plan is None,wall_s=time.perf_counter()-began,simulation_s=float(d.time),audit=audit.result(),
-        control=dict(calls=len(calls),mean_ms=float(times.mean()),p99_ms=float(np.quantile(times,.99)),max_ms=float(times.max()),over10=int(sum(times>=10))),
+        side_faces=side_faces,control=dict(calls=len(calls),mean_ms=float(times.mean()),p99_ms=float(np.quantile(times,.99)),max_ms=float(times.max()),over10=int(sum(times>=10))),
         allocation=dict(calls=len(allocation.records),errors=sum(r['error'] is not None for r in allocation.records),max_ms=max((r['calculation_s'] for r in allocation.records),default=0)*1000))
     (out/'selection.json').write_text(json.dumps(selection,default=json_value,indent=2))
     for name,value in [('result',result),('trace',trace),('control_calls',calls),('allocation_calls',allocation.records)]:

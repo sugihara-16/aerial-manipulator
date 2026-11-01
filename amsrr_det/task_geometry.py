@@ -18,6 +18,39 @@ import numpy as np
 from amsrr_det.linear_program import linprog
 
 
+def box_face_mask(points,size,axis,normals=None,contact_distance=None):
+    """Identify a box face by contact location, not a tilted pad's normal.
+
+    Points and normals are in object coordinates. At an edge, two faces
+    share the point: the contact normal identifies the supporting face.
+    A 1 micrometre tie tolerance handles collision-coordinate roundoff.
+    Compressed mesh contacts approximate the surface witnesses near edges.
+    When distance is supplied, use a component-wise penetration envelope
+    to collect nearby faces, then assign the dominant normal component.
+    This is a tested edge-attribution convention, not an exact error bound
+    for arbitrary collision geometry. Face-interior contacts must retain
+    their identity under changes of depth (see the independent mesh tests).
+    Without normals, ambiguous edges/corners are excluded.
+    """
+    magnitude=np.abs(np.asarray(points));half=np.asarray(size)/2
+    distances=np.abs(magnitude-half)
+    if normals is None:
+        on_face=np.all(distances[...,axis,None]+1e-9<np.delete(distances,axis,axis=-1),axis=-1)
+        tolerance=1e-9
+    else:
+        tolerance=1e-6
+        if contact_distance is None:
+            nearest=distances<=np.min(distances,axis=-1,keepdims=True)+tolerance
+        else:
+            tolerance=tolerance+np.maximum(-np.asarray(contact_distance),0.)[...,None]*np.abs(np.asarray(normals))
+            nearest=distances<=tolerance
+        scores=np.where(nearest,np.abs(np.asarray(normals)),-1.)
+        on_face=(np.argmax(scores,axis=-1)==axis)&np.any(nearest,axis=-1)
+    finite_tolerance=np.delete(tolerance,axis,axis=-1) if np.ndim(tolerance)>0 else tolerance
+    finite=np.all(np.delete(magnitude-half,axis,axis=-1)<=finite_tolerance,axis=-1)
+    return on_face & finite
+
+
 @lru_cache(maxsize=1)
 def library():
     root = Path(__file__).resolve().parents[1]

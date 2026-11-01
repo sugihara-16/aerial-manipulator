@@ -79,14 +79,42 @@ extern "C" void motion_maximum(int states,int nq,int rows,int hinges,const int* 
  }
 }
 
+// Contact geometry and forces in mj_step's buffers share the same pre-step
+// instant. This independent monitor never changes a command or stops a task.
+extern "C" void audit_face_step(const mjModel* m,const mjData* d,int object,int axis,const double* size,double* stats){
+ const double* origin=d->geom_xpos+3*object;const double* R=d->geom_xmat+9*object;
+ double total=0.,torque=0.;stats[0]+=1.;
+ for(int k=0;k<d->ncon;++k){
+  const auto& c=d->contact[k];const int ob=m->geom_bodyid[object];
+  bool first=m->geom_bodyid[c.geom[0]]==ob,second=m->geom_bodyid[c.geom[1]]==ob;
+  if((!first&&!second)||c.efc_address<0)continue;
+  const int other=c.geom[first?1:0];const char* name=mj_id2name(m,mjOBJ_BODY,m->geom_bodyid[other]);
+  if(!name||name[0]!='m'||name[1]<'0'||name[1]>'9')continue;
+  const double sign=second?1.:-1.;double point[3],normal[3],world[3],local[6],force[3],arm[3],moment[3];
+  for(int j=0;j<3;++j)world[j]=c.pos[j]+.5*c.dist*sign*c.frame[j]-origin[j];
+  mju_mulMatTVec(point,R,world,3,3);mju_mulMatTVec(normal,R,c.frame,3,3);mju_scl3(normal,normal,sign);
+  double distance[3],tolerance[3];for(int j=0;j<3;++j){distance[j]=std::abs(std::abs(point[j])-.5*size[j]);tolerance[j]=1e-6+std::max(0.,-c.dist)*std::abs(normal[j]);}
+  int face=-1;double best=-1.;for(int j=0;j<3;++j)if(distance[j]<=tolerance[j]&&std::abs(normal[j])>best){best=std::abs(normal[j]);face=j;}
+  bool side=c.geom[first?0:1]==object&&face==axis;for(int j=0;j<3;++j)if(j!=axis&&std::abs(point[j])>.5*size[j]+tolerance[j])side=false;
+  if(side)continue;
+  mj_contactForce(m,d,k,local);const double load=std::abs(local[0]);total+=load;
+  mju_mulMatTVec(force,c.frame,local,3,3);mju_scl3(force,force,sign);mju_sub3(arm,c.pos,origin);mju_cross(moment,arm,force);
+  torque+=R[2]*moment[0]+R[5]*moment[1]+R[8]*moment[2];
+  if(load>stats[14]){stats[14]=load;stats[7]=other;std::copy_n(point,3,stats+8);std::copy_n(normal,3,stats+11);}
+ }
+ stats[2]=std::max(stats[2],total);stats[3]+=total*m->opt.timestep;stats[4]=std::max(stats[4],std::abs(torque));
+ if(total>1e-6){if(stats[1]==0.)stats[5]=d->time-m->opt.timestep;stats[1]+=1.;stats[6]=d->time-m->opt.timestep;}
+}
+
 extern "C" int audit_advance(const mjModel* m,mjData* d,int steps,int carried,int grasp,
  int object,int pads,const int* bodies,const int* group,const int* support,
  int na,const int* ai,const int* qi,const int* vi,const double* limits,const double* effort,
  int shape,const double* size,int nv,const double* vertices,double top,
- double* stats,double* saturation,double* gaps,double* anchors,double* normal,int capacity,int* unexpected,int* count_out){
+ double* stats,double* saturation,double* gaps,double* anchors,double* normal,int capacity,int* unexpected,int* count_out,int face_axis,double* face_stats){
  std::vector<int> all;int failure=0;
  for(int step=0;step<steps;++step){
   mj_step(m,d);std::vector<int> pairs(2*d->ncon);
+  if(face_axis>=0)audit_face_step(m,d,object,face_axis,size,face_stats);
   int n=audit_step(m,d,carried,grasp,object,pads,bodies,group,support,na,ai,qi,vi,limits,effort,shape,size,nv,vertices,top,stats,saturation,gaps,anchors,normal,pairs.data());
   if(n<0){failure=5;break;}
   for(int k=0;k<n;++k){int a=pairs[2*k],b=pairs[2*k+1];if(a>b)std::swap(a,b);bool found=false;for(unsigned j=0;j<all.size();j+=2)if(all[j]==a&&all[j+1]==b){found=true;break;}if(!found){all.push_back(a);all.push_back(b);}}

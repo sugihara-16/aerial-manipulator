@@ -300,14 +300,14 @@ extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
     const double* delta,double* residuals,double* derivatives) {
   try {
     auto& c=*static_cast<Context*>(pointer);
-    if(shape<0||shape>4||int(c.frames.size())!=count+int(shape!=0)||(shape==4&&(!ne||!nt)))
+    if(shape<0||shape>5||int(c.frames.size())!=count+int(shape!=0)||(shape==4&&(!ne||!nt)))
       throw std::runtime_error("invalid fused fit shape/frames");
     int nb=c.parts.size()*(c.obstacles.size()+int(c.floor));
     std::vector<double> poses(12*c.frames.size()),jac(6*nx*c.frames.size()),br(nb),bj(nb*nx);
     int status=geometry_evaluate(pointer,configuration,tangent_map,nx,poses.data(),jac.data(),br.data(),bj.data());
     if(status)return status;
-    if(opposed_friction>0. && (count!=2||!shape))throw std::runtime_error("invalid opposed contact fit");
-    int rows=count*(shape?7:6)+(opposed_friction>0.?3:0),total=rows+nb+nx;
+    if(opposed_friction>0. && (count!=2||!shape||shape==5))throw std::runtime_error("invalid opposed contact fit");
+    int rows=count*(shape==5?9:shape?7:6)+(opposed_friction>0.?3:0),total=rows+nb+nx;
     Eigen::Map<Vec> r(residuals,total);Eigen::Map<RowMat> D(derivatives,total,nx);D.setZero();
     Eigen::Matrix3d R=Eigen::Matrix3d::Identity();V3 object=V3::Zero(),axes=V3::Ones();
     if(shape) {R=Eigen::Map<const RowMat>(poses.data()+12*count+3,3,3);object=Eigen::Map<const V3>(poses.data()+12*count);axes=Eigen::Map<const V3>(half_size);}
@@ -322,6 +322,20 @@ extern "C" int geometry_fit_evaluate(void* pointer,const double* configuration,
         r.segment<3>(6*i)=position-target;
         r.segment<3>(6*i+3)=.15*(normal-Eigen::Map<const V3>(target_normals+3*i));
         D.middleRows(6*i,3)=J.topRows(3);D.middleRows(6*i+3,3)=.15*normal_jac;
+      } else if(shape==5) {
+        V3 local=R.transpose()*(position-object);
+        V3 outward=-R.transpose()*Eigen::Map<const V3>(target_normals+3*i);
+        Eigen::Index axis;outward.cwiseAbs().maxCoeff(&axis);
+        double sign=outward[axis]>0.?1.:-1.;outward.setZero();outward[axis]=sign;
+        V3 surface=local.cwiseMax(-axes).cwiseMin(axes);surface[axis]=sign*axes[axis];
+        Eigen::Matrix3d active=Eigen::Matrix3d::Zero();
+        for(int j=0;j<3;++j)active(j,j)=(j==axis||std::abs(local[j])>axes[j])?1.:0.;
+        r.segment<3>(9*i)=local-surface-contact_gaps[i]*outward;
+        r.segment<3>(9*i+3)=.15*(normal+R*outward);
+        r.segment<3>(9*i+6)=.03*(position-target);
+        D.middleRows(9*i,3)=active*R.transpose()*J.topRows(3);
+        D.middleRows(9*i+3,3)=.15*normal_jac;
+        D.middleRows(9*i+6,3)=.03*J.topRows(3);
       } else {
         V3 local=R.transpose()*(position-object),outward,gradient;Eigen::Matrix3d dn;
         double gap;primitive_surface(shape,local,axes,gap,outward,ne,equations,nt,triangles,triangle_zero);

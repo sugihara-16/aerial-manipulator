@@ -230,9 +230,11 @@ def support_obstacles(shape,source,destination,support_top):
     return [(np.array(center),np.r_[half,support_top/2]) for center in sorted(centers)]
 
 
-def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, base_rotation=True,obstacles=(),open_posture=True):
+def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, base_rotation=True,obstacles=(),open_posture=True,preserve_box_faces=False,face_center_axis=None):
     from .contact_geometry import material_triangles,close_material
     R=pin.Quaternion(source[3:]).matrix();world=points@R.T+source[:3];world_normals=normals@R.T
+    if face_center_axis is not None and (not preserve_box_faces or face_center_axis not in (0,1,2) or np.max(abs(normals[:,face_center_axis]))>1e-8):
+        raise ValueError('face centering needs a tangent axis on a preserved box face')
     pd=p.pin.createData();frames=[p.meta["frames"][grasp_frame(*s)] for s in surfaces]
     fit=dict(position_error_m=0.,normal_error=0.,scope='material_contact_fit',task_success=False)
     # Contact frames lie at authored coordinates, but a curved object can enter
@@ -255,8 +257,10 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
         material_normals=np.array(material_normals)
         frame_normals=np.array([pd.oMf[frame].rotation[:,0] for frame in frames])
         alignment=np.linalg.norm(frame_normals-material_normals,axis=1)
+        face_error=np.linalg.norm(material_normals-world_normals,axis=1) if preserve_box_faces else np.zeros(len(frames))
+        center_error=np.zeros(len(frames)) if face_center_axis is None else np.array([obj.actInv(center)[face_center_axis] for center in patch_centers])
         gap_tolerance=.00005 if iteration>=6 else .00001
-        if np.max(abs(gap-NOMINAL_CONTACT_GAP))<gap_tolerance and alignment.max()<.1:break
+        if np.max(abs(gap-NOMINAL_CONTACT_GAP))<gap_tolerance and alignment.max()<.1 and face_error.max()<1e-8 and np.max(abs(center_error))<.001:break
         centers=np.array([pd.oMf[frame].translation for frame in frames])
         # Contact sites may move along a face. Do not sacrifice the actual gap
         # to restore an arbitrary patch centroid or improve an already allowed
@@ -265,7 +269,19 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
         # its normal, rather than the original numerical site's normal.
         preserve=alignment<.1
         fit_normals=np.where(preserve[:,None],frame_normals,material_normals)
-        if iteration<6:
+        if preserve_box_faces:
+            # Keep the designated finite face, while allowing tangential
+            # movement. Real material offsets, not an imagined flat pad,
+            # determine how far its authored frame must enter that face.
+            local=(centers-obj.translation)@obj.rotation
+            outward=-normals
+            frame_gaps=np.sum(local*outward,axis=1)-np.sum(abs(outward)*shape.size/2,axis=1)
+            target_gaps=np.where(face_error<1e-8,frame_gaps-gap+NOMINAL_CONTACT_GAP,NOMINAL_CONTACT_GAP)
+            targets=centers if face_center_axis is None else centers-center_error[:,None]*obj.rotation[:,face_center_axis]
+            closed,fit=fit_contacts(p.pin,p.meta,closed,surfaces,targets,world_normals,
+                floor_clearance=.03,base_rotation=base_rotation,obstacles=obstacles,
+                object_shape=shape,contact_gap=target_gaps,preserve_box_faces=True)
+        elif iteration<6:
             closed,fit=fit_contacts(p.pin,p.meta,closed,surfaces,centers+(gap-NOMINAL_CONTACT_GAP)[:,None]*material_normals,fit_normals,
                                    floor_clearance=.03,base_rotation=base_rotation,obstacles=obstacles)
         else:
@@ -291,11 +307,14 @@ def refine_material_posture(p,shape,source,closed,surfaces,points,normals, *, ba
     fit.update(material_gap_m=gap.tolist(),material_normal_error=max(alignment),
                nominal_contact_gap_m=NOMINAL_CONTACT_GAP,physical_contact_equilibrium_verified=False,
                contact_target_shift_m=np.linalg.norm(np.array(actual_points)-points,axis=1).tolist())
-    if np.max(abs(gap-NOMINAL_CONTACT_GAP))>.00005 or max(alignment)>.1:
+    wrong_face=preserve_box_faces and any(np.max(np.linalg.norm(outward+normal,axis=1))>1e-8
+        for (_,_,_,outward),normal in zip(patches,normals))
+    if np.max(abs(gap-NOMINAL_CONTACT_GAP))>.00005 or max(alignment)>.1 or wrong_face:
         error=ValueError('material contact fit failed')
         error.evidence=dict(fit=fit,q=closed.tolist(),surfaces=surfaces,points=points.tolist(),normals=normals.tolist(),material_gap=gap.tolist(),tangent_error=tangent.tolist())
         raise error
     points[:]=actual_points;normals[:]=actual_normals
+    if preserve_box_faces:fit['preserved_box_faces']=True
     opened=open_material_posture(p,shape,source,closed,surfaces,normals,fit,
         base_rotation=base_rotation,obstacles=obstacles) if open_posture else None
     return opened,closed,fit

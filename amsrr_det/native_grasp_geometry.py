@@ -122,9 +122,12 @@ class GeometryKernel:
         if status:raise RuntimeError(self.lib.geometry_error().decode())
         return self.poses,self.jacobians,self.residual,self.derivative
 
-    def fit(self,q,lift,points,normals,shape,gap,delta,opposed_friction=None):
+    def fit(self,q,lift,points,normals,shape,gap,delta,opposed_friction=None,*,preserve_box_faces=False):
         kind=0 if shape is None else {'box':1,'elongated_box':1,'cylinder':2,'ellipsoid':3,'triangular_prism':4,'tapered_box':4}.get(getattr(shape,'family',None))
         if kind is None:return None
+        if preserve_box_faces:
+            if kind!=1 or opposed_friction is not None:raise ValueError('invalid fixed box face fit')
+            kind=5
         from trimesh.constants import tol
         equations=np.ascontiguousarray(shape.equations if kind==4 else [],dtype=float)
         triangles=np.ascontiguousarray(shape.triangles if kind==4 else [],dtype=float)
@@ -132,7 +135,7 @@ class GeometryKernel:
                 [q,lift,points,normals,np.ones(3) if shape is None else shape.size/2,delta]]
         q,lift,points,normals,size,delta=arrays
         gaps=np.ascontiguousarray(np.broadcast_to(gap,len(points)),dtype=float)
-        rows=len(points)*(7 if kind else 6)+len(self.residual)+self.nx+(3 if opposed_friction is not None else 0)
+        rows=len(points)*(9 if kind==5 else 7 if kind else 6)+len(self.residual)+self.nx+(3 if opposed_friction is not None else 0)
         residual=np.empty(rows);derivative=np.empty((rows,self.nx))
         status=self.lib.geometry_fit_evaluate(self.handle,q.ctypes.data,lift.ctypes.data,self.nx,
             len(points),points.ctypes.data,normals.ctypes.data,kind,size.ctypes.data,gaps.ctypes.data,

@@ -9,6 +9,7 @@ from .grasp_task import refine_material_posture,material_force_contacts,open_mat
 from .grasp_geometry import aim_rotors_up,grasp_frame,fit_contacts
 from .valve_trim import static_balance
 from .structure_bounds import hover_input_burden
+from .valve_contacts import require_side_contacts,require_side_geometry,side_normals
 
 
 def contact_roles(spec,count,rng):
@@ -147,7 +148,7 @@ def candidate(spec,modules,contacts,rng,*,compile_model=True):
     obstacles=mounting_obstacles(spec)
     from .valve_root import task_root_score
     from .valve_growth import support_score
-    generated=fit_generated(modules,spec.shape,source,obstacles,points,normals,rng,opposed=False,motion_axis=spec.axis,
+    generated=fit_generated(modules,spec.shape,source,obstacles,points,normals,rng,opposed=False,motion_axis=spec.axis,preserve_box_faces=True,
         root_score=(lambda port,k,sign,R:task_root_score(spec,points[0],normals[0],port,k,sign,R)) if modules==1 else None,
         support_score=lambda edges,surfaces,root,values:support_score(spec,edges,surfaces,root,values))
     # Geometry fitting and the force screen only use rigid-body kinematics.
@@ -159,9 +160,9 @@ def candidate(spec,modules,contacts,rng,*,compile_model=True):
     plant=SimpleNamespace(pin=model,meta=meta)
     points=np.asarray(generated['generation']['target_points']);normals=np.asarray(generated['generation']['target_normals'])
     opened,closed,fit=refine_material_posture(plant,spec.shape,source,np.asarray(generated['q']),
-        generated['surfaces'],points,normals,open_posture=False,obstacles=obstacles)
+        generated['surfaces'],points,normals,open_posture=False,obstacles=obstacles,preserve_box_faces=True,face_center_axis=2)
     closed=aim_rotors_up(plant.pin,plant.meta,closed)
-    force_contacts=material_force_contacts(plant,spec.shape,closed,generated['surfaces'],force_limit=None,material_tangents=True)
+    force_contacts=require_side_contacts(plant,spec.shape,closed,generated['surfaces'])
     wanted=np.r_[np.zeros(3),np.asarray(spec.axis)*np.sign(spec.target_angle)*spec.torque*1.1]
     support=bearing_support(spec);gimbals=[a for a in plant.meta['actuators'] if a['role']=='vectoring']
     from .steerable_trim import steerable_trim
@@ -302,6 +303,7 @@ def _complete_path(plan):
     def geometry(q,*,before_directions=False):
         nonlocal checked
         d.qpos[:]=q;mujoco.mj_fwdPosition(p.mj,d);checked+=1
+        require_side_geometry(p.mj,d,spec.shape,ignore_geoms=rotor_geoms if before_directions else ())
         for contact in d.contact:
             if contact.dist>=-.001:continue
             if before_directions and any(int(g) in rotor_geoms for g in contact.geom):continue
@@ -315,6 +317,8 @@ def _complete_path(plan):
     # Body/Dock intersections cannot be repaired by changing rotor angles.
     # Screen the entire fixed geometry before expensive force continuation.
     frame_ids=[p.meta['frames'][grasp_frame(*s)] for s in plan.surfaces]
+    from .contact_geometry import close_material,material_triangles
+    triangles=[material_triangles(port,p.meta.get('material_mesh_cache')) for _,port in plan.surfaces]
     pdata=p.pin.createData();material_reference=None;material_position_error=material_angle_error=0.
     for angle in ([dense[0]] if geometry_symmetry else dense):
         pose=curve.pose(angle);geometry(pose,before_directions=True)
@@ -322,6 +326,11 @@ def _complete_path(plan):
         pin.framesForwardKinematics(p.pin,pdata,configuration)
         obj=pdata.oMf[p.meta['object']['frame']]
         material=[obj.inverse()*pdata.oMf[f] for f in frame_ids]
+        # Poses are already available. Face identity needs material normals,
+        # not another forward pass or per-point force-allocation records.
+        for placement,mesh in zip(material,triangles):
+            if not side_normals(close_material(spec.shape,placement,mesh)[3]).all():
+                raise ValueError('valve contact material must stay on bar side faces')
         if material_reference is None:material_reference=material
         for expected,actual in zip(material_reference,material):
             material_position_error=max(material_position_error,float(np.linalg.norm(expected.translation-actual.translation)))

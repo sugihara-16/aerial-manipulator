@@ -85,7 +85,17 @@ def opposed_contact_terms(points,normals,friction,point_jac=None,normal_jac=None
     return error,derivative*(raw>0)[:,None]
 
 
-def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False,base_upright_weight=0.,position_metric=None,frame_tangents=None):
+def box_face_projection(points,half,outward):
+    """Closest points on designated finite box faces, with exact derivatives."""
+    axis=np.argmax(abs(outward),axis=1);indices=np.arange(len(points))
+    surface=np.clip(points,-half,half)
+    surface[indices,axis]=outward[indices,axis]*half[axis]
+    active=abs(points)>half
+    active[indices,axis]=True
+    return surface,np.array([np.diag(row.astype(float)) for row in active])
+
+
+def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False,base_upright_weight=0.,position_metric=None,frame_tangents=None,preserve_box_faces=False):
     # Repeated matrix/quaternion conversions can amplify roundoff along a
     # retreat path. Dynamics and Jacobians require unit quaternions.
     q0=pin.normalize(model,q0)
@@ -100,6 +110,15 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
             for i in range(meta['modules']) for link,center,half in part_bounds()]
     if points.shape!=(len(surfaces),3) or normals.shape!=points.shape or not np.allclose(np.linalg.norm(normals,axis=1),1):
         raise ValueError('invalid contact targets')
+    face_outward=None
+    if preserve_box_faces:
+        if object_shape is None or object_shape.family not in ('box','elongated_box') or opposed_friction is not None or normal_moment_axis is not None:
+            raise ValueError('fixed box faces need a box without movable-normal objectives')
+        pin.framesForwardKinematics(model,data,q0)
+        face_outward=-normals@data.oMf[meta['object']['frame']].rotation
+        if not np.allclose(np.max(abs(face_outward),axis=1),1.,atol=1e-8,rtol=0):
+            raise ValueError('fixed box face normals must follow object axes')
+        face_outward=np.round(face_outward)
     if opposed_friction is not None and (len(surfaces)!=2 or object_shape is None or opposed_friction<=0):
         raise ValueError('opposed contact fitting needs two movable surface sites and positive friction')
     opposition_limit=float(np.linalg.norm(normals.sum(axis=0))) if opposed_friction is not None else None
@@ -150,7 +169,7 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 lift[3:6,3:6]=rotation.T@left
             lift[[a['v'] for a in active],3+nr+np.arange(len(active))]=1
             if kernel is not None:
-                fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0,opposed_friction) if frame_tangents is None else None
+                fused=kernel.fit(q,lift,points,normals,object_shape,contact_gap,x-x0,opposed_friction,preserve_box_faces=preserve_box_faces) if frame_tangents is None else None
                 if fused is not None:
                     if samples is None:return fused
                     extra,extra_jac=kernel.object_avoidance(lift,meta['object']['frame'],samples,object_shape,grouped=True)
@@ -162,6 +181,13 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 if object_shape is None:
                     contact=np.concatenate([position-points,.15*(normal-normals)],axis=1)
                     derivative=np.concatenate([linear,.15*normal_jac],axis=1)
+                elif preserve_box_faces:
+                    obj_position=poses[-1,:3];obj_rotation=poses[-1,3:].reshape(3,3)
+                    local=(position-obj_position)@obj_rotation
+                    surface,projection_jac=box_face_projection(local,object_shape.size/2,face_outward)
+                    contact=np.concatenate([local-surface-np.broadcast_to(contact_gap,count)[:,None]*face_outward,
+                        .15*(normal+face_outward@obj_rotation.T),.03*(position-points)],axis=1)
+                    derivative=np.concatenate([projection_jac@obj_rotation.T@linear,.15*normal_jac,.03*linear],axis=1)
                 else:
                     obj_position=poses[-1,:3];obj_rotation=poses[-1,3:].reshape(3,3)
                     local=(position-obj_position)@obj_rotation
@@ -201,6 +227,8 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
             obj=data.oMf[meta['object']['frame']]
             local_points=np.array([obj.actInv(data.oMf[f].translation) for f in frames])
             surface,gaps,outwards=object_shape.project_surface(local_points)
+            if preserve_box_faces:
+                surface,projection_jac=box_face_projection(local_points,object_shape.size/2,face_outward)
             if want_jac:
                 h=1e-6;offset=h*np.eye(3)
                 perturb=np.concatenate([local_points[:,None,:]+offset,local_points[:,None,:]-offset],axis=1)
@@ -214,6 +242,16 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
                 r.extend(T.translation-p);r.extend(.15*(T.rotation[:,0]-n))
                 if want_jac:
                     J=jac(f);rows.extend(J[:3]);rows.extend(-.15*pin.skew(T.rotation[:,0])@J[3:])
+            elif preserve_box_faces:
+                gap=contact_gap[pad] if np.ndim(contact_gap) else contact_gap
+                r.extend(local_points[pad]-surface[pad]-gap*face_outward[pad])
+                r.extend(.15*(T.rotation[:,0]+obj.rotation@face_outward[pad]))
+                r.extend(.03*(T.translation-p))
+                if want_jac:
+                    J=jac(f)
+                    rows.extend(projection_jac[pad]@obj.rotation.T@J[:3])
+                    rows.extend(-.15*pin.skew(T.rotation[:,0])@J[3:])
+                    rows.extend(.03*J[:3])
             else:
                 r.append(gaps[pad]-(contact_gap[pad] if np.ndim(contact_gap) else contact_gap))
                 r.extend(.15*(T.rotation[:,0]+obj.rotation@outwards[pad]))
@@ -384,6 +422,13 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
         report.update(position_error_m=float(np.max(abs(gaps-contact_gap))),
             normal_error=max(np.linalg.norm(data.oMf[f].rotation[:,0]+obj.rotation@n) for f,n in zip(frames,outward)),
             object_points=surface.tolist(),inward_normals=(-outward).tolist())
+        if preserve_box_faces:
+            local=np.array([obj.actInv(data.oMf[f].translation) for f in frames])
+            surface,_=box_face_projection(local,object_shape.size/2,face_outward)
+            error=local-surface-np.broadcast_to(contact_gap,len(frames))[:,None]*face_outward
+            report.update(position_error_m=float(np.max(np.linalg.norm(error,axis=1))),
+                normal_error=max(np.linalg.norm(data.oMf[f].rotation[:,0]+obj.rotation@n) for f,n in zip(frames,face_outward)),
+                object_points=surface.tolist(),inward_normals=(-face_outward).tolist(),preserved_box_faces=True)
         if opposed_friction is not None:
             report.update(opposed_friction=opposed_friction,
                 opposition_normal_sum_limit=opposition_limit,
