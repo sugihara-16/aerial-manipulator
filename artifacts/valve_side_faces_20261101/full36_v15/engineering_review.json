@@ -1,0 +1,296 @@
+{
+  "panel": "full36_v15",
+  "evidence": [
+    "audit_summary.json",
+    "failure_observations.json",
+    "acquisition_support_review.json",
+    "structure_breadth.jpg"
+  ],
+  "quantitative_requirements_pass": true,
+  "mechanical_review_completed": true,
+  "conclusion_ja": "側面限定の固定36条件で30成功（83.3%）。1〜8機すべてで成功。初期計画15秒以内、指令発行10ms以内、実測遅延を反映。事前の群比較で明確集中を検出せず、今回の成功率・台数幅・時間の要求を満たす。",
+  "failure_mechanisms": [
+    {
+      "id": "low_up_t3_a1",
+      "reason": "terminal_conditions_failed",
+      "modules": 1,
+      "contacts": 1,
+      "planning_s": 3.7185927708633244,
+      "failed_checks": [
+        "side_faces"
+      ],
+      "final_angle_deg": 180.60776557878495,
+      "first_large_pose_error": null,
+      "first_contact_gap_over_1cm": null,
+      "numerical_fallback_samples": 0,
+      "work_samples": 331,
+      "publication": {
+        "calls": 4814,
+        "mean_ms": 0.6620079874032803,
+        "p99_ms": 0.9302985155954956,
+        "max_ms": 1.947173848748207,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 4814,
+        "errors": 0,
+        "max_ms": 5.829308182001114
+      }
+    },
+    {
+      "id": "middle_down_t24_a1",
+      "reason": "terminal_conditions_failed",
+      "modules": 4,
+      "contacts": 2,
+      "planning_s": 12.513657185714692,
+      "failed_checks": [
+        "side_faces"
+      ],
+      "final_angle_deg": 180.0080685395944,
+      "first_large_pose_error": null,
+      "first_contact_gap_over_1cm": null,
+      "numerical_fallback_samples": 6,
+      "work_samples": 331,
+      "publication": {
+        "calls": 4814,
+        "mean_ms": 0.786933901874131,
+        "p99_ms": 1.0816047247499228,
+        "max_ms": 1.3548927381634712,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 4807,
+        "errors": 0,
+        "max_ms": 11.767552234232426
+      }
+    },
+    {
+      "id": "high_up_t60_a1",
+      "reason": "no_candidate",
+      "modules": null,
+      "contacts": null,
+      "planning_s": 8.951905148103833,
+      "failed_checks": []
+    },
+    {
+      "id": "high_down_t48_a0",
+      "reason": "terminal_conditions_failed",
+      "modules": 6,
+      "contacts": 2,
+      "planning_s": 11.766828404273838,
+      "failed_checks": [
+        "angle",
+        "retreat_flight",
+        "side_faces"
+      ],
+      "final_angle_deg": -46.49801681018405,
+      "first_large_pose_error": {
+        "time_s": 4.200000000001549,
+        "phase": "LOAD",
+        "angle": 0.11430617948439091,
+        "relative_position_error_m": 0.12556121135515977,
+        "relative_angle_error_rad": 0.14599221276411722,
+        "pad_gaps": [
+          0.06644303628542118,
+          -0.002329284896578041
+        ]
+      },
+      "first_contact_gap_over_1cm": {
+        "time_s": 4.100000000001782,
+        "phase": "LOAD",
+        "angle": 0.11410387753707334,
+        "relative_position_error_m": 0.07736505043458118,
+        "relative_angle_error_rad": 0.11855239460759646,
+        "pad_gaps": [
+          0.04001135338865263,
+          -0.0026654895065239223
+        ]
+      },
+      "numerical_fallback_samples": 0,
+      "work_samples": 331,
+      "publication": {
+        "calls": 4814,
+        "mean_ms": 0.8666005693058788,
+        "p99_ms": 1.1844173492863765,
+        "max_ms": 1.5775631181895733,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 4811,
+        "errors": 0,
+        "max_ms": 10.516244918107986
+      }
+    },
+    {
+      "id": "high_down_t48_a1",
+      "reason": "terminal_conditions_failed",
+      "modules": 6,
+      "contacts": 2,
+      "planning_s": 10.711881041061133,
+      "failed_checks": [
+        "angle",
+        "retreat_flight",
+        "side_faces"
+      ],
+      "final_angle_deg": 0.5004070725138549,
+      "first_large_pose_error": {
+        "time_s": 4.100000000001782,
+        "phase": "LOAD",
+        "angle": 0.008090582747266652,
+        "relative_position_error_m": 0.10776346536237168,
+        "relative_angle_error_rad": 0.36295129883712884,
+        "pad_gaps": [
+          0.002227632845300604,
+          0.2110208962850396
+        ]
+      },
+      "first_contact_gap_over_1cm": {
+        "time_s": 4.100000000001782,
+        "phase": "LOAD",
+        "angle": 0.008090582747266652,
+        "relative_position_error_m": 0.10776346536237168,
+        "relative_angle_error_rad": 0.36295129883712884,
+        "pad_gaps": [
+          0.002227632845300604,
+          0.2110208962850396
+        ]
+      },
+      "numerical_fallback_samples": 60,
+      "work_samples": 331,
+      "publication": {
+        "calls": 4814,
+        "mean_ms": 0.8513648264144138,
+        "p99_ms": 1.1412090202793477,
+        "max_ms": 1.2728185392916203,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 4811,
+        "errors": 0,
+        "max_ms": 10.522953700274229
+      }
+    },
+    {
+      "id": "high_down_t60_a0",
+      "reason": "terminal_conditions_failed",
+      "modules": 8,
+      "contacts": 1,
+      "planning_s": 11.051448577083647,
+      "failed_checks": [
+        "side_faces"
+      ],
+      "final_angle_deg": 180.08954183621603,
+      "first_large_pose_error": null,
+      "first_contact_gap_over_1cm": null,
+      "numerical_fallback_samples": 4,
+      "work_samples": 331,
+      "publication": {
+        "calls": 4814,
+        "mean_ms": 0.8556335894789471,
+        "p99_ms": 1.1552077578380704,
+        "max_ms": 1.5827449969947338,
+        "over10": 0
+      },
+      "allocation": {
+        "calls": 4788,
+        "errors": 0,
+        "max_ms": 13.840258121490479
+      }
+    }
+  ],
+  "mechanical_assessment_ja": "失敗6件は候補未発見1件、全終点達成だが実際の端面/上面接触3件、荷重移行での追従逸脱2件。後者は下向き48Nm・6機・2接触に共通するが、同じ帯の3件目は6機2接触で成功。下60Nmでは7機/6機が成功、8機1件は上面接触。計画された接近姿勢は開ローター方向でも同期補間でも6時点すべて静的保持成立。実観測は3.5秒まで成立、4秒で下48の失敗2件だけ不成立。これは追従逸脱後の支持能力低下の証拠で、最初の逸脱原因は未特定。下48の弱さは残し、全高負荷や全6機の共通欠陥を確定したとはしない。",
+  "failure_concentration": {
+    "predeclared_comparisons": 41,
+    "clear_concentration": false,
+    "minimum_unadjusted_p": 0.06582633053221287,
+    "equal_failure_rates_certified": false,
+    "weak_groups": {
+      "high_load": "8/12",
+      "down_axis": "8/12",
+      "down_48_nm": "1/3"
+    }
+  },
+  "contact_face_validation": {
+    "phases": [
+      "LOAD",
+      "TURN",
+      "SETTLE",
+      "UNLOAD"
+    ],
+    "physics_step_s": 0.000125,
+    "successful_cases": 30,
+    "successful_monitored_steps": 9358000,
+    "successful_violating_steps": 0,
+    "normal_force_zero_tolerance_n": 1e-06,
+    "scope": "Every integration-step monitor examines all robot contacts with the moving valve body. Only bar local ±y faces pass. Stored sampled forces and saved final states are checked by the independent report; continuous counters are recorded by the monitor, not independently replayed during reporting.",
+    "edge_classification": "A tested component-wise penetration envelope and dominant contact normal identify faces near shared edges. This is an approximate attribution convention, not an exact geometric error bound. Real top/end contacts remain failed.",
+    "physical_model_changes_in_this_task": false
+  },
+  "relative_pose_integral": {
+    "update_phases": [
+      "APPROACH",
+      "UNLOAD"
+    ],
+    "hold_phases": [
+      "LOAD",
+      "TURN",
+      "SETTLE"
+    ],
+    "reset_phases": [
+      "OPEN",
+      "RETREAT"
+    ],
+    "held_quantity": "world-fixed bounded acceleration correction; angular part transformed into the current base frame",
+    "scope": "Enabled for valve only. Acquiring/unloading uses tracking_fraction == 0; LOAD has tracking_fraction == 1 and therefore holds, not updates. Earlier progress shorthand that included LOAD was too broad."
+  },
+  "timing": {
+    "publisher": {
+      "samples": 177075,
+      "mean_ms": 0.7566785673290958,
+      "p99_ms": 1.088300347328186,
+      "max_ms": 4.282212816178799,
+      "over10": 0
+    },
+    "observation_to_application": {
+      "samples": 176830,
+      "mean_ms": 5.368988576568336,
+      "p99_ms": 9.12500000004357,
+      "max_ms": 23.124999999946105,
+      "over10": 1644
+    },
+    "sampling": {
+      "intervals": 177040,
+      "maximum_ms": 10.000000000047748,
+      "late_intervals": 0
+    },
+    "planning_s": {
+      "mean": 10.011503269132744,
+      "max": 13.509657318238169
+    },
+    "total_wall_s": 3907.395439347718
+  },
+  "limitations_ja": [
+    "開発で再利用した固定入力/乱数の同一版確認。未知条件の成功率推定ではない。",
+    "非鉛直9件は6Nm以下、高負荷48/60Nmは鉛直のみ。全トルク×全方向を検証していない。",
+    "高負荷8/12と下向き48Nm1/3の弱さは残る。明確集中の非検出は失敗率の等しさの証明ではない。",
+    "10ms以内なのは指令発行。新しい計算結果の作用は最大23.125msで、その遅延中も物理を進めた。",
+    "把持150条件、VIM4、実機は今回再検証していない。"
+  ],
+  "verification": {
+    "related_tests_passed": 272,
+    "test_log": "../tests15.log",
+    "runtime_manifest_files_checked": 1548,
+    "runtime_manifest_mismatches": [],
+    "git_diff_check_passed": true,
+    "audit_issues": [],
+    "source_changes_during_execution": false,
+    "documentation_missing_links": []
+  },
+  "pro_final_review": {
+    "status": "reviewed",
+    "round": 76,
+    "record": "../pro_round76.txt",
+    "screenshot": "../pro_round76.png",
+    "assessment_ja": "確定集計30/36、全1〜8機、台数帯15/16・10/11・5/8、側面判定・計画/発行時間と終了判断に具体的不整合なし。1–2機帯の記載不足は補足後の回答で解消を確認。Proによるコード/ログ再実行ではなく、提示結果の整合レビュー。"
+  }
+}

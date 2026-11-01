@@ -1,0 +1,119 @@
+追加レビュー75。側面限定の固定36件を同一実装で実行中です。30件時点27成功。低11/12、中11/12、上向き高負荷5/6成功。成功台数1〜6と8、6機48Nm上向き/8機60Nm上向きも成功。面判定の独立92配置を含む関連272検査成功。接近/荷重移行中だけ有界相対姿勢積分、回転中保持（世界一定加速度）、解放でリセット。相対PDは元の16/8。64/16への増強は水平/傾斜下3Nmを崩し、同じ構造で16/8へ戻して全刻み側面込み成功を確認したので撤回。計画高速化後、初期計画3.6〜13.6秒/発行max4.29ms/超過0。
+根本的な残件：下向き48Nmで、選ばれた6機構造2件が接近〜荷重移行で崩れています。第1例の相対位置/姿勢誤差は3.0s APPROACH .11m/.36rad、4.0s .038m/.181rad、4.5s LOAD .128m/.643rad、5.0s 1.26m/3.08rad。4.2〜5.28sにbar端面法線x=.987の衝突、最大2251N（評価値、モータ上限は維持）。5.5sには接触なし、回転-46.5度で停止。したがって回転中の積分保持より前に崩れています。第2例も同じ6機/48Nm下向きで相対位置1.5m・角度1.77rad、回転.5度で停止。まだ残り5条件があるので全36を完走し、最終率/偏りを確認します。
+現行APPROACHはopened→closedの根元/関節姿勢を4秒で補間する一方、gimbal姿勢参照だけopenedに固定。LOADの1秒でgimbalをclosedへ移し要求トルク0→48Nm。両端の空荷/荷重保持成立と中間の衝突は計画で検査しますが、接近中の全姿勢の空荷保持は別途証明していません。オンライン共通配分は観測ローター角と方向変更の線形化を使用。
+手法の観点で、次に検証する因果を絞ってください。『中間の機体形状が変わるのにローター方向参照を開姿勢に固定しているため、接近途中の空中保持が悪化した』は妥当な仮説でしょうか。静的な中間保持の確認→関節姿勢と一緒にローター方向を補間する最小対照など、全体を複雑化せず、既存80%/側面限定/10ms/上限維持の範囲で次の切り分けを提案してください。保存構造の成功選別を手法に組み込む案や、未確認原因の断定は不要です。実装と高速化はこちらで行います。
+									809 button (collapsed) 展開, Secondary Actions: Expand
+										810 text 展開
+										811 image
+								812 button メッセージをコピーする
+									813 image
+								814 button プロンプトを共有
+								827 button メッセージを編集
+									828 image
+								856 button (collapsed) 2m 43s考えました, Secondary Actions: Expand
+									857 text 2m 43s考えました
+									858 image
+								859 heading ChatGPT の発言:, Value: 4
+									860 text ChatGPT の発言:
+								861 container
+									862 text 妥当な仮説です。次は、接近途中の姿勢を、その時点のローター方向で接触に頼らず支えられるかを優先して確認するのが適切です。  共通配分器や積分則を変更する前に、姿勢経路と推力方向の組合せを切り分けられます。
+								863 container
+									864 text ただし、提示された誤差は3秒から4秒には縮小し、その後LOADで急増しています。現段階では、 接近途中の空荷保持の不足 と、 LOADで方向変更と48Nmの立上げを同時に行う難しさ の二つを区別してください。2251Nの端面衝突は、その後の崩壊を説明する重要な事実ですが、最初の誤差の原因を特定する証拠ではありません。
+								865 heading 1. 最初は、同じ中間姿勢で方向だけを比較する, Value: 2
+									866 text 1. 最初は、同じ中間姿勢で方向だけを比較する
+								867 text 接近中の誤差が増える前後について、まず計画された根元・Dock姿勢を固定し、次を比較するのが最小です。
+								868 content list
+									869 container
+										870 AXListMarker •
+										871 text 開姿勢のジンバル角のまま 、自重と全関節負荷を実推力・実トルクの上限内で支えられるか。
+									872 container
+										873 AXListMarker •
+										874 text 関節姿勢と同期させた候補ジンバル角 なら、同じ条件で支えられるか。
+								875 container
+									876 text 確認対象は全身の釣合いです。総推力が重量を超えるだけでは、姿勢を保つモーメントや接続関節の負荷を支えられるとは限りません。関節へ伝わる負荷自体も姿勢に依存します。
+									877 link Description: Modern Robotics: 5.2. Statics of Open Chains, https://modernrobotics.northwestern.edu/nu-gm-book-resource/5-2-statics-of-open-chains/?utm_source=chatgpt.com, Value: modernrobotics.northwestern.edu/nu-gm-book-resource/5-2-statics-of-open-chains/?utm_source=chatgpt.com
+								878 container
+									879 text 次に、保存された 実姿勢・実ジンバル角 でも同じ確認をすると、結果を分けられます。
+								880 container
+									881 table
+										882 row
+											883 cell
+												884 text 結果
+											885 cell
+												886 text 支持される解釈
+										887 row
+											888 cell
+												889 text 計画姿勢でも開方向では保持解が得られず、候補方向なら得られる
+											890 cell
+												891 text 中間経路の支持方向に欠落がある
+										892 row
+											893 cell
+												894 text 計画姿勢では成立し、実姿勢・実角だけで崩れる
+											895 cell
+												896 text 先行する追従誤差や方向遅れを調べる必要がある
+										897 row
+											898 cell
+												899 text 両方とも静的に成立する
+											900 cell
+												901 text 静的支持不足だけでは説明できず、移動に必要な作用や実配分を調べる
+									902 button 表をコピー
+									903 pop up button (collapsed) Description: 表を展開, Secondary Actions: Expand
+								904 container
+									905 text ここでは 実際に接触する前の状態を優先 してください。接触後の姿勢で接触反力を除いて解くことも診断には使えますが、それを実際の接触中の応答と同一視はできません。端面反力によって支えられる解も、今回の合法な空荷保持の根拠にはなりません。
+								906 heading 2. 同期補間は妥当な最小対照。ただし途中の保持成立を確認する, Value: 2
+									907 text 2. 同期補間は妥当な最小対照。ただし途中の保持成立を確認する
+								908 container
+									909 text 上の比較が仮説を支持するなら、同じ保存構造・同じ開姿勢から、 接近中のジンバル参照だけを根元・Dockの閉動作に合わせて連続的に変える対照 が筋の通った次の一手です。4秒の接近、LOADの要求トルク、元の16/8、積分則、実測遅延、物理上限は維持します。LOAD開始時にジンバル参照を旧値へ戻すような不連続も入れません。
+								910 container
+									911 text ただし、角度を補間しただけで途中の支持が成立するわけではありません。 両端の釣合い解を持つことと、角度補間後の推力方向で釣合うことは別です。  閉姿勢側の方向が接触荷重を前提としている場合には、早くその方向へ移すだけで空荷保持を悪化させます。同期補間した実角での中間確認が、この対照の物理的な根拠になります。
+								912 text オンラインで方向変更の線形近似を使っていても、ジンバルがまだ到達していない方向の推力を、その瞬間から発生できることにはなりません。
+								913 heading 3. 最終成功だけでなく、改善が始まる時点で仮説を判定する, Value: 2
+									914 text 3. 最終成功だけでなく、改善が始まる時点で仮説を判定する
+								915 container
+									916 text この対照で重要なのは、 端面衝突より前に、保持の不足・配分残差・実角の追従誤差・根元誤差がどう変わるか です。
+								917 content list
+									918 container
+										919 AXListMarker •
+										920 text 接近中から支持と追従が改善し、端面衝突も消えるなら、固定方向の仮説を支持します。
+									921 container
+										922 AXListMarker •
+										923 text 改善がLOAD開始後だけなら、接近中の保持不足より、方向変更と負荷立上げの重なりを改善した説明が残ります。
+									924 container
+										925 AXListMarker •
+										926 text 静的保持が回復しても動作が変わらなければ、次は同じ経路の速度・加速度に必要な作用を確認します。静止時の重力釣合いと、形状を動かす際の慣性負荷は別です。
+										927 link Description: Modern Robotics: 9.4. Time-Optimal Time Scaling (Part 1 of 3), https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-4-time-optimal-time-scaling-part-1-of-3/?utm_source=chatgpt.com, Value: modernrobotics.northwestern.edu/nu-gm-book-resource/9-4-time-optimal-time-scaling-part-1-of-3/?utm_source=chatgpt.com
+								928 text この順序なら、保存構造を原因診断に使いながら、全動作の成功で構造を選別する方式へ戻ることなく、共通の参照生成の欠落を検査できます。現時点では、追加のゲイン変更や重い接触予測より、この比較を先に行う根拠があります。
+								929 button コピーする
+									930 image
+								931 checkbox Description: 読み上げ, Value: 0
+								932 button 共有
+								933 pop up button (collapsed) Description: 回答を再生成, ID: radix-_r_ke_, Secondary Actions: Expand
+								934 pop up button (collapsed) Description: その他のアクション, ID: radix-_r_kh_, Secondary Actions: Expand
+							464 container
+								465 text ChatGPT は間違えることがあります。重要な情報は確認してください。
+							466 container
+								507 button 一番下までスクロール
+								467 heading 最新の応答, Value: 4
+									468 text 最新の応答
+								469 container
+									470 container
+										473 button (collapsed) Description: ファイルなどを追加, Secondary Actions: Expand
+										490 text entry area (settable) Description: ChatGPT に聞く, Value:
+
+											491 container
+												843 text ChatGPT に聞く
+										475 pop up button (collapsed) Description: ChatGPT モデルを選択, ID: radix-_r_13_, Secondary Actions: Expand
+											476 text Pro
+										477 button 音声入力
+										935 button 音声会話を開始
+		936 text 回答が完了しました
+		844 container
+			845 heading アクティビティ, Value: 3
+				846 text アクティビティ
+			847 button 10個を使用
+				848 text サブエージェント
+				849 text 10個を使用
+			850 button (expanded) 出力, Secondary Actions: Collapse
+			851 text 出力はまだありません
+
+The focused UI element is 490 text entry area (settable) Description: ChatGPT に聞く, Value:
