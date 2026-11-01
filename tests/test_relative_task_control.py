@@ -2,6 +2,7 @@
 from types import SimpleNamespace
 import numpy as np
 import mujoco
+import pytest
 from build.relative_task_control import RobotDrive, DesiredContactLoad, ObjectRelativeControl
 
 
@@ -87,18 +88,20 @@ def test_gravity_compensation_excludes_free_payload_before_contact():
     np.testing.assert_allclose(command[1], 1.1*9.80665, atol=1e-4)
 
 
-def test_optional_free_flight_feedback_rejects_a_constant_unmodelled_load():
+@pytest.mark.parametrize('relative',[False,True])
+def test_optional_pose_feedback_rejects_a_constant_unmodelled_load(relative):
     errors=[]
     for enabled in [False,True]:
         p=plant();q=p.mj.qpos0.copy();q[0]-=.2
         target=q.copy();v=np.zeros(p.mj.nv)
-        controller=ObjectRelativeControl(p,p.mj.qpos0,['pad'],free_flight_integral=enabled)
+        controller=ObjectRelativeControl(p,p.mj.qpos0,['pad'],
+            free_flight_integral=enabled and not relative,relative_pose_integral=enabled and relative)
         oi=controller.drive.oi
         # Independent vertical plant: 1.1 kg, authored gravity, plus an
         # unobserved 1 N downward load. The controller only observes q/v.
         for _ in range(1600):
             command=controller.update(q,v,target,target[oi:oi+7],payload_fraction=0.,
-                tracking_fraction=0.,squeeze=0.,track_object=False)
+                tracking_fraction=0.,squeeze=0.,track_object=relative)
             assert 0.<=command[1]<=50.
             acceleration=(command[1]-1.)/1.1-9.80665
             v[2]+=.01*acceleration;q[2]+=.01*v[2]
@@ -107,17 +110,35 @@ def test_optional_free_flight_feedback_rejects_a_constant_unmodelled_load():
     assert errors[1]<.002
 
 
-def test_free_flight_integral_uses_observation_time_when_updates_are_skipped():
+@pytest.mark.parametrize('relative',[False,True])
+def test_pose_integral_uses_observation_time_when_updates_are_skipped(relative):
     commands=[]
     for times in [np.linspace(0.,.1,11),[0.,.05,.1]]:
         p=plant();closed=p.mj.qpos0.copy();q=closed.copy();q[0]-=.2
         target=q.copy();target[2]+=.1
-        controller=ObjectRelativeControl(p,closed,['pad'],free_flight_integral=True)
+        controller=ObjectRelativeControl(p,closed,['pad'],free_flight_integral=not relative,relative_pose_integral=relative)
         for time in times:
             command=controller.update(q,np.zeros(p.mj.nv),target,target[controller.drive.oi:controller.drive.oi+7],
-                payload_fraction=0.,tracking_fraction=0.,squeeze=0.,observation_time=time)
+                payload_fraction=0.,tracking_fraction=0.,squeeze=0.,observation_time=time,track_object=relative)
         commands.append(command)
     np.testing.assert_allclose(commands[0],commands[1],atol=1e-4)
+
+
+def test_contact_bias_does_not_wind_up_during_task_motion_or_survive_release():
+    p=plant();closed=p.mj.qpos0.copy();q=closed.copy();q[0]-=.2
+    target=q.copy();target[2]+=.01
+    controller=ObjectRelativeControl(p,closed,['pad'],relative_pose_integral=True)
+    oi=controller.drive.oi
+    args=(q,np.zeros(p.mj.nv),target,target[oi:oi+7])
+    controller.update(*args,payload_fraction=0.,tracking_fraction=0.,track_object=True,observation_time=0.)
+    controller.update(*args,payload_fraction=0.,tracking_fraction=0.,track_object=True,observation_time=.1)
+    acquired=controller.relative_error_integral.copy()
+    assert acquired[2]>0.
+    for t in [.2,1.,10.]:
+        controller.update(*args,payload_fraction=0.,tracking_fraction=1.,track_object=True,observation_time=t)
+    np.testing.assert_array_equal(controller.relative_error_integral,acquired)
+    controller.update(*args,payload_fraction=0.,tracking_fraction=0.,squeeze=0.,track_object=False,observation_time=10.01)
+    np.testing.assert_array_equal(controller.relative_error_integral,np.zeros(6))
 
 
 def test_top_face_at_box_edge_is_not_reinterpreted_as_sideways_pressure():

@@ -131,7 +131,7 @@ def run(args):
     closed=path[0].copy()
     opened=plant.configuration(np.asarray(plan.opened))
     controller=ObjectRelativeControl(plant,closed,links,object_shape=spec.shape,
-        task_projection=np.r_[np.zeros(3),spec.axis][None,:],vector_directions=True,material_friction_basis=True,free_flight_integral=True,object_face_axis=1)
+        task_projection=np.r_[np.zeros(3),spec.axis][None,:],vector_directions=True,material_friction_basis=True,free_flight_integral=True,object_face_axis=1,relative_pose_integral=True)
     controller.load.nominal_normal=max(.5,spec.torque/(.4*spec.length*len(links)))
     refs=ValveReferences(system,closed,opened,angles,path,final_open,plan.surfaces,plan.normals,
         plan.geometry_angles,plan.geometry_path,plan.curve_record)

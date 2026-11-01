@@ -320,7 +320,7 @@ class CurrentContactLoad(DesiredContactLoad):
         return c
 
 class ObjectRelativeControl:
-    def __init__(self, plant, contact_reference, links, period=.01, object_shape=None, task_projection=None, vector_directions=False,material_friction_basis=False,free_flight_integral=False,object_face_axis=None):
+    def __init__(self, plant, contact_reference, links, period=.01, object_shape=None, task_projection=None, vector_directions=False,material_friction_basis=False,free_flight_integral=False,object_face_axis=None,relative_pose_integral=False):
         self.drive=RobotDrive(plant,period)
         self.load=CurrentContactLoad(plant,contact_reference,links,object_shape=object_shape,material_friction_basis=material_friction_basis,object_face_axis=object_face_axis)
         self.m=plant.mj;self.h=period;self.relative_feedback=True;self.last={}
@@ -330,6 +330,8 @@ class ObjectRelativeControl:
         self.flight_observation_time=None
         self.flight_integral_limit=np.array([.25,.25,.25,.15,.15,.15])
         self.flight_integral_gain=np.array([4.,4.,4.,8.,8.,8.])
+        self.relative_pose_integral=relative_pose_integral
+        self.relative_error_integral=np.zeros(6);self.relative_observation_time=None
         self.task_projection=None if task_projection is None else np.asarray(task_projection,dtype=float)
         self.direction=None
         if vector_directions:
@@ -434,6 +436,21 @@ class ObjectRelativeControl:
         elif symmetry or (track_object and self.task_projection is not None):
             arm=aligned[:3]-q[oi:oi+3]
             target_acc[:3]+=tracking_fraction*(np.cross(grasp_acc[3:],aligned[:3]-q[:3])+np.cross(grasp_twist[3:],np.cross(grasp_twist[3:],arm)))
+        if self.relative_pose_integral:
+            dt=self.h if observation_time is None or self.relative_observation_time is None else max(0.,observation_time-self.relative_observation_time)
+            self.relative_observation_time=observation_time
+            if track_object:
+                # Calibrate a bounded pose bias while acquiring/unloading
+                # contact. Freeze it during commanded object motion so
+                # tracking lag cannot keep winding up the relative loop.
+                if tracking_fraction==0.:
+                    error=self.delta[:6].copy();error[3:]=Ra@error[3:]
+                    self.relative_error_integral=np.clip(self.relative_error_integral+dt*error,
+                        -self.flight_integral_limit,self.flight_integral_limit)
+                correction=self.flight_integral_gain*self.relative_error_integral
+                correction[3:]=Ra.T@correction[3:]
+                target_acc[:6]+=correction
+            else:self.relative_error_integral.fill(0.)
         force=dr.mass@target_acc+d.qfrc_bias
         jv=np.zeros(dr.nj) if shape_velocity is None else shape_velocity[dr.vi]
         force[dr.vi]+=dr.kp*self.delta[dr.vi]+dr.kd*(jv-v[dr.vi])
@@ -500,4 +517,5 @@ class ObjectRelativeControl:
         self.last=dict(object_position_error_m=float(np.linalg.norm(object_reference[:3]-q[oi:oi+3])),relative_position_error_m=float(np.linalg.norm(self.delta[:3])),relative_angle_error_rad=float(np.linalg.norm(self.delta[3:6])),joint_error_rad=float(np.max(abs(self.delta[dr.vi]))),object_twist=twist.tolist(),requested_object_wrench=wrench.tolist(),**load.last,allocation=dict(velocity_error=float(np.linalg.norm(A@x-b)),saturated_inputs=int(np.count_nonzero(abs(x[:nu])>.999)),numerical_fallback=fallback,qp_iterations=iterations))
         self.last_command=u.copy()
         if self.free_flight_integral:self.last['flight_error_integral_world']=self.flight_error_integral.tolist()
+        if self.relative_pose_integral:self.last['relative_error_integral_world']=self.relative_error_integral.tolist()
         return u
