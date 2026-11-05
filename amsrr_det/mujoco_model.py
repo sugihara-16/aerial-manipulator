@@ -122,23 +122,23 @@ class PlantModel:
 
 
 def make_plant(n=1, edges=(), payload=None, *, timestep=.001,
-               meshes=True, mesh_cache=None, floor=False,compile_model=True):
+               meshes=True, mesh_cache=None, floor=False,compile_model=True,compile_threads=True):
     # Different postures of the same generated structure share this immutable
     # construction within one planning call. Loading returns an independent
     # model: later option, support and actuator changes must not leak.
     inputs=dict(operation='make_plant',modules=n,edges=edges,payload=payload,
                 timestep=timestep,meshes=meshes,
-                mesh_cache=None if mesh_cache is None else str(Path(mesh_cache).resolve()),floor=floor,compile_model=compile_model)
+                mesh_cache=None if mesh_cache is None else str(Path(mesh_cache).resolve()),floor=floor,compile_model=compile_model,compile_threads=compile_threads)
     return memoized(inputs,lambda:_make_plant(n,edges,payload,timestep=timestep,
-                    meshes=meshes,mesh_cache=mesh_cache,floor=floor,compile_model=compile_model))
+                    meshes=meshes,mesh_cache=mesh_cache,floor=floor,compile_model=compile_model,compile_threads=compile_threads))
 
 
-def _make_plant(n,edges,payload,*,timestep,meshes,mesh_cache,floor,compile_model=True):
+def _make_plant(n,edges,payload,*,timestep,meshes,mesh_cache,floor,compile_model=True,compile_threads=True):
     model, meta = build_model(n, edges, payload)
     meta['material_mesh_cache']=str(Path(mesh_cache or ROOT/'build/collision_meshes').resolve()) if meshes else None
     doc = ET.Element('mujoco', model='amsrr_det')
     ET.SubElement(doc, 'compiler', angle='radian', inertiafromgeom='false',
-                  autolimits='true', fusestatic='false')
+                  autolimits='true', fusestatic='false',usethread=str(compile_threads).lower())
     option = ET.SubElement(doc, 'option', timestep=str(timestep),
                           gravity=numbers(model.gravity.linear), integrator='implicitfast',
                           cone='elliptic', iterations='60', tolerance='1e-10')

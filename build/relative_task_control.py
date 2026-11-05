@@ -175,9 +175,11 @@ class RobotDrive:
                           [r['maximum'] for r in plant.meta['rotors']]]
         self.sites = [self.m.site(plant.pin.frames[r['frame']].name).id
                       for r in plant.meta['rotors']]
-        self.oi = int(self.m.jnt_qposadr[self.m.joint('object').id])
-        self.ov = int(self.m.jnt_dofadr[self.m.joint('object').id])
-        self.robot = np.setdiff1d(np.arange(self.m.nv), np.arange(self.ov, self.ov+6))
+        object_joint=mujoco.mj_name2id(self.m,mujoco.mjtObj.mjOBJ_JOINT,'object')
+        self.oi = int(self.m.jnt_qposadr[object_joint]) if object_joint>=0 else None
+        self.ov = int(self.m.jnt_dofadr[object_joint]) if object_joint>=0 else None
+        self.robot = (np.setdiff1d(np.arange(self.m.nv), np.arange(self.ov, self.ov+6))
+                      if self.ov is not None else np.arange(self.m.nv))
         self.mass = np.empty((self.m.nv, self.m.nv))
         self.B = np.zeros((self.m.nv, self.m.nu))
         self.B[self.vi, np.arange(self.nj)] = 1.

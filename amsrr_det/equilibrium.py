@@ -151,25 +151,47 @@ def _minimum_burden(E,equality,A,b,bounds,nr,peak_bound,reusable=None,strict=Fal
     return SimpleNamespace(x=x,success=success,status=0 if success else 1,message=str(solved.status),nit=solved.iterations,dual=np.asarray(solved.z))
 
 
-def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fraction=1., balance_thrust=False,object_wrench=None,base_load=None,base_acceleration=None,peak_slack=None,minimum_pad_normal_force_n=0.,gimbal_gradient=False,object_support=None,rotor_rays=None,rotor_direction_cost=None,minimize_burden=False,fast_lp=False,direct_burden=False,workspace=None,direct_gradient=False,direction_model=False,burden_power=1.5,relaxed_actuator_scale=False,rotor_polytope=None):
+def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fraction=1., balance_thrust=False,object_wrench=None,base_load=None,base_acceleration=None,peak_slack=None,minimum_pad_normal_force_n=0.,gimbal_gradient=False,object_support=None,rotor_rays=None,rotor_direction_cost=None,minimize_burden=False,fast_lp=False,direct_burden=False,workspace=None,direct_gradient=False,direction_model=False,burden_power=1.5,relaxed_actuator_scale=False,rotor_polytope=None,generalized_load=None,minimum_contact_normal_force_n=0.,maximize_contact_load=False,peak_effort_bound=None):
     """Contacts give force on the robot; the opposite force acts on the object.
 
     normal, point and target_point are expressed in world/each local frame as
     indicated. A diamond inner friction cone and l1 force cap are conservative.
     Failure of this screen does not prove physical infeasibility.
     """
+    if peak_effort_bound is not None and (not np.isfinite(peak_effort_bound) or not 0<peak_effort_bound<=1):
+        raise ValueError('effort bound must be positive and at most the physical limit')
+    if maximize_contact_load and (peak_effort_bound is None or minimize_burden or direct_burden or balance_thrust or gimbal_gradient or rotor_rays is not None or rotor_polytope is not None):
+        raise ValueError('contact capacity needs an explicit effort bound and actual fixed rotor directions')
+    if peak_effort_bound is not None and (direct_burden or balance_thrust):
+        raise ValueError('explicit effort bound is for the fixed-direction LP')
     solve_lp=linprog
     if relaxed_actuator_scale and rotor_rays is None and rotor_polytope is None:raise ValueError('actuator scaling is only a direction proposal for growth')
     if rotor_polytope is not None and (not relaxed_actuator_scale or rotor_rays is not None or workspace is not None or direct_burden or gimbal_gradient):
         raise ValueError('compact rotor polytope is only a growth capacity proposal')
     if fast_lp:
         if gimbal_gradient:raise ValueError('fast LP does not provide sensitivity gradients')
-        from .linear_program import conic_linprog
-        solve_lp=conic_linprog
+        from .linear_program import conic_linprog, reused_simplex_linprog
+        solve_lp=reused_simplex_linprog if fast_lp=='simplex' else conic_linprog
     if peak_slack is not None and (not np.isfinite(peak_slack) or peak_slack<0):raise ValueError('invalid peak-effort slack')
     if not np.isfinite(minimum_pad_normal_force_n) or minimum_pad_normal_force_n<0:raise ValueError('invalid minimum pad load')
-    start=time.perf_counter();data=model.createData();pin.framesForwardKinematics(model,data,q)
-    gravity=pin.computeGeneralizedGravity(model,data,q).copy()
+    if not np.isfinite(minimum_contact_normal_force_n) or minimum_contact_normal_force_n<0:raise ValueError('invalid minimum total contact load')
+    start=time.perf_counter()
+    # The walking margin checks change only the supplied load at one pose.
+    # Reuse its kinematic workspace; derivative paths can mutate placements
+    # and therefore deliberately keep their independent workspace.
+    reuse=workspace is not None and generalized_load is not None and fast_lp and not (gimbal_gradient or direct_gradient or direction_model)
+    pose_key=('_kinematics',id(model),np.asarray(q).tobytes()) if reuse else None
+    data=workspace.get(pose_key) if reuse else None
+    if data is None:
+        data=model.createData();pin.framesForwardKinematics(model,data,q)
+        if reuse:workspace[pose_key]=data
+    gravity=pin.computeGeneralizedGravity(model,data,q).copy() if generalized_load is None else np.asarray(generalized_load,dtype=float).copy()
+    if generalized_load is not None:
+        if base_acceleration is not None or base_load is not None or object_wrench is not None:
+            raise ValueError('a complete generalized load cannot be combined with a partial load override')
+        gravity=np.asarray(generalized_load,dtype=float).copy()
+        if gravity.shape!=(model.nv,) or not np.isfinite(gravity).all():
+            raise ValueError('one finite load per generalized velocity required')
     if base_acceleration is not None:
         acceleration=np.asarray(base_acceleration,dtype=float)
         if len(meta['bases'])!=1 or acceleration.shape!=(6,) or not np.isfinite(acceleration).all():
@@ -194,7 +216,7 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
         tuple((c['frame'],c.get('target_frame'),tuple(c['normal']),tuple(c.get('tangent',())),tuple(c['point']),tuple(c.get('target_point',())),c['mu'],c['max_force'],c.get('pad_force_limit')) for c in contacts),
         None if object_support is None else np.asarray(object_support).tobytes(),
         None if rotor_rays is None else np.asarray(rotor_rays).tobytes(),
-        minimum_pad_normal_force_n,gravity[np.array([a['v'] for a in meta['actuators']])].tobytes())
+        minimum_pad_normal_force_n,minimum_contact_normal_force_n,gravity[np.array([a['v'] for a in meta['actuators']])].tobytes())
     if workspace is not None and rotor_rays is not None:raise ValueError('workspace needs actual rotor directions')
     prepared=None if workspace is None else workspace.get(workspace_key)
     if prepared is None:
@@ -267,11 +289,16 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
                 for facet in facets:
                     row=np.zeros(nx);row[2*i:2*i+2]=facet[:2];row[-1]=facet[2]*r['maximum']
                     A.append(row);b.append(0.)
-        for a in meta['actuators']:
-            row=np.zeros(nx);row[:-1]=-B[a['v']];row[-1]=-a['effort']
-            A.append(row);b.append(-gravity[a['v']])
-            row=row.copy();row[:-1]*=-1;A.append(row);b.append(gravity[a['v']])
+        joint_rows=np.empty((2*len(actuated),nx))
+        joint_rows[::2,:-1]=-B[actuated];joint_rows[1::2,:-1]=B[actuated]
+        joint_rows[:,-1]=-np.repeat([a['effort'] for a in meta['actuators']],2)
+        A.extend(joint_rows);b.extend(np.column_stack([-gravity[actuated],gravity[actuated]]).ravel())
         for first,c,R in contact_columns:
+            if (c['max_force'] is None or not np.isfinite(c['max_force'])) and first not in absolute_columns:
+                cone=np.zeros((4,nx));cone[:,first]=-c['mu']
+                cone[:,first+1:first+3]=[[-1,-1],[-1,1],[1,-1],[1,1]]
+                A.extend(cone);b.extend([0.]*4)
+                continue
             for sx in [-1,1]:
                 for sy in [-1,1]:
                     row=np.zeros(nx);row[first:first+3]=[-c['mu'],sx,sy];A.append(row);b.append(0.)
@@ -296,10 +323,14 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
             for indices in pad_columns.values():
                 row=np.zeros(nx);row[indices]=-1.
                 A.append(row);b.append(-minimum_pad_normal_force_n)
+        if minimum_contact_normal_force_n:
+            row=np.zeros(nx);row[[first for first,_,_ in contact_columns]]=-1.
+            A.append(row);b.append(-minimum_contact_normal_force_n)
         prepared=(B,nv,nx,bounds,contact_columns,actuated,unactuated,E,np.asarray(A),np.asarray(b),pad_columns,{})
         if workspace is not None:workspace[workspace_key]=prepared
     B,nv,nx,bounds,contact_columns,actuated,unactuated,E,A,b,pad_columns,solvers=prepared
-    objective=np.zeros(nx);objective[-1]=1.
+    objective=np.zeros(nx);objective[-1]=0. if maximize_contact_load else 1.
+    if maximize_contact_load:objective[[first for first,_,_ in contact_columns]]=-1.
     if rotor_polytope is None:objective[:len(meta['rotors'])*(len(rays) if rotor_rays is not None else 1)]=1e-8
     options={'maxiter':500}
     if time_limit_s is not None:options['time_limit']=float(time_limit_s)
@@ -308,8 +339,8 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
             raise ValueError('direct burden needs actual rotor directions and no secondary objective')
         solution=_minimum_burden(E,gravity[unactuated],A,b,bounds,len(meta['rotors']),1.,reusable=solvers if workspace is not None else None,power=burden_power)
     else:
-        solution=solve_lp(objective,A_ub=np.array(A),b_ub=np.array(b),A_eq=E,b_eq=gravity[unactuated],bounds=bounds+[(0,None)],
-                         method='highs',options=options)
+        solution=solve_lp(objective,A_ub=np.array(A),b_ub=np.array(b),A_eq=E,b_eq=gravity[unactuated],bounds=bounds+[(0,peak_effort_bound)],
+                         method='highs',options=options,**({'reusable':solvers} if fast_lp and workspace is not None else {}))
     result=dict(scope='fixed_pose_inner_force_screen_only',task_accepted=False,
                 solver_status=int(solution.status),solver_message=solution.message,iterations=int(solution.nit),
                 wall_s=time.perf_counter()-start,physical_impossibility_proven=False)
@@ -317,9 +348,12 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
     if not solution.success:
         result['status']='unresolved_or_inner_model_infeasible';return result
     x=solution.x
-    result['feasible_peak_effort_ratio' if direct_burden else 'minimum_peak_effort_ratio']=float(x[-1])
+    if workspace is not None:
+        solvers['load_certificate_x']=np.asarray(x).copy()
+        solvers['load_certificate_equality']=gravity[unactuated].copy()
+    result['feasible_peak_effort_ratio' if direct_burden or maximize_contact_load else 'minimum_peak_effort_ratio']=float(x[-1])
     if rotor_polytope is not None:
-        result.update(status='direction_proposal',scope='relaxed_motor_scale_for_growth_not_feasibility')
+        result.update(status='direction_proposal',scope='relaxed_motor_scale_for_growth_not_feasibility',rotor_plane_coefficients=x[:2*nr].reshape(nr,2).tolist())
         return result
     if rotor_rays is not None:
         if relaxed_actuator_scale:result['scope']='relaxed_motor_scale_for_growth_not_feasibility'
@@ -371,7 +405,7 @@ def static_balance(model,meta,q,contacts=(),time_limit_s=None, *, payload_fracti
         result['gimbal_peak_gradient']=gradient
 
     if minimize_burden and not direct_burden and x[-1]<=1.+1e-7:
-        cap=min(1.,max(.8,float(x[-1])+.02))
+        cap=min(1. if peak_effort_bound is None else peak_effort_bound,max(.8,float(x[-1])+.02))
         refined=_minimum_burden(E,gravity[unactuated],A,b,bounds,len(meta['rotors']),cap)
         nr=len(meta['rotors'])
         accepted=refined.success and np.maximum(refined.x[:nr],0.).dot(np.sqrt(np.maximum(refined.x[:nr],0.)))<=np.maximum(x[:nr],0.).dot(np.sqrt(np.maximum(x[:nr],0.)))+1e-7
@@ -513,3 +547,27 @@ def refine_gimbal_trim(model,meta,q,contacts,initial,*,minimum_normal=.5):
     current.pop('gimbal_peak_gradient',None)
     current['gimbal_refinement']=records
     return q,current
+
+
+def certify_load_changes(workspace,changes):
+ # Return only independently rechecked feasible upper bounds. A failed
+ # correction requests a full solve; it is not an infeasibility certificate.
+ choices=[v for v in workspace.values() if isinstance(v,tuple) and len(v)==12]
+ if len(choices)!=1:return None
+ prepared=choices[0]
+ B,nv,nx,bounds,contacts,actuated,unactuated,E,A,b,pads,solvers=prepared
+ x=solvers.get('load_certificate_x')
+ if x is None or np.max(abs(changes[:,actuated]))>1e-12:return None
+ f=x[:-1];lo=np.array([-np.inf if a is None else a for a,_ in bounds]);hi=np.array([np.inf if z is None else z for _,z in bounds])
+ width=np.minimum(f-lo,hi-f);width[~np.isfinite(width)]=1.
+ for first,c,_ in contacts:
+  width[first+1:first+3]=max(0.,c['mu']*f[first]-abs(f[first+1])-abs(f[first+2]))/2
+ width=np.maximum(width,1e-12)
+ M=E[:,:-1]*width
+ delta=changes[:,unactuated].T
+ adjustment=width[:,None]*(M.T@np.linalg.lstsq(M@M.T,delta,rcond=1e-12)[0]);F=np.clip(f[:,None]+adjustment,lo[:,None],hi[:,None])
+ eqerr=np.max(abs(E[:,:-1]@F-solvers['load_certificate_equality'][:,None]-delta),axis=0)
+ X=np.vstack([F,np.ones((1,len(changes)))]);error=np.max(A@X-b[:,None],axis=0)
+ good=(eqerr<1e-8)&(error<1e-8)
+ motor=A[:,-1]<0;required=(A[motor,:-1]@F-b[motor,None])/(-A[motor,-1,None]);peak=np.maximum(required.max(axis=0),0.)
+ return good & (peak<=1.),peak

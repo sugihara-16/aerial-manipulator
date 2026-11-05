@@ -156,7 +156,7 @@ def build_model(n=1, edges=(), payload=None, urdf=None, gravity=(0.,0.,-9.80665)
             actuators.append(dict(name=jname, joint=jid, q=j.idx_q, v=j.idx_v,
                                   role=role, lower=lo, upper=hi, kp=drive["stiffness"], kd=drive["damping"],
                                   effort=prof["continuous_torque_limit_nm"], peak=prof["peak_torque_nm"],
-                                  speed=drive["safe_velocity_limit_rad_s"]))
+                                  speed=drive["safe_velocity_limit_rad_s"],rated_speed=prof.get("rated_speed_rad_s")))
             visit(child, jid, B)
     for i in range(n):
         name = f"m{i}/root"

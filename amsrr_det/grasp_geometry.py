@@ -95,7 +95,7 @@ def box_face_projection(points,half,outward):
     return surface,np.array([np.diag(row.astype(float)) for row in active])
 
 
-def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False,base_upright_weight=0.,position_metric=None,frame_tangents=None,preserve_box_faces=False):
+def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluations=100,floor_clearance=None,base_rotation=False,object_shape=None,contact_gap=-.001,avoid_pairs=(),avoid_shapes=None,obstacles=(),analytic_jacobian=True,normal_moment_axis=None,normal_moment_samples=None,opposed_friction=None,avoid_object=False,base_upright_weight=0.,position_metric=None,frame_tangents=None,preserve_box_faces=False,floor_contact_links=(),normal_weight=1.):
     # Repeated matrix/quaternion conversions can amplify roundoff along a
     # retreat path. Dynamics and Jacobians require unit quaternions.
     q0=pin.normalize(model,q0)
@@ -106,10 +106,15 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
     frames=[meta['frames'][grasp_frame(*s)] for s in surfaces]
     collision_parts={link:(T,shape) for link,T,shape in part_geometry().entries} if avoid_pairs else {}
     points=np.asarray(points);normals=np.asarray(inward_normals)
+    if floor_contact_links and obstacles:
+        raise ValueError('floor-contact exemptions cannot exclude obstacle checks')
     bounds=[] if floor_clearance is None and not obstacles else [(meta['frames'][f'm{i}/{link}'],center,half)
-            for i in range(meta['modules']) for link,center,half in part_bounds()]
+            for i in range(meta['modules']) for link,center,half in part_bounds()
+            if f'm{i}/{link}' not in floor_contact_links]
     if points.shape!=(len(surfaces),3) or normals.shape!=points.shape or not np.allclose(np.linalg.norm(normals,axis=1),1):
         raise ValueError('invalid contact targets')
+    if normal_weight not in (0.,1.):raise ValueError("normal_weight must be zero or one")
+    if normal_weight==0.:normals=np.zeros_like(normals)
     face_outward=None
     if preserve_box_faces:
         if object_shape is None or object_shape.family not in ('box','elongated_box') or opposed_friction is not None or normal_moment_axis is not None:

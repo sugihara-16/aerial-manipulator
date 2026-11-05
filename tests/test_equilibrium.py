@@ -201,3 +201,19 @@ def test_direct_burden_solves_same_force_contract_and_rejects_overload():
         assert 'minimum_peak_effort_ratio' not in new
     overload=static_balance(model,meta,q,base_load=[0,0,10000,0,0,0],direct_burden=True)
     assert overload['status']!='static_screen_pass'
+
+
+def test_ground_capacity_is_bounded_by_weight_and_preserves_real_motor_limits():
+    model,meta=build_model();q=pin.neutral(model)
+    # Algebraic point on the root, not a claim about available foot material.
+    contacts=[dict(frame='m0/root',point=[0,0,0],normal=[0,0,1],mu=.8,max_force=None)]
+    r=static_balance(model,meta,q,contacts,fast_lp=True,maximize_contact_load=True,peak_effort_bound=.9)
+    assert r['status']=='static_screen_pass'
+    assert 'minimum_peak_effort_ratio' not in r
+    assert r['max_normalized_joint_effort']<=.9+1e-8
+    assert .9*meta['mass']*9.80665<r['contacts'][0]['normal_force']<=meta['mass']*9.80665+1e-7
+    constrained=static_balance(model,meta,q,contacts,fast_lp=True,minimize_burden=True,
+        minimum_contact_normal_force_n=.8*r['contacts'][0]['normal_force'],peak_effort_bound=.9)
+    assert constrained['status']=='static_screen_pass'
+    assert constrained['contacts'][0]['normal_force']>=.8*r['contacts'][0]['normal_force']-1e-7
+    assert constrained['max_normalized_joint_effort']<=.9+1e-8
