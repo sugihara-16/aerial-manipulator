@@ -1,0 +1,382 @@
+{
+  "purpose": "Fixed 3..8 module, 5 metre ground walking; requested speeds .22/.26/.30 m/s, measured travel at least .20 m/s; straight and radius 3.33 m curves. Actual load-bearing steps required.",
+  "acceptance": {
+    "minimum_success_fraction": 0.8,
+    "planning_seconds": 15,
+    "publication_seconds": 0.01,
+    "measured_delay": true,
+    "no_clear_failure_concentration": true,
+    "groups": [
+      "modules",
+      "speed",
+      "path",
+      "module_speed"
+    ],
+    "failure_test": "one-sided Fisher exact with Holm; also review common physical failure mechanisms",
+    "alpha": 0.05,
+    "maximum_mean_rotor_hover_proxy": 0.4
+  },
+  "cases": [
+    {
+      "id": "n3_v22_straight",
+      "seed": 746565690,
+      "task": {
+        "modules": 3,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v22_left",
+      "seed": 3565289567,
+      "task": {
+        "modules": 3,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v26_straight",
+      "seed": 371421547,
+      "task": {
+        "modules": 3,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v26_right",
+      "seed": 4123477389,
+      "task": {
+        "modules": 3,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v30_straight",
+      "seed": 1678784928,
+      "task": {
+        "modules": 3,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v30_left",
+      "seed": 930539347,
+      "task": {
+        "modules": 3,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v22_straight",
+      "seed": 3429213356,
+      "task": {
+        "modules": 4,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v22_right",
+      "seed": 2979068329,
+      "task": {
+        "modules": 4,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v26_straight",
+      "seed": 1527796618,
+      "task": {
+        "modules": 4,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v26_left",
+      "seed": 1956668580,
+      "task": {
+        "modules": 4,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v30_straight",
+      "seed": 920120122,
+      "task": {
+        "modules": 4,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v30_right",
+      "seed": 4128082823,
+      "task": {
+        "modules": 4,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v22_straight",
+      "seed": 1227981458,
+      "task": {
+        "modules": 5,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v22_left",
+      "seed": 3640430728,
+      "task": {
+        "modules": 5,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v26_straight",
+      "seed": 1076631139,
+      "task": {
+        "modules": 5,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v26_right",
+      "seed": 390733140,
+      "task": {
+        "modules": 5,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v30_straight",
+      "seed": 2213390339,
+      "task": {
+        "modules": 5,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v30_left",
+      "seed": 826474697,
+      "task": {
+        "modules": 5,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v22_straight",
+      "seed": 1356288518,
+      "task": {
+        "modules": 6,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v22_right",
+      "seed": 112520406,
+      "task": {
+        "modules": 6,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v26_straight",
+      "seed": 3416976589,
+      "task": {
+        "modules": 6,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v26_left",
+      "seed": 866586946,
+      "task": {
+        "modules": 6,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v30_straight",
+      "seed": 962718616,
+      "task": {
+        "modules": 6,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v30_right",
+      "seed": 1403588167,
+      "task": {
+        "modules": 6,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v22_straight",
+      "seed": 3120517598,
+      "task": {
+        "modules": 7,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v22_left",
+      "seed": 770458663,
+      "task": {
+        "modules": 7,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v26_straight",
+      "seed": 926449281,
+      "task": {
+        "modules": 7,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v26_right",
+      "seed": 1254250225,
+      "task": {
+        "modules": 7,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v30_straight",
+      "seed": 2772135770,
+      "task": {
+        "modules": 7,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v30_left",
+      "seed": 1740171348,
+      "task": {
+        "modules": 7,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v22_straight",
+      "seed": 2545372561,
+      "task": {
+        "modules": 8,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v22_right",
+      "seed": 3678467046,
+      "task": {
+        "modules": 8,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v26_straight",
+      "seed": 2988569466,
+      "task": {
+        "modules": 8,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v26_left",
+      "seed": 3289515227,
+      "task": {
+        "modules": 8,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v30_straight",
+      "seed": 3854155391,
+      "task": {
+        "modules": 8,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v30_right",
+      "seed": 2410955282,
+      "task": {
+        "modules": 8,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    }
+  ],
+  "seed_protocol": "New independent system-random seeds drawn after v294 implementation freeze; all task conditions and acceptance unchanged. No outcome-dependent resampling."
+}

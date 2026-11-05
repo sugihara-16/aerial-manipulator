@@ -1,4 +1,4 @@
-"""Identify valve runtime, physical inputs and numerical dependencies."""
+"""Identify runtime, physical inputs and numerical dependencies."""
 import hashlib
 import importlib.metadata
 import json
@@ -19,13 +19,14 @@ def source_hashes():
         paths.update(p for p in ROOT.glob(pattern) if p.is_file())
     for name in ['CMakeLists.txt','requirements.lock.txt','requirements.txt',
                  'assets/generated/authored_part_bounds.json','assets/generated/material_surfaces.npz',
-                 'scripts/run_valve_task.py','scripts/run_valve_panel.py','scripts/report_valve_panel.py']:
+                 'scripts/run_valve_task.py','scripts/run_valve_panel.py','scripts/report_valve_panel.py',
+                 'scripts/run_walking_task.py','scripts/run_walking_panel.py','scripts/report_walking_panel.py']:
         if (ROOT/name).is_file():paths.add(ROOT/name)
     return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
 
 
 def dependency_versions():
-    return {name:importlib.metadata.version(name) for name in ['numpy','scipy','mujoco','pin','clarabel','coal','trimesh']}
+    return {name:importlib.metadata.version(name) for name in ['numpy','scipy','mujoco','pin','clarabel','highspy','coal','trimesh']}
 
 
 def physical_library():
