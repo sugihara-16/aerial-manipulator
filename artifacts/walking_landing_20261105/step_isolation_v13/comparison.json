@@ -1,0 +1,126 @@
+{
+  "rows": [
+    {
+      "id": "n8_v22_straight",
+      "baseline": {
+        "task_success": true,
+        "maximum_path_error_m": 0.030958455224265102,
+        "rotor_burden_hover_ratio": 0.4678391896443985,
+        "allocation": {
+          "calls": 3403,
+          "errors": 0,
+          "max_ms": 10.706142988055944
+        },
+        "control": {
+          "calls": 3404,
+          "mean_ms": 0.5381029412767617,
+          "p99_ms": 0.7994007458910346,
+          "max_ms": 5.23864571005106,
+          "over10": 0,
+          "observation_over10": 0
+        },
+        "timestep": 0.0005
+      },
+      "halfstep_parallel": {
+        "task_success": false,
+        "maximum_path_error_m": 0.20387232833202962,
+        "rotor_burden_hover_ratio": 0.509031212466761,
+        "allocation": {
+          "calls": 3389,
+          "errors": 0,
+          "max_ms": 15.940945595502853
+        },
+        "control": {
+          "calls": 3400,
+          "mean_ms": 0.5384273047778098,
+          "p99_ms": 0.7998510403558611,
+          "max_ms": 4.724255762994289,
+          "over10": 0,
+          "observation_over10": 0
+        },
+        "timestep": 0.00025
+      },
+      "halfstep_sequential": {
+        "task_success": true,
+        "maximum_path_error_m": 0.031016161060865678,
+        "rotor_burden_hover_ratio": 0.46767037037282205,
+        "allocation": {
+          "calls": 3403,
+          "errors": 0,
+          "max_ms": 10.350446216762066
+        },
+        "control": {
+          "calls": 3404,
+          "mean_ms": 0.5412652526875973,
+          "p99_ms": 0.813743402250111,
+          "max_ms": 4.892068915069103,
+          "over10": 0,
+          "observation_over10": 0
+        },
+        "timestep": 0.00025
+      }
+    },
+    {
+      "id": "n8_v26_straight",
+      "baseline": {
+        "task_success": true,
+        "maximum_path_error_m": 0.04435975404974105,
+        "rotor_burden_hover_ratio": 0.6078375622017086,
+        "allocation": {
+          "calls": 3075,
+          "errors": 0,
+          "max_ms": 9.787422604858875
+        },
+        "control": {
+          "calls": 3075,
+          "mean_ms": 0.5336622080606658,
+          "p99_ms": 0.8260970562696457,
+          "max_ms": 5.087854340672493,
+          "over10": 0,
+          "observation_over10": 0
+        },
+        "timestep": 0.0005
+      },
+      "halfstep_parallel": {
+        "task_success": false,
+        "maximum_path_error_m": 0.10518178824280892,
+        "rotor_burden_hover_ratio": 0.6328497736680789,
+        "allocation": {
+          "calls": 3070,
+          "errors": 0,
+          "max_ms": 16.178810968995094
+        },
+        "control": {
+          "calls": 3075,
+          "mean_ms": 0.5500711037254915,
+          "p99_ms": 0.8106188569217918,
+          "max_ms": 4.725365433841944,
+          "over10": 0,
+          "observation_over10": 0
+        },
+        "timestep": 0.00025
+      },
+      "halfstep_sequential": {
+        "task_success": true,
+        "maximum_path_error_m": 0.04423093672881765,
+        "rotor_burden_hover_ratio": 0.6060052373836298,
+        "allocation": {
+          "calls": 3074,
+          "errors": 0,
+          "max_ms": 10.928335599601269
+        },
+        "control": {
+          "calls": 3075,
+          "mean_ms": 0.5329033579465335,
+          "p99_ms": 0.8025437127798796,
+          "max_ms": 4.759176634252071,
+          "over10": 0,
+          "observation_over10": 0
+        },
+        "timestep": 0.00025
+      }
+    }
+  ],
+  "scope": "Diagnostic comparisons of two saved plans only. The sequential half-step successes neither replace the parallel half-step failures nor enter the fresh-generation score.",
+  "interpretation": "Both recover under the original execution configuration at the finer timestep. Timestep alone is not established as the cause. Susceptibility to concurrent compute load and measured control delay remains; these two tests are not a strict causal proof or a full sequential half-step panel."
+}

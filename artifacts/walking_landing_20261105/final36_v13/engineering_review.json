@@ -1,0 +1,4107 @@
+{
+  "rows": [
+    {
+      "id": "n3_v22_straight",
+      "modules": 3,
+      "speed": 0.22,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 9.955480902921408,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.1293486890559439,
+        "final_cost": 0.11007951166967031,
+        "updates": [
+          {
+            "iterations": 2,
+            "cost": 0.12098394957809064
+          },
+          {
+            "iterations": 4,
+            "cost": 0.11569706696472809
+          },
+          {
+            "iterations": 6,
+            "cost": 0.1121809058458961
+          },
+          {
+            "iterations": 8,
+            "cost": 0.11007951166967031
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.13003689609468,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 2,
+      "walking_proxy_ratio": 0.3919142552858398,
+      "whole_proxy_ratio": 0.6193523696787436,
+      "walking_joint_mean": 2.941833652076123,
+      "walking_positive_work": 25.3716878697142,
+      "whole_joint_proxy": 84.6296258018109,
+      "whole_positive_work": 25.481193072188475,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 141.50640956604622,
+          "joint_proxy": 0.7539692187004493,
+          "positive_joint_work_j": 0.004337522731180079
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 520.5663832197583,
+          "joint_proxy": 3.0358371590139237,
+          "positive_joint_work_j": 0.0039419991322572024
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 731.0302483655261,
+          "joint_proxy": 4.990492577744875,
+          "positive_joint_work_j": 0.010326028998196023
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 38.1505677498717,
+          "joint_proxy": 8.804937915559663,
+          "positive_joint_work_j": 0.09089965161264198
+        },
+        "WALK": {
+          "seconds": 22.789999999992236,
+          "rotor_proxy": 1049.3817656971287,
+          "joint_proxy": 67.044388930792,
+          "positive_joint_work_j": 25.3716878697142
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.39429697193468477,
+        0.4164482067915929
+      ],
+      "valid_steps_per_foot": [
+        12,
+        12
+      ],
+      "actual_speed": 0.21943754467343496,
+      "ground_load_fraction": 0.7085717496520736,
+      "other_load_fraction": 0.0039040306459945245,
+      "posture_error_p95_rad": 0.04726803531284805
+    },
+    {
+      "id": "n3_v22_left",
+      "modules": 3,
+      "speed": 0.22,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 9.715832832735032,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.1301875756984643,
+        "final_cost": 0.11425495587429085,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.1275240999459592
+          },
+          {
+            "iterations": 2,
+            "cost": 0.12177553449872121
+          },
+          {
+            "iterations": 2,
+            "cost": 0.11662584313975957
+          },
+          {
+            "iterations": 4,
+            "cost": 0.11446582043067725
+          },
+          {
+            "iterations": 6,
+            "cost": 0.11433311016099254
+          },
+          {
+            "iterations": 8,
+            "cost": 0.11425495587429085
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.141816042829305,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 2,
+      "walking_proxy_ratio": 0.41508296771424386,
+      "whole_proxy_ratio": 0.6170845944547776,
+      "walking_joint_mean": 2.720493238174535,
+      "walking_positive_work": 20.11952671574432,
+      "whole_joint_proxy": 64.78585166353737,
+      "whole_positive_work": 20.138694846365794,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 136.50462275415885,
+          "joint_proxy": 0.21932877615719573,
+          "positive_joint_work_j": 0.0004878366168022495
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 510.10272349471745,
+          "joint_proxy": 0.8334099379096301,
+          "positive_joint_work_j": 4.829498406171129e-06
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 709.0499826095607,
+          "joint_proxy": 1.2871260645499691,
+          "positive_joint_work_j": 0.006610153165591915
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1.629324441261133,
+          "joint_proxy": 0.7724051755242254,
+          "positive_joint_work_j": 0.012065311340672626
+        },
+        "WALK": {
+          "seconds": 22.669999999992516,
+          "rotor_proxy": 1105.5657120301416,
+          "joint_proxy": 61.67358170939635,
+          "positive_joint_work_j": 20.11952671574432
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.34140501357201514,
+        0.5690919831714032
+      ],
+      "valid_steps_per_foot": [
+        10,
+        11
+      ],
+      "actual_speed": 0.2205628173034254,
+      "ground_load_fraction": 0.6748252044137832,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.048939197309730606
+    },
+    {
+      "id": "n3_v26_straight",
+      "modules": 3,
+      "speed": 0.26,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 9.192059768829495,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.12205117315054248,
+        "final_cost": 0.10642773709812614,
+        "updates": [
+          {
+            "iterations": 2,
+            "cost": 0.1168333664107505
+          },
+          {
+            "iterations": 4,
+            "cost": 0.10951365776466429
+          },
+          {
+            "iterations": 6,
+            "cost": 0.10824693474166758
+          },
+          {
+            "iterations": 8,
+            "cost": 0.10642773709812614
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.9658048693090677,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 2,
+      "walking_proxy_ratio": 0.3877454071848715,
+      "whole_proxy_ratio": 0.599950497033979,
+      "walking_joint_mean": 2.888928200569965,
+      "walking_positive_work": 22.192898868100134,
+      "whole_joint_proxy": 64.85976720563681,
+      "whole_positive_work": 22.309126806631753,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 125.71004627581223,
+          "joint_proxy": 0.07962785315758271,
+          "positive_joint_work_j": 0.0016499843797341419
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 472.8170720184929,
+          "joint_proxy": 0.33136907611247945,
+          "positive_joint_work_j": 0.04584950312333478
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 672.9707986711969,
+          "joint_proxy": 1.4567174487446657,
+          "positive_joint_work_j": 0.03203127320905078
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 4.701621892054163,
+          "joint_proxy": 7.409074248654485,
+          "positive_joint_work_j": 0.036697177819500784
+        },
+        "WALK": {
+          "seconds": 19.24000000000051,
+          "rotor_proxy": 876.4958371981108,
+          "joint_proxy": 55.5829785789676,
+          "positive_joint_work_j": 22.192898868100134
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.44002391299509513,
+        1.5099252574232802
+      ],
+      "valid_steps_per_foot": [
+        8,
+        10
+      ],
+      "actual_speed": 0.2599532173337078,
+      "ground_load_fraction": 0.7123108258440616,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.11516238767392425
+    },
+    {
+      "id": "n3_v26_right",
+      "modules": 3,
+      "speed": 0.26,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 7.30072687799111,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.1600981245510878,
+        "final_cost": 0.1600981245510878,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 1.1638829447329044,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 2,
+      "walking_proxy_ratio": 0.5242464597128513,
+      "whole_proxy_ratio": 0.6799191946136639,
+      "walking_joint_mean": 2.57455517598769,
+      "walking_positive_work": 17.28683592165981,
+      "whole_joint_proxy": 61.04071710839031,
+      "whole_positive_work": 17.43456762926683,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 124.65413105239028,
+          "joint_proxy": 0.1836973239157336,
+          "positive_joint_work_j": 0.0008358973036396295
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 466.0221468392294,
+          "joint_proxy": 0.43959990169219126,
+          "positive_joint_work_j": 0.11079113138346058
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 652.2860545543712,
+          "joint_proxy": 1.4719222889202943,
+          "positive_joint_work_j": 0.0074133628444226635
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 11.980725818698602,
+          "joint_proxy": 9.359564904337988,
+          "positive_joint_work_j": 0.028691316075495688
+        },
+        "WALK": {
+          "seconds": 19.260000000000463,
+          "rotor_proxy": 1186.287397972372,
+          "joint_proxy": 49.5859326895241,
+          "positive_joint_work_j": 17.28683592165981
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.44160726574895903,
+        0.5880904216459295
+      ],
+      "valid_steps_per_foot": [
+        9,
+        10
+      ],
+      "actual_speed": 0.25968826848288123,
+      "ground_load_fraction": 0.6429164237781981,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.08101402674576703
+    },
+    {
+      "id": "n3_v30_straight",
+      "modules": 3,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 6.820887617766857,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.1608336979139595,
+        "final_cost": 0.14998382212854403,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.15955558460364885
+          },
+          {
+            "iterations": 2,
+            "cost": 0.15632921825663282
+          },
+          {
+            "iterations": 2,
+            "cost": 0.14998382212854403
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 1.7473033852875233,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 2,
+      "walking_proxy_ratio": 0.4915765979835573,
+      "whole_proxy_ratio": 0.6699696917848933,
+      "walking_joint_mean": 2.5194096845102094,
+      "walking_positive_work": 19.742396713902604,
+      "whole_joint_proxy": 51.95806286387677,
+      "whole_positive_work": 19.891650622613625,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 121.62371974288571,
+          "joint_proxy": 0.3206595172624372,
+          "positive_joint_work_j": 0.0017737904542725368
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 464.8647985463537,
+          "joint_proxy": 1.98936180881098,
+          "positive_joint_work_j": 0.07916272365121953
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 633.9010146479286,
+          "joint_proxy": 3.952589208805107,
+          "positive_joint_work_j": 0.043441594135799
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 18.68196711706696,
+          "joint_proxy": 3.6716987913516306,
+          "positive_joint_work_j": 0.02487580046972833
+        },
+        "WALK": {
+          "seconds": 16.680000000006476,
+          "rotor_proxy": 963.3528216088914,
+          "joint_proxy": 42.02375353764661,
+          "positive_joint_work_j": 19.742396713902604
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.5230653595370232,
+        0.5729154332761134
+      ],
+      "valid_steps_per_foot": [
+        8,
+        9
+      ],
+      "actual_speed": 0.2999038144244849,
+      "ground_load_fraction": 0.6619667078593781,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.04536467216904215
+    },
+    {
+      "id": "n3_v30_left",
+      "modules": 3,
+      "speed": 0.3,
+      "curvature": 0.3,
+      "success": false,
+      "reason": "no_candidate",
+      "checks": null,
+      "planning_s": 4.817469685804099,
+      "trials": 59,
+      "evidence_complete": null,
+      "refinement": null
+    },
+    {
+      "id": "n4_v22_straight",
+      "modules": 4,
+      "speed": 0.22,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.274585668928921,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.10243745125874104,
+        "final_cost": 0.0935280799684416,
+        "updates": [
+          {
+            "iterations": 2,
+            "cost": 0.09786588538054357
+          },
+          {
+            "iterations": 4,
+            "cost": 0.09666908007019062
+          },
+          {
+            "iterations": 6,
+            "cost": 0.0945646352272091
+          },
+          {
+            "iterations": 8,
+            "cost": 0.0935280799684416
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.334611184895039,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.37146421176879,
+      "whole_proxy_ratio": 0.5717820038912756,
+      "walking_joint_mean": 4.538521605508788,
+      "walking_positive_work": 36.962866403414466,
+      "whole_joint_proxy": 122.14747832142963,
+      "whole_positive_work": 37.563166631396,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 162.806073721411,
+          "joint_proxy": 1.3044338758943441,
+          "positive_joint_work_j": 0.00040649446900565503
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 629.0587504735666,
+          "joint_proxy": 5.408615759426128,
+          "positive_joint_work_j": 0.5244978737044744
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 930.5395785171097,
+          "joint_proxy": 8.811127623386007,
+          "positive_joint_work_j": 0.034834528918147645
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.1965636051738784,
+          "joint_proxy": 3.871171914037822,
+          "positive_joint_work_j": 0.04056133088990399
+        },
+        "WALK": {
+          "seconds": 22.639999999992586,
+          "rotor_proxy": 1317.4382410633814,
+          "joint_proxy": 102.75212914868533,
+          "positive_joint_work_j": 36.962866403414466
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3921316671684769,
+        0.4394331846578815
+      ],
+      "valid_steps_per_foot": [
+        11,
+        11,
+        12
+      ],
+      "actual_speed": 0.220854365423426,
+      "ground_load_fraction": 0.7395001484296772,
+      "other_load_fraction": 0.015587170551809833,
+      "posture_error_p95_rad": 0.06746386465414786
+    },
+    {
+      "id": "n4_v22_right",
+      "modules": 4,
+      "speed": 0.22,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.0440877196379,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.10602037460498669,
+        "final_cost": 0.09493681632393365,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.10445868731657176
+          },
+          {
+            "iterations": 2,
+            "cost": 0.09963768355938316
+          },
+          {
+            "iterations": 2,
+            "cost": 0.09787659922770534
+          },
+          {
+            "iterations": 4,
+            "cost": 0.09689613458042433
+          },
+          {
+            "iterations": 4,
+            "cost": 0.09582650568574724
+          },
+          {
+            "iterations": 6,
+            "cost": 0.09533513121367998
+          },
+          {
+            "iterations": 8,
+            "cost": 0.09506702612031406
+          },
+          {
+            "iterations": 8,
+            "cost": 0.09493681632393365
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.410490369889885,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.35878837413614345,
+      "whole_proxy_ratio": 0.5727561278115972,
+      "walking_joint_mean": 5.002307154234821,
+      "walking_positive_work": 34.77012118370694,
+      "whole_joint_proxy": 140.16659527447945,
+      "whole_positive_work": 35.051101601906495,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 172.14924399046978,
+          "joint_proxy": 1.228348973919406,
+          "positive_joint_work_j": 0.0009426299909074555
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 670.2315289185278,
+          "joint_proxy": 5.402820037906382,
+          "positive_joint_work_j": 0.2033977612239464
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 926.244916678565,
+          "joint_proxy": 10.44573026291698,
+          "positive_joint_work_j": 0.024468624363819247
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 3.7755312268802754,
+          "joint_proxy": 9.88748509943964,
+          "positive_joint_work_j": 0.05217140262088185
+        },
+        "WALK": {
+          "seconds": 22.62999999999261,
+          "rotor_proxy": 1271.919953456735,
+          "joint_proxy": 113.20221090029703,
+          "positive_joint_work_j": 34.77012118370694
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.38834352207935846,
+        0.5290140795209503
+      ],
+      "valid_steps_per_foot": [
+        10,
+        10,
+        11
+      ],
+      "actual_speed": 0.22099730448544375,
+      "ground_load_fraction": 0.7607742573032262,
+      "other_load_fraction": 0.0009527176753651687,
+      "posture_error_p95_rad": 0.026416256523279717
+    },
+    {
+      "id": "n4_v26_straight",
+      "modules": 4,
+      "speed": 0.26,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 12.360917250160128,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.11608803373171273,
+        "final_cost": 0.10417856728808346,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.11213128230047623
+          },
+          {
+            "iterations": 2,
+            "cost": 0.10600141805653186
+          },
+          {
+            "iterations": 4,
+            "cost": 0.10504784617922493
+          },
+          {
+            "iterations": 4,
+            "cost": 0.10456524123329104
+          },
+          {
+            "iterations": 6,
+            "cost": 0.10436409933378571
+          },
+          {
+            "iterations": 8,
+            "cost": 0.10417856728808346
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.747914180159569,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.42571585098781284,
+      "whole_proxy_ratio": 0.6155617686073714,
+      "walking_joint_mean": 4.328909998716546,
+      "walking_positive_work": 40.736790685586406,
+      "whole_joint_proxy": 102.49457485674499,
+      "whole_positive_work": 40.92126425722431,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 167.28931301298354,
+          "joint_proxy": 1.6287540362241222,
+          "positive_joint_work_j": 0.0002768482483771251
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 623.1381218004451,
+          "joint_proxy": 6.726168158249275,
+          "positive_joint_work_j": 0.0976460894039583
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 873.1708858368911,
+          "joint_proxy": 9.058463900386625,
+          "positive_joint_work_j": 0.048617651441752285
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.02973762777492084,
+          "joint_proxy": 1.5332257866540218,
+          "positive_joint_work_j": 0.03793298254381405
+        },
+        "WALK": {
+          "seconds": 19.30000000000037,
+          "rotor_proxy": 1287.1050499799967,
+          "joint_proxy": 83.54796297523094,
+          "positive_joint_work_j": 40.736790685586406
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.4371140138245288,
+        0.5214602373380972
+      ],
+      "valid_steps_per_foot": [
+        10,
+        10,
+        10
+      ],
+      "actual_speed": 0.25914034740092007,
+      "ground_load_fraction": 0.7456440396002706,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.03502120758560084
+    },
+    {
+      "id": "n4_v26_left",
+      "modules": 4,
+      "speed": 0.26,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 12.254756601061672,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.11332250233748019,
+        "final_cost": 0.1003414044205668,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.11232185584942858
+          },
+          {
+            "iterations": 2,
+            "cost": 0.10696052808359648
+          },
+          {
+            "iterations": 2,
+            "cost": 0.10625038898929523
+          },
+          {
+            "iterations": 4,
+            "cost": 0.10371427492302189
+          },
+          {
+            "iterations": 6,
+            "cost": 0.10198563801139764
+          },
+          {
+            "iterations": 8,
+            "cost": 0.1003414044205668
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.060737869236618,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.4053506533679068,
+      "whole_proxy_ratio": 0.5954118731077447,
+      "walking_joint_mean": 4.544730398522653,
+      "walking_positive_work": 34.68934879058298,
+      "whole_joint_proxy": 114.76151912926149,
+      "whole_positive_work": 34.87739852965461,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 165.75340018210008,
+          "joint_proxy": 1.1337798698452788,
+          "positive_joint_work_j": 0.00015811599056997152
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 614.6766482240863,
+          "joint_proxy": 6.2715730347998315,
+          "positive_joint_work_j": 0.07437453306135873
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 846.4080771508926,
+          "joint_proxy": 12.320371632049213,
+          "positive_joint_work_j": 0.06055737599036631
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.2834305834051065,
+          "joint_proxy": 7.549734421003887,
+          "positive_joint_work_j": 0.052959714029333194
+        },
+        "WALK": {
+          "seconds": 19.250000000000487,
+          "rotor_proxy": 1222.358158735457,
+          "joint_proxy": 87.48606017156328,
+          "positive_joint_work_j": 34.68934879058298
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.43741367908019624,
+        0.554857488359695
+      ],
+      "valid_steps_per_foot": [
+        9,
+        10,
+        10
+      ],
+      "actual_speed": 0.2597826528232346,
+      "ground_load_fraction": 0.7332226475396453,
+      "other_load_fraction": 0.002853776980707281,
+      "posture_error_p95_rad": 0.03185999283485029
+    },
+    {
+      "id": "n4_v30_straight",
+      "modules": 4,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 11.658386568073183,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.13260356835805234,
+        "final_cost": 0.1163529777278277,
+        "updates": [
+          {
+            "iterations": 2,
+            "cost": 0.12491335679101685
+          },
+          {
+            "iterations": 4,
+            "cost": 0.12002403146720175
+          },
+          {
+            "iterations": 6,
+            "cost": 0.11678725564271125
+          },
+          {
+            "iterations": 8,
+            "cost": 0.1163529777278277
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.9073082082904875,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.49956935002065816,
+      "whole_proxy_ratio": 0.6900778837600491,
+      "walking_joint_mean": 4.968937231971125,
+      "walking_positive_work": 26.05061918520274,
+      "whole_joint_proxy": 120.28061853962896,
+      "whole_positive_work": 26.545181728281122,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 167.78269303551917,
+          "joint_proxy": 1.6132595020142066,
+          "positive_joint_work_j": 0.0005879783740273052
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 631.7684121917567,
+          "joint_proxy": 6.313081977053718,
+          "positive_joint_work_j": 0.36616971665669634
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 900.9484960354564,
+          "joint_proxy": 12.301207289524015,
+          "positive_joint_work_j": 0.06538777029091941
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 19.743156510810195,
+          "joint_proxy": 17.022128624767678,
+          "positive_joint_work_j": 0.062417077756737105
+        },
+        "WALK": {
+          "seconds": 16.710000000006406,
+          "rotor_proxy": 1307.702938461066,
+          "joint_proxy": 83.03094114626934,
+          "positive_joint_work_j": 26.05061918520274
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.5134808453393584,
+        0.5871547757354477
+      ],
+      "valid_steps_per_foot": [
+        8,
+        9,
+        9
+      ],
+      "actual_speed": 0.2993496295309482,
+      "ground_load_fraction": 0.6515872441002726,
+      "other_load_fraction": 0.0019372676548044456,
+      "posture_error_p95_rad": 0.05016163424820882
+    },
+    {
+      "id": "n4_v30_right",
+      "modules": 4,
+      "speed": 0.3,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 11.094571790657938,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.1450963049695091,
+        "final_cost": 0.12831919403385417,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.1440889369605008
+          },
+          {
+            "iterations": 2,
+            "cost": 0.13499996090460634
+          },
+          {
+            "iterations": 4,
+            "cost": 0.13204719525841432
+          },
+          {
+            "iterations": 6,
+            "cost": 0.13055581424617616
+          },
+          {
+            "iterations": 8,
+            "cost": 0.13028051377374078
+          },
+          {
+            "iterations": 8,
+            "cost": 0.12831919403385417
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.9595710490830243,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.517321437802272,
+      "whole_proxy_ratio": 0.7647564902077404,
+      "walking_joint_mean": 4.7172182586817115,
+      "walking_positive_work": 33.14235490820095,
+      "whole_joint_proxy": 106.98244915052238,
+      "whole_positive_work": 33.76030985999719,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 167.20426902740545,
+          "joint_proxy": 1.88967051997905,
+          "positive_joint_work_j": 0.00021584376738027376
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 619.0876574519373,
+          "joint_proxy": 6.819376621752013,
+          "positive_joint_work_j": 0.5617936108826294
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 889.6601204685533,
+          "joint_proxy": 9.456999171689525,
+          "positive_joint_work_j": 0.018684635736122335
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 325.4989380197476,
+          "joint_proxy": 9.991685734500177,
+          "positive_joint_work_j": 0.03726086141011098
+        },
+        "WALK": {
+          "seconds": 16.710000000006406,
+          "rotor_proxy": 1354.171876867466,
+          "joint_proxy": 78.82471710260162,
+          "positive_joint_work_j": 33.14235490820095
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.42319161869254246,
+        0.5929652281735007
+      ],
+      "valid_steps_per_foot": [
+        9,
+        10,
+        9
+      ],
+      "actual_speed": 0.29922226032609445,
+      "ground_load_fraction": 0.5955381587009022,
+      "other_load_fraction": 0.012628901923028157,
+      "posture_error_p95_rad": 0.06360191469645703
+    },
+    {
+      "id": "n5_v22_straight",
+      "modules": 5,
+      "speed": 0.22,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 10.942179466132075,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.046112593414635854,
+        "final_cost": 0.04227956820627682,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.043819797524235884
+          },
+          {
+            "iterations": 2,
+            "cost": 0.04227956820627682
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.41518966993317,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.17008516513895375,
+      "whole_proxy_ratio": 0.4661505928287167,
+      "walking_joint_mean": 5.181490216147309,
+      "walking_positive_work": 29.5201718955654,
+      "whole_joint_proxy": 142.56505857083192,
+      "whole_positive_work": 29.67743241646321,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 239.8612691627635,
+          "joint_proxy": 1.2913550768555184,
+          "positive_joint_work_j": 0.0021259210527245155
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 895.5788859335067,
+          "joint_proxy": 4.947851579257516,
+          "positive_joint_work_j": 4.072753306666368e-05
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1229.0913261226601,
+          "joint_proxy": 8.154417617946816,
+          "positive_joint_work_j": 0.07645177971287344
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.3325656005495148,
+          "joint_proxy": 8.997159325426708,
+          "positive_joint_work_j": 0.07864209259914437
+        },
+        "WALK": {
+          "seconds": 22.999999999991747,
+          "rotor_proxy": 766.0218355471285,
+          "joint_proxy": 119.17427497134535,
+          "positive_joint_work_j": 29.5201718955654
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3614516792389644,
+        0.42615646126301154
+      ],
+      "valid_steps_per_foot": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "actual_speed": 0.21747293921169195,
+      "ground_load_fraction": 0.8960904054545513,
+      "other_load_fraction": 0.002948561731730218,
+      "posture_error_p95_rad": 0.022664489161464445
+    },
+    {
+      "id": "n5_v22_left",
+      "modules": 5,
+      "speed": 0.22,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.860475488007069,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.042675388164632545,
+        "final_cost": 0.03863568836323226,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.04260507385696588
+          },
+          {
+            "iterations": 2,
+            "cost": 0.039675876265936855
+          },
+          {
+            "iterations": 4,
+            "cost": 0.03883593105298552
+          },
+          {
+            "iterations": 6,
+            "cost": 0.03870231031192058
+          },
+          {
+            "iterations": 8,
+            "cost": 0.03865260094215414
+          },
+          {
+            "iterations": 8,
+            "cost": 0.03863568836323226
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.456884387880564,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.2164641865924032,
+      "whole_proxy_ratio": 0.5248140325911149,
+      "walking_joint_mean": 6.097952535073189,
+      "walking_positive_work": 45.766864876302,
+      "whole_joint_proxy": 183.84103650664872,
+      "whole_positive_work": 46.55225676862475,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 214.27673725596503,
+          "joint_proxy": 1.4568706586331697,
+          "positive_joint_work_j": 0.0002068670226068182
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 918.7865291820491,
+          "joint_proxy": 8.521169691498985,
+          "positive_joint_work_j": 0.6588884257501083
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1405.3223330736887,
+          "joint_proxy": 15.9944598507922,
+          "positive_joint_work_j": 0.05054443472665826
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1.949133180654826,
+          "joint_proxy": 18.591300404700807,
+          "positive_joint_work_j": 0.0757521648233741
+        },
+        "WALK": {
+          "seconds": 22.83999999999212,
+          "rotor_proxy": 968.1196402900173,
+          "joint_proxy": 139.27723590102357,
+          "positive_joint_work_j": 45.766864876302
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3456016269030874,
+        0.5173649477512334
+      ],
+      "valid_steps_per_foot": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "actual_speed": 0.21896605027808738,
+      "ground_load_fraction": 0.8864555400998751,
+      "other_load_fraction": 0.002140486681274513,
+      "posture_error_p95_rad": 0.03975673123185163
+    },
+    {
+      "id": "n5_v26_straight",
+      "modules": 5,
+      "speed": 0.26,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 11.881956032011658,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.05307646247229553,
+        "final_cost": 0.0434355138509825,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.047666417433552724
+          },
+          {
+            "iterations": 2,
+            "cost": 0.04443705399249998
+          },
+          {
+            "iterations": 4,
+            "cost": 0.043696909072903134
+          },
+          {
+            "iterations": 6,
+            "cost": 0.0435525875133216
+          },
+          {
+            "iterations": 8,
+            "cost": 0.0434355138509825
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.401158560998738,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.22458647638899545,
+      "whole_proxy_ratio": 0.48616927894877554,
+      "walking_joint_mean": 6.187617535305072,
+      "walking_positive_work": 44.588266136401366,
+      "whole_joint_proxy": 141.6087680329965,
+      "whole_positive_work": 45.29535738643581,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 209.98179492142543,
+          "joint_proxy": 1.7496971888585482,
+          "positive_joint_work_j": 0.0003947759783210214
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 783.5299710450314,
+          "joint_proxy": 5.877447844976305,
+          "positive_joint_work_j": 0.5814369567526074
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1075.117963647111,
+          "joint_proxy": 7.842832881627003,
+          "positive_joint_work_j": 0.0550936791010026
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.3174467858416392,
+          "joint_proxy": 6.160886107968318,
+          "positive_joint_work_j": 0.07016583820251665
+        },
+        "WALK": {
+          "seconds": 19.39000000000016,
+          "rotor_proxy": 852.7236101802587,
+          "joint_proxy": 119.97790400956633,
+          "positive_joint_work_j": 44.588266136401366
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.482076671232035,
+        0.5812189887588721
+      ],
+      "valid_steps_per_foot": [
+        9,
+        9,
+        9,
+        9
+      ],
+      "actual_speed": 0.2578685766479397,
+      "ground_load_fraction": 0.8504192921134718,
+      "other_load_fraction": 0.016296229717326197,
+      "posture_error_p95_rad": 0.06447198420234347
+    },
+    {
+      "id": "n5_v26_right",
+      "modules": 5,
+      "speed": 0.26,
+      "curvature": -0.3,
+      "success": false,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": false,
+        "other_support": false,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 11.93806238239631,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.051428783289363754,
+        "final_cost": 0.041298827350425164,
+        "updates": [
+          {
+            "iterations": 6,
+            "cost": 0.04265929417237332
+          },
+          {
+            "iterations": 8,
+            "cost": 0.041298827350425164
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.2404687092639506,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.27956409103914714,
+      "whole_proxy_ratio": 0.5263699862870989,
+      "walking_joint_mean": 6.1369011286659285,
+      "walking_positive_work": 43.41140752347122,
+      "whole_joint_proxy": 142.183990658727,
+      "whole_positive_work": 43.814500802409306,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 212.3384623957455,
+          "joint_proxy": 1.3325876235612548,
+          "positive_joint_work_j": 0.00045095862698661714
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 793.1281448631646,
+          "joint_proxy": 4.494848222887375,
+          "positive_joint_work_j": 0.3170302243213986
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1095.662007865996,
+          "joint_proxy": 6.820127209156722,
+          "positive_joint_work_j": 0.024045403715056368
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.6653752819843248,
+          "joint_proxy": 10.541914718288304,
+          "positive_joint_work_j": 0.06156669227464512
+        },
+        "WALK": {
+          "seconds": 19.39000000000016,
+          "rotor_proxy": 1061.465965451805,
+          "joint_proxy": 118.99451288483334,
+          "positive_joint_work_j": 43.41140752347122
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3342463366691653,
+        0.8071347601130096
+      ],
+      "valid_steps_per_foot": [
+        11,
+        10,
+        11,
+        5
+      ],
+      "actual_speed": 0.2579021429448207,
+      "ground_load_fraction": 0.8127998996835667,
+      "other_load_fraction": 0.039281714416435624,
+      "posture_error_p95_rad": 0.10908541477284003
+    },
+    {
+      "id": "n5_v30_straight",
+      "modules": 5,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.440996047109365,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.06318599697521214,
+        "final_cost": 0.0539465754961235,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.060990960436653405
+          },
+          {
+            "iterations": 2,
+            "cost": 0.05613452702908356
+          },
+          {
+            "iterations": 2,
+            "cost": 0.05526712805779255
+          },
+          {
+            "iterations": 4,
+            "cost": 0.055216325782000114
+          },
+          {
+            "iterations": 6,
+            "cost": 0.05405199641960872
+          },
+          {
+            "iterations": 8,
+            "cost": 0.0539465754961235
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.837466555181891,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.2836466957548764,
+      "whole_proxy_ratio": 0.5521309913659875,
+      "walking_joint_mean": 5.773125278139252,
+      "walking_positive_work": 34.20073173803723,
+      "whole_joint_proxy": 126.5640534760439,
+      "whole_positive_work": 35.06295762389477,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 214.94767692933868,
+          "joint_proxy": 1.709054319953694,
+          "positive_joint_work_j": 0.0010113333224038676
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 800.164516788865,
+          "joint_proxy": 7.978643490034776,
+          "positive_joint_work_j": 0.7766150752849967
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1088.2826951926706,
+          "joint_proxy": 12.223254511293362,
+          "positive_joint_work_j": 0.03418622322121356
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.49423418592004964,
+          "joint_proxy": 7.780058987549356,
+          "positive_joint_work_j": 0.050413254028925936
+        },
+        "WALK": {
+          "seconds": 16.780000000006243,
+          "rotor_proxy": 932.0013955466885,
+          "joint_proxy": 96.8730421672127,
+          "positive_joint_work_j": 34.20073173803723
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.4226218857275021,
+        0.5274813123746289
+      ],
+      "valid_steps_per_foot": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "actual_speed": 0.2979974853847777,
+      "ground_load_fraction": 0.8426064053288413,
+      "other_load_fraction": 0.0017351395624622744,
+      "posture_error_p95_rad": 0.054550915521897655
+    },
+    {
+      "id": "n5_v30_left",
+      "modules": 5,
+      "speed": 0.3,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 9.095538931898773,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.07825658710323379,
+        "final_cost": 0.07825658710323379,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 1.682176967151463,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.3252156823125998,
+      "whole_proxy_ratio": 0.5670025151851342,
+      "walking_joint_mean": 5.470267631900299,
+      "walking_positive_work": 43.67045108194229,
+      "whole_joint_proxy": 118.28655279538913,
+      "whole_positive_work": 44.16869717939401,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 206.65640418745235,
+          "joint_proxy": 1.6821780254592105,
+          "positive_joint_work_j": 0.0004251107196179777
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 773.438710861274,
+          "joint_proxy": 6.462179697780385,
+          "positive_joint_work_j": 0.41233574671987233
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1063.2494478669114,
+          "joint_proxy": 10.428477618245898,
+          "positive_joint_work_j": 0.03878677199180852
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.5209169305771866,
+          "joint_proxy": 8.524356030090104,
+          "positive_joint_work_j": 0.04669846802042238
+        },
+        "WALK": {
+          "seconds": 16.6700000000065,
+          "rotor_proxy": 1061.583004110748,
+          "joint_proxy": 91.18936142381354,
+          "positive_joint_work_j": 43.67045108194229
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.4073811469788155,
+        0.5997965816343676
+      ],
+      "valid_steps_per_foot": [
+        9,
+        9,
+        10,
+        10
+      ],
+      "actual_speed": 0.29996661702528626,
+      "ground_load_fraction": 0.817105483120233,
+      "other_load_fraction": 0.0014553481471090094,
+      "posture_error_p95_rad": 0.03371210358977778
+    },
+    {
+      "id": "n6_v22_straight",
+      "modules": 6,
+      "speed": 0.22,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.331929184030741,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.06515139420339933,
+        "final_cost": 0.05612849614454724,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.06296253805614221
+          },
+          {
+            "iterations": 2,
+            "cost": 0.057606572566946436
+          },
+          {
+            "iterations": 4,
+            "cost": 0.05622518518126174
+          },
+          {
+            "iterations": 6,
+            "cost": 0.05612849614454724
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.628192007075995,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.21820890104631924,
+      "whole_proxy_ratio": 0.4457124358614165,
+      "walking_joint_mean": 8.10633428841212,
+      "walking_positive_work": 53.67240161815665,
+      "whole_joint_proxy": 231.0504794253623,
+      "whole_positive_work": 54.0617170441353,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 241.42910452135774,
+          "joint_proxy": 1.5926073147770037,
+          "positive_joint_work_j": 0.00019122324618469272
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 897.3714034079775,
+          "joint_proxy": 6.091771222416834,
+          "positive_joint_work_j": 0.17789179268667946
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1241.2382450735777,
+          "joint_proxy": 12.608590193394198,
+          "positive_joint_work_j": 0.08638384698431248
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 19.621809554240826,
+          "joint_proxy": 26.33840563346073,
+          "positive_joint_work_j": 0.12484856306147452
+        },
+        "WALK": {
+          "seconds": 22.74999999999233,
+          "rotor_proxy": 1166.4925958852684,
+          "joint_proxy": 184.41910506131353,
+          "positive_joint_work_j": 53.67240161815665
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3658233425614125,
+        0.3972912577307076
+      ],
+      "valid_steps_per_foot": [
+        12,
+        13,
+        13,
+        12
+      ],
+      "actual_speed": 0.2198379763190478,
+      "ground_load_fraction": 0.8427038385062117,
+      "other_load_fraction": 0.001540783932669151,
+      "posture_error_p95_rad": 0.0312244161266167
+    },
+    {
+      "id": "n6_v22_right",
+      "modules": 6,
+      "speed": 0.22,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.341736059635878,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.05802151828817208,
+        "final_cost": 0.05134704397776486,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.0569992836567678
+          },
+          {
+            "iterations": 2,
+            "cost": 0.0534046257046034
+          },
+          {
+            "iterations": 4,
+            "cost": 0.05134704397776486
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.0886487560346723,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.2521530500992458,
+      "whole_proxy_ratio": 0.4832679691093764,
+      "walking_joint_mean": 8.360213130789168,
+      "walking_positive_work": 59.381384522649974,
+      "whole_joint_proxy": 261.1963972378542,
+      "whole_positive_work": 60.39940161951559,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 250.2761196341247,
+          "joint_proxy": 4.090441697538921,
+          "positive_joint_work_j": 0.000553302009516519
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 948.2479916104581,
+          "joint_proxy": 17.769956089406598,
+          "positive_joint_work_j": 0.8579980405638277
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1317.8973914875437,
+          "joint_proxy": 28.7511212217415,
+          "positive_joint_work_j": 0.10875078291077045
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 2.807319937327975,
+          "joint_proxy": 20.30642737247009,
+          "positive_joint_work_j": 0.05071497138150105
+        },
+        "WALK": {
+          "seconds": 22.759999999992306,
+          "rotor_proxy": 1348.5424037365817,
+          "joint_proxy": 190.27845085669713,
+          "positive_joint_work_j": 59.381384522649974
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3730517712737236,
+        0.5225430663323887
+      ],
+      "valid_steps_per_foot": [
+        11,
+        11,
+        11,
+        11
+      ],
+      "actual_speed": 0.21984494555847833,
+      "ground_load_fraction": 0.815095956840648,
+      "other_load_fraction": 0.0049900141080046895,
+      "posture_error_p95_rad": 0.033185450437983495
+    },
+    {
+      "id": "n6_v26_straight",
+      "modules": 6,
+      "speed": 0.26,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 12.446604041848332,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.1263651479941304,
+        "final_cost": 0.11579311612817507,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.12343253154617655
+          },
+          {
+            "iterations": 2,
+            "cost": 0.1189486903744343
+          },
+          {
+            "iterations": 2,
+            "cost": 0.11876312649810833
+          },
+          {
+            "iterations": 4,
+            "cost": 0.11694786098267765
+          },
+          {
+            "iterations": 6,
+            "cost": 0.11579311612817507
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          0,
+          -15
+        ],
+        "seconds": 5.012400175910443,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 3,
+      "walking_proxy_ratio": 0.5488967184090976,
+      "whole_proxy_ratio": 0.7288915853052913,
+      "walking_joint_mean": 7.470839797874682,
+      "walking_positive_work": 39.05961537530134,
+      "whole_joint_proxy": 217.32830337524476,
+      "whole_positive_work": 39.96139245322701,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 262.6606485633187,
+          "joint_proxy": 4.894197399983501,
+          "positive_joint_work_j": 0.0010974768532436231
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 983.0182838700284,
+          "joint_proxy": 19.300798489337268,
+          "positive_joint_work_j": 0.6843660307951012
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1352.5900747860578,
+          "joint_proxy": 28.57569110651352,
+          "positive_joint_work_j": 0.10111741471715008
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 148.76507834021504,
+          "joint_proxy": 21.19220065819065,
+          "positive_joint_work_j": 0.11519615556017793
+        },
+        "WALK": {
+          "seconds": 19.190000000000627,
+          "rotor_proxy": 2475.1055986053866,
+          "joint_proxy": 143.36541572121982,
+          "positive_joint_work_j": 39.05961537530134
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.44769512952971047,
+        0.5613400678086218
+      ],
+      "valid_steps_per_foot": [
+        9,
+        9,
+        9
+      ],
+      "actual_speed": 0.260610256374827,
+      "ground_load_fraction": 0.5915629274607398,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.04001655177036104
+    },
+    {
+      "id": "n6_v26_left",
+      "modules": 6,
+      "speed": 0.26,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 12.716498191002756,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.07141371303210409,
+        "final_cost": 0.07141371303210409,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.1095467931590974,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.3516366047790051,
+      "whole_proxy_ratio": 0.5559190156054923,
+      "walking_joint_mean": 5.82645705880756,
+      "walking_positive_work": 34.26261415237557,
+      "whole_joint_proxy": 149.16161796678574,
+      "whole_positive_work": 34.89905143110774,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 241.7067060691445,
+          "joint_proxy": 2.6930945158550688,
+          "positive_joint_work_j": 0.0006382508131574967
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 904.1257746899469,
+          "joint_proxy": 10.845030461872353,
+          "positive_joint_work_j": 0.5431276798674052
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1257.0058249237306,
+          "joint_proxy": 16.424477345334665,
+          "positive_joint_work_j": 0.049469655635805077
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.18768639122390596,
+          "joint_proxy": 6.690129838147644,
+          "positive_joint_work_j": 0.04320169241580951
+        },
+        "WALK": {
+          "seconds": 19.310000000000347,
+          "rotor_proxy": 1595.5281662380453,
+          "joint_proxy": 112.50888580557601,
+          "positive_joint_work_j": 34.26261415237557
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.37628807867966646,
+        0.5768138710550799
+      ],
+      "valid_steps_per_foot": [
+        10,
+        11,
+        10,
+        11
+      ],
+      "actual_speed": 0.25894218414154613,
+      "ground_load_fraction": 0.7514822820154328,
+      "other_load_fraction": 0.014018536975531381,
+      "posture_error_p95_rad": 0.039902362140525616
+    },
+    {
+      "id": "n6_v30_straight",
+      "modules": 6,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 11.212965477723628,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.07392639608254505,
+        "final_cost": 0.07392639608254505,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.219119749031961,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.3892725616611234,
+      "whole_proxy_ratio": 0.6263755497861263,
+      "walking_joint_mean": 6.653785540740135,
+      "walking_positive_work": 42.47158017466841,
+      "whole_joint_proxy": 154.07907598133085,
+      "whole_positive_work": 43.10796412605763,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 248.30252618412186,
+          "joint_proxy": 1.3511485617308205,
+          "positive_joint_work_j": 0.000369637109822113
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 961.7467043635777,
+          "joint_proxy": 10.194544635938602,
+          "positive_joint_work_j": 0.4933167455514389
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1382.1597513917122,
+          "joint_proxy": 20.655698711318067,
+          "positive_joint_work_j": 0.07257478844851589
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 2.518917705703643,
+          "joint_proxy": 10.626389831125813,
+          "positive_joint_work_j": 0.07012278027944396
+        },
+        "WALK": {
+          "seconds": 16.720000000006383,
+          "rotor_proxy": 1529.3898005932058,
+          "joint_proxy": 111.25129424121754,
+          "positive_joint_work_j": 42.47158017466841
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.4926318748237224,
+        0.5891333149579752
+      ],
+      "valid_steps_per_foot": [
+        8,
+        8,
+        9,
+        9
+      ],
+      "actual_speed": 0.2992921117120445,
+      "ground_load_fraction": 0.7539732733930473,
+      "other_load_fraction": 0.010601883370952955,
+      "posture_error_p95_rad": 0.046147370801831095
+    },
+    {
+      "id": "n6_v30_right",
+      "modules": 6,
+      "speed": 0.3,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 12.379240387119353,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.07886466057231216,
+        "final_cost": 0.07886466057231216,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.1441338872537017,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.3746501966435708,
+      "whole_proxy_ratio": 0.5941335706113068,
+      "walking_joint_mean": 7.145045844717765,
+      "walking_positive_work": 52.06962316081434,
+      "whole_joint_proxy": 169.88268884001994,
+      "whole_positive_work": 52.81258965584415,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 247.33211042296503,
+          "joint_proxy": 2.9555357491462684,
+          "positive_joint_work_j": 0.00023491364974461066
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 922.9200683440441,
+          "joint_proxy": 11.448478085876642,
+          "positive_joint_work_j": 0.5453727354850995
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1274.77432579627,
+          "joint_proxy": 19.246542137493883,
+          "positive_joint_work_j": 0.08578101050003473
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 3.633558342559809,
+          "joint_proxy": 15.552308550177322,
+          "positive_joint_work_j": 0.11157783539493027
+        },
+        "WALK": {
+          "seconds": 16.890000000005987,
+          "rotor_proxy": 1486.9067667841155,
+          "joint_proxy": 120.67982431732582,
+          "positive_joint_work_j": 52.06962316081434
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.45566201025314024,
+        0.6603882639073965
+      ],
+      "valid_steps_per_foot": [
+        9,
+        9,
+        10,
+        10
+      ],
+      "actual_speed": 0.2960678851743481,
+      "ground_load_fraction": 0.7864451461066996,
+      "other_load_fraction": 0.0031384524918681572,
+      "posture_error_p95_rad": 0.02298938963250171
+    },
+    {
+      "id": "n7_v22_straight",
+      "modules": 7,
+      "speed": 0.22,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.410568973980844,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.07851677353525918,
+        "final_cost": 0.07154186692921627,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.07328127984619309
+          },
+          {
+            "iterations": 2,
+            "cost": 0.07154186692921627
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          0,
+          -15
+        ],
+        "seconds": 3.7149449051357806,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.36260985579270244,
+      "whole_proxy_ratio": 0.5597539114475977,
+      "walking_joint_mean": 8.51763277401279,
+      "walking_positive_work": 56.15534460727302,
+      "whole_joint_proxy": 252.95008494978356,
+      "whole_positive_work": 57.69838010124461,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 297.9305168383533,
+          "joint_proxy": 2.490531065062708,
+          "positive_joint_work_j": 0.0010961027508270304
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1134.772847017616,
+          "joint_proxy": 11.054771118048198,
+          "positive_joint_work_j": 1.3465995780985205
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1502.3250943859084,
+          "joint_proxy": 17.257114740382487,
+          "positive_joint_work_j": 0.11572657128852915
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 30.130960365819192,
+          "joint_proxy": 28.11599343434472,
+          "positive_joint_work_j": 0.07961324183371232
+        },
+        "WALK": {
+          "seconds": 22.77999999999226,
+          "rotor_proxy": 2264.478683955582,
+          "joint_proxy": 194.03167459194543,
+          "positive_joint_work_j": 56.15534460727302
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.46804513075582677,
+        0.523591391274595
+      ],
+      "valid_steps_per_foot": [
+        9,
+        10,
+        10,
+        10
+      ],
+      "actual_speed": 0.21954040630011262,
+      "ground_load_fraction": 0.7727869478521218,
+      "other_load_fraction": 0.003556570060519469,
+      "posture_error_p95_rad": 0.031492768036143474
+    },
+    {
+      "id": "n7_v22_left",
+      "modules": 7,
+      "speed": 0.22,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.385891552083194,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.07718253916687538,
+        "final_cost": 0.07075472957640355,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.07694710658949308
+          },
+          {
+            "iterations": 2,
+            "cost": 0.07075472957640355
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          0,
+          -15
+        ],
+        "seconds": 2.3721573147922754,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.33603991463454924,
+      "whole_proxy_ratio": 0.5193215494935138,
+      "walking_joint_mean": 9.33205695564357,
+      "walking_positive_work": 63.05771685371228,
+      "whole_joint_proxy": 266.67466906563595,
+      "whole_positive_work": 63.983552488572265,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 301.00824994803156,
+          "joint_proxy": 2.0785248583759994,
+          "positive_joint_work_j": 0.0021745707326552874
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1083.0311102720368,
+          "joint_proxy": 9.022279762440382,
+          "positive_joint_work_j": 0.7429238295497937
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1378.37206087306,
+          "joint_proxy": 17.620136094159246,
+          "positive_joint_work_j": 0.1072071591832654
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1.478048276109348,
+          "joint_proxy": 23.409738940491494,
+          "positive_joint_work_j": 0.0735300753942727
+        },
+        "WALK": {
+          "seconds": 22.98999999999177,
+          "rotor_proxy": 2117.896584879528,
+          "joint_proxy": 214.54398941016885,
+          "positive_joint_work_j": 63.05771685371228
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.36313528045569854,
+        0.5644742489725496
+      ],
+      "valid_steps_per_foot": [
+        10,
+        11,
+        10,
+        11
+      ],
+      "actual_speed": 0.21753302320123036,
+      "ground_load_fraction": 0.7387074793780799,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.013077724793872267
+    },
+    {
+      "id": "n7_v26_straight",
+      "modules": 7,
+      "speed": 0.26,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.407873585820198,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.08365433030406526,
+        "final_cost": 0.07094188834369734,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.0774320878599987
+          },
+          {
+            "iterations": 2,
+            "cost": 0.07374159489792977
+          },
+          {
+            "iterations": 2,
+            "cost": 0.07094188834369734
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          -15
+        ],
+        "seconds": 3.5293928240425885,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.3769357931940963,
+      "whole_proxy_ratio": 0.5674138903075198,
+      "walking_joint_mean": 9.969497194644175,
+      "walking_positive_work": 74.31502966436129,
+      "whole_joint_proxy": 267.3464610594361,
+      "whole_positive_work": 75.25554593885197,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 272.72194801204455,
+          "joint_proxy": 3.298236825422909,
+          "positive_joint_work_j": 0.0006398163070841605
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1026.74887591441,
+          "joint_proxy": 13.906015066272305,
+          "positive_joint_work_j": 0.6634329896464183
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1432.2419637409994,
+          "joint_proxy": 24.639690091024427,
+          "positive_joint_work_j": 0.16042338345261842
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 39.05043911170105,
+          "joint_proxy": 32.0942735006181,
+          "positive_joint_work_j": 0.11602008508455797
+        },
+        "WALK": {
+          "seconds": 19.400000000000137,
+          "rotor_proxy": 2004.6752211066128,
+          "joint_proxy": 193.40824557609835,
+          "positive_joint_work_j": 74.31502966436129
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.5049259670907024,
+        0.5635822648364375
+      ],
+      "valid_steps_per_foot": [
+        9,
+        9,
+        9,
+        9
+      ],
+      "actual_speed": 0.25781764011625935,
+      "ground_load_fraction": 0.7197238127724067,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.0449303665537317
+    },
+    {
+      "id": "n7_v26_right",
+      "modules": 7,
+      "speed": 0.26,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.408780372701585,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.07995457177546156,
+        "final_cost": 0.07352653411452366,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.07893268019499668
+          },
+          {
+            "iterations": 2,
+            "cost": 0.07352653411452366
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          -15
+        ],
+        "seconds": 2.4845072301104665,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.3720751504920125,
+      "whole_proxy_ratio": 0.5819451824666427,
+      "walking_joint_mean": 9.31548946744204,
+      "walking_positive_work": 70.72263258483598,
+      "whole_joint_proxy": 246.22784288370565,
+      "whole_positive_work": 71.90334513125967,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 284.23015648312713,
+          "joint_proxy": 2.6611897051304934,
+          "positive_joint_work_j": 0.00034733222168976426
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1078.8021616438234,
+          "joint_proxy": 13.15038527907052,
+          "positive_joint_work_j": 1.0573046739608967
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1513.0892676534913,
+          "joint_proxy": 24.384718302530953,
+          "positive_joint_work_j": 0.034421433243167154
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 42.214367092333305,
+          "joint_proxy": 25.404208823271027,
+          "positive_joint_work_j": 0.08863910699793753
+        },
+        "WALK": {
+          "seconds": 19.39000000000016,
+          "rotor_proxy": 1977.8046254705027,
+          "joint_proxy": 180.62734077370266,
+          "positive_joint_work_j": 70.72263258483598
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3686220813037571,
+        0.6064444976457813
+      ],
+      "valid_steps_per_foot": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "actual_speed": 0.25801418627962575,
+      "ground_load_fraction": 0.7300793188170497,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.019289838410225846
+    },
+    {
+      "id": "n7_v30_straight",
+      "modules": 7,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.419234191067517,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.10078651456832771,
+        "final_cost": 0.09774571210264192,
+        "updates": [
+          {
+            "iterations": 3,
+            "cost": 0.09808192884946054
+          },
+          {
+            "iterations": 2,
+            "cost": 0.09774571210264192
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.662540698889643,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.47660378874755727,
+      "whole_proxy_ratio": 0.6858495051876546,
+      "walking_joint_mean": 8.844836733496729,
+      "walking_positive_work": 47.284130642491874,
+      "whole_joint_proxy": 200.6526191005026,
+      "whole_positive_work": 48.059908001189186,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 265.2692277608268,
+          "joint_proxy": 1.9886338646644335,
+          "positive_joint_work_j": 0.00015000987837959925
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1003.8516865402216,
+          "joint_proxy": 7.683775449901778,
+          "positive_joint_work_j": 0.5920110466641926
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1455.2598704161617,
+          "joint_proxy": 15.033172079296586,
+          "positive_joint_work_j": 0.04095880252435147
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 357.6313810417014,
+          "joint_proxy": 28.32671262452229,
+          "positive_joint_work_j": 0.14265749963038454
+        },
+        "WALK": {
+          "seconds": 16.690000000006453,
+          "rotor_proxy": 2180.6639307201617,
+          "joint_proxy": 147.6203250821175,
+          "positive_joint_work_j": 47.284130642491874
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.5229919850447019,
+        0.5865451823634085
+      ],
+      "valid_steps_per_foot": [
+        8,
+        9,
+        9,
+        8
+      ],
+      "actual_speed": 0.29970838529697763,
+      "ground_load_fraction": 0.6868961499172732,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.026210895515731986
+    },
+    {
+      "id": "n7_v30_left",
+      "modules": 7,
+      "speed": 0.3,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.823728445917368,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.10420747282512294,
+        "final_cost": 0.10420747282512294,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.385796485003084,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.5402268484656465,
+      "whole_proxy_ratio": 0.7065896919862678,
+      "walking_joint_mean": 8.237542170976958,
+      "walking_positive_work": 50.237522773697556,
+      "whole_joint_proxy": 195.54822931704842,
+      "whole_positive_work": 51.113838982080104,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 285.42244851424965,
+          "joint_proxy": 2.970778662768174,
+          "positive_joint_work_j": 0.0004036365750417947
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1067.079216321145,
+          "joint_proxy": 10.693128755556486,
+          "positive_joint_work_j": 0.7415360545249768
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1481.8715958894193,
+          "joint_proxy": 17.51500669106862,
+          "positive_joint_work_j": 0.06242584712567012
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 114.31236121441043,
+          "joint_proxy": 27.131862639125302,
+          "positive_joint_work_j": 0.07195067015685774
+        },
+        "WALK": {
+          "seconds": 16.660000000006523,
+          "rotor_proxy": 2467.323381386494,
+          "joint_proxy": 137.23745256852985,
+          "positive_joint_work_j": 50.237522773697556
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.40862258562165044,
+        0.5869017557267601
+      ],
+      "valid_steps_per_foot": [
+        9,
+        10,
+        9,
+        10
+      ],
+      "actual_speed": 0.300190794457635,
+      "ground_load_fraction": 0.6519877670062747,
+      "other_load_fraction": 0.0006204449489771743,
+      "posture_error_p95_rad": 0.028675588219138355
+    },
+    {
+      "id": "n8_v22_straight",
+      "modules": 8,
+      "speed": 0.22,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.484968402888626,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.09512600039679421,
+        "final_cost": 0.09512600039679421,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          -15
+        ],
+        "seconds": 1.7257185517810285,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.4678391896443985,
+      "whole_proxy_ratio": 0.6140583135823001,
+      "walking_joint_mean": 10.019781384255644,
+      "walking_positive_work": 62.36102021865215,
+      "whole_joint_proxy": 295.81182001375424,
+      "whole_positive_work": 62.9284466572472,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 299.46948940156915,
+          "joint_proxy": 3.370630217860483,
+          "positive_joint_work_j": 9.28207957621423e-05
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1131.0231500503703,
+          "joint_proxy": 15.390732349683363,
+          "positive_joint_work_j": 0.4077140554498785
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1608.9348765717125,
+          "joint_proxy": 27.781338689581975,
+          "positive_joint_work_j": 0.07434757706107348
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 176.29452956611385,
+          "joint_proxy": 21.4192900787317,
+          "positive_joint_work_j": 0.08527198528833313
+        },
+        "WALK": {
+          "seconds": 22.739999999992353,
+          "rotor_proxy": 3333.142790741032,
+          "joint_proxy": 227.8498286778967,
+          "positive_joint_work_j": 62.36102021865215
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.45756155019099226,
+        0.4816219283197782
+      ],
+      "valid_steps_per_foot": [
+        10,
+        11,
+        11,
+        10
+      ],
+      "actual_speed": 0.21989630386321773,
+      "ground_load_fraction": 0.6515348152180058,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.03348473367659553
+    },
+    {
+      "id": "n8_v22_right",
+      "modules": 8,
+      "speed": 0.22,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.704745384864509,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "insufficient_remaining_time",
+        "seconds": 0.0,
+        "original_cost": 0.08989507746476803
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.4708202069848803,
+      "whole_proxy_ratio": 0.6266028939178008,
+      "walking_joint_mean": 9.050076180615712,
+      "walking_positive_work": 38.84909395611852,
+      "whole_joint_proxy": 266.0622282677554,
+      "whole_positive_work": 39.20225174829023,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 301.7628070895808,
+          "joint_proxy": 2.429020128365263,
+          "positive_joint_work_j": 0.00046840515590541886
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1129.0971475717208,
+          "joint_proxy": 10.145353331001207,
+          "positive_joint_work_j": 0.13024857702385687
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1605.227453918737,
+          "joint_proxy": 19.095688557810305,
+          "positive_joint_work_j": 0.09309474586763014
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 291.2066657965079,
+          "joint_proxy": 28.774435427058428,
+          "positive_joint_work_j": 0.12934606412431185
+        },
+        "WALK": {
+          "seconds": 22.7199999999924,
+          "rotor_proxy": 3351.4309887143795,
+          "joint_proxy": 205.6177308235202,
+          "positive_joint_work_j": 38.84909395611852
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3010804869129782,
+        0.541175932385265
+      ],
+      "valid_steps_per_foot": [
+        11,
+        12,
+        12,
+        11
+      ],
+      "actual_speed": 0.22009148545702487,
+      "ground_load_fraction": 0.657387233368426,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.02106599296282543
+    },
+    {
+      "id": "n8_v26_straight",
+      "modules": 8,
+      "speed": 0.26,
+      "curvature": 0.0,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.48722670180723,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.1106470469228284,
+        "final_cost": 0.1106470469228284,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          -15
+        ],
+        "seconds": 1.780317448079586,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.6078375622017086,
+      "whole_proxy_ratio": 0.7298421274445683,
+      "walking_joint_mean": 11.246957679808137,
+      "walking_positive_work": 52.450704607258324,
+      "whole_joint_proxy": 313.95302679288545,
+      "whole_positive_work": 54.112863994606734,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 317.7956439142794,
+          "joint_proxy": 5.2079644600546136,
+          "positive_joint_work_j": 0.0007494247814784042
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1154.2883819847993,
+          "joint_proxy": 19.362744413874807,
+          "positive_joint_work_j": 1.3698030933522551
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1573.5126512332367,
+          "joint_proxy": 33.70378724983189,
+          "positive_joint_work_j": 0.17044984431703258
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 281.76303009470575,
+          "joint_proxy": 36.92520379685564,
+          "positive_joint_work_j": 0.12115702489764213
+        },
+        "WALK": {
+          "seconds": 19.45000000000002,
+          "rotor_proxy": 3704.025775164241,
+          "joint_proxy": 218.7533268722685,
+          "positive_joint_work_j": 52.450704607258324
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.5498331324202761,
+        0.5904932090825467
+      ],
+      "valid_steps_per_foot": [
+        8,
+        9,
+        9,
+        8
+      ],
+      "actual_speed": 0.25709650818849583,
+      "ground_load_fraction": 0.5745695443448695,
+      "other_load_fraction": 0.0022711845957956896,
+      "posture_error_p95_rad": 0.027001112811085255
+    },
+    {
+      "id": "n8_v26_left",
+      "modules": 8,
+      "speed": 0.26,
+      "curvature": 0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.527944910805672,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.10840040980256378,
+        "final_cost": 0.1006837128538608,
+        "updates": [
+          {
+            "iterations": 2,
+            "cost": 0.1006837128538608
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          -15
+        ],
+        "seconds": 4.210926963016391,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.5115996060520415,
+      "whole_proxy_ratio": 0.7171932437960473,
+      "walking_joint_mean": 10.659891927771225,
+      "walking_positive_work": 49.143025488742,
+      "whole_joint_proxy": 270.17175733323165,
+      "whole_positive_work": 49.829403610503995,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 322.79400842111505,
+          "joint_proxy": 2.6327352668453154,
+          "positive_joint_work_j": 4.230883417209498e-05
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1205.9834723771057,
+          "joint_proxy": 9.546256558264817,
+          "positive_joint_work_j": 0.3160270303158719
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1745.4023330457223,
+          "joint_proxy": 17.285189370911887,
+          "positive_joint_work_j": 0.11604482115366227
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 504.24474691913474,
+          "joint_proxy": 35.61125544688584,
+          "positive_joint_work_j": 0.25426396145828967
+        },
+        "WALK": {
+          "seconds": 19.24000000000051,
+          "rotor_proxy": 3083.913081162628,
+          "joint_proxy": 205.0963206903238,
+          "positive_joint_work_j": 49.143025488742
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.38691525516418523,
+        0.635978910323346
+      ],
+      "valid_steps_per_foot": [
+        9,
+        9,
+        9,
+        9
+      ],
+      "actual_speed": 0.26000146137757374,
+      "ground_load_fraction": 0.6065977920379068,
+      "other_load_fraction": 0.004987342919388121,
+      "posture_error_p95_rad": 0.02267862649297068
+    },
+    {
+      "id": "n8_v30_straight",
+      "modules": 8,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": false,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": false,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.970924320165068,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.12045300990042127,
+        "final_cost": 0.12045300990042127,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.7318734349682927,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.6513196646076613,
+      "whole_proxy_ratio": 0.8271276612531527,
+      "walking_joint_mean": 10.37337049375877,
+      "walking_positive_work": 62.85692233492601,
+      "whole_joint_proxy": 264.0480492376319,
+      "whole_positive_work": 63.76337667366374,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 323.8789898801191,
+          "joint_proxy": 4.8501721870502035,
+          "positive_joint_work_j": 0.000919332579225337
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1187.8180376015798,
+          "joint_proxy": 18.641226109584927,
+          "positive_joint_work_j": 0.6267475773739777
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1681.6598059587782,
+          "joint_proxy": 29.35865577262333,
+          "positive_joint_work_j": 0.06328948737968954
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 654.8190175748887,
+          "joint_proxy": 37.9627079225353,
+          "positive_joint_work_j": 0.2154979414048359
+        },
+        "WALK": {
+          "seconds": 16.70000000000643,
+          "rotor_proxy": 3407.8268609689308,
+          "joint_proxy": 173.23528724583815,
+          "positive_joint_work_j": 62.85692233492601
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.559115583831674,
+        0.6016208410057897
+      ],
+      "valid_steps_per_foot": [
+        8,
+        8,
+        9,
+        8
+      ],
+      "actual_speed": 0.2994354435143914,
+      "ground_load_fraction": 0.5907020923205571,
+      "other_load_fraction": 0.020845616337473387,
+      "posture_error_p95_rad": 0.05849327288814235
+    },
+    {
+      "id": "n8_v30_right",
+      "modules": 8,
+      "speed": 0.3,
+      "curvature": -0.3,
+      "success": true,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": true,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 14.450110704638064,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.15473555330533606,
+        "final_cost": 0.09977430372398323,
+        "updates": [
+          {
+            "iterations": 2,
+            "cost": 0.10528565553854155
+          },
+          {
+            "iterations": 4,
+            "cost": 0.09977430372398323
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 4.202500012237579,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.5103027845566295,
+      "whole_proxy_ratio": 0.8406396463406877,
+      "walking_joint_mean": 11.43670422359986,
+      "walking_positive_work": 75.58747730276068,
+      "whole_joint_proxy": 304.408906649816,
+      "whole_positive_work": 76.31341366308074,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 14.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 313.3947553745667,
+          "joint_proxy": 2.9488680406969165,
+          "positive_joint_work_j": 4.306708840772356e-05
+        },
+        "MORPH": {
+          "seconds": 5.999999999999394,
+          "rotor_proxy": 2763.63387824099,
+          "joint_proxy": 36.76028345885119,
+          "positive_joint_work_j": 0.5648504295125958
+        },
+        "DESCEND": {
+          "seconds": 4.499500000000226,
+          "rotor_proxy": 2321.1622763937053,
+          "joint_proxy": 43.362460908603886,
+          "positive_joint_work_j": 0.1128200867018968
+        },
+        "TRANSFER": {
+          "seconds": 3.000000000000169,
+          "rotor_proxy": 106.82462927423512,
+          "joint_proxy": 29.20066328511551,
+          "positive_joint_work_j": 0.04822277701715971
+        },
+        "WALK": {
+          "seconds": 16.800000000006197,
+          "rotor_proxy": 2685.98807327976,
+          "joint_proxy": 192.13663095654852,
+          "positive_joint_work_j": 75.58747730276068
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.40117987408831,
+        0.6573663935990564
+      ],
+      "valid_steps_per_foot": [
+        9,
+        10,
+        10,
+        9
+      ],
+      "actual_speed": 0.29774030876302027,
+      "ground_load_fraction": 0.612210911875029,
+      "other_load_fraction": 0.0,
+      "posture_error_p95_rad": 0.019861004919313873
+    }
+  ],
+  "by_modules": {
+    "3": {
+      "successes": 5,
+      "total": 6,
+      "mean_walking_ratio": 0.44211313757627274,
+      "mean_whole_ratio": 0.6372552695132115,
+      "mean_joint_burden": 2.7290439902637043,
+      "mean_positive_joint_work_j": 20.942669217824214
+    },
+    "4": {
+      "successes": 6,
+      "total": 6,
+      "mean_walking_ratio": 0.4297016463472639,
+      "mean_whole_ratio": 0.6350576912309631,
+      "mean_joint_burden": 4.683437441272607,
+      "mean_positive_joint_work_j": 34.392016859449086
+    },
+    "5": {
+      "successes": 5,
+      "total": 6,
+      "mean_walking_ratio": 0.2439996412375657,
+      "mean_whole_ratio": 0.5192534821839457,
+      "mean_joint_burden": 5.742090639313024,
+      "mean_positive_joint_work_j": 39.54929714564965
+    },
+    "6": {
+      "successes": 6,
+      "total": 6,
+      "mean_walking_ratio": 0.355803005439727,
+      "mean_whole_ratio": 0.572383354379835,
+      "mean_joint_burden": 7.260445943556905,
+      "mean_positive_joint_work_j": 46.81953650066105
+    },
+    "7": {
+      "successes": 6,
+      "total": 6,
+      "mean_walking_ratio": 0.4107485585544273,
+      "mean_whole_ratio": 0.6034789551481995,
+      "mean_joint_burden": 9.036175882702711,
+      "mean_positive_joint_work_j": 60.29539618772866
+    },
+    "8": {
+      "successes": 5,
+      "total": 6,
+      "mean_walking_ratio": 0.5136798698879316,
+      "mean_whole_ratio": 0.7056672450162809,
+      "mean_joint_burden": 10.482682279210115,
+      "mean_positive_joint_work_j": 55.678264314706325
+    }
+  },
+  "failures": [
+    {
+      "id": "n3_v30_left",
+      "modules": 3,
+      "speed": 0.3,
+      "curvature": 0.3,
+      "success": false,
+      "reason": "no_candidate",
+      "checks": null,
+      "planning_s": 4.817469685804099,
+      "trials": 59,
+      "evidence_complete": null,
+      "refinement": null
+    },
+    {
+      "id": "n5_v26_right",
+      "modules": 5,
+      "speed": 0.26,
+      "curvature": -0.3,
+      "success": false,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": false,
+        "other_support": false,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 11.93806238239631,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "improved",
+        "original_cost": 0.051428783289363754,
+        "final_cost": 0.041298827350425164,
+        "updates": [
+          {
+            "iterations": 6,
+            "cost": 0.04265929417237332
+          },
+          {
+            "iterations": 8,
+            "cost": 0.041298827350425164
+          }
+        ],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 3.2404687092639506,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.27956409103914714,
+      "whole_proxy_ratio": 0.5263699862870989,
+      "walking_joint_mean": 6.1369011286659285,
+      "walking_positive_work": 43.41140752347122,
+      "whole_joint_proxy": 142.183990658727,
+      "whole_positive_work": 43.814500802409306,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 212.3384623957455,
+          "joint_proxy": 1.3325876235612548,
+          "positive_joint_work_j": 0.00045095862698661714
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 793.1281448631646,
+          "joint_proxy": 4.494848222887375,
+          "positive_joint_work_j": 0.3170302243213986
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1095.662007865996,
+          "joint_proxy": 6.820127209156722,
+          "positive_joint_work_j": 0.024045403715056368
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 0.6653752819843248,
+          "joint_proxy": 10.541914718288304,
+          "positive_joint_work_j": 0.06156669227464512
+        },
+        "WALK": {
+          "seconds": 19.39000000000016,
+          "rotor_proxy": 1061.465965451805,
+          "joint_proxy": 118.99451288483334,
+          "positive_joint_work_j": 43.41140752347122
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.3342463366691653,
+        0.8071347601130096
+      ],
+      "valid_steps_per_foot": [
+        11,
+        10,
+        11,
+        5
+      ],
+      "actual_speed": 0.2579021429448207,
+      "ground_load_fraction": 0.8127998996835667,
+      "other_load_fraction": 0.039281714416435624,
+      "posture_error_p95_rad": 0.10908541477284003
+    },
+    {
+      "id": "n8_v30_straight",
+      "modules": 8,
+      "speed": 0.3,
+      "curvature": 0.0,
+      "success": false,
+      "reason": null,
+      "checks": {
+        "distance": true,
+        "physical": true,
+        "minimum_speed": true,
+        "mean_speed": true,
+        "window_speed": true,
+        "path": true,
+        "posture": true,
+        "ground_support": true,
+        "feet": true,
+        "other_support": false,
+        "airborne_landing": true,
+        "control_deadline": true,
+        "planning_deadline": true
+      },
+      "planning_s": 13.970924320165068,
+      "trials": 59,
+      "evidence_complete": true,
+      "refinement": {
+        "status": "original_retained",
+        "original_cost": 0.12045300990042127,
+        "final_cost": 0.12045300990042127,
+        "updates": [],
+        "modes": [
+          "both",
+          "condensed"
+        ],
+        "worker_exitcodes": [
+          -15,
+          0
+        ],
+        "seconds": 2.7318734349682927,
+        "evidence_scope": "Auxiliary updates are not independent trials. The next basic trial improvement probability bound is conservative at this lower cost."
+      },
+      "feet": 4,
+      "walking_proxy_ratio": 0.6513196646076613,
+      "whole_proxy_ratio": 0.8271276612531527,
+      "walking_joint_mean": 10.37337049375877,
+      "walking_positive_work": 62.85692233492601,
+      "whole_joint_proxy": 264.0480492376319,
+      "whole_positive_work": 63.76337667366374,
+      "landing_support_s": 0.3000000000000002,
+      "prefix_duration_s": 11.3,
+      "peak_actuator_ratio": 1.0,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.8004999999999672,
+          "rotor_proxy": 323.8789898801191,
+          "joint_proxy": 4.8501721870502035,
+          "positive_joint_work_j": 0.000919332579225337
+        },
+        "MORPH": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 1187.8180376015798,
+          "joint_proxy": 18.641226109584927,
+          "positive_joint_work_j": 0.6267475773739777
+        },
+        "DESCEND": {
+          "seconds": 4.500500000000225,
+          "rotor_proxy": 1681.6598059587782,
+          "joint_proxy": 29.35865577262333,
+          "positive_joint_work_j": 0.06328948737968954
+        },
+        "TRANSFER": {
+          "seconds": 2.999500000000169,
+          "rotor_proxy": 654.8190175748887,
+          "joint_proxy": 37.9627079225353,
+          "positive_joint_work_j": 0.2154979414048359
+        },
+        "WALK": {
+          "seconds": 16.70000000000643,
+          "rotor_proxy": 3407.8268609689308,
+          "joint_proxy": 173.23528724583815,
+          "positive_joint_work_j": 62.85692233492601
+        }
+      },
+      "valid_step_stride_range_m": [
+        0.559115583831674,
+        0.6016208410057897
+      ],
+      "valid_steps_per_foot": [
+        8,
+        8,
+        9,
+        8
+      ],
+      "actual_speed": 0.2994354435143914,
+      "ground_load_fraction": 0.5907020923205571,
+      "other_load_fraction": 0.020845616337473387,
+      "posture_error_p95_rad": 0.05849327288814235
+    }
+  ],
+  "scope": "Fixed development panel, independently rerun from fresh generation; not unseen-task performance or calibrated electric power."
+}
