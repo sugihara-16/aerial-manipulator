@@ -8,6 +8,16 @@ from amsrr_det.task_structure import grow_to_contacts
 from amsrr_det.task_contacts import ContactRequirements
 
 
+@pytest.fixture(autouse=True)
+def restore_diagnostic_model_constructor():
+    # Legacy generation diagnostics replace this constructor on import.
+    # Their precision setting must not leak into unrelated task tests.
+    from amsrr_det.mujoco_model import PlantModel
+    original=PlantModel.__init__
+    yield
+    PlantModel.__init__=original
+
+
 def request():
     return dict(payload=dict(shape='box',size=[.3,.2,.2],mass=.7),
                 source=[0,0,.3,0,0,0,1],destination=[.3,0,.3,0,0,0,1],support_top=.2)
@@ -75,7 +85,7 @@ def test_growth_local_geometry_reuse_preserves_every_seeded_choice(monkeypatch):
     reused=growth.grow_to_contacts(6,points,normals,np.random.default_rng(91))
     reused_calls=len(calls);calls.clear()
     choices=growth._expansion_choices
-    monkeypatch.setattr(growth,'_expansion_choices',lambda *args:choices(*args[:7]))
+    monkeypatch.setattr(growth,'_expansion_choices',lambda *args,**kwargs:choices(*args[:7],**kwargs))
     reference=growth.grow_to_contacts(6,points,normals,np.random.default_rng(91))
     assert reused_calls<len(calls)
     assert reused[:2]==reference[:2] and reused[3:]==reference[3:]

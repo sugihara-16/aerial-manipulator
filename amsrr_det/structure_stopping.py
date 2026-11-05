@@ -34,6 +34,27 @@ def required_trials(improvement_probability=.05, total_error=.05, groups=8):
     return math.ceil(math.log(total_error)/math.log1p(-improvement_probability))
 
 
+def fixed_count_evidence(modules, outcomes, incumbent, *, protocol_id,
+                         improvement_probability=.05, total_error=.05):
+    """The same IID order-statistic bound when module count is a task input."""
+    count=required_trials(improvement_probability,total_error,1)
+    if not isinstance(modules,int) or not 1<=modules<=8 or not protocol_id:
+        raise ValueError('a fixed module count and frozen protocol are required')
+    if not math.isfinite(incumbent) or incumbent<0:
+        raise ValueError('a finite accepted incumbent is required')
+    for cost in outcomes:
+        if cost is not None and (math.isnan(cost) or cost<incumbent):
+            raise ValueError('incumbent must retain every completed improvement')
+    complete=len(outcomes)>=count and all(x is not None for x in outcomes)
+    return dict(complete=complete,modules=modules,protocol_id=protocol_id,
+        method='fixed_count_independent_trial_minimum',required_trials=count,
+        completed_trials=sum(x is not None for x in outcomes),
+        successful_trials=sum(x is not None and math.isfinite(x) for x in outcomes),
+        one_more_trial_improvement_probability_upper=-math.expm1(math.log(total_error)/len(outcomes)) if complete else None,
+        error_probability=total_error,improvement_probability_target=improvement_probability,
+        undiscovered_structure_existence_probability_claimed=False)
+
+
 def selection_evidence(bounds, outcomes, incumbent, *, protocol_id,
                        improvement_probability=.05, total_error=.05,censored_bounds=None):
     """Combine count-wide physical bounds and fixed-prefix statistical evidence.
