@@ -1,0 +1,46 @@
+{
+  "primary_numeric_targets_pass": true,
+  "independent_audit_issues": [],
+  "structure_review_issues": [],
+  "all_basic_trials_completed": true,
+  "failure_review": {
+    "statistical_concentration_detected": false,
+    "remaining_weaknesses": [
+      "3 modules at 0.30 m/s: single-support load selected by control and actual floor load are both low; mean load/steps/posture pass, half-weight support-time fails",
+      "8 modules at 0.30 m/s straight: non-foot load fraction .0232088 exceeds fixed .02 limit"
+    ],
+    "not_claimed": [
+      "equal failure rates",
+      "failure-free operation in each subgroup",
+      "physical impossibility of a rejected structure"
+    ]
+  },
+  "step_sensitivity": {
+    "cases": 36,
+    "successes": 33,
+    "mean_success_ratio": 0.39493847227096823,
+    "changed_outcomes": [],
+    "common_success_max_relative_ratio_change": 0.04085601127506433,
+    "common_success_mean_ratio_change": -0.00023886232055351264,
+    "publication_max_ms": 4.151525907218456,
+    "publication_over10": 0,
+    "issues": []
+  },
+  "visual_review": {
+    "cases": [
+      "n3_v26_straight",
+      "n4_v22_straight",
+      "n6_v26_left",
+      "n8_v30_right"
+    ],
+    "method": "Saved-state videos and nine-frame cycle sheets; observed alternating foot advance and body progression against floor grid. Full physical-step load and valid-step checks are separate.",
+    "render_only_changes": [
+      "checkerboard material on floor",
+      "camera distance",
+      "foot display color"
+    ]
+  },
+  "tests": "102 related tests passed before frozen-source evaluation",
+  "pro_review": "pro_round176.txt",
+  "scope": "PC simulation, uncalibrated rotor burden proxy, 2..8 foot proposals; 2..4 feet selected and physically executed; no VIM4 or electric-power claim"
+}
