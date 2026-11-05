@@ -54,27 +54,28 @@ def summarize(root):
                     ages.append(r['application_s']-r['observation_s'])
             # Independently recover task path/speed from recorded COM and final CAD model.
             samples=json.loads((folder/'audit.json').read_text());task=WalkSpec(**case['task'])
-            origin=np.array(s['plan']['gait']['origin']);times=np.array([r['time_s'] for r in samples]);xy=np.array([r['com'][:2] for r in samples])
-            relative=xy-origin[:2];k=task.curvature
-            progress=relative[:,0] if abs(k)<1e-10 else np.unwrap(np.arctan2(k*relative[:,0],1-k*relative[:,1]))/k
-            travel=progress[-1]-progress[0];mean=travel/(times[-1]-times[0])
-            boundaries=np.r_[np.arange(0,times[-1],5.),times[-1]]
-            windows=np.diff(np.interp(boundaries,times,progress))/np.diff(boundaries)
-            error=np.linalg.norm(xy-origin[:2]-task.path(times)[0],axis=1)
-            m=mujoco.MjModel.from_xml_path(str(folder/'physical.xml'));d=mujoco.MjData(m);final=np.load(folder/'final.npz');d.qpos[:]=final['q'];d.qvel[:]=final['v'];mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d)
-            if np.linalg.norm(d.subtree_com[0]-np.array(samples[-1]['com']))>1e-8:issues.append(['final_com_mismatch',case['id']])
-            independent=dict(distance=bool(travel>=task.distance),minimum_speed=bool(travel/result['simulation_s']>=.2),
-                mean_speed=bool(abs(mean/task.speed-1)<=.1),window_speed=bool(max(abs(windows/task.speed-1))<=.2),
-                path=bool(error.max()<=.1 and error[-1]<=.05),control_deadline=bool(cpu.max()<.01 and max(dt)<=.01+1e-8),
-                planning_deadline=bool(result['planning_s']<=15.))
-            if any(result['checks'][key]!=value for key,value in independent.items()):issues.append(['independent_check_mismatch',case['id'],independent])
-            if row['success'] and (not all(independent.values()) or not all(result['checks'].values()) or result['peak_actuator_ratio']>1.00001):issues.append(['invalid_success',case['id']])
-            row.update(maximum_path_error_m=float(error.max()),ground_contact_fraction=result['ground_contact_fraction'],ground_load_fraction=result['ground_load_fraction'],
-                rotor_burden_mean=result['rotor_burden_mean'],joint_burden_mean=result['joint_burden_mean'])
-            hover=(m.body_mass.sum()*abs(m.opt.gravity[2]))**1.5/np.sqrt(4*task.modules)
-            row['rotor_burden_hover_ratio']=result['rotor_burden_mean']/hover
-            if abs(row['rotor_burden_hover_ratio']-result['rotor_burden_hover_ratio'])>1e-8:
-                issues.append(['energy_normalization_mismatch',case['id']])
+            if samples:
+                origin=np.array(s['plan']['gait']['origin']);times=np.array([r['time_s'] for r in samples]);xy=np.array([r['com'][:2] for r in samples])
+                relative=xy-origin[:2];k=task.curvature
+                progress=relative[:,0] if abs(k)<1e-10 else np.unwrap(np.arctan2(k*relative[:,0],1-k*relative[:,1]))/k
+                travel=progress[-1]-progress[0];mean=travel/(times[-1]-times[0])
+                boundaries=np.r_[np.arange(0,times[-1],5.),times[-1]]
+                windows=np.diff(np.interp(boundaries,times,progress))/np.diff(boundaries)
+                error=np.linalg.norm(xy-origin[:2]-task.path(times)[0],axis=1)
+                m=mujoco.MjModel.from_xml_path(str(folder/'physical.xml'));d=mujoco.MjData(m);final=np.load(folder/'final.npz');d.qpos[:]=final['q'];d.qvel[:]=final['v'];mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d)
+                if np.linalg.norm(d.subtree_com[0]-np.array(samples[-1]['com']))>1e-8:issues.append(['final_com_mismatch',case['id']])
+                independent=dict(distance=bool(travel>=task.distance),minimum_speed=bool(travel/result['simulation_s']>=.2),
+                    mean_speed=bool(abs(mean/task.speed-1)<=.1),window_speed=bool(max(abs(windows/task.speed-1))<=.2),
+                    path=bool(error.max()<=.1 and error[-1]<=.05),control_deadline=bool(cpu.max()<.01 and max(dt)<=.01+1e-8),
+                    planning_deadline=bool(result['planning_s']<=15.))
+                if any(result['checks'][key]!=value for key,value in independent.items()):issues.append(['independent_check_mismatch',case['id'],independent])
+                if row['success'] and (not all(independent.values()) or not all(result['checks'].values()) or result['peak_actuator_ratio']>1.00001):issues.append(['invalid_success',case['id']])
+                row.update(maximum_path_error_m=float(error.max()),ground_contact_fraction=result['ground_contact_fraction'],ground_load_fraction=result['ground_load_fraction'],
+                    rotor_burden_mean=result['rotor_burden_mean'],joint_burden_mean=result['joint_burden_mean'])
+                hover=(m.body_mass.sum()*abs(m.opt.gravity[2]))**1.5/np.sqrt(4*task.modules)
+                row['rotor_burden_hover_ratio']=result['rotor_burden_mean']/hover
+                if abs(row['rotor_burden_hover_ratio']-result['rotor_burden_hover_ratio'])>1e-8:
+                    issues.append(['energy_normalization_mismatch',case['id']])
         rows.append(row)
         t=case['task'];strata=dict(modules=t['modules'],speed=t['speed'],path='straight' if t['curvature']==0 else 'left' if t['curvature']>0 else 'right',module_speed=str((t['modules'],t['speed'])))
         for group,key in strata.items():groups[group][str(key)].append(row)
