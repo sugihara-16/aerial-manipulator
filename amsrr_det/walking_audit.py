@@ -5,8 +5,9 @@ from .walking import foot_material
 
 
 class WalkingAudit:
-    def __init__(self,plant,links,spec,reference):
+    def __init__(self,plant,links,spec,reference,*,start_time=0.):
         self.plant=plant;self.m=plant.mj;self.spec=spec;self.reference=reference
+        self.start_time=float(start_time)
         self.links=links;self.material=foot_material(plant,links);self.count=len(links)
         m=self.m;self.floor=m.geom('floor').id;self.groups=np.full(m.nbody,-1,int)
         for i,link in enumerate(links):self.groups[m.body(link).id]=i
@@ -61,13 +62,13 @@ class WalkingAudit:
             self.dominant_support_s+=dt;self.light_support_s=0.
         else:
             self.light_support_s+=dt;self.longest_light_support_s=max(self.longest_light_support_s,self.light_support_s)
-        phase=int(max(0.,d.time-dt)/self.reference.period)
+        phase=int(max(0.,d.time-self.start_time-dt)/self.reference.period)
         cycle=self.cycles.setdefault(phase,dict(time=0.,impulse=np.zeros(self.count),lift=np.full(self.count,-np.inf)))
         cycle['time']+=dt;cycle['impulse']+=load*dt
 
     def observe(self,d):
         """Kinematic/task evidence at control ticks; force peaks use every step."""
-        m=self.m;now=float(d.time);qr=self.reference.pose(now)
+        m=self.m;now=float(d.time)-self.start_time;qr=self.reference.pose(now)
         mujoco.mj_differentiatePos(m,self.delta,1.,d.qpos,qr)
         # Separate data makes the observer unable to change the plant solver.
         if not hasattr(self,'observed'):self.observed=mujoco.MjData(m)

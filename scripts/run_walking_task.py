@@ -16,7 +16,7 @@ from build.async_allocation import AsyncAllocation
 from build.control_latency import ControlCycle
 
 
-def prepare_execution(spec,plan,timestep,control_cpu,*,compiled_plant=None,preparation_cpus=None):
+def prepare_execution(spec,plan,timestep,control_cpu,*,compiled_plant=None,preparation_cpus=None,air_start=False):
     if control_cpu is not None:os.sched_setaffinity(0,{control_cpu})
     plant=compiled_plant if compiled_plant is not None and compiled_plant.mj.opt.timestep==timestep else plant_for(plan,timestep)
     m=plant.mj
@@ -28,11 +28,17 @@ def prepare_execution(spec,plan,timestep,control_cpu,*,compiled_plant=None,prepa
     d.ctrl[:]=control.update(q0,np.zeros(m.nv),q0[:7],np.zeros(6),np.zeros(6),feet,
         np.zeros_like(feet),np.zeros_like(feet),np.ones(len(feet),bool),deadline=time.perf_counter()+1.)
     control.load_path=LoadPathReference(plant,control,ref,strength=.5,cpus=preparation_cpus)
-    audit=WalkingAudit(plant,links,spec,ref)
+    if air_start:
+        from amsrr_det.walking_landing import LandingReference,screen_landing
+        if 'landing' not in plan:plan['landing']=screen_landing(plant,plan,spec)
+        control.landing=LandingReference(plant,plan,ref)
+        d.qpos[:]=control.landing.hover;d.qvel[:]=0.;d.ctrl[:]=control.landing.initial_command(control)
+        mujoco.mj_forward(m,d)
+    audit=WalkingAudit(plant,links,spec,ref,start_time=control.landing.duration if air_start else 0.)
     return plant,gait,links,ref,control,d,audit
 
 
-def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,timestep=.0005):
+def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,timestep=.0005,air_start=True):
     out=Path(out);out.mkdir(parents=True,exist_ok=True);began=time.perf_counter()
     from amsrr_det.valve_search import performance_cpus
     preparation_cpus=performance_cpus(set(os.sched_getaffinity(0)));execution_plant=[]
@@ -42,7 +48,7 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
     if plan_file is None and selection['status']=='accepted' and execution_plant:
         from amsrr_det.walking_refine import refine
         selection['plan'],selection['refinement']=refine(execution_plant[0],selection['plan'],spec,
-            deadline=min(began+14.1,time.perf_counter()+4.),cpu=min(preparation_cpus) if preparation_cpus else None,cpus=preparation_cpus)
+            deadline=min(began+14.1,time.perf_counter()+5.),cpu=min(preparation_cpus) if preparation_cpus else None,cpus=preparation_cpus)
     (out/'request.json').write_text(json.dumps(asdict(spec),indent=2))
     (out/'selection.json').write_text(json.dumps(selection,default=json_value))
     if selection['status']!='accepted' or selection['plan'] is None:
@@ -50,7 +56,10 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
         (out/'result.json').write_text(json.dumps(result,indent=2));return result
     if control_cpu is not None:os.sched_setaffinity(0,{control_cpu})
     plan=selection['plan']
-    plant,gait,links,ref,control,d,audit=prepare_execution(spec,plan,timestep,control_cpu,compiled_plant=execution_plant[0] if execution_plant else None,preparation_cpus=preparation_cpus)
+    plant,gait,links,ref,control,d,audit=prepare_execution(spec,plan,timestep,control_cpu,compiled_plant=execution_plant[0] if execution_plant else None,preparation_cpus=preparation_cpus,air_start=air_start)
+    landing=getattr(control,"landing",None);walk_start=landing.duration if landing else 0.
+    whole=WalkingAudit(plant,links,spec,ref) if landing else None
+    phases={};landing_load_time=0.;hover_gap=float("inf")
     m=plant.mj;allocation=AsyncAllocation(control,worker_cpu)
     planning=time.perf_counter()-began
     if plan_file is None and planning>15.:
@@ -59,8 +68,22 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
     (out/'physical.xml').write_text(plant.xml);np.savez(out/'initial.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
     calls=[];states=[];poll_cpu=0.
     def plain(steps):
+        nonlocal landing_load_time,hover_gap
         for _ in range(steps):
-            mujoco.mj_step(m,d);audit.physics(d)
+            before=float(d.time);mujoco.mj_step(m,d)
+            if whole and before<walk_start-1e-9:
+                e=whole.energy_rotor;j=whole.energy_joint;w=whole.positive_work
+                whole.physics(d)
+                phase=landing.phase(before)
+                entry=phases.setdefault(phase,dict(seconds=0.,rotor_proxy=0.,joint_proxy=0.,positive_joint_work_j=0.))
+                entry['seconds']+=m.opt.timestep;entry['rotor_proxy']+=whole.energy_rotor-e
+                entry['joint_proxy']+=whole.energy_joint-j;entry['positive_joint_work_j']+=whole.positive_work-w
+                if before<landing.hold_end:
+                    for bid,vertices in whole.material:
+                        hover_gap=min(hover_gap,float((vertices@d.xmat[bid].reshape(3,3).T+d.xpos[bid])[:,2].min()))
+                if walk_start-.3<=before<walk_start and whole.last_load.sum()>=.2*whole.weight:landing_load_time+=m.opt.timestep
+                if whole.abort:audit.abort=whole.abort
+            if before>=walk_start-1e-9:audit.physics(d)
             if audit.abort:return audit.abort
         return None
     def advance(steps):
@@ -87,30 +110,46 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
         return None
     gc.collect();gc.disable();started=time.perf_counter()
     try:
-        audit.observe(d)
-        while d.time<spec.time_limit-1e-9 and not audit.abort and not audit.reached():
+        if not landing:audit.observe(d)
+        while d.time<walk_start+spec.time_limit-1e-9 and not audit.abort and not audit.reached():
             start=time.perf_counter();cycle=ControlCycle(m,d,.01);now=float(d.time);poll_cpu=0.
-            q,v,a=ref.rates(now);feet,fv,fa,stance=ref.feet(now)
+            walking=now>=walk_start-1e-9
+            if walking:
+                if not audit.samples:audit.observe(d)
+                local=max(0.,now-walk_start);q,v,a=ref.rates(local);feet,fv,fa,stance=ref.feet(local);phase='WALK';fraction=1.
+                cr,cv,ca=ref.com(local)
+            else:
+                phase,q,v,a,feet,fv,fa,stance,fraction=landing.targets(now);cr=cv=ca=None
             args=(d.qpos.copy(),d.qvel.copy(),q[:7],v[:6],a[:6],feet,fv,fa,stance)
-            cr,cv,ca=ref.com(now)
             kwargs=dict(shape_reference=q,shape_velocity=v,shape_acceleration=a,observation_time=now,
-                        com_reference=cr,com_velocity=cv,com_acceleration=ca)
-            command=allocation.update(now,'WALK',args,kwargs,observed_wall=start)
+                        com_reference=cr,com_velocity=cv,com_acceleration=ca,ground_fraction=fraction,walk_time=max(0.,now-walk_start),flight_mode=not walking)
+            command=allocation.update(now,phase,args,kwargs,observed_wall=start)
             elapsed=time.perf_counter()-start;cycle.wait_for_result(elapsed,plain)
             if not audit.abort:
                 cycle.apply(command)
                 if allocation.records and allocation.records[-1].get('application_tick_s')==cycle.observed_at and 'application_s' not in allocation.records[-1]:
                     allocation.records[-1]['application_s']=float(d.time)
                 advance(cycle.remaining_steps())
-            record=cycle.record('WALK');record['publication_cpu_s']=elapsed+poll_cpu;calls.append(record)
-            audit.observe(d)
-            if len(calls)%10==0:states.append(dict(time_s=float(d.time),q=d.qpos.tolist(),v=d.qvel.tolist(),ctrl=d.ctrl.tolist(),**control.last))
+            record=cycle.record(phase);record['publication_cpu_s']=elapsed+poll_cpu;calls.append(record)
+            if walking:audit.observe(d)
+            if len(calls)%10==0:states.append(dict(time_s=float(d.time),phase=phase,q=d.qpos.tolist(),v=d.qvel.tolist(),ctrl=d.ctrl.tolist(),**control.last))
             if len(calls)%500==0:
-                (out/'progress.json').write_text(json.dumps(audit.samples[-1]))
+                (out/'progress.json').write_text(json.dumps(dict(phase=phase,time_s=float(d.time),walk=audit.samples[-1] if audit.samples else None)))
             if time.perf_counter()-started>600.:audit.abort='wall_time_limit'
     finally:
         allocation.close();gc.enable()
-    result=audit.result();timing=np.array([r['publication_cpu_s'] for r in calls])*1000
+    result=audit.result();result.setdefault('checks',{'walking_executed':False})
+    if whole:
+        phases['WALK']=dict(seconds=audit.elapsed,rotor_proxy=audit.energy_rotor,joint_proxy=audit.energy_joint,positive_joint_work_j=audit.positive_work)
+        # Whole-sequence totals are the disjoint prefix and walking integrals.
+        whole.elapsed+=audit.elapsed;whole.energy_rotor+=audit.energy_rotor
+        whole.energy_joint+=audit.energy_joint;whole.positive_work+=audit.positive_work
+        whole.peak_penetration=max(whole.peak_penetration,audit.peak_penetration)
+        whole.peak_effort=max(whole.peak_effort,audit.peak_effort)
+        whole.abort=whole.abort or audit.abort
+        result['checks']['airborne_landing']=landing_load_time>=.15 and hover_gap>.1 and whole.abort is None
+        result['whole_sequence']=dict(simulation_s=whole.elapsed,rotor_proxy=whole.energy_rotor,joint_proxy=whole.energy_joint,positive_joint_work_j=whole.positive_work,rotor_burden_hover_ratio=whole.energy_rotor/max(whole.elapsed*whole.weight**1.5/np.sqrt(len(whole.rotor_sites)),1e-9),phases=phases,walk_start_s=walk_start,landing_support_s=landing_load_time,hover_minimum_foot_gap_m=hover_gap,physical_abort=whole.abort,peak_penetration_m=whole.peak_penetration,peak_actuator_ratio=whole.peak_effort)
+    timing=np.array([r['publication_cpu_s'] for r in calls])*1000
     intervals=np.diff([r['observation_s'] for r in calls])
     result.update(modules=spec.modules,feet=len(links),planning_s=planning,fresh_structure_generation=plan_file is None,
         wall_s=time.perf_counter()-began,timestep=timestep,
@@ -127,6 +166,6 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
 
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--modules',type=int,default=4);ap.add_argument('--speed',type=float,default=.22);ap.add_argument('--curvature',type=float,default=0.);ap.add_argument('--seed',type=int,default=1);ap.add_argument('--workers',type=int,default=24);ap.add_argument('--worker-cpu',type=int,default=2);ap.add_argument('--control-cpu',type=int,default=0);ap.add_argument('--plan');ap.add_argument('--timestep',type=float,default=.0005);ap.add_argument('--out',required=True);a=ap.parse_args()
-    result=run(WalkSpec(modules=a.modules,speed=a.speed,curvature=a.curvature),a.out,seed=a.seed,workers=a.workers,worker_cpu=a.worker_cpu,control_cpu=a.control_cpu,plan_file=a.plan,timestep=a.timestep)
+    ap=argparse.ArgumentParser();ap.add_argument('--modules',type=int,default=4);ap.add_argument('--speed',type=float,default=.22);ap.add_argument('--curvature',type=float,default=0.);ap.add_argument('--seed',type=int,default=1);ap.add_argument('--workers',type=int,default=24);ap.add_argument('--worker-cpu',type=int,default=2);ap.add_argument('--control-cpu',type=int,default=0);ap.add_argument('--plan');ap.add_argument('--ground-start',action='store_true');ap.add_argument('--timestep',type=float,default=.0005);ap.add_argument('--out',required=True);a=ap.parse_args()
+    result=run(WalkSpec(modules=a.modules,speed=a.speed,curvature=a.curvature),a.out,seed=a.seed,workers=a.workers,worker_cpu=a.worker_cpu,control_cpu=a.control_cpu,plan_file=a.plan,timestep=a.timestep,air_start=not a.ground_start)
     print(json.dumps(result,default=json_value),flush=True)

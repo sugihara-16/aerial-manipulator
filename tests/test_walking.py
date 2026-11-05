@@ -844,21 +844,23 @@ def test_periodic_direction_polynomial_envelope():
                 np.testing.assert_allclose([low[j],high[j]],[min(values),max(values)],atol=2e-13)
 
 
-def test_auxiliary_deadline_keeps_last_checked_plan(monkeypatch):
+@pytest.mark.parametrize("worker_count",[1,2])
+def test_auxiliary_deadline_keeps_last_checked_plan(monkeypatch,worker_count):
     import time
     import multiprocessing as mp
     from amsrr_det import walking_refine
     initial={'cost':.5,'gait':'original'}
     children={p.pid for p in mp.active_children()}
-    def unfinished(pipe,plant,plan,spec,deadline,cpu,cpus):
+    def unfinished(pipe,plant,plan,spec,deadline,cpu,cpus,mode="both"):
         import os
         os.setsid()
+        assert type(cpu) is int and all(type(c) is int for c in cpus)
         pipe.send(dict(cost=.4,gait='checked',iterations=2))
         pipe.send(dict(cost=.6,gait='worse',iterations=4))
         time.sleep(10)
     monkeypatch.setattr(walking_refine,'_improve',unfinished)
     start=time.perf_counter()
-    selected,report=walking_refine.refine(None,initial,None,deadline=start+1.)
+    selected,report=walking_refine.refine(None,initial,None,deadline=start+1.,cpus=set(range(worker_count)))
     assert time.perf_counter()-start<1.5
     assert selected['gait']=='checked' and selected['cost']==.4
     assert initial=={'cost':.5,'gait':'original'}

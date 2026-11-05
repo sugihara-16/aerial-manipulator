@@ -125,6 +125,9 @@ def finish_candidate(spec,record):
     report=direction.get('accepted_report') or screen_motion(plant,controller,spec,gait)
     record.update(gait=gait,report=report,geometry=geometry,smoothing=smoothing,cost=report['cost'],
                   posture=posture,direction=direction,_execution_plant=plant,generation_s=generation_s,wall_s=record['preparation_s']+time.perf_counter()-started)
+    from .walking_landing import screen_landing
+    record['landing']=screen_landing(plant,record,spec)
+    record['wall_s']=record['preparation_s']+time.perf_counter()-started
     return record
 
 

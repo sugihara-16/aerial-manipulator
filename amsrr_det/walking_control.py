@@ -59,7 +59,7 @@ class GroundControl:
         return np.array([data.xpos[b]+data.xmat[b].reshape(3,3)@p
                          for (b,_),p in zip(self.material,self.foot_points)])
 
-    def update(self,q,v,base_reference,base_velocity,base_acceleration,feet,foot_velocity,foot_acceleration,stance,*,observation_time=None,deadline=None,shape_reference=None,shape_velocity=None,shape_acceleration=None,com_reference=None,com_velocity=None,com_acceleration=None):
+    def update(self,q,v,base_reference,base_velocity,base_acceleration,feet,foot_velocity,foot_acceleration,stance,*,observation_time=None,deadline=None,shape_reference=None,shape_velocity=None,shape_acceleration=None,com_reference=None,com_velocity=None,com_acceleration=None,ground_fraction=1.,walk_time=None,flight_mode=False):
         if deadline is None:deadline=time.perf_counter()+.008
         dr=self.drive;m=self.m;dr.observe(q,v);d=dr.d;nu=m.nu;nf=len(self.material)
         dt=.01 if observation_time is None or self.last_observation is None else np.clip(observation_time-self.last_observation,0.,.05)
@@ -121,7 +121,7 @@ class GroundControl:
         response=held@np.c_[W,drift-d.qfrc_bias];D=response[:,:-1];bias=response[:,-1]+hold_bias
         # One acceleration objective for both support and swing. The mode
         # changes targets and the available ground reactions, not the solver.
-        scale=np.full(m.nv,.12);scale[:3]=4.;scale[3:6]=self.attitude_weight;scale[dr.vi[~dr.dock]]=0.3
+        scale=np.full(m.nv,.12);scale[:3]=40. if flight_mode else 4.;scale[3:6]=self.attitude_weight;scale[dr.vi[~dr.dock]]=0.3
         # Preserve the articulated motion in acceleration space. A small
         # generalized-torque residual alone does not restore joint shape
         # when the root and ground reactions move together.
@@ -140,8 +140,8 @@ class GroundControl:
             desired_com=com_acceleration+25*(com_error+self.path_bias)+10*(com_velocity-Jcom@v)
             drift_com=d.qfrc_bias[:2]/mass+m.opt.gravity[:2]
             A=np.vstack([A,60.0*Jcom@D]);target=np.r_[target,60.0*(desired_com-Jcom@bias-drift_com)]
-        if hasattr(self,"load_path") and observation_time is not None:
-            K=self.load_path(observation_time);A=np.vstack([A,K@D]);target=np.r_[target,K@(desired-bias)]
+        if hasattr(self,"load_path") and observation_time is not None and not flight_mode:
+            K=self.load_path(observation_time if walk_time is None else walk_time);A=np.vstack([A,K@D]);target=np.r_[target,K@(desired-bias)]
         if contact_jacobians:
             CJ=np.vstack(contact_jacobians);ct=np.concatenate(contact_targets)
             A=np.vstack([A,30.0*CJ@D]);target=np.r_[target,30.0*(ct-CJ@bias)]
@@ -154,7 +154,7 @@ class GroundControl:
         # Retain the bounded correction across steps; never invent a reaction
         # or use simulated contact force to acquire the next support.
         self.last_observation=observation_time
-        self.contact_bias[stance]=np.clip(self.contact_bias[stance]+20*dt*(gaps[stance]-.00005),0.,.03)
+        self.contact_bias[stance]=np.clip(self.contact_bias[stance]+ground_fraction*20*dt*(gaps[stance]-.00005),0.,.03)
         goal=feet.copy();goal[stance,2]-=np.where(gaps[stance]<.0002, 0., .016+self.contact_bias[stance])
         position_error=goal-positions;velocity_error=foot_velocity-(J@v).reshape(nf,3)
         foot_target=foot_acceleration+100*position_error+20*velocity_error
@@ -167,13 +167,13 @@ class GroundControl:
         # Bounds limit accumulated demand; they are not an anti-windup proof.
         envelope=np.clip(feet[:,2]/.02,0.,1.)
         self.lift_bias[stance]=0.
-        self.lift_bias[~stance]=np.clip(self.lift_bias[~stance]+10.*dt*
+        self.lift_bias[~stance]=np.clip(self.lift_bias[~stance]+(0. if flight_mode else 10.)*dt*
             (feet[~stance,2]-positions[~stance,2])*envelope[~stance],0.,.015)
         foot_target[:,2]+=1600.*self.lift_bias*envelope
         foot_target=foot_target.ravel()
-        A=np.vstack([A,10*J@D]);target=np.r_[target,10*(foot_target-Jdot-J@bias)]
+        A=np.vstack([A,ground_fraction*10*J@D]);target=np.r_[target,ground_fraction*10*(foot_target-Jdot-J@bias)]
         angular=np.vstack(angular);at=np.concatenate(angular_target)
-        A=np.vstack([A,0.5*angular@D]);target=np.r_[target,0.5*(at-angular@bias)]
+        A=np.vstack([A,ground_fraction*0.5*angular@D]);target=np.r_[target,ground_fraction*0.5*(at-angular@bias)]
         # Walking support belongs to the chosen feet. Keep nearby batteries
         # and other body parts above the ground through the same allocation,
         # rather than stopping or letting those parts become unintended feet.
@@ -186,7 +186,7 @@ class GroundControl:
             mujoco.mj_jacDot(m,d,self.jd,None,point,bid)
             row=self.jp[2].copy();velocity=row@v
             acceleration=max(0.,100*(.01-point[2])-20*velocity)
-            A=np.vstack([A,5*row@D]);target=np.r_[target,5*(acceleration-self.jd[2]@v-row@bias)]
+            A=np.vstack([A,10*row@D]);target=np.r_[target,10*(acceleration-self.jd[2]@v-row@bias)]
         # Present support must use observed rotor directions. Anticipated
         # gimbal motion may improve future allocation, not current gravity.
         current_scale=4/np.maximum(np.diag(dr.mass)[:6],.01)
@@ -226,6 +226,7 @@ class GroundControl:
         # Execution prioritizes rotor consumption more strongly than the joint
         # term. The bounded task corrections above preserve sustained tracking.
         energy[dr.nj:]*=2.
+        energy*=.001 if flight_mode else 1.
         reg=np.r_[energy+np.r_[np.full(dr.nj,.00005),np.full(nu-dr.nj,.05)],np.repeat([1e-5/len(g) for g in support_groups],3)]
         previous=np.r_[self.previous[:nu],np.array([self.previous[nu:].reshape(nf*4,3)[g].sum(axis=0) for g in support_groups]).ravel()]
         x,fallback,iterations=minimum_support_qp(A.T@A+np.diag(reg),A.T@target,C,np.r_[lower,-upper,np.zeros(9*len(active))],lower,upper,previous,support_row=(row if active else None),support_target=75.0,deadline=deadline,friction=.8)
