@@ -76,6 +76,7 @@ def dock_error(plant,q,v,edge,data=None):
     relative=vb.linear-va.linear-np.cross(va.angular,B.translation-A.translation)
     return dict(axial_m=float(delta[0]),transverse_m=float(np.linalg.norm(delta[1:])),
                 attitude_rad=float(np.linalg.norm(angular)),linear_speed_m_s=float(np.linalg.norm(relative)),
+                transverse_speed_m_s=float(np.linalg.norm((A.rotation.T@relative)[1:])),
                 angular_speed_rad_s=float(np.linalg.norm(vb.angular-va.angular)))
 
 
