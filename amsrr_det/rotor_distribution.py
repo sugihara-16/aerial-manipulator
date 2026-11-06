@@ -10,26 +10,26 @@ from scipy.optimize import minimize, LinearConstraint
 from .linear_program import linprog
 
 
-def rotor_action_basis(model,meta,q):
+def rotor_action_basis(model,meta,q,data=None):
     """Exact constant/cosine/sine force maps of independent terminal hinges.
 
     Dock and floating-body coordinates stay fixed. Each rotor's force and
     moment rotate about its own gimbal pivot, including its constant axial
-    moment. No small-angle or massless-link approximation is made here.
+    moment. A caller-owned workspace avoids allocating model data each cycle.
     """
     q=np.asarray(q).copy();gimbals=[meta['actuators'][r['gimbal']] for r in meta['rotors']]
-    q[[a['q'] for a in gimbals]]=0.;data=model.createData()
+    q[[a['q'] for a in gimbals]]=0.
+    if data is None:data=model.createData()
     pin.computeJointJacobians(model,data,q);pin.updateFramePlacements(model,data)
-    basis=np.empty((3,model.nv,len(gimbals)))
-    for i,(rotor,a) in enumerate(zip(meta['rotors'],gimbals)):
-        J=pin.getJointJacobian(model,data,a['joint'],pin.LOCAL_WORLD_ALIGNED)
-        axis=J[3:,a['v']];frame=data.oMf[rotor['frame']]
-        force=frame.rotation[:,2];moment=np.cross(frame.translation-data.oMi[a['joint']].translation,force)
-        fp=axis*(axis@force);mp=axis*(axis@moment)
-        basis[0,:,i]=J[:3].T@fp+J[3:].T@mp
-        basis[1,:,i]=J[:3].T@(force-fp)+J[3:].T@(moment-mp)
-        basis[2,:,i]=J[:3].T@np.cross(axis,force)+J[3:].T@np.cross(axis,moment)
-    return basis
+    jac=np.array([pin.getJointJacobian(model,data,a['joint'],pin.LOCAL_WORLD_ALIGNED) for a in gimbals])
+    axis=jac[np.arange(len(gimbals)),3:,[a['v'] for a in gimbals]]
+    force=np.array([data.oMf[r['frame']].rotation[:,2] for r in meta['rotors']])
+    arm=np.array([data.oMf[r['frame']].translation-data.oMi[a['joint']].translation for r,a in zip(meta['rotors'],gimbals)])
+    moment=np.cross(arm,force)
+    fp=axis*np.sum(axis*force,axis=1)[:,None];mp=axis*np.sum(axis*moment,axis=1)[:,None]
+    f=np.array([fp,force-fp,np.cross(axis,force)])
+    t=np.array([mp,moment-mp,np.cross(axis,moment)])
+    return np.einsum('rin,sri->snr',jac[:,:3],f)+np.einsum('rin,sri->snr',jac[:,3:],t)
 
 
 def rotor_basis_actions(basis,angles):

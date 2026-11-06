@@ -18,7 +18,7 @@ def cross3(a,b):
 
 
 class FlightController:
-    def __init__(self, model, meta, q0, period=.01, preserve_joint_action=False, guard_vectoring=False, measured_thrust=False, preserve_requested_action=False):
+    def __init__(self, model, meta, q0, period=.01, preserve_joint_action=False, guard_vectoring=False, measured_thrust=False, preserve_requested_action=False, *, cooperative_joints=False):
         self.model,self.meta,self.dt=model,meta,period
         self.data=model.createData()
         self.actuators=meta['actuators'];self.rotors=meta['rotors']
@@ -36,7 +36,8 @@ class FlightController:
         self.kd=np.array([a['kd'] for a in self.actuators])
         self.limits=np.array([[a['lower'],a['upper']] for a in self.actuators])
         self.speed=np.array([a['speed'] for a in self.actuators])
-        self.gimbal_effort=np.array([self.actuators[i]['effort'] for i in self.ai])
+        self.effort=np.array([a['effort'] for a in self.actuators])
+        self.gimbal_effort=self.effort[self.ai]
         self.force_maximum=np.array([r['maximum'] for r in self.rotors])
         self.gimbal_margin=.01+self.gimbal_effort/self.kp[self.ai]
         self.allocation_groups={}
@@ -56,11 +57,23 @@ class FlightController:
         self.distribution_diagnostics=None
         self.guard_vectoring=guard_vectoring;self.allocation_failure=None
         self.measured_thrust=measured_thrust
+        self.qp_bounds={b:np.c_[np.eye(len(ids)),-np.eye(len(ids))]for b,(_,ids,_,_)in self.allocation_groups.items()} if cooperative_joints else {}
+        self.cooperative_joints=bool(cooperative_joints)
+        self.basis_data=model.createData() if cooperative_joints else None
+        self.motion_data=model.createData() if cooperative_joints else None
+        self.joint_groups={}
+        for b in meta['bases']:
+            selected=[]
+            for i,a in enumerate(self.actuators):
+                ancestor=a['joint']
+                while model.parents[ancestor]!=0:ancestor=model.parents[ancestor]
+                if a['role']=='dock' and ancestor==b['joint']:selected.append(i)
+            self.joint_groups[b['joint']]=np.array(selected,dtype=int)
         self.vectoring_guard_checks=0;self.maximum_vectoring_request_ratio=0.;self.vectoring_guard_diagnostics=None
         self.command_diagnostics=None
 
     def update(self,q,v,target, *, target_velocity=None, target_acceleration=None,
-               payload_mass=0., payload_com=None, joint_bias=None, thrust_reference=None, gimbal_reference=None):
+               payload_mass=0., payload_com=None, joint_bias=None, thrust_reference=None, gimbal_reference=None, nominal_input=None, feedback_bandwidth=1., acceleration_requests=None):
         m,d=self.model,self.data
         if self.preserve_requested_action:
             previous_command,previous_force=self.command.copy(),self.force.copy()
@@ -81,8 +94,33 @@ class FlightController:
             k,j=b['q'],b['v'];R=d.oMi[b['joint']].rotation
             Rref=pin.Quaternion(target[k+3:k+7]).matrix()
             vw=R@v[j:j+3];omega=R@v[j+3:j+6]
-            acceleration[j:j+3]=R.T@(ta[j:j+3]+4*(target[k:k+3]-q[k:k+3])+4*(tv[j:j+3]-vw))-cross3(v[j+3:j+6],v[j:j+3])
-            acceleration[j+3:j+6]=R.T@(ta[j+3:j+6]+16*pin.log3(Rref@R.T)+8*(tv[j+3:j+6]-omega))
+            pos_gain,vel_gain=(16.*feedback_bandwidth**2,8.*feedback_bandwidth) if self.cooperative_joints else (4.,4.)
+            acceleration[j:j+3]=R.T@(ta[j:j+3]+pos_gain*(target[k:k+3]-q[k:k+3])+vel_gain*(tv[j:j+3]-vw))-cross3(v[j+3:j+6],v[j:j+3])
+            acceleration[j+3:j+6]=R.T@(ta[j+3:j+6]+16*feedback_bandwidth**2*pin.log3(Rref@R.T)+8*feedback_bandwidth*(tv[j+3:j+6]-omega))
+        if self.cooperative_joints:
+            joint=self.vi[self.dock]
+            acceleration[joint]=64*(target[self.qi[self.dock]]-q[self.qi[self.dock]])+16*(tv[joint]-v[joint])
+        if self.cooperative_joints and acceleration_requests is not None:
+            # Project the observed body tracking requests onto ONE articulated
+            # acceleration. Internal connection forces are then handled only
+            # by whole-body inverse dynamics, not assigned to local rotors.
+            pd=self.motion_data
+            pin.computeJointJacobians(m,pd,q)
+            pin.forwardKinematics(m,pd,q,v,np.zeros(m.nv));pin.updateFramePlacements(m,pd)
+            matrices=[];residuals=[]
+            for module,desired in acceleration_requests.items():
+                frame=self.meta['frames'][f'm{module}/root']
+                J=pin.getFrameJacobian(m,pd,frame,pin.LOCAL_WORLD_ALIGNED)
+                drift=pin.getFrameClassicalAcceleration(m,pd,frame,pin.LOCAL_WORLD_ALIGNED).vector
+                root=pd.oMf[frame].translation
+                length=max(.05,float(np.sqrt(np.mean([np.sum((pd.oMf[r['frame']].translation-root)**2)for r in self.rotors if r['module']==module]))))
+                weight=np.r_[np.ones(3),np.full(3,length)]
+                matrices.append(J*weight[:,None]);residuals.append((desired-drift-J@acceleration)*weight)
+            A_motion=np.vstack(matrices);b_motion=np.concatenate(residuals)
+            used=np.flatnonzero(np.linalg.norm(A_motion,axis=0)>1e-10)
+            correction=np.linalg.lstsq(A_motion[:,used],b_motion,rcond=1e-4)[0]
+            acceleration[used]+=correction
+            self.motion_residual=float(np.linalg.norm(A_motion[:,used]@correction-b_motion))
         required=pin.rnea(m,d,q,v,acceleration).copy()
         positions=np.array([d.oMf[r['frame']].translation for r in self.rotors])
         directions=np.array([d.oMf[r['frame']].rotation[:,2] for r in self.rotors])
@@ -91,7 +129,17 @@ class FlightController:
         inputs=np.r_[self.force,self.command[self.ai]]
         # Predictor, not hidden plant state. Same .05 s nominal parameter as C++.
         ag=1-.05/self.dt*(1-np.exp(-self.dt/.05))
+        if self.cooperative_joints:
+            from .rotor_distribution import rotor_action_basis,rotor_basis_actions
+            basis=rotor_action_basis(m,self.meta,q,self.basis_data)
+            ag=np.exp(-1.)
+            if self.trim_effort is None:
+                self.trim_effort=pin.rnea(m,d,q,np.zeros(m.nv),np.zeros(m.nv))[self.vi]-rotor_basis_actions(basis,q[self.qi[self.ai]])[self.vi]@self.force
+            desired_motor=self.kp*(nominal_input[:len(self.actuators)]-q[self.qi])-self.kd*v[self.vi] if nominal_input is not None else self.kp*(target[self.qi]-q[self.qi])-self.kd*v[self.vi]+self.trim_effort
+            desired_motor=np.clip(desired_motor,-self.effort,self.effort)
         for base in self.meta['bases']:
+            active=self.rotor_groups[base['joint']]
+            if self.cooperative_joints and acceleration_requests is not None and active.sum()==4:continue
             R=d.oMi[base['joint']].rotation;j=base['v'];origin=q[base['q']:base['q']+3]
             target_wrench=np.r_[R@required[j:j+3],R@required[j+3:j+6]]
             if payload_mass:
@@ -129,11 +177,38 @@ class FlightController:
                 lower=np.r_[np.zeros(self.nr),angle_low]
                 upper=np.r_[self.force_maximum,angle_high]
                 linear=B[:,ids];epsilon=.001
+                if self.cooperative_joints:
+                    reference=np.r_[self.force,self.command[self.ai]]
+                    regularizer=np.eye(len(ids))*epsilon
                 A=np.vstack([linear*scale,regularizer])
                 rhs=np.r_[target_wrench-wrench+linear@inputs[ids],epsilon*reference[ids]/scale]
-                allocation=lsq_linear(A,rhs,bounds=(lower[ids]/scale,upper[ids]/scale),method='bvls',tol=1e-8,max_iter=50)
-                inputs[ids]=allocation.x*scale
-                self.allocation_diagnostics.append(dict(min_force=float(inputs[:self.nr].min()),max_force=float(inputs[:self.nr].max()),target=target_wrench.tolist(),prediction=wrench.tolist(),solver_status=int(allocation.status)))
+                if self.cooperative_joints:
+                    # Normalize load errors by component weight and geometry.
+                    # Local terms are averages, so adding modules does not
+                    # silently change the global/local priority.
+                    count=int(active.sum())//4
+                    weight=self.meta['mass']*9.80665/self.meta['modules']
+                    length=max(.05,float(np.sqrt(np.mean(np.sum((pivots[active]-origin)**2,axis=1)))))
+                    root_scale=1./np.r_[np.full(3,count*weight),np.full(3,count*weight*length)]
+                    A[:6]*=root_scale[:,None];rhs[:6]*=root_scale
+                    import time
+                    from .bounded_qp import bounded_qp
+                    ji=self.joint_groups[base['joint']];rows=self.vi[ji]
+                    angles=q[self.qi[self.ai]]+ag*(inputs[self.nr:]-q[self.qi[self.ai]])
+                    action=rotor_basis_actions(basis,angles)[rows]
+                    derivative=(-basis[1]*np.sin(angles)+basis[2]*np.cos(angles))[rows]*inputs[:self.nr]*ag
+                    full=np.c_[action,derivative][:,ids]
+                    load=action@inputs[:self.nr];goal=required[rows]-desired_motor[ji]
+                    joint_scale=1./(self.effort[ji]*np.sqrt(max(1,len(ji))))
+                    A=np.vstack([A,full*scale*joint_scale[:,None]]);rhs=np.r_[rhs,(goal-load+full@inputs[ids])*joint_scale]
+                    lo,hi=lower[ids]/scale,upper[ids]/scale
+                    x,expired,_=bounded_qp(A.T@A,A.T@rhs,self.qp_bounds[base['joint']],
+                        np.r_[lo,-hi],lo,hi,inputs[ids]/scale,deadline=time.perf_counter()+.001)
+                    inputs[ids]=x*scale;status=0 if expired else 1
+                else:
+                    allocation=lsq_linear(A,rhs,bounds=(lower[ids]/scale,upper[ids]/scale),method='bvls',tol=1e-8,max_iter=50)
+                    inputs[ids]=allocation.x*scale;status=int(allocation.status)
+                self.allocation_diagnostics.append(dict(min_force=float(inputs[:self.nr].min()),max_force=float(inputs[:self.nr].max()),target=target_wrench.tolist(),prediction=wrench.tolist(),solver_status=status))
             if self.measured_thrust:
                 # Keep the same bounded gimbal update, but issue thrust using
                 # the observed rotor directions. The predicted future angle
@@ -207,7 +282,7 @@ class FlightController:
         self.last_joint_bias=effort.copy();self.last_target_velocity=tv.copy()
         desired=target[self.qi]+(effort+self.kd*tv[self.vi])/self.kp
         # Drive saturation remains in the plant. References never bypass limits.
-        self.command[self.dock]=np.clip(desired[self.dock],self.limits[self.dock,0],self.limits[self.dock,1])
+        self.command[self.dock]=np.clip(desired[self.dock] if nominal_input is None else nominal_input[:len(self.actuators)][self.dock],self.limits[self.dock,0],self.limits[self.dock,1])
         if self.preserve_requested_action:
             from .rotor_distribution import rotor_actions,preserve_requested_action
             action=rotor_actions(m,self.meta,q)
