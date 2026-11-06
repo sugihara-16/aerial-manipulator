@@ -22,6 +22,7 @@ def source_hashes():
                  'scripts/run_valve_task.py','scripts/run_valve_panel.py','scripts/report_valve_panel.py',
                  'scripts/run_walking_task.py','scripts/run_walking_panel.py','scripts/report_walking_panel.py']:
         if (ROOT/name).is_file():paths.add(ROOT/name)
+    paths.update(p for p in (ROOT/'scripts').glob('*assembly*.py') if p.is_file())
     return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
 
 
