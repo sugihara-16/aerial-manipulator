@@ -1,0 +1,100 @@
+{
+  "scope": "Assembly of all final task-generated structures, including downstream task failures. One module is a takeoff/hold control, reported separately.",
+  "sources": {
+    "grasp": "artifacts/runs/control_tail150_v8_20261027",
+    "valve": "artifacts/valve_side_faces_20261101/full36_v15",
+    "walking": "artifacts/walking_landing_20261105/final36_v13"
+  },
+  "cases": [
+    {
+      "id": "gust_2n",
+      "task": "grasp",
+      "modules": 3,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        }
+      ],
+      "source": "artifacts/runs/control_tail150_v8_20261027/box_y0_0/generated_plan/plan.json",
+      "sha256": "faa448135e162669e823223245621e6681d53477e892e1852e7556290d32438e",
+      "initial_seed": 4122003778
+    },
+    {
+      "id": "gust_3n",
+      "task": "grasp",
+      "modules": 3,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        }
+      ],
+      "source": "artifacts/runs/control_tail150_v8_20261027/box_y0_0/generated_plan/plan.json",
+      "sha256": "faa448135e162669e823223245621e6681d53477e892e1852e7556290d32438e",
+      "initial_seed": 4122003778
+    }
+  ],
+  "excluded": [
+    {
+      "task": "grasp",
+      "id": "span_load_cylinder_050",
+      "reason": "no_generated_structure"
+    },
+    {
+      "task": "valve",
+      "id": "high_up_t60_a1",
+      "reason": "no_generated_structure"
+    },
+    {
+      "task": "walking",
+      "id": "n3_v30_left",
+      "reason": "no_generated_structure"
+    }
+  ],
+  "counts": {
+    "grasp": 149,
+    "valve": 35,
+    "walking": 35
+  },
+  "module_counts": {
+    "3": 93,
+    "4": 42,
+    "8": 10,
+    "5": 24,
+    "6": 20,
+    "7": 14,
+    "1": 8,
+    "2": 8
+  },
+  "cpu_pairs": [
+    [
+      0,
+      2
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      8,
+      10
+    ]
+  ]
+}

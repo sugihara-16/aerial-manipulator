@@ -1,0 +1,278 @@
+{
+  "scope": "Assembly of all final task-generated structures, including downstream task failures. One module is a takeoff/hold control, reported separately.",
+  "sources": {
+    "grasp": "artifacts/runs/control_tail150_v8_20261027",
+    "valve": "artifacts/valve_side_faces_20261101/full36_v15",
+    "walking": "artifacts/walking_landing_20261105/final36_v13"
+  },
+  "cases": [
+    {
+      "id": "valve/low_tilt_down_t0.75_a0",
+      "task": "valve",
+      "modules": 2,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 1,
+          "port_b": "yaw1"
+        }
+      ],
+      "source": "artifacts/valve_side_faces_20261101/full36_v15/low_tilt_down_t0.75_a0/selection.json",
+      "sha256": "b05b09f9ef68d7df6c92983923e565d85ff4d085c24a601fa9e7903f316f0ce5",
+      "initial_seed": 2291070105
+    },
+    {
+      "id": "grasp/box_y0_0",
+      "task": "grasp",
+      "modules": 3,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        }
+      ],
+      "source": "artifacts/runs/control_tail150_v8_20261027/box_y0_0/generated_plan/plan.json",
+      "sha256": "faa448135e162669e823223245621e6681d53477e892e1852e7556290d32438e",
+      "initial_seed": 4122003778
+    },
+    {
+      "id": "grasp/cylinder_y1_1",
+      "task": "grasp",
+      "modules": 5,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 1,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw1",
+          "b": 3,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 4,
+          "port_b": "pitch2"
+        }
+      ],
+      "source": "artifacts/runs/control_tail150_v8_20261027/cylinder_y1_1/generated_plan/plan.json",
+      "sha256": "3577a00cf7de54eb637519251ee919e4025d208a9085dcefa0098cba9fbbe4ab",
+      "initial_seed": 2883773961
+    },
+    {
+      "id": "grasp/box_y3_0",
+      "task": "grasp",
+      "modules": 8,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 2,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 2,
+          "port_a": "yaw2",
+          "b": 3,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 4,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 4,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 3,
+          "port_a": "yaw1",
+          "b": 6,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 6,
+          "port_a": "yaw2",
+          "b": 7,
+          "port_b": "pitch1"
+        }
+      ],
+      "source": "artifacts/runs/control_tail150_v8_20261027/box_y3_0/generated_plan/plan.json",
+      "sha256": "736ef314b4f660606bc4b722640b30fea33f4fe228b54e6b47546d6e1ad8d28b",
+      "initial_seed": 3635013457
+    },
+    {
+      "id": "valve/high_down_t60_a1",
+      "task": "valve",
+      "modules": 7,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 1,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "yaw2",
+          "b": 2,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch2",
+          "b": 4,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 5,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 4,
+          "port_a": "pitch1",
+          "b": 6,
+          "port_b": "yaw2"
+        }
+      ],
+      "source": "artifacts/valve_side_faces_20261101/full36_v15/high_down_t60_a1/selection.json",
+      "sha256": "4a1640fe6f12f9d495c968a361662d0f05a36a9fb9141e747592cae1a4b69290",
+      "initial_seed": 2560336563
+    },
+    {
+      "id": "walking/n8_v30_straight",
+      "task": "walking",
+      "modules": 8,
+      "edges": [
+        {
+          "a": 0,
+          "port_a": "yaw1",
+          "b": 1,
+          "port_b": "pitch2"
+        },
+        {
+          "a": 1,
+          "port_a": "pitch1",
+          "b": 2,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch1",
+          "b": 3,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 0,
+          "port_a": "pitch2",
+          "b": 4,
+          "port_b": "yaw1"
+        },
+        {
+          "a": 4,
+          "port_a": "pitch2",
+          "b": 5,
+          "port_b": "yaw2"
+        },
+        {
+          "a": 0,
+          "port_a": "yaw2",
+          "b": 6,
+          "port_b": "pitch1"
+        },
+        {
+          "a": 6,
+          "port_a": "pitch2",
+          "b": 7,
+          "port_b": "yaw2"
+        }
+      ],
+      "source": "artifacts/walking_landing_20261105/final36_v13/n8_v30_straight/selection.json",
+      "sha256": "acd9d0735aa9386b87ca408bbfe1524a2eca503a274fbd90f56d52b81738ca0d",
+      "initial_seed": 3336682957
+    }
+  ],
+  "excluded": [
+    {
+      "task": "grasp",
+      "id": "span_load_cylinder_050",
+      "reason": "no_generated_structure"
+    },
+    {
+      "task": "valve",
+      "id": "high_up_t60_a1",
+      "reason": "no_generated_structure"
+    },
+    {
+      "task": "walking",
+      "id": "n3_v30_left",
+      "reason": "no_generated_structure"
+    }
+  ],
+  "counts": {
+    "grasp": 149,
+    "valve": 35,
+    "walking": 35
+  },
+  "module_counts": {
+    "3": 93,
+    "4": 42,
+    "8": 10,
+    "5": 24,
+    "6": 20,
+    "7": 14,
+    "1": 8,
+    "2": 8
+  },
+  "cpu_pairs": [
+    [
+      0,
+      2
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      8,
+      10
+    ]
+  ]
+}
