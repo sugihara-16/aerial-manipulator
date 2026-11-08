@@ -1,0 +1,1699 @@
+{
+  "success": false,
+  "task_engine_success": false,
+  "reason": "terminal_conditions_failed",
+  "task": "valve",
+  "mode": "integrated",
+  "modules": 2,
+  "preparation_s": 6.623977050650865,
+  "execution_started": true,
+  "wall_s": 171.98700242256746,
+  "simulation_s": 79.89674999897468,
+  "control": {
+    "max_ms": 2.0662671886384487,
+    "over10": 0,
+    "stages": {
+      "task": {
+        "calls": 4814,
+        "mean_ms": 0.7285999718822901,
+        "p99_ms": 0.9998740255832672,
+        "max_ms": 2.0662671886384487,
+        "over10": 0
+      },
+      "assembly": {
+        "max_ms": 0.963924452662468,
+        "over10": 0
+      },
+      "transfer": {
+        "max_ms": 1.603919081389904,
+        "over10": 0
+      },
+      "transition_hold": {
+        "calls": 12,
+        "max_ms": 0.011171214282512665,
+        "over10": 0
+      }
+    }
+  },
+  "engine_result": {
+    "task_success": false,
+    "reason": "terminal_conditions_failed",
+    "checks": {
+      "angle": false,
+      "speed": true,
+      "released": true,
+      "settled": false,
+      "retreat_flight": false,
+      "side_faces": true
+    },
+    "angle_rad": 0.0,
+    "speed_rad_s": 0.0,
+    "modules": 2,
+    "contacts": 1,
+    "planning_s": 5.967129059135914,
+    "fresh_structure_generation": true,
+    "wall_s": 171.35562087921426,
+    "simulation_s": 79.89674999897468,
+    "audit": {
+      "engine": "MuJoCo",
+      "contact_force_components": "normal_and_friction",
+      "clearance_detection": "refitted_body_bounds",
+      "support_representation": "native_unsplit",
+      "clearance_queries": 483,
+      "clearance_motion_bound_reuses": 0,
+      "peak_contact_force_n": 0.0,
+      "peak_contact_moment_nm": 0.0,
+      "peak_penetration_m": 0.0006482494499757876,
+      "peak_joint_speed_rad_s": 5.784491814938003,
+      "peak_effort_ratio": 1.0,
+      "joint_limit_violation_rad": 0.0,
+      "peak_unsaturated_servo_effort_ratio": 105.55084656613613,
+      "maximum_servo_reference_error_rad": 304.6900421705028,
+      "actuator_saturation_time_s": {
+        "m0/gimbal1": 0.059125000000000046,
+        "m0/pitch_dock_mech_joint1": 22.623500000062517,
+        "m1/yaw_dock_mech_joint1": 27.149125000084126,
+        "m1/gimbal1": 18.277625000041766,
+        "m1/gimbal3": 0.000375,
+        "m1/gimbal4": 22.02112500005964,
+        "m1/pitch_dock_mech_joint2": 0.02475000000000002,
+        "m1/gimbal2": 20.58462500005278,
+        "m0/gimbal2": 21.132500000055398,
+        "m0/yaw_dock_mech_joint1": 0.02737500000000002,
+        "m0/gimbal3": 21.224500000055837,
+        "m0/yaw_dock_mech_joint2": 0.10112500000000008,
+        "m0/gimbal4": 0.09925000000000007
+      },
+      "maximum_lift_clearance_m": 1.475,
+      "minimum_transport_clearance_m": null,
+      "time_since_gripper_contact_s": null,
+      "minimum_part_gap_capped_m": 0.001,
+      "minimum_environment_gap_capped_m": -0.0006203169506759833,
+      "clearance_violations": [
+        [
+          "floor",
+          "m0/gimbal_link1/12"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/15"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/16"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/18"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/19"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/27"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/28"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/29"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/4"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/5"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link1/8"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/0"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/12"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/13"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/15"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/16"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/17"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/18"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/19"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/24"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/27"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/28"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/29"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/30"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/31"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/4"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/5"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/8"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/9"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/15"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/27"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/29"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/30"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/5"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/12"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/16"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/18"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/19"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/24"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/28"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/4"
+        ],
+        [
+          "floor",
+          "m0/main_body/10"
+        ],
+        [
+          "floor",
+          "m0/main_body/18"
+        ],
+        [
+          "floor",
+          "m0/main_body/21"
+        ],
+        [
+          "floor",
+          "m0/main_body/22"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/0"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/100"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/103"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/113"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/116"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/119"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/13"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/19"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/2"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/21"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/29"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/3"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/36"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/39"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/40"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/42"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/51"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/55"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/56"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/58"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/63"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/67"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/71"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/74"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/76"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/78"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/81"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/83"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/84"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/85"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/86"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/89"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/9"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/90"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/91"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/93"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/98"
+        ],
+        [
+          "floor",
+          "m0/rotor_arm3/1"
+        ],
+        [
+          "floor",
+          "m0/rotor_arm3/2"
+        ],
+        [
+          "floor",
+          "m0/thrust_1/0"
+        ],
+        [
+          "floor",
+          "m0/thrust_1/3"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/0"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/1"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/2"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/3"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/4"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/5"
+        ],
+        [
+          "floor",
+          "m0/thrust_2/6"
+        ],
+        [
+          "floor",
+          "m0/thrust_3/0"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/0"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/103"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/109"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/116"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/118"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/119"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/12"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/122"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/127"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/15"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/20"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/22"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/24"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/27"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/31"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/32"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/33"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/39"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/42"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/47"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/48"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/49"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/55"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/58"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/63"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/64"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/66"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/69"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/73"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/74"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/75"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/88"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/9"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/96"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/0"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/100"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/103"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/109"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/11"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/116"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/118"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/119"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/12"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/120"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/122"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/127"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/15"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/20"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/21"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/22"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/24"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/27"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/31"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/32"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/33"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/39"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/42"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/47"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/48"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/49"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/55"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/58"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/63"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/64"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/66"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/69"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/73"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/74"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/75"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/82"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/88"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/9"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/96"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/99"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/0"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/12"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/16"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/18"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/19"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/24"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/28"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/31"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/4"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/8"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/15"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/27"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/29"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/30"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/5"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/8"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/0"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/12"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/13"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/15"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/16"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/17"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/18"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/19"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/24"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/27"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/28"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/29"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/30"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/31"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/4"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/5"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/8"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link3/9"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/0"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/12"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/13"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/15"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/16"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/17"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/18"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/19"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/24"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/27"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/28"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/29"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/30"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/31"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/4"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/5"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/8"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/9"
+        ],
+        [
+          "floor",
+          "m1/main_body/10"
+        ],
+        [
+          "floor",
+          "m1/main_body/18"
+        ],
+        [
+          "floor",
+          "m1/main_body/21"
+        ],
+        [
+          "floor",
+          "m1/main_body/22"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/0"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/113"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/119"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/13"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/19"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/2"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/21"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/29"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/3"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/36"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/39"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/42"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/51"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/55"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/56"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/58"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/63"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/71"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/76"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/78"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/83"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/86"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/9"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/90"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/91"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech1/93"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/0"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/100"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/103"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/108"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/113"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/116"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/119"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/13"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/19"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/2"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/21"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/29"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/3"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/36"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/39"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/40"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/42"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/51"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/55"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/56"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/58"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/63"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/67"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/71"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/74"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/76"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/78"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/80"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/81"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/83"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/84"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/85"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/86"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/89"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/9"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/90"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/91"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/93"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/98"
+        ],
+        [
+          "floor",
+          "m1/rotor_arm3/1"
+        ],
+        [
+          "floor",
+          "m1/thrust_1/2"
+        ],
+        [
+          "floor",
+          "m1/thrust_1/3"
+        ],
+        [
+          "floor",
+          "m1/thrust_2/0"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/0"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/1"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/2"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/3"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/4"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/5"
+        ],
+        [
+          "floor",
+          "m1/thrust_3/6"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/0"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/1"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/2"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/3"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/4"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/5"
+        ],
+        [
+          "floor",
+          "m1/thrust_4/6"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/0"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/103"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/109"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/11"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/116"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/119"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/12"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/122"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/124"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/127"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/15"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/20"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/21"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/22"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/24"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/31"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/32"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/33"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/39"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/42"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/47"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/48"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/49"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/55"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/58"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/63"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/64"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/66"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/69"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/73"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/74"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/75"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/88"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/9"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/96"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/99"
+        ]
+      ],
+      "contact_center_displacement_m": 0.0,
+      "contact_material_displacement_m": 0.0,
+      "longest_carried_contact_gap_s": 0.0,
+      "unexpected_contacts": [
+        [
+          "floor",
+          "m0/gimbal_link1/18"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/27"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/29"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link2/5"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/27"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link3/29"
+        ],
+        [
+          "floor",
+          "m0/gimbal_link4/18"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/13"
+        ],
+        [
+          "floor",
+          "m0/pitch_dock_mech2/29"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/116"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/122"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/127"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech1/24"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/116"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/122"
+        ],
+        [
+          "floor",
+          "m0/yaw_dock_mech2/127"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link1/18"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link2/27"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/18"
+        ],
+        [
+          "floor",
+          "m1/gimbal_link4/4"
+        ],
+        [
+          "floor",
+          "m1/main_body/10"
+        ],
+        [
+          "floor",
+          "m1/pitch_dock_mech2/29"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/116"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/122"
+        ],
+        [
+          "floor",
+          "m1/yaw_dock_mech2/127"
+        ]
+      ],
+      "clearance_sampling_period_s": 0.1,
+      "contact_faces": {
+        "axis": 1,
+        "integration_steps": 288960,
+        "violating_steps": 0,
+        "maximum_non_side_normal_force_n": 0.0,
+        "non_side_normal_impulse_ns": 0.0,
+        "maximum_non_side_axis_torque_nm": 0.0,
+        "first_violation_s": null,
+        "last_violation_s": null,
+        "worst_geom": null,
+        "worst_point_local": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "worst_normal_local": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "normal_force_zero_tolerance_n": 1e-06,
+        "passes": true
+      }
+    },
+    "side_faces": {
+      "axis": 1,
+      "integration_steps": 288960,
+      "violating_steps": 0,
+      "maximum_non_side_normal_force_n": 0.0,
+      "non_side_normal_impulse_ns": 0.0,
+      "maximum_non_side_axis_torque_nm": 0.0,
+      "first_violation_s": null,
+      "last_violation_s": null,
+      "worst_geom": null,
+      "worst_point_local": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_normal_local": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "normal_force_zero_tolerance_n": 1e-06,
+      "passes": true,
+      "sampled": {
+        "passes": true,
+        "samples": 361,
+        "violating_samples": 0,
+        "maximum_non_side_normal_force_n": 0.0,
+        "maximum_non_side_axis_torque_nm": 0.0,
+        "sample_period_s": 0.1,
+        "normal_force_zero_tolerance_n": 1e-06,
+        "phases": [
+          "LOAD",
+          "TURN",
+          "SETTLE",
+          "UNLOAD"
+        ]
+      }
+    },
+    "control": {
+      "calls": 4814,
+      "mean_ms": 0.7285999718822901,
+      "p99_ms": 0.9998740255832672,
+      "max_ms": 2.0662671886384487,
+      "over10": 0
+    },
+    "allocation": {
+      "calls": 4814,
+      "errors": 0,
+      "max_ms": 7.136446889489889
+    }
+  },
+  "assembly": {
+    "success": true,
+    "physical_success": true,
+    "reason": "assembled",
+    "case": "interactive",
+    "modules": 2,
+    "planning_s": 0.016525838989764452,
+    "simulation_s": 11.700000000010359,
+    "assembly_s": 8.610000000009455,
+    "hover_confirmed_s": 3.0900000000009036,
+    "latched": 1,
+    "required": 1,
+    "retries": 0,
+    "phase": "VERIFY",
+    "last_errors": {
+      "0": {
+        "axial_m": 2.3353203021827298e-07,
+        "transverse_m": 3.206820917008921e-07,
+        "attitude_rad": 9.00447074747884e-06,
+        "linear_speed_m_s": 1.1555175214905587e-05,
+        "transverse_speed_m_s": 1.0923699268348373e-05,
+        "angular_speed_rad_s": 9.268902052076606e-05
+      }
+    },
+    "wall_s": 21.774091768078506,
+    "publication_max_s": 0.000963924452662468,
+    "publication_over_10ms": 0,
+    "air_max_loss": 0.00028469401670805117,
+    "air_loss_impulse_ns": 0.0005148608849658396,
+    "peak_joint_fraction": 1.0,
+    "max_penetration_m": 0.00011316135235116178,
+    "constraint_base_force_n": 3.328742421472314,
+    "constraint_base_moment_nm": 1.3502023471254954,
+    "failure_hold_started_s": null,
+    "post_failure_hold_s": 0.0,
+    "worker_max_s": 0.005933315027505159,
+    "worker_errors": [],
+    "central_mask": 1,
+    "leaders": {
+      "0": 0,
+      "1": 0
+    },
+    "handoff_complete": true
+  },
+  "transfer": {
+    "duration_s": 19.950000000095258,
+    "position_error_m": 3.3067189496870624,
+    "joint_error": 2.1162254769194715,
+    "publication_max_s": 0.001603919081389904,
+    "publication_over_10ms": 0,
+    "failure": null
+  }
+}

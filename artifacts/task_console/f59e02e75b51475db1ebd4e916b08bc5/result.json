@@ -1,0 +1,619 @@
+{
+  "success": true,
+  "task_engine_success": true,
+  "reason": "completed",
+  "task": "walking",
+  "mode": "integrated",
+  "modules": 4,
+  "preparation_s": 13.31048199115321,
+  "wall_s": 99.3712822208181,
+  "simulation_s": 22.62999999999261,
+  "control": {
+    "max_ms": 8.550936821848154,
+    "over10": 0,
+    "stages": {
+      "task": {
+        "calls": 3393,
+        "mean_ms": 0.5185233582510573,
+        "p99_ms": 0.8613589033484456,
+        "max_ms": 8.550936821848154,
+        "over10": 0,
+        "observation_over10": 0
+      },
+      "assembly": {
+        "max_ms": 1.0253069922327995,
+        "over10": 0
+      },
+      "transfer": {
+        "max_ms": 4.6173082664608955,
+        "over10": 0
+      }
+    }
+  },
+  "engine_result": {
+    "task_success": true,
+    "checks": {
+      "distance": true,
+      "physical": true,
+      "minimum_speed": true,
+      "mean_speed": true,
+      "window_speed": true,
+      "path": true,
+      "posture": true,
+      "ground_support": true,
+      "feet": true,
+      "other_support": true,
+      "airborne_landing": true,
+      "control_deadline": true,
+      "planning_deadline": true
+    },
+    "reason": null,
+    "simulation_s": 22.62999999999261,
+    "distance_m": 5.001738756147982,
+    "mean_speed_m_s": 0.2210224814902386,
+    "window_speeds_m_s": [
+      0.21555529164261275,
+      0.22304894531654837,
+      0.22093175784140584,
+      0.2210078687050908,
+      0.22776404508851403
+    ],
+    "maximum_path_error_m": 0.03437727116060704,
+    "posture_error_p95_rad": 0.02376257672629083,
+    "ground_load_fraction": 0.7375248876477544,
+    "ground_contact_fraction": 1.0,
+    "foot_dominant_fraction": 0.9998232434821037,
+    "longest_light_support_s": 0.0015,
+    "other_load_fraction": 0.0019902971040663344,
+    "complete_cycles": 12,
+    "foot_cycle_success_fractions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "steps": [
+      {
+        "foot": 2,
+        "time_s": 0.66000000005711,
+        "stride_m": 0.3716135354547167,
+        "clearance_m": 0.030898151616224653,
+        "support_s": 0.16000000000076398,
+        "body_advance_m": 0.15154711470876023,
+        "stance_slip_m": 0.001129927846544915,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 1.2300000000598317,
+        "stride_m": 0.37838435807109305,
+        "clearance_m": 0.030514386700412538,
+        "support_s": 0.7500000000035811,
+        "body_advance_m": 0.2537849523779678,
+        "stance_slip_m": 0.004954063587818555,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 1.8800000000629353,
+        "stride_m": 0.4218335569890052,
+        "clearance_m": 0.030330710583215056,
+        "support_s": 1.390000000006637,
+        "body_advance_m": 0.41465810700293915,
+        "stance_slip_m": 0.0034060103564107487,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 2.5000000000658957,
+        "stride_m": 0.4180827662171455,
+        "clearance_m": 0.03128667841961205,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.4084776239078899,
+        "stance_slip_m": 0.007590054134810869,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 3.090000000068713,
+        "stride_m": 0.4010451416745551,
+        "clearance_m": 0.030302831103513672,
+        "support_s": 1.4100000000067325,
+        "body_advance_m": 0.40976033273562495,
+        "stance_slip_m": 0.011779154307874002,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 3.6600000000714346,
+        "stride_m": 0.40342037515470297,
+        "clearance_m": 0.03020417999323345,
+        "support_s": 1.3400000000063983,
+        "body_advance_m": 0.3999341025714098,
+        "stance_slip_m": 0.008306922710863918,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 4.320000000074586,
+        "stride_m": 0.40804708949209123,
+        "clearance_m": 0.03125425327468746,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.403684829827776,
+        "stance_slip_m": 0.00568477794905756,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 4.900000000077355,
+        "stride_m": 0.40130829726622996,
+        "clearance_m": 0.030197505000472996,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.40386013786499075,
+        "stance_slip_m": 0.008032499485159085,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 5.560000000080507,
+        "stride_m": 0.41147170629598095,
+        "clearance_m": 0.03025513243026516,
+        "support_s": 1.390000000006637,
+        "body_advance_m": 0.4107382600888716,
+        "stance_slip_m": 0.006490180709471761,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 6.160000000083372,
+        "stride_m": 0.40652572085101446,
+        "clearance_m": 0.03133082095525408,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.4047197400484088,
+        "stance_slip_m": 0.004779790797465918,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 6.740000000086141,
+        "stride_m": 0.40517942857077616,
+        "clearance_m": 0.030284749098758196,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.4043331635040379,
+        "stance_slip_m": 0.007111136264160039,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 7.4000000000892925,
+        "stride_m": 0.40548752215769923,
+        "clearance_m": 0.030241581489503913,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.4047791859899126,
+        "stance_slip_m": 0.005083489973103251,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 8.000000000092157,
+        "stride_m": 0.40509583513070013,
+        "clearance_m": 0.031426313328793434,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.40451089672447327,
+        "stance_slip_m": 0.004208567727752261,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 8.580000000094927,
+        "stride_m": 0.40538659642200225,
+        "clearance_m": 0.03036169688592083,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.404014823065854,
+        "stance_slip_m": 0.00623136544766366,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 9.240000000098078,
+        "stride_m": 0.40549984870845623,
+        "clearance_m": 0.029790733592015978,
+        "support_s": 1.350000000006446,
+        "body_advance_m": 0.40448215317423375,
+        "stance_slip_m": 0.004517050820113999,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 9.840000000100943,
+        "stride_m": 0.40414434232223906,
+        "clearance_m": 0.03140620840746414,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.40454485443504473,
+        "stance_slip_m": 0.009284601418492687,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 10.440000000103808,
+        "stride_m": 0.40653094632034237,
+        "clearance_m": 0.030388626103588515,
+        "support_s": 1.390000000006637,
+        "body_advance_m": 0.4054516204263099,
+        "stance_slip_m": 0.00549732581212117,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 11.060000000106768,
+        "stride_m": 0.40418647516750017,
+        "clearance_m": 0.02991391267784478,
+        "support_s": 1.350000000006446,
+        "body_advance_m": 0.4028074122626748,
+        "stance_slip_m": 0.004738334819238679,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 11.690000000109777,
+        "stride_m": 0.4055103469873158,
+        "clearance_m": 0.03097537928983206,
+        "support_s": 1.3700000000065415,
+        "body_advance_m": 0.40459193794693515,
+        "stance_slip_m": 0.00642348758304319,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 12.280000000112594,
+        "stride_m": 0.4038269807801682,
+        "clearance_m": 0.03039694568511632,
+        "support_s": 1.390000000006637,
+        "body_advance_m": 0.40404774770186247,
+        "stance_slip_m": 0.012344178594958427,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 12.850000000115315,
+        "stride_m": 0.3987113778023561,
+        "clearance_m": 0.02998716302049173,
+        "support_s": 1.350000000006446,
+        "body_advance_m": 0.3985250158854359,
+        "stance_slip_m": 0.008258552728583089,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 13.510000000118467,
+        "stride_m": 0.4030091525417241,
+        "clearance_m": 0.03104826961542269,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.4028672926775485,
+        "stance_slip_m": 0.005178501125242752,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 14.090000000121236,
+        "stride_m": 0.4029248999674717,
+        "clearance_m": 0.03035104431112265,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.4015793404400667,
+        "stance_slip_m": 0.009853927210056729,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 14.750000000124388,
+        "stride_m": 0.4093985148709365,
+        "clearance_m": 0.030070472352526884,
+        "support_s": 1.390000000006637,
+        "body_advance_m": 0.40932109904215297,
+        "stance_slip_m": 0.006470074780602685,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 15.350000000127253,
+        "stride_m": 0.4040550937352325,
+        "clearance_m": 0.031157005207492677,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.40424650529217265,
+        "stance_slip_m": 0.004609862246195152,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 15.930000000130022,
+        "stride_m": 0.4053289559681419,
+        "clearance_m": 0.030420343595859045,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.4033413649460158,
+        "stance_slip_m": 0.008940000969971612,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 16.590000000133173,
+        "stride_m": 0.40410243987060124,
+        "clearance_m": 0.03013102240445896,
+        "support_s": 1.3600000000064938,
+        "body_advance_m": 0.4039338490224531,
+        "stance_slip_m": 0.005445322815485862,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 17.19000000013604,
+        "stride_m": 0.40414560837282565,
+        "clearance_m": 0.03129453639274221,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.4040992362453921,
+        "stance_slip_m": 0.004057741127075886,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 17.770000000138808,
+        "stride_m": 0.404965179386954,
+        "clearance_m": 0.03047950571687573,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.4034584818768012,
+        "stance_slip_m": 0.0073490326262123035,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 18.43000000014196,
+        "stride_m": 0.40528393605446933,
+        "clearance_m": 0.02978038736106299,
+        "support_s": 1.350000000006446,
+        "body_advance_m": 0.4041895295366911,
+        "stance_slip_m": 0.004804645161667324,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 19.030000000144824,
+        "stride_m": 0.40411136034498885,
+        "clearance_m": 0.031323344656775595,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.4043230966446125,
+        "stance_slip_m": 0.009820547414582248,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 19.610000000147593,
+        "stride_m": 0.4036579486192067,
+        "clearance_m": 0.03043611282682053,
+        "support_s": 1.3800000000065893,
+        "body_advance_m": 0.40372385540642997,
+        "stance_slip_m": 0.0058407696290747775,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 20.25000000015065,
+        "stride_m": 0.4038926082076788,
+        "clearance_m": 0.029899583435759686,
+        "support_s": 1.350000000006446,
+        "body_advance_m": 0.4025780584517573,
+        "stance_slip_m": 0.004751448591300658,
+        "valid": true
+      },
+      {
+        "foot": 2,
+        "time_s": 20.880000000153657,
+        "stride_m": 0.4058982703624485,
+        "clearance_m": 0.030924112830611764,
+        "support_s": 1.3700000000065415,
+        "body_advance_m": 0.40421141457755283,
+        "stance_slip_m": 0.006440270406062133,
+        "valid": true
+      },
+      {
+        "foot": 1,
+        "time_s": 21.470000000156475,
+        "stride_m": 0.4056281035924898,
+        "clearance_m": 0.03046475710787165,
+        "support_s": 1.4000000000066848,
+        "body_advance_m": 0.4053088096185693,
+        "stance_slip_m": 0.005755886294847344,
+        "valid": true
+      },
+      {
+        "foot": 0,
+        "time_s": 22.040000000159196,
+        "stride_m": 0.39885181030570127,
+        "clearance_m": 0.029977306726510347,
+        "support_s": 1.350000000006446,
+        "body_advance_m": 0.39852574138770436,
+        "stance_slip_m": 0.008295305525839024,
+        "valid": true
+      }
+    ],
+    "valid_steps_per_foot": [
+      12,
+      12,
+      12
+    ],
+    "step_success_fractions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "minimum_stride_m": [
+      0.137848525,
+      0.117117491,
+      0.137848525
+    ],
+    "minimum_steps_per_foot": 9,
+    "rotor_burden_mean": 64.52576052847968,
+    "joint_burden_mean": 4.22921610692812,
+    "rotor_thrust_weight_ratio": 0.3734727835346874,
+    "rotor_vertical_weight_ratio": 0.263097781602405,
+    "rotor_burden_hover_ratio": 0.41190424491830585,
+    "rotor_burden_per_m": 291.94206893835945,
+    "positive_joint_work_j": 28.981768525890065,
+    "peak_actuator_ratio": 1.0,
+    "peak_penetration_m": 0.0006745668727140743,
+    "peak_joint_speed_rad_s": 3.0675338499864107,
+    "actuator_motion": {
+      "dock": {
+        "max_speed_rad_s": 3.0675338499864107,
+        "max_speed_ratio": 0.07916970491270306,
+        "max_range_excess_rad": 0.13658922799971274,
+        "joint_limit_peak_nm": 0.0,
+        "joint_limit_mean_absolute_nm": 0.0,
+        "max_joint_limit_time_fraction": 0.0,
+        "positive_work_j": 24.129238638147545,
+        "negative_work_j": 27.557348027818772
+      },
+      "gimbal": {
+        "max_speed_rad_s": 2.434393003093035,
+        "max_speed_ratio": 0.8114643343643451,
+        "max_range_excess_rad": 0.0,
+        "joint_limit_peak_nm": 0.0,
+        "joint_limit_mean_absolute_nm": 0.0,
+        "max_joint_limit_time_fraction": 0.0,
+        "positive_work_j": 4.852529887742675,
+        "negative_work_j": 5.4319938233718545
+      }
+    },
+    "whole_sequence": {
+      "simulation_s": 33.929999999994926,
+      "rotor_proxy": 3167.7701810000535,
+      "joint_proxy": 119.26229923819054,
+      "positive_joint_work_j": 29.46785776010605,
+      "rotor_burden_hover_ratio": 0.5959817242676434,
+      "phases": {
+        "HOLD": {
+          "seconds": 0.7999999999999673,
+          "rotor_proxy": 218.16486703575967,
+          "joint_proxy": 1.83274213629884,
+          "positive_joint_work_j": 0.21229331891961983
+        },
+        "MORPH": {
+          "seconds": 3.000000000000169,
+          "rotor_proxy": 630.2240805809253,
+          "joint_proxy": 8.157556082957026,
+          "positive_joint_work_j": 0.19788406733624586
+        },
+        "DESCEND": {
+          "seconds": 4.500000000000226,
+          "rotor_proxy": 858.9984365159455,
+          "joint_proxy": 10.28825339815442,
+          "positive_joint_work_j": 0.0329214767441352
+        },
+        "TRANSFER": {
+          "seconds": 3.000000000000169,
+          "rotor_proxy": 0.16483610840509755,
+          "joint_proxy": 3.2765871210281503,
+          "positive_joint_work_j": 0.04299037121598476
+        },
+        "WALK": {
+          "seconds": 22.62999999999261,
+          "rotor_proxy": 1460.2179607590183,
+          "joint_proxy": 95.70716049975209,
+          "positive_joint_work_j": 28.981768525890065
+        }
+      },
+      "walk_start_s": 11.3,
+      "landing_support_s": 0.3000000000000002,
+      "hover_minimum_foot_gap_m": 0.5932530571470418,
+      "physical_abort": null,
+      "peak_penetration_m": 0.0006745668727140743,
+      "peak_actuator_ratio": 1.0
+    },
+    "modules": 4,
+    "feet": 3,
+    "planning_s": 12.568031033035368,
+    "fresh_structure_generation": true,
+    "wall_s": 98.898524554912,
+    "timestep": 0.0005,
+    "control": {
+      "calls": 3393,
+      "mean_ms": 0.5185233582510573,
+      "p99_ms": 0.8613589033484456,
+      "max_ms": 8.550936821848154,
+      "over10": 0,
+      "observation_over10": 0
+    },
+    "allocation": {
+      "calls": 3392,
+      "errors": 0,
+      "max_ms": 11.48801064118743
+    }
+  },
+  "assembly": {
+    "success": true,
+    "physical_success": true,
+    "reason": "assembled",
+    "case": "interactive",
+    "modules": 4,
+    "planning_s": 0.06159522896632552,
+    "simulation_s": 18.220000000002887,
+    "assembly_s": 15.130000000002688,
+    "hover_confirmed_s": 3.0900000000001993,
+    "latched": 3,
+    "required": 3,
+    "retries": 0,
+    "phase": "VERIFY",
+    "last_errors": {
+      "0": {
+        "axial_m": -3.039216525769271e-07,
+        "transverse_m": 3.7473420553851483e-07,
+        "attitude_rad": 1.5890491660541116e-05,
+        "linear_speed_m_s": 1.370196386319373e-05,
+        "transverse_speed_m_s": 1.3292720823781172e-05,
+        "angular_speed_rad_s": 3.2975713626391326e-05
+      },
+      "1": {
+        "axial_m": -5.526601926263796e-07,
+        "transverse_m": 2.8329975001957567e-07,
+        "attitude_rad": 9.656956110683237e-06,
+        "linear_speed_m_s": 1.5528402811269387e-05,
+        "transverse_speed_m_s": 1.5196895662632345e-05,
+        "angular_speed_rad_s": 3.6673951240353806e-05
+      },
+      "2": {
+        "axial_m": -5.212757921271385e-07,
+        "transverse_m": 3.819626545096404e-07,
+        "attitude_rad": 1.8127299347383962e-05,
+        "linear_speed_m_s": 3.765901258910551e-06,
+        "transverse_speed_m_s": 3.6757783697116206e-06,
+        "angular_speed_rad_s": 1.1041187185387912e-05
+      }
+    },
+    "wall_s": 17.773216225672513,
+    "publication_max_s": 0.0010253069922327995,
+    "publication_over_10ms": 0,
+    "air_max_loss": 0.0035062513190428756,
+    "air_loss_impulse_ns": 0.004642428558838251,
+    "peak_joint_fraction": 1.0,
+    "max_penetration_m": 9.593140314231603e-05,
+    "constraint_base_force_n": 9.61090207937623,
+    "constraint_base_moment_nm": 3.1214401794299844,
+    "failure_hold_started_s": null,
+    "post_failure_hold_s": 0.0,
+    "worker_max_s": 0.010515342000871897,
+    "worker_errors": [],
+    "central_mask": 7,
+    "leaders": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "handoff_complete": true
+  },
+  "transfer": {
+    "duration_s": 17.599999999986665,
+    "position_error_m": 0.0016921313214505397,
+    "joint_error": 2.059585385405546,
+    "publication_max_s": 0.0046173082664608955,
+    "publication_over_10ms": 0,
+    "failure": null
+  }
+}

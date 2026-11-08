@@ -1,0 +1,205 @@
+{
+  "success": true,
+  "task_engine_success": true,
+  "reason": "task_completed",
+  "task": "grasp",
+  "mode": "integrated",
+  "modules": 3,
+  "preparation_s": 6.5711926110088825,
+  "wall_s": 165.24630187824368,
+  "simulation_s": 77.34962499903492,
+  "control": {
+    "max_ms": 2.9145232401788235,
+    "over10": 0,
+    "stages": {
+      "task": {
+        "calls": 3884,
+        "mean_ms": 0.19066441474706855,
+        "p99_ms": 0.271348194219172,
+        "maximum_ms": 0.42486749589443207,
+        "misses": 0,
+        "max_ms": 0.42486749589443207,
+        "over10": 0
+      },
+      "assembly": {
+        "max_ms": 1.0072952136397362,
+        "over10": 0
+      },
+      "transfer": {
+        "max_ms": 2.9145232401788235,
+        "over10": 0
+      },
+      "transition_hold": {
+        "calls": 15,
+        "max_ms": 0.01213420182466507,
+        "over10": 0
+      }
+    }
+  },
+  "engine_result": {
+    "task_success": true,
+    "reason": "task_completed",
+    "modules": 3,
+    "task_checks": {
+      "position": true,
+      "orientation": true,
+      "linear_velocity": true,
+      "angular_velocity": true,
+      "released": true,
+      "release_settled": true,
+      "lifted": true,
+      "transport_clearance": true
+    },
+    "audit": {
+      "engine": "MuJoCo",
+      "contact_force_components": "normal_and_friction",
+      "clearance_detection": "refitted_body_bounds",
+      "support_representation": "native_unsplit",
+      "clearance_queries": 311,
+      "clearance_motion_bound_reuses": 79,
+      "peak_contact_force_n": 16.088717836155407,
+      "peak_contact_moment_nm": 1.8543656270624236,
+      "peak_penetration_m": 0.0004285901160840466,
+      "peak_joint_speed_rad_s": 0.8952294782484314,
+      "peak_effort_ratio": 1.0,
+      "joint_limit_violation_rad": 0.0,
+      "peak_unsaturated_servo_effort_ratio": 1.0445646552413796,
+      "maximum_servo_reference_error_rad": 244.30046573513744,
+      "actuator_saturation_time_s": {
+        "m0/gimbal2": 0.004000000000000003,
+        "m0/gimbal3": 0.008500000000000006,
+        "m0/yaw_dock_mech_joint2": 0.37962499999997207,
+        "m0/gimbal4": 0.003250000000000002,
+        "m1/gimbal1": 0.005250000000000004,
+        "m1/gimbal2": 0.004500000000000003,
+        "m1/yaw_dock_mech_joint1": 0.011500000000000008,
+        "m1/gimbal4": 0.0025000000000000014,
+        "m2/gimbal1": 0.0011250000000000001,
+        "m2/gimbal4": 0.006125000000000005
+      },
+      "maximum_lift_clearance_m": 0.1894866296056429,
+      "minimum_transport_clearance_m": 0.17680658347559397,
+      "time_since_gripper_contact_s": 9.258874999781057,
+      "minimum_part_gap_capped_m": 0.001,
+      "minimum_environment_gap_capped_m": 0.03,
+      "clearance_violations": [],
+      "contact_center_displacement_m": 0.0012410133329526455,
+      "contact_material_displacement_m": 1.556656611106887e-05,
+      "longest_carried_contact_gap_s": 8.209999999993695,
+      "unexpected_contacts": [],
+      "clearance_sampling_period_s": 0.1
+    },
+    "events": [
+      {
+        "time_s": 0.0,
+        "phase": "APPROACH"
+      },
+      {
+        "time_s": 5.009999999881529,
+        "phase": "LOAD"
+      },
+      {
+        "time_s": 7.019999999833999,
+        "phase": "LIFT"
+      },
+      {
+        "time_s": 13.499999999680767,
+        "phase": "CARRY"
+      },
+      {
+        "time_s": 21.709999999486627,
+        "phase": "DESCEND"
+      },
+      {
+        "time_s": 27.799999999342624,
+        "phase": "UNLOAD"
+      },
+      {
+        "time_s": 29.809999999295094,
+        "phase": "OPEN"
+      },
+      {
+        "time_s": 33.81999999920027,
+        "phase": "RETREAT"
+      }
+    ],
+    "phase": "RETREAT",
+    "simulation_s": 77.34962499903492,
+    "wall_s": 164.66735172783956,
+    "scope": "fresh_generation_spawn_task",
+    "initial_planning_s": 5.752207439858466,
+    "control": {
+      "calls": 3884,
+      "mean_ms": 0.19066441474706855,
+      "p99_ms": 0.271348194219172,
+      "maximum_ms": 0.42486749589443207,
+      "misses": 0
+    },
+    "allocation": {
+      "calls": 3884,
+      "held_ticks": 3884,
+      "maximum_ms": 8.514884859323502
+    }
+  },
+  "assembly": {
+    "success": true,
+    "physical_success": true,
+    "reason": "assembled",
+    "case": "interactive",
+    "modules": 3,
+    "planning_s": 0.03386722132563591,
+    "simulation_s": 14.730000000024827,
+    "assembly_s": 11.640000000023923,
+    "hover_confirmed_s": 3.0900000000009036,
+    "latched": 2,
+    "required": 2,
+    "retries": 0,
+    "phase": "VERIFY",
+    "last_errors": {
+      "0": {
+        "axial_m": -7.721159196972714e-08,
+        "transverse_m": 2.474609655349611e-07,
+        "attitude_rad": 5.440491901200327e-06,
+        "linear_speed_m_s": 2.599390351988858e-07,
+        "transverse_speed_m_s": 2.591464599807404e-07,
+        "angular_speed_rad_s": 6.737575139246297e-06
+      },
+      "1": {
+        "axial_m": -3.0491067633613715e-08,
+        "transverse_m": 4.073988707628958e-08,
+        "attitude_rad": 4.4653996202013836e-07,
+        "linear_speed_m_s": 6.196681944435527e-07,
+        "transverse_speed_m_s": 6.16956483115534e-07,
+        "angular_speed_rad_s": 5.659943265425947e-06
+      }
+    },
+    "wall_s": 47.17107126303017,
+    "publication_max_s": 0.0010072952136397362,
+    "publication_over_10ms": 0,
+    "air_max_loss": 0.0014310911603060603,
+    "air_loss_impulse_ns": 0.00146681232165921,
+    "peak_joint_fraction": 1.0,
+    "max_penetration_m": 0.00011529848416789393,
+    "constraint_base_force_n": 4.853243181484748,
+    "constraint_base_moment_nm": 0.9060437896281895,
+    "failure_hold_started_s": null,
+    "post_failure_hold_s": 0.0,
+    "worker_max_s": 0.007230304181575775,
+    "worker_errors": [],
+    "central_mask": 3,
+    "leaders": {
+      "0": 0,
+      "1": 0,
+      "2": 0
+    },
+    "handoff_complete": true
+  },
+  "transfer": {
+    "duration_s": 23.639999999930225,
+    "position_error_m": 0.000343016075385215,
+    "joint_error": 0.7033206214382853,
+    "publication_max_s": 0.0029145232401788235,
+    "publication_over_10ms": 0,
+    "failure": null
+  }
+}

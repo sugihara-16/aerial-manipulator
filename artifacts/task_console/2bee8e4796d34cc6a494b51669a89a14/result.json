@@ -1,0 +1,136 @@
+{
+  "success": true,
+  "task_engine_success": true,
+  "reason": "task_completed",
+  "task": "grasp",
+  "mode": "task",
+  "modules": 3,
+  "preparation_s": 5.802074856124818,
+  "wall_s": 56.301238318905234,
+  "simulation_s": 38.86999999994483,
+  "control": {
+    "calls": 3887,
+    "mean_ms": 0.15631986131203002,
+    "p99_ms": 0.23790130391716957,
+    "maximum_ms": 0.40452973917126656,
+    "misses": 0,
+    "max_ms": 0.40452973917126656,
+    "over10": 0
+  },
+  "engine_result": {
+    "task_success": true,
+    "reason": "task_completed",
+    "modules": 3,
+    "task_checks": {
+      "position": true,
+      "orientation": true,
+      "linear_velocity": true,
+      "angular_velocity": true,
+      "released": true,
+      "release_settled": true,
+      "lifted": true,
+      "transport_clearance": true
+    },
+    "audit": {
+      "engine": "MuJoCo",
+      "contact_force_components": "normal_and_friction",
+      "clearance_detection": "refitted_body_bounds",
+      "support_representation": "native_unsplit",
+      "clearance_queries": 336,
+      "clearance_motion_bound_reuses": 53,
+      "peak_contact_force_n": 17.476846404001762,
+      "peak_contact_moment_nm": 2.013558657297627,
+      "peak_penetration_m": 0.0005042097378852786,
+      "peak_joint_speed_rad_s": 0.0931003318893304,
+      "peak_effort_ratio": 1.0,
+      "joint_limit_violation_rad": 0.0,
+      "peak_unsaturated_servo_effort_ratio": 1.2813702631800543,
+      "maximum_servo_reference_error_rad": 244.27786953988493,
+      "actuator_saturation_time_s": {
+        "m0/yaw_dock_mech_joint2": 0.04237500000000003,
+        "m1/yaw_dock_mech_joint1": 0.14137499999999828
+      },
+      "maximum_lift_clearance_m": 0.18947888536849827,
+      "minimum_transport_clearance_m": 0.17690212425334984,
+      "time_since_gripper_contact_s": 9.271874999849011,
+      "minimum_part_gap_capped_m": 0.001,
+      "minimum_environment_gap_capped_m": 0.029038688775596087,
+      "clearance_violations": [
+        [
+          "m1/battery1/2",
+          "support"
+        ],
+        [
+          "m1/battery1/3",
+          "support"
+        ],
+        [
+          "m1/battery2/2",
+          "support"
+        ],
+        [
+          "m1/battery2/3",
+          "support"
+        ]
+      ],
+      "contact_center_displacement_m": 0.0008511966744659371,
+      "contact_material_displacement_m": 1.2597562848108754e-05,
+      "longest_carried_contact_gap_s": 8.209999999993695,
+      "unexpected_contacts": [],
+      "clearance_sampling_period_s": 0.1
+    },
+    "events": [
+      {
+        "time_s": 0.0,
+        "phase": "APPROACH"
+      },
+      {
+        "time_s": 5.009999999999661,
+        "phase": "LOAD"
+      },
+      {
+        "time_s": 7.019999999994977,
+        "phase": "LIFT"
+      },
+      {
+        "time_s": 13.530000000019097,
+        "phase": "CARRY"
+      },
+      {
+        "time_s": 21.7400000000583,
+        "phase": "DESCEND"
+      },
+      {
+        "time_s": 27.830000000087377,
+        "phase": "UNLOAD"
+      },
+      {
+        "time_s": 29.840000000096975,
+        "phase": "OPEN"
+      },
+      {
+        "time_s": 33.85000000006354,
+        "phase": "RETREAT"
+      }
+    ],
+    "phase": "RETREAT",
+    "simulation_s": 38.86999999994483,
+    "wall_s": 55.72311914013699,
+    "scope": "fresh_generation_spawn_task",
+    "initial_planning_s": 5.2789279338903725,
+    "control": {
+      "calls": 3887,
+      "mean_ms": 0.15631986131203002,
+      "p99_ms": 0.23790130391716957,
+      "maximum_ms": 0.40452973917126656,
+      "misses": 0
+    },
+    "allocation": {
+      "calls": 3887,
+      "held_ticks": 3887,
+      "maximum_ms": 6.967160850763321
+    }
+  },
+  "assembly": null,
+  "transfer": null
+}

@@ -1,0 +1,117 @@
+{
+  "scope": "Representative fresh-generation development runs; not a frozen validation panel or a new success-rate estimate.",
+  "tests": {
+    "passed": 153,
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=. .venv/bin/python -m pytest -q tests/test_task_console.py tests/test_walking_landing.py tests/test_assembly.py tests/test_assembly_central.py tests/test_valve.py tests/test_valve_side_contacts.py tests/test_task_completion.py"
+  },
+  "gui_checks": [
+    "start",
+    "cancel_owned_processes",
+    "result_history",
+    "live_physical_frame",
+    "reject_unsupported_json",
+    "apply_json",
+    "download_json",
+    "import_downloaded_json"
+  ],
+  "screenshot": "gui_selected_overlay.png",
+  "known_limitation": "The two-module 12 Nm valve assembled, but failed during transfer to its task start. The physical cause is not established. The one-module valve success does not demonstrate a multi-module valve handoff.",
+  "runs": [
+    {
+      "id": "e66ef19d09944b80a62ed5f768870d64",
+      "task": "walking",
+      "mode": "task",
+      "success": true,
+      "modules": 4,
+      "preparation_s": 14.040230794809759,
+      "publication_max_ms": 3.7633809261024,
+      "publication_over10": 0,
+      "reason": null,
+      "input": "e66ef19d09944b80a62ed5f768870d64/task.json",
+      "result": "e66ef19d09944b80a62ed5f768870d64/result.json"
+    },
+    {
+      "id": "2bee8e4796d34cc6a494b51669a89a14",
+      "task": "grasp",
+      "mode": "task",
+      "success": true,
+      "modules": 3,
+      "preparation_s": 5.802074856124818,
+      "publication_max_ms": 0.40452973917126656,
+      "publication_over10": 0,
+      "reason": "task_completed",
+      "input": "2bee8e4796d34cc6a494b51669a89a14/task.json",
+      "result": "2bee8e4796d34cc6a494b51669a89a14/result.json"
+    },
+    {
+      "id": "f59e02e75b51475db1ebd4e916b08bc5",
+      "task": "walking",
+      "mode": "integrated",
+      "success": true,
+      "modules": 4,
+      "preparation_s": 13.31048199115321,
+      "publication_max_ms": 8.550936821848154,
+      "publication_over10": 0,
+      "reason": "completed",
+      "input": "f59e02e75b51475db1ebd4e916b08bc5/task.json",
+      "result": "f59e02e75b51475db1ebd4e916b08bc5/result.json"
+    },
+    {
+      "id": "6cb7f7b43851412597d48966228357f6",
+      "task": "grasp",
+      "mode": "integrated",
+      "success": true,
+      "modules": 3,
+      "preparation_s": 6.5711926110088825,
+      "publication_max_ms": 2.9145232401788235,
+      "publication_over10": 0,
+      "reason": "task_completed",
+      "input": "6cb7f7b43851412597d48966228357f6/task.json",
+      "result": "6cb7f7b43851412597d48966228357f6/result.json"
+    },
+    {
+      "id": "f4da760408b54ef28f07460b16f01e7d",
+      "task": "valve",
+      "mode": "integrated",
+      "success": true,
+      "modules": 1,
+      "preparation_s": 4.858640355989337,
+      "publication_max_ms": 1.1107008904218674,
+      "publication_over10": 0,
+      "reason": "completed",
+      "input": "f4da760408b54ef28f07460b16f01e7d/task.json",
+      "result": "f4da760408b54ef28f07460b16f01e7d/result.json"
+    },
+    {
+      "id": "646f0adfc9ff4127bbddda240d159077",
+      "task": "valve",
+      "mode": "assembly",
+      "success": true,
+      "modules": 2,
+      "preparation_s": 6.804554363247007,
+      "publication_max_ms": 0.8730189874768257,
+      "publication_over10": 0,
+      "reason": "assembled",
+      "input": "646f0adfc9ff4127bbddda240d159077/task.json",
+      "result": "646f0adfc9ff4127bbddda240d159077/result.json"
+    },
+    {
+      "id": "664db2f862e14e76b4f1e339ffb4c3cf",
+      "task": "valve",
+      "mode": "integrated",
+      "success": false,
+      "modules": 2,
+      "preparation_s": 6.623977050650865,
+      "publication_max_ms": 2.0662671886384487,
+      "publication_over10": 0,
+      "reason": "terminal_conditions_failed",
+      "input": "664db2f862e14e76b4f1e339ffb4c3cf/task.json",
+      "result": "664db2f862e14e76b4f1e339ffb4c3cf/result.json"
+    }
+  ],
+  "screenshot_scope": "Latest GUI layout; historical run shown, separate from the representative runs below.",
+  "precommit_tests": {
+    "passed": 281,
+    "command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=. .venv/bin/python -m pytest -q tests/test_task_console.py tests/test_planning_preview.py tests/test_task_structure.py tests/test_assembly.py tests/test_assembly_central.py tests/test_assembly_procedure.py tests/test_walking.py tests/test_walking_landing.py tests/test_valve.py tests/test_valve_side_contacts.py tests/test_relative_task_control.py tests/test_control_latency.py"
+  }
+}

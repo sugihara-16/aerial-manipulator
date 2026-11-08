@@ -1,0 +1,208 @@
+{
+  "success": true,
+  "task_engine_success": true,
+  "reason": "completed",
+  "task": "valve",
+  "mode": "integrated",
+  "modules": 1,
+  "preparation_s": 4.858640355989337,
+  "execution_started": true,
+  "wall_s": 57.307855578139424,
+  "simulation_s": 72.24549999915561,
+  "control": {
+    "max_ms": 1.1107008904218674,
+    "over10": 0,
+    "stages": {
+      "task": {
+        "calls": 4814,
+        "mean_ms": 0.6516035070652889,
+        "p99_ms": 0.9453033469617367,
+        "max_ms": 1.1107008904218674,
+        "over10": 0
+      },
+      "assembly": {
+        "max_ms": 0.7300935685634613,
+        "over10": 0
+      },
+      "transfer": {
+        "max_ms": 1.0790200904011726,
+        "over10": 0
+      },
+      "transition_hold": {
+        "calls": 10,
+        "max_ms": 0.012191012501716614,
+        "over10": 0
+      }
+    }
+  },
+  "engine_result": {
+    "task_success": true,
+    "reason": "completed",
+    "checks": {
+      "angle": true,
+      "speed": true,
+      "released": true,
+      "settled": true,
+      "retreat_flight": true,
+      "side_faces": true
+    },
+    "angle_rad": 3.1472723412274055,
+    "speed_rad_s": 1.3308462259811572e-15,
+    "modules": 1,
+    "contacts": 1,
+    "planning_s": 4.261485738214105,
+    "task_start_s": 24.105500000069593,
+    "fresh_structure_generation": true,
+    "wall_s": 56.695477987173945,
+    "simulation_s": 72.24549999915561,
+    "audit": {
+      "engine": "MuJoCo",
+      "contact_force_components": "normal_and_friction",
+      "clearance_detection": "refitted_body_bounds",
+      "support_representation": "native_unsplit",
+      "clearance_queries": 355,
+      "clearance_motion_bound_reuses": 127,
+      "peak_contact_force_n": 422.5858621377546,
+      "peak_contact_moment_nm": 48.73270995734548,
+      "peak_penetration_m": 0.00011546087849295927,
+      "peak_joint_speed_rad_s": 0.869445106250967,
+      "peak_effort_ratio": 1.0,
+      "joint_limit_violation_rad": 0.0,
+      "peak_unsaturated_servo_effort_ratio": 2.306615321448528,
+      "maximum_servo_reference_error_rad": 234.81908570142932,
+      "actuator_saturation_time_s": {
+        "m0/gimbal1": 0.001,
+        "m0/gimbal2": 0.000375,
+        "m0/gimbal3": 0.003250000000000002,
+        "m0/yaw_dock_mech_joint2": 0.0018750000000000008,
+        "m0/gimbal4": 0.000875
+      },
+      "maximum_lift_clearance_m": 1.475,
+      "minimum_transport_clearance_m": null,
+      "time_since_gripper_contact_s": 7.932999999812409,
+      "minimum_part_gap_capped_m": 0.001,
+      "minimum_environment_gap_capped_m": 0.03,
+      "clearance_violations": [],
+      "contact_center_displacement_m": 0.0,
+      "contact_material_displacement_m": 0.0,
+      "longest_carried_contact_gap_s": 0.0,
+      "unexpected_contacts": [],
+      "clearance_sampling_period_s": 0.1,
+      "contact_faces": {
+        "axis": 1,
+        "integration_steps": 289040,
+        "violating_steps": 0,
+        "maximum_non_side_normal_force_n": 0.0,
+        "non_side_normal_impulse_ns": 0.0,
+        "maximum_non_side_axis_torque_nm": 0.0,
+        "first_violation_s": null,
+        "last_violation_s": null,
+        "worst_geom": null,
+        "worst_point_local": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "worst_normal_local": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "normal_force_zero_tolerance_n": 1e-06,
+        "passes": true
+      }
+    },
+    "side_faces": {
+      "axis": 1,
+      "integration_steps": 289040,
+      "violating_steps": 0,
+      "maximum_non_side_normal_force_n": 0.0,
+      "non_side_normal_impulse_ns": 0.0,
+      "maximum_non_side_axis_torque_nm": 0.0,
+      "first_violation_s": null,
+      "last_violation_s": null,
+      "worst_geom": null,
+      "worst_point_local": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_normal_local": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "normal_force_zero_tolerance_n": 1e-06,
+      "passes": true,
+      "sampled": {
+        "passes": true,
+        "samples": 361,
+        "violating_samples": 0,
+        "maximum_non_side_normal_force_n": 0.0,
+        "maximum_non_side_axis_torque_nm": 0.0,
+        "sample_period_s": 0.1,
+        "normal_force_zero_tolerance_n": 1e-06,
+        "phases": [
+          "LOAD",
+          "TURN",
+          "SETTLE",
+          "UNLOAD"
+        ]
+      }
+    },
+    "control": {
+      "calls": 4814,
+      "mean_ms": 0.6516035070652889,
+      "p99_ms": 0.9453033469617367,
+      "max_ms": 1.1107008904218674,
+      "over10": 0
+    },
+    "allocation": {
+      "calls": 4813,
+      "errors": 0,
+      "max_ms": 7.956311572343111
+    }
+  },
+  "assembly": {
+    "success": true,
+    "physical_success": true,
+    "reason": "assembled",
+    "case": "interactive",
+    "modules": 1,
+    "planning_s": 0.007274239789694548,
+    "simulation_s": 5.3999999999987525,
+    "assembly_s": 2.309999999997849,
+    "hover_confirmed_s": 3.0900000000009036,
+    "latched": 0,
+    "required": 0,
+    "retries": 0,
+    "phase": "VERIFY",
+    "last_errors": {},
+    "wall_s": 7.528939364943653,
+    "publication_max_s": 0.0007300935685634613,
+    "publication_over_10ms": 0,
+    "air_max_loss": 0.0,
+    "air_loss_impulse_ns": 0.0,
+    "peak_joint_fraction": 0.5088546993557233,
+    "max_penetration_m": 0.00011304774561234077,
+    "constraint_base_force_n": 0.0,
+    "constraint_base_moment_nm": 0.0,
+    "failure_hold_started_s": null,
+    "post_failure_hold_s": 0.0,
+    "worker_max_s": 0.003955580294132233,
+    "worker_errors": [],
+    "central_mask": 0,
+    "leaders": {
+      "0": 0
+    },
+    "handoff_complete": true
+  },
+  "transfer": {
+    "duration_s": 18.62000000007064,
+    "position_error_m": 5.551707352511015e-05,
+    "joint_error": 0.8203456488630957,
+    "publication_max_s": 0.0010790200904011726,
+    "publication_over_10ms": 0,
+    "failure": null
+  }
+}

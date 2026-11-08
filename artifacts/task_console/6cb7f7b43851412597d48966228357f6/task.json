@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "task": "grasp",
+  "scene": {
+    "frame": "world",
+    "length_unit": "m",
+    "angle_unit": "rad",
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "ground": "horizontal_rigid",
+    "object": {
+      "shape": "box",
+      "size_m": [
+        0.3,
+        0.3,
+        0.2
+      ],
+      "mass_kg": 0.6,
+      "support_height_m": 0.2,
+      "initial": {
+        "xy_m": [
+          0.0,
+          0.0
+        ],
+        "rpy_rad": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "height": "resting_on_support"
+      }
+    }
+  },
+  "robot": {
+    "model": "amsrr",
+    "module_count": {
+      "min": 1,
+      "max": 8
+    }
+  },
+  "contacts": {
+    "robot_surface": "anchor",
+    "target": "object",
+    "allowed_region": "object_surface",
+    "model": "unilateral_friction",
+    "count": {
+      "min": 1,
+      "max": 8
+    }
+  },
+  "goal": {
+    "quantity": "object_pose",
+    "frame": "world",
+    "translation_m": [
+      0.4,
+      0.0,
+      0.0
+    ],
+    "orientation": "preserve_initial",
+    "minimum_transport_clearance_m": 0.1,
+    "release": true
+  },
+  "objectives": {
+    "priority": [
+      "required_physical_margins",
+      "minimize_rotor_load_proxy"
+    ],
+    "profile": "current_v1"
+  },
+  "acceptance": {
+    "profile": "grasp_v1"
+  },
+  "execution": {
+    "mode": "integrated",
+    "initial_state": "individual_ground_random",
+    "seed": 1,
+    "planning_budget_s": 15.0,
+    "control_period_s": 0.01,
+    "delay": "measured",
+    "wall_limit_s": 600.0,
+    "assembly": {
+      "nearest_distance_m": [
+        1.0,
+        2.0
+      ],
+      "deadline_after_hover_s": 30.0,
+      "final_hover_s": 1.0
+    }
+  }
+}
