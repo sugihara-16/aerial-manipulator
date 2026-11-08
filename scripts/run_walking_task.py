@@ -38,7 +38,7 @@ def prepare_execution(spec,plan,timestep,control_cpu,*,compiled_plant=None,prepa
     return plant,gait,links,ref,control,d,audit
 
 
-def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,timestep=.0005,air_start=True):
+def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,timestep=.0005,air_start=True,observer=None,plan_only=False,integration=None):
     out=Path(out);out.mkdir(parents=True,exist_ok=True);began=time.perf_counter()
     from amsrr_det.valve_search import performance_cpus
     preparation_cpus=performance_cpus(set(os.sched_getaffinity(0)));execution_plant=[]
@@ -54,25 +54,35 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
     if selection['status']!='accepted' or selection['plan'] is None:
         result=dict(task_success=False,reason=selection['status'],planning_s=selection['planning_s'])
         (out/'result.json').write_text(json.dumps(result,indent=2));return result
-    if control_cpu is not None:os.sched_setaffinity(0,{control_cpu})
     from amsrr_det.planning_preview import select_candidate,walking_candidate
     if execution_plant:select_candidate(lambda:walking_candidate(selection['plan'],execution_plant[0]))
+    if plan_only:return dict(task_success=None,reason='structure_generated',planning_s=time.perf_counter()-began)
+    if control_cpu is not None:os.sched_setaffinity(0,{control_cpu})
     plan=selection['plan']
     plant,gait,links,ref,control,d,audit=prepare_execution(spec,plan,timestep,control_cpu,compiled_plant=execution_plant[0] if execution_plant else None,preparation_cpus=preparation_cpus,air_start=air_start)
-    landing=getattr(control,"landing",None);walk_start=landing.duration if landing else 0.
-    whole=WalkingAudit(plant,links,spec,ref) if landing else None
+    landing=getattr(control,'landing',None);walk_start=landing.duration if landing else 0.
+    task_clock=0.;physical=plant;task_preparation=time.perf_counter()-began
+    if integration is not None:
+        physical,d=integration.start(plant,d);task_clock=float(d.time)
+        audit=WalkingAudit(physical,links,spec,integration.reference(ref,plant),start_time=task_clock+walk_start)
+        from amsrr_det.task_sequence import BlendedControl
+        control=BlendedControl(control,d.ctrl,integration.map)
+    whole=WalkingAudit(physical,links,spec,integration.reference(ref,plant) if integration is not None else ref,start_time=task_clock) if landing else None
     phases={};landing_load_time=0.;hover_gap=float("inf")
-    m=plant.mj;allocation=AsyncAllocation(control,worker_cpu)
-    planning=time.perf_counter()-began
-    if plan_file is None and planning>15.:
+    m=physical.mj;allocation=AsyncAllocation(control,worker_cpu)
+    if observer is not None and integration is None:observer.begin(m,plant.xml)
+    planning=task_preparation if integration is not None else time.perf_counter()-began
+    if plan_file is None and integration is None and planning>15.:
         allocation.close();result=dict(task_success=False,reason='planning_timeout',planning_s=planning)
         (out/'result.json').write_text(json.dumps(result,indent=2));return result
-    (out/'physical.xml').write_text(plant.xml);np.savez(out/'initial.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
+    (out/'physical.xml').write_text(physical.xml);np.savez(out/'initial.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
     calls=[];states=[];poll_cpu=0.
     def plain(steps):
         nonlocal landing_load_time,hover_gap
         for _ in range(steps):
-            before=float(d.time);mujoco.mj_step(m,d)
+            before=float(d.time)-task_clock
+            if integration is not None:integration.air.apply(d)
+            mujoco.mj_step(m,d)
             if whole and before<walk_start-1e-9:
                 e=whole.energy_rotor;j=whole.energy_joint;w=whole.positive_work
                 whole.physics(d)
@@ -111,10 +121,15 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
             if n and plain(n):return audit.abort
         return None
     gc.collect();gc.disable();started=time.perf_counter()
+    if observer is not None:observer.ready()
+    if integration is not None:
+        integration.resume(integration.advance_plain);task_clock=float(d.time)
+        audit.start_time=task_clock+walk_start
+        if whole:whole.start_time=task_clock
     try:
         if not landing:audit.observe(d)
-        while d.time<walk_start+spec.time_limit-1e-9 and not audit.abort and not audit.reached():
-            start=time.perf_counter();cycle=ControlCycle(m,d,.01);now=float(d.time);poll_cpu=0.
+        while d.time-task_clock<walk_start+spec.time_limit-1e-9 and not audit.abort and not audit.reached():
+            start=time.perf_counter();cycle=ControlCycle(m,d,.01);now=float(d.time)-task_clock;poll_cpu=0.
             walking=now>=walk_start-1e-9
             if walking:
                 if not audit.samples:audit.observe(d)
@@ -122,10 +137,12 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
                 cr,cv,ca=ref.com(local)
             else:
                 phase,q,v,a,feet,fv,fa,stance,fraction=landing.targets(now);cr=cv=ca=None
-            args=(d.qpos.copy(),d.qvel.copy(),q[:7],v[:6],a[:6],feet,fv,fa,stance)
-            kwargs=dict(shape_reference=q,shape_velocity=v,shape_acceleration=a,observation_time=now,
+            observed_q,observed_v=integration.map.observe(d.qpos,d.qvel) if integration is not None else (d.qpos.copy(),d.qvel.copy())
+            args=(observed_q,observed_v,q[:7],v[:6],a[:6],feet,fv,fa,stance)
+            kwargs=dict(shape_reference=q,shape_velocity=v,shape_acceleration=a,observation_time=float(d.time),
                         com_reference=cr,com_velocity=cv,com_acceleration=ca,ground_fraction=fraction,walk_time=max(0.,now-walk_start),flight_mode=not walking)
-            command=allocation.update(now,phase,args,kwargs,observed_wall=start)
+            command=allocation.update(float(d.time),phase,args,kwargs,observed_wall=start)
+            if observer is not None:observer.update(d,phase)
             elapsed=time.perf_counter()-start;cycle.wait_for_result(elapsed,plain)
             if not audit.abort:
                 cycle.apply(command)
@@ -150,10 +167,10 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
         whole.peak_effort=max(whole.peak_effort,audit.peak_effort)
         whole.abort=whole.abort or audit.abort
         result['checks']['airborne_landing']=landing_load_time>=.15 and hover_gap>.1 and whole.abort is None
-        result['whole_sequence']=dict(simulation_s=whole.elapsed,rotor_proxy=whole.energy_rotor,joint_proxy=whole.energy_joint,positive_joint_work_j=whole.positive_work,rotor_burden_hover_ratio=whole.energy_rotor/max(whole.elapsed*whole.weight**1.5/np.sqrt(len(whole.rotor_sites)),1e-9),phases=phases,walk_start_s=walk_start,landing_support_s=landing_load_time,hover_minimum_foot_gap_m=hover_gap,physical_abort=whole.abort,peak_penetration_m=whole.peak_penetration,peak_actuator_ratio=whole.peak_effort)
+        result['whole_sequence']=dict(simulation_s=whole.elapsed,rotor_proxy=whole.energy_rotor,joint_proxy=whole.energy_joint,positive_joint_work_j=whole.positive_work,rotor_burden_hover_ratio=whole.energy_rotor/max(whole.elapsed*whole.weight**1.5/np.sqrt(len(whole.rotor_sites)),1e-9),phases=phases,walk_start_s=task_clock+walk_start,task_start_s=task_clock,landing_support_s=landing_load_time,hover_minimum_foot_gap_m=hover_gap,physical_abort=whole.abort,peak_penetration_m=whole.peak_penetration,peak_actuator_ratio=whole.peak_effort)
     timing=np.array([r['publication_cpu_s'] for r in calls])*1000
     intervals=np.diff([r['observation_s'] for r in calls])
-    result.update(modules=spec.modules,feet=len(links),planning_s=planning,fresh_structure_generation=plan_file is None,
+    result.update(modules=spec.modules,feet=len(links),planning_s=planning,task_start_s=task_clock,fresh_structure_generation=plan_file is None,
         wall_s=time.perf_counter()-began,timestep=timestep,
         control=dict(calls=len(calls),mean_ms=float(timing.mean()),p99_ms=float(np.quantile(timing,.99)),max_ms=float(timing.max()),over10=int(sum(timing>=10))),
         allocation=dict(calls=len(allocation.records),errors=sum(r['error'] is not None for r in allocation.records),max_ms=max((r['calculation_s'] for r in allocation.records),default=0)*1000))

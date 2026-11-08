@@ -150,7 +150,7 @@ class References(TaskReferences):
   return shape,target,vel,svel,fraction,squeeze
 
 
-def main(argv=None):
+def main(argv=None,*,observer=None,plan_only=False,integration=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source', type=Path, help='task JSON, or a saved generated-plan directory')
     parser.add_argument('output', type=Path)
@@ -196,6 +196,7 @@ def main(argv=None):
         plan, request = load_saved_plan(args.source/'generated_plan')
         closed = np.load(args.source/'endpoint.npz')['q'].copy()
         planning_s = None
+    if plan_only:return dict(task_success=None,reason="structure_generated",planning_s=planning_s)
     plant = dock_mit_model(plan.plant, kp=200.)
     m = plant.mj
     m.opt.timestep = args.timestep
@@ -219,13 +220,20 @@ def main(argv=None):
     if initial_command is not None:d.ctrl[:]=initial_command
     mujoco.mj_forward(m, d)
     controller.last_command=d.ctrl.copy()
+    task_clock=0.;physical=plant
+    if integration is not None:
+        physical,d=integration.start(plant,d);m=physical.mj;task_clock=float(d.time)
+        from amsrr_det.task_sequence import BlendedControl
+        controller=BlendedControl(controller,d.ctrl,integration.map)
     allocation = AsyncAllocation(controller, args.worker_cpu)
-    audit = FastTaskAudit(plant, links, plan.shape.size, plan.support_top, shape=plan.shape, clearance_period=.1)
+    (out/'physical.xml').write_text(physical.xml)
+    audit = FastTaskAudit(physical, links, plan.shape.size, plan.support_top, shape=plan.shape, clearance_period=.1)
     (out/'request.json').write_text(json.dumps(request, indent=2))
     (out/'config.json').write_text(json.dumps(dict(timing=args.timing, period_s=.01, timestep_s=m.opt.timestep,
         all_robot_collisions=True, collision=args.collision, auxiliary_stops=False, duration_s=args.duration, source=str(args.source.resolve()),
         relative_feedback=controller.relative_feedback, asynchronous=True, intertick_publication=True, worker_cpu=args.worker_cpu), indent=2))
     np.savez(out/'initial.npz', q=d.qpos, v=d.qvel, ctrl=d.ctrl)
+    if observer is not None and integration is None:observer.begin(m,plant.xml)
     calls, trace = [], []
     failure = None
     reason = 'task_timeout'
@@ -234,7 +242,7 @@ def main(argv=None):
     poll_cpu=0.
     def plain_advance(steps):
         nonlocal failure
-        failure=audit.advance(d,steps,carried=references.phase=='CARRY')
+        failure=(integration.advance_audited(audit,steps,carried=references.phase=='CARRY') if integration is not None else audit.advance(d,steps,carried=references.phase=='CARRY'))
         return failure
     def advance(steps):
         nonlocal failure,poll_cpu
@@ -268,17 +276,22 @@ def main(argv=None):
     collect_enabled = gc.isenabled()
     gc.collect()
     gc.disable()
+    if observer is not None:observer.ready()
+    if integration is not None:
+        integration.resume(plain_advance);task_clock=float(d.time)
     try:
-        while d.time < args.duration and not references.complete:
+        while d.time-task_clock < args.duration and not references.complete:
             poll_cpu=0.
             began = time.perf_counter()
             cycle = ControlCycle(m, d, .01, measured=args.timing == 'measured')
-            shape, target, velocity, shape_velocity, fraction, squeeze = references.update(d.time, cycle.q, cycle.v, controller.last)
+            observed_q,observed_v=(integration.map.observe(cycle.q,cycle.v) if integration is not None else (cycle.q,cycle.v))
+            shape, target, velocity, shape_velocity, fraction, squeeze = references.update(d.time-task_clock, observed_q, observed_v, controller.last)
             command = allocation.update(float(d.time), references.phase,
-                (cycle.q, cycle.v, shape, target),
-                dict(object_velocity=velocity, shape_velocity=shape_velocity,
+                (observed_q, observed_v, shape, target),
+                dict(observation_time=float(d.time),object_velocity=velocity, shape_velocity=shape_velocity,
                      payload_fraction=fraction, squeeze=squeeze, damping_scale=4. if references.phase in ('UNLOAD', 'OPEN') else 1., tracking_fraction=1. if references.phase in ('UNLOAD', 'OPEN') else fraction,
                      track_object=references.phase not in ('OPEN', 'RETREAT')), observed_wall=began)
+            if observer is not None:observer.update(d,references.phase)
             elapsed = time.perf_counter()-began
             cycle.wait_for_result(elapsed, plain_advance)
             if not failure:
@@ -295,7 +308,7 @@ def main(argv=None):
             calls.append(record)
             if len(calls) % 10 == 0:
                 trace.append(dict(time_s=float(d.time), phase=references.phase, progress=float(references.progress),
-                                  object_pose=d.qpos[drive.oi:drive.oi+7].tolist(), **controller.last))
+                                  object_pose=d.qpos[int(m.jnt_qposadr[m.joint('object').id]):int(m.jnt_qposadr[m.joint('object').id])+7].tolist(), **controller.last))
             if len(calls) % 500 == 0:
                 (out/'progress.json').write_text(json.dumps(dict(time_s=d.time, phase=references.phase, progress=references.progress, **controller.last)))
             if time.perf_counter()-started > 600.:
@@ -307,7 +320,7 @@ def main(argv=None):
         allocation.close()
         if collect_enabled:
             gc.enable()
-    checks = task_checks(plant, plan, d, audit)
+    checks = task_checks(physical, plan, d, audit)
     checks['transport_clearance'] = bool(np.isfinite(audit.min_clearance_carried) and audit.min_clearance_carried >= .10)
     success = bool(not failure and all(checks.values()))
     if references.complete:
@@ -316,7 +329,8 @@ def main(argv=None):
     result = dict(task_success=success, reason=reason, modules=plan.plant.meta['modules'],
                   task_checks=checks, audit=audit.result(), events=references.events,
                   phase=references.phase, simulation_s=float(d.time), wall_s=time.perf_counter()-started,
-                  scope='fresh_generation_spawn_task' if fresh else 'saved_generated_structure_control_replay',
+                  scope=('fresh_generation_assembly_task' if integration is not None else 'fresh_generation_spawn_task') if fresh else 'saved_generated_structure_control_replay',
+                  task_start_s=task_clock,
                   initial_planning_s=planning_s,
                   control=dict(calls=len(calls), mean_ms=float(times.mean()*1000), p99_ms=float(np.quantile(times, .99)*1000),
                                maximum_ms=float(times.max()*1000), misses=int(np.count_nonzero(times >= .01))))

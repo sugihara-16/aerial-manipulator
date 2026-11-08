@@ -13,10 +13,10 @@ from build.async_allocation import AsyncAllocation
 from build.control_latency import ControlCycle
 
 
-def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.):
+def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.,observer=None,prepared_plan=None,return_context=False):
     out=Path(out);out.mkdir(parents=True,exist_ok=True);begin=time.perf_counter()
     (out/'input.json').write_text(json.dumps(case,indent=2))
-    try:plan=prepare(case,timestep)
+    try:plan=prepare(case,timestep) if prepared_plan is None else prepared_plan
     except ValueError as error:
         result=dict(success=False,case=case['id'],modules=case['modules'],reason=str(error),planning_s=time.perf_counter()-begin)
         (out/'result.json').write_text(json.dumps(result,indent=2));return result
@@ -25,6 +25,7 @@ def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.):
     control=CentralAssemblyControl(plan);control.last_command[:]=0.
     handoff=SmoothHandoff(p,case['edges'])
     allocation=AsyncAllocation(control,worker_cpu)
+    if observer is not None:observer.begin(m,p.xml)
     planning=time.perf_counter()-begin
     if planning>15.:
         allocation.close()
@@ -80,6 +81,7 @@ def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.):
             count=min(2,max(0,round((end-d.time)/m.opt.timestep)))
             if count and plain(count):return abort
     gc.collect();gc.disable();began=time.perf_counter();last_event=0;failure_hold_start=None;failure_hold=None
+    if observer is not None:observer.ready()
     try:
         while d.time<46. and not fsm.success and not abort:
             start=time.perf_counter();cycle=ControlCycle(m,d,.01);now=float(d.time);poll_cpu=0.
@@ -100,6 +102,7 @@ def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.):
             if not current_topology and allocation.records and allocation.records[-1].get('application_tick_s')==now:
                 allocation.records[-1]['discarded_topology']=True
             command=handoff.command(requested,d.ctrl,now) if current_topology else d.ctrl.copy()
+            if observer is not None:observer.update(d,fsm.stage)
             elapsed=time.perf_counter()-start;cycle.wait_for_result(elapsed,plain)
             if not abort:
                 previous=d.ctrl.copy()
@@ -116,6 +119,7 @@ def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.):
                 for event in fsm.events[last_event:]:print(json.dumps(event),flush=True)
                 last_event=len(fsm.events)
     finally:
+        boundary_wall=time.perf_counter()
         allocation.close();gc.enable()
     values=[x['publication_s']for x in calls]
     physical_success=bool(fsm.success and not fsm.failure and not abort);timing_ok=max(values,default=0.)<=.01
@@ -142,6 +146,7 @@ def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.):
     if states:
         t,q,v,u,e,phase=zip(*states);np.savez_compressed(out/'trajectory.npz',t=t,q=q,v=v,u=u,seams=e,phase=phase)
     np.savez(out/'final.npz',q=d.qpos,v=d.qvel,u=d.ctrl,seams=d.eq_active,time=d.time)
+    if return_context:return result,dict(plan=plan,data=d,control=control,air=air,boundary_wall=boundary_wall)
     return result
 
 

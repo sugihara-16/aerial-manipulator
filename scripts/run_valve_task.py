@@ -97,7 +97,7 @@ class ValveReferences:
             motion_derivative=motion,motion_curvature=curvature)
 
 
-def run(args):
+def run(args,*,observer=None,plan_only=False,integration=None):
     out=args.output;out.mkdir(parents=True,exist_ok=False);began=time.perf_counter()
     spec=ValveSpec(**json.loads(args.request.read_text())) if args.request else ValveSpec()
     plan=None;cleanup=None
@@ -112,6 +112,9 @@ def run(args):
         if selection['status']!='accepted':
             result=dict(task_success=False,reason=selection['status'],planning_s=time.perf_counter()-began)
             (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result));return
+    if plan_only:
+        if cleanup:cleanup()
+        return dict(task_success=None,reason='structure_generated',planning_s=time.perf_counter()-began)
     if selection.get('plan') is None:raise ValueError('saved input has no complete candidate')
     if plan is None:plan=unpack(spec,selection['plan'])
     system=plan.system
@@ -140,11 +143,23 @@ def run(args):
     d.ctrl[:dr.nj]=(dr.kp*opened[dr.qi]+np.array([j['effort_nm'] for j in plan.empty_trim['joints']]))/dr.gain[:dr.nj]
     d.ctrl[dr.nj:]=plan.empty_trim['thrust'];controller.last_command=d.ctrl.copy()
     mujoco.mj_forward(m,d)
+    task_clock=0.;task_preparation=time.perf_counter()-began
+    if integration is not None:
+        physical_task=SimpleNamespace(mj=m,xml=system.xml,meta=plant.meta)
+        physical,d=integration.start(physical_task,d);m=physical.mj;task_clock=float(d.time)
+        system.m=m;system.xml=physical.xml
+        system.oj=m.joint('object').id;system.oi=int(m.jnt_qposadr[system.oj]);system.ov=int(m.jnt_dofadr[system.oj])
+        # Existing hinge adapter follows its reduced physical joint indices.
+        system.pq=integration.map.pq[np.searchsorted(integration.map.cq,system.pq)]
+        system.pv=integration.map.pv[np.searchsorted(integration.map.cv,system.pv)]
+        from amsrr_det.task_sequence import BlendedControl
+        controller=BlendedControl(controller,d.ctrl,integration.map)
     physical=SimpleNamespace(mj=m,meta=plant.meta)
     audit=FastTaskAudit(physical,links,spec.shape.size,0.,shape=spec.shape,clearance_period=.1,face_axis=1)
     allocation=AsyncAllocation(controller,args.worker_cpu)
-    planning=time.perf_counter()-began
-    if args.plan is None and planning>15.:
+    if observer is not None and integration is None:observer.begin(m,system.xml)
+    planning=task_preparation if integration is not None else time.perf_counter()-began
+    if args.plan is None and integration is None and planning>15.:
         allocation.close()
         if cleanup:cleanup()
         result=dict(task_success=False,reason='planning_timeout',planning_s=planning)
@@ -165,7 +180,7 @@ def run(args):
     np.savez(out/'initial.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
     def plain(steps):
         nonlocal failure
-        failure=audit.advance(d,steps)
+        failure=integration.advance_audited(audit,steps) if integration is not None else audit.advance(d,steps)
         return failure
     def advance(steps):
         nonlocal poll_cpu,applied_record,applied_solution
@@ -196,12 +211,17 @@ def run(args):
             if n and plain(n):return failure
         return failure
     gc.collect();gc.disable()
+    if observer is not None:observer.ready()
+    if integration is not None:
+        integration.resume(plain);task_clock=float(d.time)
     try:
-        while d.time<(sum(refs.durations)+3.) and not refs.complete:
+        while d.time-task_clock<(sum(refs.durations)+3.) and not refs.complete:
             start=time.perf_counter();cycle=ControlCycle(m,d,.01);poll_cpu=0.
-            q,v=system.observation(d);a,k=refs.update(float(d.time),q,v,float(d.qpos[system.oi]))
+            q,v=system.observation(d);a,k=refs.update(float(d.time)-task_clock,q,v,float(d.qpos[system.oi]))
+            k['observation_time']=float(d.time)
             audit.face_active=refs.phase in ('LOAD','TURN','SETTLE','UNLOAD')
             command=allocation.update(float(d.time),refs.phase,a,k,observed_wall=start)
+            if observer is not None:observer.update(d,refs.phase)
             elapsed=time.perf_counter()-start;cycle.wait_for_result(elapsed,plain)
             if not failure:
                 cycle.apply(command)
@@ -234,7 +254,7 @@ def run(args):
     times=np.array([r['publication_cpu_s'] for r in calls])*1000
     result=dict(task_success=bool(not failure and all(checks.values())),reason=failure or ('completed' if all(checks.values()) else 'terminal_conditions_failed'),checks=checks,
         angle_rad=float(d.qpos[system.oi]),speed_rad_s=float(d.qvel[system.ov]),modules=plant.meta['modules'],contacts=len(links),
-        planning_s=planning,fresh_structure_generation=args.plan is None,wall_s=time.perf_counter()-began,simulation_s=float(d.time),audit=audit.result(),
+        planning_s=planning,task_start_s=task_clock,fresh_structure_generation=args.plan is None,wall_s=time.perf_counter()-began,simulation_s=float(d.time),audit=audit.result(),
         side_faces=side_faces,control=dict(calls=len(calls),mean_ms=float(times.mean()),p99_ms=float(np.quantile(times,.99)),max_ms=float(times.max()),over10=int(sum(times>=10))),
         allocation=dict(calls=len(allocation.records),errors=sum(r['error'] is not None for r in allocation.records),max_ms=max((r['calculation_s'] for r in allocation.records),default=0)*1000))
     (out/'selection.json').write_text(json.dumps(selection,default=json_value,indent=2))
