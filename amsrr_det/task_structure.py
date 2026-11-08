@@ -12,6 +12,7 @@ from .model import build_model, PORTS
 from .grasp_geometry import grasp_frame, fit_contacts, part_bounds
 from .planning_memo import evaluate as memoized
 from .native_grasp_geometry import growth_clearance
+from .planning_preview import GrowthPreview
 
 
 @lru_cache(maxsize=2)
@@ -275,6 +276,8 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
         root=np.asarray(root_pose,dtype=float).copy()
         if root.shape!=(4,4) or not np.isfinite(root).all():raise ValueError('finite root transform required')
         poses=[root];values=[{}];occupied=set();surfaces=[];remaining=list(range(len(points)))
+    preview = GrowthPreview(modules)
+    preview.update(poses, edges, surfaces, points)
     def assign_existing(force=False):
         # A free moving Dock can supply another foot without adding a body.
         # Only that free joint changes; occupied seams and existing poses stay.
@@ -385,7 +388,9 @@ def grow_to_contacts(modules, points, normals, rng, *, shape=None,source=None,ob
         if support_reports is not None:
             trace[-1].update(criterion='task_load_support',support_scores=support_reports,selected=selected)
             trace[-1]['support_score']=trace[-1].pop('residual_m2')
+        preview.update(poses, edges, surfaces, points)
     if multiple_contacts:assign_existing(force=True)
+    preview.update(poses, edges, surfaces, points)
     return edges, surfaces, root, values, trace
 
 

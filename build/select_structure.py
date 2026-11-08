@@ -14,6 +14,7 @@ import tempfile
 import numpy as np
 import mujoco
 from amsrr_det.model import build_model
+from amsrr_det.planning_preview import SearchPreview,grasp_candidate
 from amsrr_det.objects import ObjectShape
 from amsrr_det.structure_search import grasp_candidates
 from amsrr_det.structure_bounds import count_lower_bounds,compare_count_groups
@@ -64,6 +65,7 @@ def select_structure(request, *, workers=8,starts=1,seed=None,task_wrench=False,
         raise ValueError('unknown structure generator')
     if not isinstance(workers,int) or workers<1 or not isinstance(starts,int) or starts<1:
         raise ValueError('positive worker and per-trial start counts required')
+    preview=SearchPreview()
     started=time.perf_counter();payload=request['payload']
     seed_source='fresh_system_entropy' if seed is None else 'explicit_replay'
     seed=secrets.randbits(128) if seed is None else seed
@@ -133,6 +135,10 @@ def select_structure(request, *, workers=8,starts=1,seed=None,task_wrench=False,
             initial=dict(**result,burden=None if candidate is None else candidate['burden'])
         else:
             outcomes[key[0]][key[1]]=result['burden'];rows.append(result)
+        if key is not None or candidate is not None:
+            n=key[0] if key is not None else plan.plant.meta['modules']
+            preview.outcome(n,'accepted' if candidate is not None else 'rejected',
+                None if candidate is None else candidate['burden'],lambda:grasp_candidate(plan))
         if candidate is not None and (prepared is None or candidate['burden']<prepared['burden']):
             best,prepared=plan,candidate
     try:
@@ -218,5 +224,7 @@ def select_structure(request, *, workers=8,starts=1,seed=None,task_wrench=False,
                 wall_s=time.perf_counter()-started,initial=initial,rows=sorted(rows,key=lambda r:(r['modules'],r['trial'])),
                 selection_evidence=evidence,selected_burden=prepared['burden'] if prepared is not None else None)
     if best is None or evidence is None or not evidence['complete']:
+        preview.finish()
         error=ValueError('structure selection did not complete');error.evidence=report;raise error
+    preview.finish(grasp_candidate(best) if preview.folder else None)
     return best,prepared,report

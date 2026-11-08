@@ -55,6 +55,8 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
         result=dict(task_success=False,reason=selection['status'],planning_s=selection['planning_s'])
         (out/'result.json').write_text(json.dumps(result,indent=2));return result
     if control_cpu is not None:os.sched_setaffinity(0,{control_cpu})
+    from amsrr_det.planning_preview import select_candidate,walking_candidate
+    if execution_plant:select_candidate(lambda:walking_candidate(selection['plan'],execution_plant[0]))
     plan=selection['plan']
     plant,gait,links,ref,control,d,audit=prepare_execution(spec,plan,timestep,control_cpu,compiled_plant=execution_plant[0] if execution_plant else None,preparation_cpus=preparation_cpus,air_start=air_start)
     landing=getattr(control,"landing",None);walk_start=landing.duration if landing else 0.

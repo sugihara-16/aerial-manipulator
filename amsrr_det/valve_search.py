@@ -15,6 +15,7 @@ from .valve_plan import candidate,complete_path
 from .model import build_model
 from .structure_bounds import count_lower_bounds,compare_count_groups
 from .structure_stopping import required_trials,selection_evidence
+from .planning_preview import SearchPreview,valve_candidate
 
 
 def links_for(surfaces):
@@ -137,6 +138,7 @@ def _pin_worker(cpus,tail_cpus):
 
 def search(spec,*,seed=1,workers=8,cpus=None,budget=15.,prepare=False,defer_cleanup=False):
     """Never count cancelled or unfinished draws as generator failures."""
+    preview=SearchPreview()
     started=time.perf_counter();K=required_trials();_,meta=build_model()
     bounds=count_lower_bounds(meta['mass'],0.,9.80665)
     outcomes={n:[None]*K for n in range(1,9)};records=[];best=None
@@ -236,6 +238,7 @@ def search(spec,*,seed=1,workers=8,cpus=None,budget=15.,prepare=False,defer_clea
                 else:rows=[row]
                 for row in rows:
                     n,i=row['modules'],row['index']
+                    preview.outcome(n,row['status'],row.get('burden'),lambda:valve_candidate(row['plan']))
                     if row['status']=='cancelled':
                         records.append(row);continue
                     outcomes[n][i]=row['burden']
@@ -280,6 +283,7 @@ def search(spec,*,seed=1,workers=8,cpus=None,budget=15.,prepare=False,defer_clea
                 timing=timing,
                 request=spec.__dict__,
                 criterion='maximum sampled static thrust burden, including free-flight ends')
+    preview.finish(valve_candidate(best['plan']) if preview.folder and complete else None)
     if prepare:result['_prepared_plan']=prepared
     if deferred_cleanup is not None:result['_cleanup']=deferred_cleanup
     return result

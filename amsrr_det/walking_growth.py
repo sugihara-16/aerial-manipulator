@@ -12,6 +12,7 @@ from amsrr_det.model import build_model
 from amsrr_det.objects import ObjectShape
 from amsrr_det.grasp_geometry import fit_contacts,aim_rotors_up,grasp_frame
 from amsrr_det.walking import foot_link,rotation_z
+from .planning_preview import GrowthPreview
 
 def select(cost,rng):
  cost=np.array(cost);w=np.exp(-(cost-cost.min())/.025**2);return int(rng.choice(len(cost),p=w/w.sum()))
@@ -61,6 +62,7 @@ def radial_generate(spec,rng):
  radii=radius+.42*(lengths-1);targets=np.c_[radii*np.cos(phases),radii*np.sin(phases),np.full(count,.03)]
  period,duty=motion_timing(spec,targets,period,duty)
  floor=ObjectShape('box',[20.,20.,1.],1.);source=np.array([0,0,-.5,0,0,0,1.]);poses=[root];values=[{}];edges=[];occupied=set();surfaces=[];assigned=[];trace=[];cache={}
+ preview=GrowthPreview(n);preview.update(poses,edges,surfaces,targets)
  for role in rng.permutation(count):
   parent=0;tip=targets[role];velocity=np.array([spec.speed-spec.speed*spec.curvature*tip[1],spec.speed*spec.curvature*tip[0],0.]);axis=np.cross([0.,0.,1.],velocity);axis/=np.linalg.norm(axis);force=np.array([0.,spec.speed**2*spec.curvature,9.80665])*(.85*mass*n/(count*duty))
   for depth in range(int(lengths[role])):
@@ -97,6 +99,7 @@ def radial_generate(spec,rng):
    residual,parent,out,inc,pad,aa,bb,cc,pose=choices[selected];edges.append(dict(a=parent,port_a=ports[out],b=child,port_b=ports[inc]));occupied.update([(parent,out),(child,inc)]);values[parent][names[out]]=float(angles[aa]);values.append({names[inc]:float(angles[bb])});poses.append(pose)
    if terminal:surfaces.append((child,ports[pad]));assigned.append(int(role));occupied.add((child,pad));values[child][names[pad]]=float(angles[cc])
    trace.append(dict(module=child,parent=parent,role=int(role),depth=depth,terminal=bool(terminal),cost=residual,motion=motion));parent=child
+   preview.update(poses,edges,surfaces,targets)
  model,meta=build_model(n,edges);q=pin.neutral(model);q[:3]=root[:3,3];q[3:7]=pin.Quaternion(root[:3,:3]).coeffs()
  for act in meta['actuators']:
   owner,name=act['name'].split('/');q[act['q']]=values[int(owner[1:])].get(name,0.)

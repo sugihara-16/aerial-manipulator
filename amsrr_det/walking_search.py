@@ -6,6 +6,7 @@ from .valve_search import performance_cpus
 import numpy as np
 from .walking_plan import candidate,generate,prepare_candidate,finish_candidate
 from .structure_stopping import required_trials,fixed_count_evidence
+from .planning_preview import SearchPreview,walking_candidate
 
 _planning_cpus=None
 _force_cpus=None
@@ -54,6 +55,7 @@ def trial_stage(payload):
 
 def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
     global _planning_cpus,_force_cpus
+    preview=SearchPreview()
     allowed=set(os.sched_getaffinity(0));fast_cpus=set(sorted(performance_cpus(allowed))[:8]);_force_cpus=fast_cpus
     # Geometry can use idle fast cores. Once force jobs become ready, their
     # higher process priority takes precedence without leaving cores reserved
@@ -78,8 +80,10 @@ def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
         nonlocal best
         if row['status']=='accepted':
             plant=row['plan'].pop('_execution_plant',None)
+            preview.outcome(spec.modules,'accepted',row['cost'],lambda:walking_candidate(row['plan'],plant))
             if execution_plant is not None and (best is None or row['cost']<best['cost']):
                 execution_plant[:]=[plant]
+        if row['status']!='accepted':preview.outcome(spec.modules,row['status'])
         outcomes[row['index']]=row['cost']
         if row['status']=='accepted' and (best is None or row['cost']<best['cost']):best=row
         records.append({key:value for key,value in row.items() if key!='plan'})
@@ -119,6 +123,7 @@ def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
             if pending:
                 for process in (pool._processes or {}).values():process.terminate()
             pool.shutdown(wait=True,cancel_futures=True)
+    preview.finish()
     evidence=None if best is None else fixed_count_evidence(spec.modules,outcomes,best['cost'],protocol_id=protocol)
     return dict(status='planning_timeout' if timed_out else 'accepted' if best else 'no_candidate',
         request=asdict(spec),seed=seed,workers=workers,planning_s=time.perf_counter()-started,
