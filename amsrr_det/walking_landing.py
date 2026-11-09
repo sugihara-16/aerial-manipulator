@@ -5,6 +5,23 @@ from .grasp_geometry import aim_rotors_up, robot_bottom
 from .equilibrium import static_balance
 
 
+def flight_directions(plant,configuration):
+    """Fit rotor directions to whole-assembly balance when vertical aiming fails.
+
+    Dock joints and base posture stay fixed. This is only an initial guess;
+    the finite landing path and independent physical execution still decide
+    whether that configuration is usable.
+    """
+    d=mujoco.MjData(plant.mj);d.qpos[:]=configuration
+    q,_=plant.observation(d)
+    q=aim_rotors_up(plant.pin,plant.meta,q)
+    check=static_balance(plant.pin,plant.meta,q,fast_lp=True)
+    if check['status']!='static_screen_pass':
+        from .free_flight_trim import free_flight_trim
+        q,_=free_flight_trim(plant.pin,plant.meta,q,physical_check_interval=8)
+    return plant.configuration(q)
+
+
 def smooth(x):
     x=np.clip(x,0.,1.)
     return x*x*x*(10+x*(-15+6*x))
@@ -16,8 +33,7 @@ class LandingReference:
         self.d=mujoco.MjData(self.m);self.delta=np.empty(self.m.nv)
         self.walk_pose=walk.pose(0.)
         def upward(q):
-            self.d.qpos[:]=q;pin_q,_=plant.observation(self.d)
-            return plant.configuration(aim_rotors_up(plant.pin,plant.meta,pin_q))
+            return flight_directions(plant,q)
         self.landing=upward(self.walk_pose)
         support=np.asarray(plan['support_pose'])
         # A short posture continuation repairs an unsupported all-feet seed.

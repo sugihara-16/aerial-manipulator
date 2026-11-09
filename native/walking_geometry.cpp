@@ -9,7 +9,7 @@ using V3=Eigen::Vector3d;
 static M3 skew(const V3& v){M3 S;S<<0,-v[2],v[1],v[2],0,-v[0],-v[1],v[0],0;return S;}
 extern "C" void walking_geometry(const mjModel* m,mjData* d,int nd,const int* indices,const double* x,const double* base,
  int nf,const int* foot_bodies,const int* offsets,const double* vertices,const double* centers,const double* targets,
- const double* rotations,const int* support,const double* com,int nb,const int* bodies,const double* bound_centers,const double* halves,
+ const double* rotations,const int* aligned,const int* support,const double* com,int nb,const int* bodies,const double* bound_centers,const double* halves,
  double* residual,double* jacobian){
  const int nv=m->nv,rows=12*nf+nd+2+nb+1;
  Eigen::Map<Eigen::VectorXd> r(residual,rows);Eigen::Map<Mat> J(jacobian,rows,nd);r.setZero();J.setZero();
@@ -28,7 +28,7 @@ extern "C" void walking_geometry(const mjModel* m,mjData* d,int nd,const int* in
   V3 point=center;point[2]=z;V3 w(30.,30.,support[f]?300.:30.);
   r.segment<3>(row)=w.asDiagonal()*(point-Eigen::Map<const V3>(targets+3*f));J.block(row,0,3,nd)=w.asDiagonal()*Jp;row+=3;
   M3 Rt=Eigen::Map<const M3>(rotations+9*f);
-  for(int a=0;a<3;++a){r.segment<3>(row)=.2*(R.col(a)-Rt.col(a));J.block(row,0,3,nd)=-.2*skew(R.col(a))*Jr;row+=3;}
+  for(int a=0;a<3;++a){double weight=aligned[f]?(a==0?(.2+(support[f]?29.8:0.)):(support[f]?1.:.2)):.2;V3 goal=aligned[f]&&a==0?V3(0,0,-1):V3(Rt.col(a));r.segment<3>(row)=weight*(R.col(a)-goal);J.block(row,0,3,nd)=-weight*skew(R.col(a))*Jr;row+=3;}
  }
  const double regbase[]={1.,.5,.25,.12,.12,.12};
  for(int j=0;j<nd;++j){double w=j<6?regbase[j]:.008;r[row+j]=w*x[j];J(row+j,j)=w;}row+=nd;
@@ -40,13 +40,20 @@ extern "C" void walking_geometry(const mjModel* m,mjData* d,int nd,const int* in
    Mat one=dh-jp.row(2);J.row(row)=20*select(one);r[row]=20*depth;
   }++row;
  }
- mj_collision(m,d);const int floor=mj_name2id(m,mjOBJ_GEOM,"floor");double deepest=0.;const mjContact* chosen=nullptr;
- for(int i=0;i<d->ncon;++i){const auto& c=d->contact[i];if(c.geom[0]==floor||c.geom[1]==floor||c.dist>=.001)continue;if(.001-c.dist>deepest){deepest=.001-c.dist;chosen=&c;}}
- if(chosen){int a=m->geom_bodyid[chosen->geom[0]],b=m->geom_bodyid[chosen->geom[1]];mj_jac(m,d,jp.data(),nullptr,chosen->pos,a);mj_jac(m,d,jb.data(),nullptr,chosen->pos,b);Mat one=Eigen::Map<const V3>(chosen->frame).transpose()*(jb-jp);J.row(row)=-20*select(one);r[row]=20*deepest;}
+ mj_collision(m,d);const int floor=mj_name2id(m,mjOBJ_GEOM,"floor");
+ std::map<std::pair<int,int>,const mjContact*> pairs;
+ for(int i=0;i<d->ncon;++i){const auto& c=d->contact[i];if(c.geom[0]==floor||c.geom[1]==floor||c.dist>=.001)continue;
+  auto key=std::make_pair(m->geom_bodyid[c.geom[0]],m->geom_bodyid[c.geom[1]]);auto found=pairs.find(key);if(found==pairs.end()||c.dist<found->second->dist)pairs[key]=&c;}
+ double squared=0.;Mat gradient=Mat::Zero(1,nd);
+ for(const auto& item:pairs){const auto* c=item.second;double depth=.001-c->dist;squared+=depth*depth;
+  mj_jac(m,d,jp.data(),nullptr,c->pos,item.first.first);mj_jac(m,d,jb.data(),nullptr,c->pos,item.first.second);
+  Mat one=Eigen::Map<const V3>(c->frame).transpose()*(jb-jp);gradient-=depth*select(one);}
+ if(squared>0.){double norm=std::sqrt(squared);r[row]=200*norm;J.row(row)=200*gradient/norm;}
+
 }
 
 extern "C" double walking_seed(const mjModel* m,mjData* d,int nd,const int* indices,const int* qi,const double* limits,
- double* q,const double* reference,int nf,const int* foot_bodies,const int* offsets,const double* vertices,const double* centers,const double* targets,const double* rotations,
+ double* q,const double* reference,int nf,const int* foot_bodies,const int* offsets,const double* vertices,const double* centers,const double* targets,const double* rotations,const int* aligned,
  int nb,const int* bodies,const double* bound_centers,const double* halves,int iterations){
  const int nv=m->nv;const int floor=mj_name2id(m,mjOBJ_GEOM,"floor");
  Mat jp(3,nv),jr(3,nv),jb(3,nv);std::vector<double> delta(nv),dq(nv);const double weights[]={1.,.5,.25,.12,.12,.12};
@@ -57,10 +64,11 @@ extern "C" double walking_seed(const mjModel* m,mjData* d,int nd,const int* indi
   Mat ang(3*nf,nd);Eigen::VectorXd angle_error(3*nf);
   for(int f=0;f<nf;++f){int b=foot_bodies[f];M3 R=Eigen::Map<const M3>(d->xmat+9*b),Rt=Eigen::Map<const M3>(rotations+9*f);V3 p=Eigen::Map<const V3>(d->xpos+3*b),center=p+R*Eigen::Map<const V3>(centers+3*f),lowest;double z=1e100;
    for(int k=offsets[f];k<offsets[f+1];++k){V3 v=p+R*Eigen::Map<const V3>(vertices+3*k);if(v[2]<z){z=v[2];lowest=v;}}
-   mj_jac(m,d,jp.data(),jr.data(),center.data(),b);Mat point=jp;ang.block(3*f,0,3,nd)=select(jr);V3 err=V3::Zero();for(int j=0;j<3;++j)err+=R.col(j).cross(Rt.col(j));angle_error.segment<3>(3*f)=.5*err;
+   mj_jac(m,d,jp.data(),jr.data(),center.data(),b);Mat point=jp;ang.block(3*f,0,3,nd)=select(jr);V3 err=V3::Zero();for(int j=0;j<3;++j)err+=R.col(j).cross(Rt.col(j));M3 tilt=M3::Identity()-R.col(0)*R.col(0).transpose();double nw=targets[3*f+2]<1e-6?30.:.2;ang.block(3*f,0,3,nd)=(nw*tilt+1.*(M3::Identity()-tilt))*select(jr);angle_error.segment<3>(3*f)=nw*R.col(0).cross(V3(0,0,-1))+.5*(M3::Identity()-tilt)*err;
+   if(!aligned[f]){ang.block(3*f,0,3,nd)=.2*select(jr);angle_error.segment<3>(3*f)=.1*err;}
    mj_jac(m,d,jp.data(),nullptr,lowest.data(),b);point.row(2)=jp.row(2);center[2]=z;A.block(row,0,3,nd)=10*select(point);rhs.segment<3>(row)=10*(Eigen::Map<const V3>(targets+3*f)-center);row+=3;
   }
-  A.block(row,0,3*nf,nd)=.2*ang;rhs.segment(row,3*nf)=.2*angle_error;row+=3*nf;
+  A.block(row,0,3*nf,nd)=ang;rhs.segment(row,3*nf)=angle_error;row+=3*nf;
   for(int i=0;i<6;++i){for(int j=0;j<nd;++j)if(indices[j]==i)A(row+i,j)=weights[i];rhs[row+i]=weights[i]*delta[i];}row+=6;
   for(int j=0;j<nd;++j){A(row+j,j)=.008;rhs[row+j]=.008*delta[indices[j]];}row+=nd;
   for(int i=0;i<nb;++i){int b=bodies[i];M3 R=Eigen::Map<const M3>(d->xmat+9*b);V3 h=Eigen::Map<const V3>(halves+3*i),world=Eigen::Map<const V3>(d->xpos+3*b)+R*Eigen::Map<const V3>(bound_centers+3*i);

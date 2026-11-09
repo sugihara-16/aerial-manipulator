@@ -1,7 +1,7 @@
 """Kinematic one-cycle synthesis under stance and swing-foot constraints."""
 import numpy as np
 import mujoco
-from .walking import rotation_z
+from .walking import rotation_z,requires_face_alignment
 
 
 def foot_targets(time,period,speed,nominal,*,height=.02,curvature=0.,origin=None,duty=.62,phases=None):
@@ -39,14 +39,22 @@ def foot_headings(time,period,speed,count,curvature,*,duty=.62,phases=None):
 
 
 class CycleKinematics:
-    def __init__(self,plant,controller,nominal):
+    def __init__(self,plant,controller,nominal,*,include_gimbals=False):
         self.plant=plant;self.m=plant.mj;self.d=mujoco.MjData(self.m);self.controller=controller
         self.nominal=nominal.copy();dr=controller.drive
-        self.indices=np.r_[np.arange(6),dr.vi[dr.dock]];self.jac=np.zeros((3,self.m.nv));self.jr=self.jac.copy()
-        self.qi=dr.qi[dr.dock];self.limits=np.array([[a['lower']+.02,a['upper']-.02] for a in dr.actuators if a['role']=='dock'])
+        chosen=np.ones(len(dr.vi),bool) if include_gimbals else dr.dock
+        self.indices=np.r_[np.arange(6),dr.vi[chosen]];self.jac=np.zeros((3,self.m.nv));self.jr=self.jac.copy()
+        self.qi=dr.qi[chosen];self.limits=np.array([[a['lower']+.02,a['upper']-.02] for a,use in zip(dr.actuators,chosen)if use])
         self.delta=np.zeros(self.m.nv)
         self.d.qpos[:]=nominal;mujoco.mj_kinematics(self.m,self.d)
         self.rotations=[self.d.xmat[b].reshape(3,3).copy() for b,_ in controller.material]
+        self.face_alignment=np.array([requires_face_alignment(link) for link in controller.links])
+        for R,aligned in zip(self.rotations,self.face_alignment):
+            if not aligned:continue
+            tangent=R[:,1].copy();tangent[2]=0.
+            if np.linalg.norm(tangent)<1e-8:tangent=np.array([1.,0.,0.])
+            tangent/=np.linalg.norm(tangent)
+            R[:,0]=[0.,0.,-1.];R[:,1]=tangent;R[:,2]=np.cross(R[:,0],tangent)
         from .grasp_geometry import part_bounds
         self.bounds=[(self.m.body(f'm{i}/{link}').id,center,half)
                      for i in range(plant.meta['modules']) for link,center,half in part_bounds()
@@ -101,7 +109,7 @@ class CycleKinematics:
         end_rotation=np.empty((3,3));mujoco.mju_quat2Mat(end_rotation.ravel(),closure[3:7]);mujoco.mju_mat2Quat(closure[3:7],(R@end_rotation).ravel())
         delta=np.zeros(m.nv);mujoco.mj_differentiatePos(m,delta,1.,values[0],closure)
         return dict(period=period,duty=duty,phases=phases,phase_selection=phase_report,configurations=values,feet=feet,
-                    foot_points=self.controller.foot_points.copy(),errors=errors,closure_error=float(np.max(abs(delta))),origin=origin,height=height)
+                    foot_bodies=[b for b,_ in self.controller.material],stance_rotations=np.array(self.rotations),foot_points=self.controller.foot_points.copy(),errors=errors,closure_error=float(np.max(abs(delta))),origin=origin,height=height)
 
 
 def validate_cycle(plant,gait,*,spec,penetration_tolerance=.001):
@@ -114,7 +122,12 @@ def validate_cycle(plant,gait,*,spec,penetration_tolerance=.001):
     # Inspect the actual periodic interpolation, including points between the
     # fitted knots. Knot-to-knot secants miss spline speed/angle overshoot.
     samples=4*(len(gait['configurations'])-1)+1
-    worst=0.;pair=None;velocity_ratio=0.;angle_excess=0.
+    worst=0.;pair=None;worst_time=None;velocity_ratio=0.;angle_excess=0.;face_angle=0.;stance_angle=0.
+    from .walking import foot_link,foot_material
+    feet=[m.body(foot_link(*s)).id for s in gait["surfaces"]] if "surfaces" in gait else gait.get("foot_bodies",[])
+    material=foot_material(plant,[m.body(b).name for b in feet]) if len(feet) and 'foot_points' in gait else []
+    aligned=np.array([requires_face_alignment(m.body(b).name) for b in feet],bool)
+    position_error=0.
     for t in np.linspace(0,ref.period,samples):
         q,v,_=ref.rates(t)
         if not np.all(np.isfinite(q)) or not np.all(np.isfinite(v)):
@@ -122,12 +135,38 @@ def validate_cycle(plant,gait,*,spec,penetration_tolerance=.001):
         velocity_ratio=max(velocity_ratio,float(np.max(abs(v[vi])/limits)))
         angle_excess=max(angle_excess,float(np.max(ranges[:,0]-q[qi])),float(np.max(q[qi]-ranges[:,1])))
         d.qpos[:]=q;mujoco.mj_kinematics(m,d);mujoco.mj_collision(m,d)
+        if len(feet):
+            targets,_,_,support=ref.feet(t)
+            if material:
+                actual=[]
+                for i,(bid,vertices) in enumerate(material):
+                    R=d.xmat[bid].reshape(3,3)
+                    point=d.xpos[bid]+R@gait['foot_points'][i]
+                    point[2]=np.min(vertices@R[2]+d.xpos[bid,2])
+                    actual.append(point)
+                difference=np.asarray(actual)-targets
+                difference[~support,:2]=0.
+                difference[~support,2]=np.minimum(difference[~support,2],0.)
+                position_error=max(position_error,float(np.max(np.linalg.norm(difference,axis=1))))
+            required=support&aligned
+            if np.any(required):face_angle=max(face_angle,float(np.arccos(np.clip(-d.xmat[np.asarray(feet)[required],6],-1.,1.)).max()))
+            if 'stance_rotations' in gait:
+                headings=foot_headings(t,ref.period,spec.speed,len(feet),spec.curvature,duty=gait.get('duty',.62),phases=gait.get('phases'))
+                for i in np.flatnonzero(support):
+                    target=rotation_z(headings[i])@gait['stance_rotations'][i]
+                    actual=d.xmat[feet[i]].reshape(3,3)
+                    stance_angle=max(stance_angle,float(np.arccos(np.clip((np.trace(target.T@actual)-1)/2,-1.,1.))))
         if d.ncon:
             contact=d.contact[int(np.argmin(d.contact.dist))]
             if contact.dist<worst:
-                worst=float(contact.dist);pair=[m.geom(int(g)).name for g in contact.geom]
-    result=dict(penetration=worst,pair=pair,velocity_ratio=velocity_ratio,angle_excess_rad=angle_excess,
-                samples=samples,interpolated_motion=True,speed_basis="Dock manufacturer rated; gimbal existing configured speed",
-                closure_error=gait['closure_error'],position_error=max(gait['errors']))
-    result['passed']=bool(worst>=-penetration_tolerance and velocity_ratio<=1. and angle_excess<=1e-8 and gait['closure_error']<.002 and max(gait['errors'])<.005)
+                worst=float(contact.dist);pair=[m.geom(int(g)).name for g in contact.geom];worst_time=float(t)
+    result=dict(penetration=worst,pair=pair,penetration_time=worst_time,velocity_ratio=velocity_ratio,angle_excess_rad=angle_excess,
+                samples=samples,interpolated_motion=True,maximum_face_angle_rad=face_angle,maximum_stance_rotation_rad=stance_angle,speed_basis="Dock manufacturer rated; gimbal existing configured speed",
+                closure_error=gait['closure_error'],position_error=max(gait['errors']),dense_position_error=position_error,
+                dense_position_limit_m=.02)
+    # Keep the established 5 mm knot fit. Between knots this approximate
+    # reference may be corrected by contact feedback; reject gross (>2 cm)
+    # drift, but do not equate a 5 mm interpolated error with task failure.
+    # Female normals and physical walking/clearance remain independently checked.
+    result['passed']=bool(face_angle<=np.deg2rad(1.) and worst>=-penetration_tolerance and velocity_ratio<=1. and angle_excess<=1e-8 and gait['closure_error']<.002 and result['position_error']<.005 and position_error<.02)
     return result

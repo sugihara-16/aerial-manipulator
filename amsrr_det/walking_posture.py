@@ -9,6 +9,17 @@ from .sparse_least_squares import least_squares
 from scipy.sparse import csr_matrix
 from .walking_load import support_phases
 from .grasp_geometry import part_bounds
+from .walking import requires_face_alignment
+
+
+def support_durations(phases,duty):
+    """Fraction of a cycle spent in each support set, including wraparound."""
+    phases=np.asarray(phases)
+    cuts=np.unique(np.r_[0.,1.,(-phases)%1.,(duty-phases)%1.]);duration={}
+    for lo,hi in zip(cuts[:-1],cuts[1:]):
+        active=tuple(np.flatnonzero(((lo+hi)/2+phases)%1.<duty))
+        duration[active]=duration.get(active,0.)+hi-lo
+    return duration
 
 
 def propose_support_pose(plant,controller,pose,*,iterations,duty=.62,phases=None,motion=None):
@@ -53,12 +64,16 @@ def refine_support_pose(plant,controller,pose,*,iterations=24,support_weight=20.
     actuators=meta['actuators'];qi=np.array([a['q'] for a in actuators]);vi=np.array([a['v'] for a in actuators]);limits=np.array([a['effort'] for a in actuators]);nj=len(qi);nr=len(meta['rotors']);weight=meta['mass']*9.80665
     R0=pin.Quaternion(q0[3:7]).matrix();npv=6+nj;data=model.createData();pin.framesForwardKinematics(model,data,q0)
     frames=[meta['frames'][link] for link in controller.links];points=controller.foot_points.copy();nf=len(frames)
+    aligned=np.array([requires_face_alignment(link) for link in controller.links])
     nominal=np.array([data.oMf[f].act(p) for f,p in zip(frames,points)]);nominal[:,2]=0.
     radius=max(.2,float(np.max(np.linalg.norm(nominal[:,:2]-np.mean(nominal[:,:2],axis=0),axis=1))))
     base_scale=np.r_[np.full(3,100/weight),np.full(3,100/(weight*radius))]
     phase=np.arange(nf)/nf if phases is None else np.asarray(phases)
     cuts=np.unique(np.r_[0.,1.,(-phase)%1.,(duty-phase)%1.]);sets=sorted({tuple(((t+phase)%1)<duty) for t in (cuts[:-1]+cuts[1:])/2})
-    x0=list(np.r_[q0[:3],np.zeros(3),q0[qi]]);lo=list(np.r_[q0[:3]-.5,[-.7]*3,[a['lower']+(0.02 if a['role']=='dock' else .02) for a in actuators]]);hi=list(np.r_[q0[:3]+.5,[.7]*3,[a['upper']-(0.02 if a['role']=='dock' else .02) for a in actuators]])
+    duration=support_durations(phase,duty)
+    # This is a numerical search window around the floating-body seed, not
+    # an actuator limit. Real joint, contact and finite-motion bounds follow.
+    x0=list(np.r_[q0[:3],np.zeros(3),q0[qi]]);lo=list(np.r_[q0[:3]-.5,[-1.2]*3,[a['lower']+(0.02 if a['role']=='dock' else .02) for a in actuators]]);hi=list(np.r_[q0[:3]+.5,[1.2]*3,[a['upper']-(0.02 if a['role']=='dock' else .02) for a in actuators]])
     stages=[]
     for active in sets:
         ids=np.flatnonzero(active);begin=len(x0);stages.append((ids,begin))
@@ -135,6 +150,11 @@ def refine_support_pose(plant,controller,pose,*,iterations=24,support_weight=20.
             if force_block is not None:rows[cursor:cursor+size,start:start+force_block.shape[1]]=force_block
             cursor+=size
         w=np.array([.5,.5,500.]);append(((positions-nominal)*w).ravel(),(tracking@lift*w[None,:,None]).reshape(3*nf,npv))
+        for f,required in zip(frames,aligned):
+            if not required:continue
+            normal=data.oMf[f].rotation[:,0]
+            angular=pin.getFrameJacobian(model,data,f,pin.LOCAL_WORLD_ALIGNED)[3:]
+            append(100*(normal-np.array([0.,0.,-1.])), -100*pin.skew(normal)@angular@lift)
         for ids,start in stages:
             force=x[start:start+nr];cf=x[start+nr:start+nr+3*len(ids)].reshape(-1,3);C=np.column_stack([Jp[i].T@basis for i in ids]);F=np.c_[B,C];tau=g-F@np.r_[force,cf.ravel()]
             values=rotor_wrenches@force;extra=np.zeros((model.nv,model.nv))
@@ -156,10 +176,10 @@ def refine_support_pose(plant,controller,pose,*,iterations=24,support_weight=20.
             append(support_weight/weight*deficit,force_block=row,start=start+nr)
             # Rotor effort and joint holding load now alter the pose itself.
             # This residual is the square root of the original convex proxy.
-            es=np.sqrt(20.0/(weight**1.5/np.sqrt(nr))/len(stages))
+            es=np.sqrt(20.0/(weight**1.5/np.sqrt(nr))*duration[tuple(ids)])
             soft=1e-4;rr=es*((force+soft)**.75-soft**.75)
             append(rr,force_block=np.diag(es*.75*(force+soft)**-.25),start=start)
-            js=np.sqrt(20.0*.05/nj/len(stages))/limits
+            js=np.sqrt(20.0*.05/nj*duration[tuple(ids)])/limits
             append(js*tau[vi],js[:,None]*(deriv[vi]@lift),-js[:,None]*F[vi],start)
         for ids,start in movement:
             from .walking_mobility import residual
@@ -178,12 +198,12 @@ def refine_support_pose(plant,controller,pose,*,iterations=24,support_weight=20.
     # Fixed block pattern includes every possible pose derivative. Avoid a
     # dense nonzero scan on each Jacobian without dropping structural zeros.
     row_columns=[]
-    row_columns.extend([np.arange(npv)]*(3*nf))
+    row_columns.extend([np.arange(npv)]*(3*nf+3*sum(aligned)))
     for ids,start in stages:
         width=nr+3*len(ids);nrrows=6+nj+len(ids)+1+nr+nj
         row_columns.extend([np.r_[np.arange(npv),np.arange(start,start+width)]]*nrrows)
     for ids,start in movement:
-        row_columns.extend([np.r_[np.arange(npv),np.arange(start,start+len(moving))]]*(3*nf+3))
+        row_columns.extend([np.r_[np.arange(npv),np.arange(start,start+len(moving))]]*(3*nf+3*sum(aligned[ids])+3))
     row_columns.extend([np.arange(npv)]*(len(bounds)+1))
     row_columns.extend([np.array([i]) for i in range(len(x0))])
     columns=np.concatenate(row_columns);offsets=np.r_[0,np.cumsum([len(c) for c in row_columns])];ri=np.repeat(np.arange(len(row_columns)),np.diff(offsets))

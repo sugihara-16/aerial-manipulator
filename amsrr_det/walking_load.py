@@ -21,6 +21,12 @@ def motion_load(plant,drive,q,v,a):
 
 
 def ground_contacts(controller,stance):
+    """Proposal forces at the actual lowest CAD points, within friction cones.
+
+    The cone leaves slip mode and force magnitude to the controller/plant.
+    This is a candidate-comparison approximation, not a prediction or proof
+    of the reactions that the unchanged physical contact law will realize.
+    """
     d=controller.drive.d;contacts=[]
     for active,link,(bid,vertices) in zip(stance,controller.links,controller.material):
         if not active:continue

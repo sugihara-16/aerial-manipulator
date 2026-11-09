@@ -5,7 +5,7 @@ import numpy as np
 import mujoco
 from build.relative_task_control import RobotDrive
 from amsrr_det.bounded_qp import bounded_qp
-from amsrr_det.walking import foot_material,ground_support
+from amsrr_det.walking import foot_material,ground_support,requires_face_alignment
 
 
 def energy_regularizer(previous,limits,joint_count,weight):
@@ -25,6 +25,7 @@ class GroundControl:
     def __init__(self,plant,reference,links,*,foot_points=None):
         self.drive=RobotDrive(plant);self.m=plant.mj;self.reference=reference.copy()
         self.material=foot_material(plant,links);self.links=links
+        self.face_alignment=np.array([requires_face_alignment(link) for link in links])
         self.foot_points=[];self.last={};self.last_command=None
         dr=self.drive;dr.observe(reference,np.zeros(self.m.nv))
         if foot_points is None:
@@ -42,6 +43,7 @@ class GroundControl:
         self.contact_bias=np.zeros(len(links));self.last_observation=None
         self.lift_bias=np.zeros(len(links));self.path_bias=np.zeros(2)
         self.attitude_bias=np.zeros(3)
+        self.joint_bias=np.zeros(self.drive.nj)
         self.attitude_weight=max(20.,2*float(plant.meta['modules']))
         self.jp=np.empty((3,self.m.nv));self.jr=self.jp.copy();self.jd=self.jp.copy()
         self.delta=np.zeros(self.m.nv);self.previous=np.zeros(self.m.nu+12*len(links))
@@ -73,7 +75,12 @@ class GroundControl:
         desired[3:6]+=25*self.attitude_bias
         sv=np.zeros(m.nv) if shape_velocity is None else shape_velocity
         sa=np.zeros(m.nv) if shape_acceleration is None else shape_acceleration
-        desired[dr.vi]=sa[dr.vi]+64.*self.delta[dr.vi]+16.*(sv[dr.vi]-v[dr.vi])
+        # Bounded integral feedback restores lasting Dock shape error. It is
+        # frozen in flight; clipping bounds memory but is not anti-windup or
+        # a stability guarantee under competing tasks and actuator saturation.
+        self.joint_bias=np.clip(self.joint_bias+(0. if flight_mode else .5)*dt*
+            self.delta[dr.vi]*dr.dock,-.1,.1)
+        desired[dr.vi]=sa[dr.vi]+64.*(self.delta[dr.vi]+self.joint_bias)+16.*(sv[dr.vi]-v[dr.vi])
         rd=self.reference_data;rd.qpos[:]=ref;rd.qvel[:]=sv
         mujoco.mj_kinematics(m,rd);mujoco.mj_comPos(m,rd);mujoco.mj_comVel(m,rd)
         J=[];Jdot=[];angular=[];angular_target=[]
@@ -87,7 +94,33 @@ class GroundControl:
             error=.5*np.cross(R.T,Rref.T).sum(axis=0)
             omega=self.jr@v
             mujoco.mj_jac(m,rd,None,self.jr,rd.xpos[bid],bid)
-            angular_target.append(64*error+16*(self.jr@sv-omega)+self.jr@sa)
+            reference_omega=self.jr@sv
+            reference_alpha=self.jr@sa
+            mujoco.mj_jacDot(m,rd,None,self.jd,rd.xpos[bid],bid)
+            reference_alpha+=self.jd@sv
+            if self.face_alignment[i] and (not flight_mode or ground_fraction>0.):
+                # Landing still uses flight tracking for the assembly, but
+                # its feet need the same face-normal objective as walking
+                # once the ground-transfer objectives begin to ramp in.
+                normal=R[:,0];tilt=np.eye(3)-np.outer(normal,normal)
+                # Follow the generated swing orientation; it reaches the
+                # downward contact face before planned touchdown.
+                measured_height=float(np.min((vertices@R.T+d.xpos[bid])[:,2]))
+                blend=np.clip((measured_height-.003)/.012,0.,1.)
+                blend=blend*blend*(3-2*blend)
+                contact_normal=(1-blend)*np.array([0.,0.,-1.])+blend*Rref[:,0]
+                contact_normal/=np.linalg.norm(contact_normal)
+                # A delayed lift must not tilt a foot still touching ground.
+                # Only measured geometric clearance releases this target.
+                angle_goal=400*np.cross(normal,contact_normal)+tilt@(40*(blend*reference_omega-omega)+blend*reference_alpha)
+                yaw=np.eye(3)-tilt
+                weight=120*tilt+.5*yaw
+                angular[-1]=weight@angular[-1]
+                mujoco.mj_jacDot(m,d,None,self.jd,point,bid)
+                angular_target.append(weight@(angle_goal+yaw@(64*error+16*(self.jr@sv-omega)+self.jr@sa)-self.jd@v))
+            else:
+                angular[-1]*=.5
+                angular_target.append(.5*(64*error+16*(self.jr@sv-omega)+self.jr@sa))
             world=vertices@d.xmat[bid].reshape(3,3).T+d.xpos[bid]
             lowest=int(np.argmin(world[:,2]));gap=world[lowest,2]
             gaps[i]=gap
@@ -97,7 +130,7 @@ class GroundControl:
             mujoco.mj_jac(m,d,self.jp,None,world[lowest],bid)
             mujoco.mj_jacDot(m,d,self.jd,None,world[lowest],bid)
             J[-1][2]=self.jp[2];Jdot[-1][2]=self.jd[2]@v;positions[i,2]=gap
-            if stance[i] and gap<.0002:
+            if gap<.0002 and (stance[i] or foot_velocity[i,2]<=0.):
                 # Geometry from measured poses, never simulated reaction truth.
                 basis,extreme=ground_support(R,world)
                 for j,index in enumerate(extreme):
@@ -105,12 +138,17 @@ class GroundControl:
                     group=[4*i+k for k,z in enumerate(extreme) if z==index];support_groups.append(group);repeat=len(group)
                     slot=4*i+j;support=world[index]
                     mujoco.mj_jac(m,d,self.jp,None,support,bid)
-                    reaction[:,3*slot:3*slot+3]=self.jp.T@basis;active.append(slot)
+                    force_basis=basis.copy()
+                    reaction[:,3*slot:3*slot+3]=self.jp.T@force_basis;active.append(slot)
                     # Same material point for velocity and acceleration.
                     # Sticking is a soft objective under finite friction.
                     contact_jacobians.append(self.jp.copy()*np.sqrt(repeat))
                     mujoco.mj_jacDot(m,d,self.jd,None,support,bid)
-                    settle=-self.jd@v-40*self.jp@v;settle[2]-=400*support[2]
+                    # Brake slip at the measured material point. This is a
+                    # soft feedback objective, not a rolling constraint or
+                    # an assumed actual reaction from the physical engine.
+                    settle=-self.jd@v-40*self.jp@v
+                    settle[2]-=400*support[2]
                     contact_targets.append(settle*np.sqrt(repeat))
         J=np.vstack(J);Jdot=np.concatenate(Jdot)
         cols=np.concatenate([np.arange(3*i,3*i+3) for i in active]) if active else np.empty(0,dtype=int)
@@ -125,7 +163,7 @@ class GroundControl:
         # Preserve the articulated motion in acceleration space. A small
         # generalized-torque residual alone does not restore joint shape
         # when the root and ground reactions move together.
-        scale[dr.vi[dr.dock]]=2.0
+        scale[dr.vi[dr.dock]]=6.0
         A=D*scale[:,None];target=(desired-bias)*scale
         if com_reference is not None:
             # The route belongs to the whole assembly, not just its root.
@@ -137,7 +175,7 @@ class GroundControl:
             # is feedback, not a learned or structure-specific offset.
             com_error=com_reference-d.subtree_com[0,:2]
             self.path_bias=np.clip(self.path_bias+.5*dt*com_error,-.05,.05)
-            desired_com=com_acceleration+25*(com_error+self.path_bias)+10*(com_velocity-Jcom@v)
+            desired_com=com_acceleration+49*(com_error+self.path_bias)+14*(com_velocity-Jcom@v)
             drift_com=d.qfrc_bias[:2]/mass+m.opt.gravity[:2]
             A=np.vstack([A,60.0*Jcom@D]);target=np.r_[target,60.0*(desired_com-Jcom@bias-drift_com)]
         if hasattr(self,"load_path") and observation_time is not None and not flight_mode:
@@ -170,10 +208,19 @@ class GroundControl:
         self.lift_bias[~stance]=np.clip(self.lift_bias[~stance]+(0. if flight_mode else 10.)*dt*
             (feet[~stance,2]-positions[~stance,2])*envelope[~stance],0.,.015)
         foot_target[:,2]+=1600.*self.lift_bias*envelope
+        # Brake the real foot before touchdown. The old below-floor reference
+        # produced a new impact at each stance transition. Use measured gap
+        # and velocity; no virtual floor force is introduced before contact.
+        descending=(foot_velocity[:,2]<0) & (gaps<.012) & ~stance
+        vz=(J@v).reshape(nf,3)[:,2]
+        foot_target[descending,2]=np.maximum(foot_target[descending,2],
+            -400*np.maximum(gaps[descending],0.)-40*vz[descending])
+        missing=stance & (gaps>=.0002)
+        foot_target[missing,2]=400*(-.0005-gaps[missing])-40*vz[missing]
         foot_target=foot_target.ravel()
         A=np.vstack([A,ground_fraction*10*J@D]);target=np.r_[target,ground_fraction*10*(foot_target-Jdot-J@bias)]
         angular=np.vstack(angular);at=np.concatenate(angular_target)
-        A=np.vstack([A,ground_fraction*0.5*angular@D]);target=np.r_[target,ground_fraction*0.5*(at-angular@bias)]
+        A=np.vstack([A,ground_fraction*angular@D]);target=np.r_[target,ground_fraction*(at-angular@bias)]
         # Walking support belongs to the chosen feet. Keep nearby batteries
         # and other body parts above the ground through the same allocation,
         # rather than stopping or letting those parts become unintended feet.
@@ -198,7 +245,7 @@ class GroundControl:
         # stale-command resistance does not remove commanded shape restoration. Low inertia must not turn
         # a nominal acceleration target into a nearly unweighted soft limb.
         holding=dr.mass@desired+d.qfrc_bias
-        holding[dr.vi]+=np.where(dr.dock,30.0,dr.kp)*self.delta[dr.vi]+np.where(dr.dock,2.,dr.kd)*(sv[dr.vi]-v[dr.vi])
+        holding[dr.vi]+=np.where(dr.dock,30.0,dr.kp)*(self.delta[dr.vi]+self.joint_bias)+np.where(dr.dock,2.,dr.kd)*(sv[dr.vi]-v[dr.vi])
         js=1/dr.limit[:dr.nj];js[~dr.dock]*=.3
         A=np.vstack([A,W[dr.vi]*js[:,None]])
         target=np.r_[target,(holding[dr.vi]-drift[dr.vi])*js]
@@ -207,12 +254,20 @@ class GroundControl:
         offset=dr.kp[gi]*q[dr.qi[gi]]+dr.kd[gi]*v[dr.vi[gi]]
         lower[gi]=np.maximum(-1,(dr.kp[gi]*ranges[:,0]-offset)/dr.limit[gi]);upper[gi]=np.minimum(1,(dr.kp[gi]*ranges[:,1]-offset)/dr.limit[gi])
         bad=lower>upper;lower[bad]=upper[bad]=np.clip((lower[bad]+upper[bad])/2,-1,1)
+        # Gimbal position servos receive this prescribed command. Allocate
+        # other actuators against the same saturated effort, instead of
+        # choosing a different gimbal effort and replacing it afterwards.
+        target_velocity=np.clip(sv[dr.vi[gi]]+4*self.delta[dr.vi[gi]],-2.2,2.2)
+        gimbal_command=np.clip(q[dr.qi[gi]]+(dr.kd[gi]/dr.kp[gi]+.005)*target_velocity,ranges[:,0],ranges[:,1])
+        fixed_effort=np.clip((dr.kp[gi]*gimbal_command-offset)/dr.limit[gi],-1.,1.)
+
         nc=len(cols);C=np.zeros((nu+nc,2*nu+9*len(active)));C[:nu,:2*nu]=dr.constraints
         theta=np.arange(8)*np.pi/4+np.pi/8
         for j in range(len(active)):
             C[nu+3*j,2*nu+9*j]=1.
             C[nu+3*j,2*nu+9*j+1:2*nu+9*j+9]=.8*np.cos(np.pi/8)
             C[nu+3*j+1:nu+3*j+3,2*nu+9*j+1:2*nu+9*j+9]=-np.array([np.cos(theta),np.sin(theta)])
+        contact_bounds=np.zeros(9*len(active))
         if active:
             # Ground-load preference uses the allocation's reaction variables,
             # never the simulator's measured reaction. Real support is audited
@@ -229,12 +284,19 @@ class GroundControl:
         energy*=.001 if flight_mode else 1.
         reg=np.r_[energy+np.r_[np.full(dr.nj,.00005),np.full(nu-dr.nj,.05)],np.repeat([1e-5/len(g) for g in support_groups],3)]
         previous=np.r_[self.previous[:nu],np.array([self.previous[nu:].reshape(nf*4,3)[g].sum(axis=0) for g in support_groups]).ravel()]
-        x,fallback,iterations=minimum_support_qp(A.T@A+np.diag(reg),A.T@target,C,np.r_[lower,-upper,np.zeros(9*len(active))],lower,upper,previous,support_row=(row if active else None),support_target=75.0,deadline=deadline,friction=.8)
+        # Eliminate fixed inputs; duplicate lower/upper active constraints
+        # make this small bound solver degenerate. Contact variables retain
+        # their original order and physical bounds.
+        H=A.T@A+np.diag(reg);linear=A.T@target
+        free_act=np.setdiff1d(np.arange(nu),gi);free=np.r_[free_act,np.arange(nu,len(previous))]
+        columns=np.ones(C.shape[1],bool);columns[gi]=False;columns[nu+gi]=False
+        bounds=np.r_[lower,-upper,contact_bounds]-C[gi].T@fixed_effort
+        z,fallback,iterations=minimum_support_qp(H[np.ix_(free,free)],linear[free]-H[np.ix_(free,gi)]@fixed_effort,C[np.ix_(free,np.flatnonzero(columns))],bounds[columns],lower[free_act],upper[free_act],previous[free],support_row=(row[free] if active else None),support_target=75.0,deadline=deadline,friction=.8)
+        x=np.empty(len(previous));x[free]=z;x[gi]=fixed_effort
         self.previous[:nu]=x[:nu];self.previous[nu:]=0
         for group,force in zip(support_groups,x[nu:].reshape(-1,3)):self.previous[nu:].reshape(nf*4,3)[group]=force/len(group)
         u=np.clip(x[:nu],lower,upper)*dr.limit
         u[:dr.nj]=(u[:dr.nj]+dr.kp*q[dr.qi]+dr.kd*v[dr.vi])/dr.gain[:dr.nj]
-        target_velocity=np.clip(sv[dr.vi[gi]]+4*self.delta[dr.vi[gi]],-2.2,2.2)
-        u[gi]=np.clip(q[dr.qi[gi]]+(dr.kd[gi]/dr.kp[gi]+.005)*target_velocity,ranges[:,0],ranges[:,1]);self.last_command=u.copy()
-        self.last=dict(base_error=float(np.linalg.norm(self.delta[:3])),foot_error=float(np.max(np.linalg.norm(feet-positions,axis=1))),active_feet=sorted({i//4 for i in active}),forces=self.previous[nu:].reshape(nf,4,3).sum(axis=1).tolist(),contact_bias=self.contact_bias.tolist(),lift_bias=self.lift_bias.tolist(),path_bias=self.path_bias.tolist(),attitude_bias=self.attitude_bias.tolist(),fallback=bool(fallback),iterations=iterations,allocation_error=float(np.linalg.norm(A@x-target)))
+        u[gi]=gimbal_command;self.last_command=u.copy()
+        self.last=dict(base_error=float(np.linalg.norm(self.delta[:3])),foot_error=float(np.max(np.linalg.norm(feet-positions,axis=1))),active_feet=sorted({i//4 for i in active}),forces=self.previous[nu:].reshape(nf,4,3).sum(axis=1).tolist(),contact_bias=self.contact_bias.tolist(),lift_bias=self.lift_bias.tolist(),path_bias=self.path_bias.tolist(),joint_bias=self.joint_bias.tolist(),attitude_bias=self.attitude_bias.tolist(),fallback=bool(fallback),iterations=iterations,allocation_error=float(np.linalg.norm(A@x-target)))
         return u

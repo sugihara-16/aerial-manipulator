@@ -53,6 +53,8 @@ def smooth_cycle(kin,spec,gait,weight=.008):
   t=k*dt;xy,yaw,*_=spec.path(t);base=kin.nominal.copy()
   base[:3]=gait['origin']+rotation_z(yaw)@(base[:3]-gait['origin'])+np.r_[xy,0.]
   R=np.empty((3,3));mujoco.mju_quat2Mat(R.ravel(),base[3:7]);mujoco.mju_mat2Quat(base[3:7],(rotation_z(yaw)@R).ravel())
+  base[7:]=gait['configurations'][k,7:]
+  base[kin.qi]=kin.nominal[kin.qi]
   bases.append(base);delta=np.zeros(m.nv);mujoco.mj_differentiatePos(m,delta,1,base,gait['configurations'][k]);x0.append(delta[idx])
   feet=foot_targets(t,gait['period'],spec.speed,gait['feet'],height=gait['height'],curvature=spec.curvature,origin=gait['origin'],duty=gait.get('duty',.62),phases=gait.get('phases'))
   targets.append(feet[0]);supports.append(feet[3])
@@ -63,26 +65,27 @@ def smooth_cycle(kin,spec,gait,weight=.008):
  smoothmap=kron(D.tocsr()/dt**2,csr_matrix(np.diag(weights)))
  lo=np.full((count,nd),-np.inf);hi=-lo
  lo[:,6:]=kin.limits[:,0]-kin.nominal[kin.qi];hi[:,6:]=kin.limits[:,1]-kin.nominal[kin.qi]
+ width=nd
  com_targets=np.array([gait['origin'][:2]+spec.path(k*dt)[0] for k in range(count)])
  geometry=CycleGeometry(kin)
  last=None;pair=None
  def evaluate(flat):
   nonlocal last,pair
   if last is not None and np.array_equal(last,flat):return pair
-  X=flat.reshape(count,nd);res=[];blocks=[]
+  X=flat.reshape(count,width);res=[];blocks=[]
   for k,x in enumerate(X):
-   residual,jacobian=geometry.evaluate(x,bases[k],targets[k],rotations[k],supports[k],com_targets[k])
+   residual,jacobian=geometry.evaluate(x[:nd],bases[k],targets[k],rotations[k],supports[k],com_targets[k])
    for i,active in enumerate(supports[k]):
     if not active:
      residual[12*i:12*i+2]=0.;jacobian[12*i:12*i+2]=0.
      if residual[12*i+2]>0:residual[12*i+2]=0.;jacobian[12*i+2]=0.
    res.append(residual);blocks.append(jacobian)
-  res=np.r_[np.concatenate(res),smoothmap@flat];matrix=bsr_matrix((np.array(blocks),np.arange(count),np.arange(count+1)),shape=(count*blocks[0].shape[0],count*nd)).tocsr();matrix.eliminate_zeros();J=vstack([matrix,smoothmap]).tocsr()
+  res=np.r_[np.concatenate(res),smoothmap@flat];matrix=bsr_matrix((np.array(blocks),np.arange(count),np.arange(count+1)),shape=(count*blocks[0].shape[0],count*width)).tocsr();matrix.eliminate_zeros();J=vstack([matrix,smoothmap]).tocsr()
   last=flat.copy();pair=res,J;return pair
  result=least_squares(lambda x:evaluate(x)[0],np.clip(x0.ravel(),lo.ravel(),hi.ravel()),jac=lambda x:evaluate(x)[1],bounds=(lo.ravel(),hi.ravel()),tr_solver='lsmr',direct=True,max_nfev=25,ftol=1e-6,xtol=1e-7,gtol=1e-7)
  poses=[];err=[]
- for k,x in enumerate(result.x.reshape(count,nd)):
-  q=bases[k].copy();delta=np.zeros(m.nv);delta[idx]=x;mujoco.mj_integratePos(m,q,delta,1.);poses.append(q)
+ for k,x in enumerate(result.x.reshape(count,width)):
+  q=bases[k].copy();delta=np.zeros(m.nv);delta[idx]=x[:nd];mujoco.mj_integratePos(m,q,delta,1.);poses.append(q)
   d.qpos[:]=q;mujoco.mj_kinematics(m,d);difference=kin.points()[0]-targets[k];difference[~supports[k],:2]=0.;difference[~supports[k],2]=np.minimum(difference[~supports[k],2],0.);err.append(float(np.max(np.linalg.norm(difference,axis=1))))
  q=poses[0].copy();xy,yaw,*_=spec.path(gait['period']);R=rotation_z(yaw);q[:3]=gait['origin']+R@(q[:3]-gait['origin'])+np.r_[xy,0.]
  rot=np.empty((3,3));mujoco.mju_quat2Mat(rot.ravel(),q[3:7]);mujoco.mju_mat2Quat(q[3:7],(R@rot).ravel());poses.append(q)

@@ -113,8 +113,9 @@ def fit_contacts(model,meta,q0,surfaces,points,inward_normals, *, max_evaluation
             if f'm{i}/{link}' not in floor_contact_links]
     if points.shape!=(len(surfaces),3) or normals.shape!=points.shape or not np.allclose(np.linalg.norm(normals,axis=1),1):
         raise ValueError('invalid contact targets')
-    if normal_weight not in (0.,1.):raise ValueError("normal_weight must be zero or one")
-    if normal_weight==0.:normals=np.zeros_like(normals)
+    normal_weights=np.broadcast_to(np.asarray(normal_weight,dtype=float),(len(surfaces),))
+    if not np.isin(normal_weights,[0.,1.]).all():raise ValueError("normal_weight must be zero or one per contact")
+    normals=normals*normal_weights[:,None]
     face_outward=None
     if preserve_box_faces:
         if object_shape is None or object_shape.family not in ('box','elongated_box') or opposed_friction is not None or normal_moment_axis is not None:

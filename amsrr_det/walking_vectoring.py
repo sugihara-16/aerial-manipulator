@@ -9,30 +9,86 @@ import scipy.sparse as sp
 import clarabel
 import pinocchio as pin
 import mujoco
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, BSpline
 from .rotor_distribution import rotor_action_basis, rotor_basis_actions
 from .equilibrium import point_jacobian, contact_basis, static_balance
 from .walking_load import motion_load, ground_contacts, support_switch_times
 from .walking_cycle import CycleReference
 from .walking_gait import validate_cycle
 
+def spline_velocity_hull(times,period):
+    """Linear Bernstein bounds for the derivative of a periodic cubic.
+
+    Each interval derivative lies in the convex hull of its three quadratic
+    Bernstein controls. Constraining those controls bounds the entire spline,
+    unlike bounding only the average knot-to-knot velocity.
+    """
+    times=np.asarray(times);n=len(times);ends=np.r_[times,period]
+    basis=CubicSpline(ends,np.vstack([np.eye(n),np.eye(n)[0]]),bc_type='periodic')
+    derivatives=basis(ends,1);rows=[]
+    for k,h in enumerate(np.diff(ends)):
+        secant=(np.eye(n)[(k+1)%n]-np.eye(n)[k])/h
+        rows.extend([derivatives[k],3*secant-derivatives[k]-derivatives[k+1],derivatives[k+1]])
+    return sp.csr_matrix(np.array(rows))
+
+
+def spline_position_hull(times,period):
+    """Cubic Bernstein controls bound positions throughout every interval."""
+    times=np.asarray(times);n=len(times);ends=np.r_[times,period]
+    eye=np.eye(n);spline=CubicSpline(ends,np.vstack([eye,eye[0]]),bc_type='periodic')
+    derivative=spline(ends,1);rows=[]
+    for k,h in enumerate(np.diff(ends)):
+        rows.extend([eye[k],eye[k]+h*derivative[k]/3,
+                     eye[(k+1)%n]-h*derivative[k+1]/3,eye[(k+1)%n]])
+    return sp.csr_matrix(np.array(rows))
+
+
+def local_spline_maps(times,period):
+    """The same periodic cubics in local B-spline coordinates.
+
+    Knot values couple every velocity constraint through cubic interpolation.
+    Local coefficients describe exactly the same curves while keeping each
+    interval's position and velocity hulls coupled to nearby coefficients.
+    """
+    times=np.asarray(times);n=len(times)
+    knots=np.r_[times[-3:]-period,times,times[:4]+period]
+    curve=BSpline(knots,np.eye(n+3),3)
+    def wrap(values):
+        a=sp.coo_matrix(values)
+        return sp.csr_matrix((a.data,(a.row,a.col%n)),shape=(a.shape[0],n))
+    values=wrap(curve(np.r_[times,period])).toarray()
+    derivative=wrap(curve(np.r_[times,period],1)).toarray()
+    velocity=[];position=[]
+    for k,h in enumerate(np.diff(np.r_[times,period])):
+        secant=(values[k+1]-values[k])/h
+        velocity.extend([derivative[k],3*secant-derivative[k]-derivative[k+1],derivative[k+1]])
+        position.extend([values[k],values[k]+h*derivative[k]/3,
+                         values[k+1]-h*derivative[k+1]/3,values[k+1]])
+    return sp.csr_matrix(values[:-1]),sp.csr_matrix(velocity),sp.csr_matrix(position)
+
+
 def inspect_proposal(plant, controller, spec, gait, screen_motion, complete_check=True):
     geometry = validate_cycle(plant, gait, spec=spec)
     if not geometry['passed']:
-        return (None, np.empty(0), dict(reason='geometry', geometry=geometry))
+        cuts=np.array([(geometry['penetration_time']/gait['period'])%1.]) if geometry.get('penetration',0.)<-.001 else np.empty(0)
+        return (None, cuts, dict(reason='geometry', geometry=geometry))
     ref = CycleReference(plant, spec, gait)
     # Reject a failing proposal on a coarse subset first. Acceptance still
     # requires every one of the 96 phases and the unchanged margin screen.
     scores = np.full(96,np.nan)
     times=np.linspace(0,ref.period,97)[:-1]
-    for index in np.r_[np.arange(0,96,3),[i for i in range(96) if i%3]]:
+    def sample(index):
         t=times[index]
         (q, v, a) = ref.rates(t)
         (qp, load) = motion_load(plant, controller.drive, q, v, a)
         contacts = ground_contacts(controller, ref.feet(t)[3])
         r = static_balance(plant.pin, plant.meta, qp, contacts, generalized_load=load, fast_lp=True)
-        scores[index]=r.get('minimum_peak_effort_ratio', 1000000.0)
-        if index==93 and np.nanmax(scores)>.9:break
+        return r.get('minimum_peak_effort_ratio', 1000000.0)
+    from .walking_screen import _map_rows
+    cpus=getattr(screen_motion,'phase_cpus',lambda:None)()
+    for indices in [np.arange(0,96,3),np.array([i for i in range(96) if i%3])]:
+        scores[indices]=_map_rows(sample,indices,cpus)
+        if np.nanmax(scores)>.9:break
     scores = np.asarray(scores)
     if np.nanmax(scores) <= 0.9:
         if not complete_check:
@@ -48,6 +104,7 @@ def inspect_proposal(plant, controller, spec, gait, screen_motion, complete_chec
 
 
 def _direction_iterations(plant, controller, spec, gait, screen_motion, iterations, restore=False, improve=False):
+    import copy
     meta = plant.meta
     m = plant.pin
     data = m.createData()
@@ -72,6 +129,15 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
     speed = np.array([a['speed'] for a in act])
     maximum = np.array([r['maximum'] for r in meta['rotors']])
     mq = controller.drive.qi[np.array([r['gimbal'] for r in meta['rotors']])]
+    # Use a planning-only proximity model. This leaves simulation contact
+    # margins/material unchanged and exposes nearby self-collision pairs to
+    # the direction optimizer before a rotor is rotated into another part.
+    clearance_model=copy.copy(plant.mj)
+    clearance_model.geom_margin[:]=.01
+    clearance_data=mujoco.MjData(clearance_model)
+    floor=clearance_model.geom('floor').id
+    gvi=controller.drive.vi[np.array([z['gimbal'] for z in meta['rotors']])]
+    ca=np.empty((3,plant.mj.nv));cb=ca.copy()
     new = dict(gait, configurations=gait['configurations'].copy())
     prev = np.full((nt, nr), W * 0.5 / nr)
     if improve:
@@ -84,6 +150,7 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
     history = []
     geometry_cache = {}
     extra_phases = []
+    trust_angle=.6
     for iteration in range(iterations):
         if extra_phases:
             old_times = times.copy()
@@ -117,9 +184,10 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
                 contacts = ground_contacts(controller, stance)
                 basis = rotor_action_basis(m, meta, qp)
                 pin.framesForwardKinematics(m, data, qp)
-                C = np.column_stack([point_jacobian(m, data, qp, meta['frames'][c['frame']], c['point']).T @ contact_basis(c) for c in contacts])
-                geometry_cache[k] = (basis, C, len(contacts))
-            (basis, C, nc) = geometry_cache[k]
+                columns = [point_jacobian(m, data, qp, meta['frames'][c['frame']], c['point']).T @ contact_basis(c) for c in contacts]
+                C = np.column_stack(columns) if columns else np.empty((m.nv, 0))
+                geometry_cache[k] = (basis, C, len(contacts), contacts)
+            (basis, C, nc, contacts) = geometry_cache[k]
             B = rotor_basis_actions(basis, theta)
             D = (-basis[1] * np.sin(theta) + basis[2] * np.cos(theta)) * prev[k]
             F = np.c_[D, B, C, np.eye(m.nv,free), np.zeros((m.nv, nj))]
@@ -148,8 +216,25 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
                 row[0, :nr] = -gradient
                 A.append(row)
                 b.append(np.array([lowest[gi, 2] - 0.001]))
-            lo = np.r_[np.maximum(lower - theta, -0.6), np.zeros(nr), np.tile([0.0, -np.inf, -np.inf], nc), np.full(free,-np.inf), np.zeros(nj)]
-            hi = np.r_[np.minimum(upper - theta, 0.6), maximum, np.full(3 * nc + free + nj, np.inf)]
+            clearance_data.qpos[:]=q
+            mujoco.mj_kinematics(clearance_model,clearance_data)
+            mujoco.mj_comPos(clearance_model,clearance_data)
+            mujoco.mj_collision(clearance_model,clearance_data)
+            closest={}
+            for contact in clearance_data.contact:
+                if floor in contact.geom or contact.dist>=.008:continue
+                pair=tuple(sorted(clearance_model.geom_bodyid[contact.geom]))
+                if pair not in closest or contact.dist<closest[pair].dist:closest[pair]=contact
+            for contact in closest.values():
+                ga,gb=clearance_model.geom_bodyid[contact.geom]
+                mujoco.mj_jac(clearance_model,clearance_data,ca,None,contact.pos,int(ga))
+                mujoco.mj_jac(clearance_model,clearance_data,cb,None,contact.pos,int(gb))
+                gradient=contact.frame[:3]@(cb[:,gvi]-ca[:,gvi])
+                if np.max(abs(gradient))<1e-9:continue
+                row=np.zeros((1,size));row[0,:nr]=-gradient
+                A.append(row);b.append(np.array([contact.dist-.001]))
+            lo = np.r_[np.maximum(lower - theta, -trust_angle), np.zeros(nr), np.tile([0.0, -np.inf, -np.inf], nc), np.full(free,-np.inf), np.zeros(nj)]
+            hi = np.r_[np.minimum(upper - theta, trust_angle), maximum, np.full(3 * nc + free + nj, np.inf)]
             ident = np.eye(size)
             il = np.isfinite(lo)
             ih = np.isfinite(hi)
@@ -185,21 +270,44 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
         velocity = sp.kron(D1, sp.eye(nr))
         accel = sp.kron(D2, sp.eye(nr))
         R = velocity @ S
+        # Interval-end velocities duplicate the next interval's start.
+        # Endpoint angles already have their node bounds in A.
+        vrows=(3*np.arange(nt)[:,None]+[0,1]).ravel()
+        prows=(4*np.arange(nt)[:,None]+[1,2]).ravel()
+        velocity_bound=sp.kron(spline_velocity_hull(times,gait['period'])[vrows],sp.eye(nr),format='csc')
+        V=velocity_bound@S
+        position_bound=sp.kron(spline_position_hull(times,gait['period'])[prows],sp.eye(nr),format='csc')
+        Q=position_bound@S
         H = accel @ S
         P = sp.diags(diags, format='csc') + 0.05 * (R.T @ R) + 0.001 * (H.T @ H)
         cost = 0.05 * (R.T @ (velocity @ current)) + 0.001 * (H.T @ (accel @ current))
         # T**1.5 is concave in T**2. Its tangent gives a quadratic upper
         # model touching the previous thrust (ordinary T tangents do not).
         # First recover feasible directions, then improve the same burden.
-        energy_weight=200. if improve else 20. if iteration>=2 else 0.
+        energy_weight=200. if improve else 200. if iteration>=2 else 0.
         rotor_diagonal=np.zeros(size);offset=np.r_[0,np.cumsum(widths)]
         hover=W**1.5/np.sqrt(nr)
         for k,start in enumerate(offset[:-1]):
             rotor_diagonal[start+nr:start+2*nr]=energy_weight*weights[k]*1.5/np.sqrt(np.maximum(prev[k],.02*W/nr))/hover
         P+=sp.diags(rotor_diagonal,format='csc')
         ground = sp.csc_matrix(-np.concatenate([w * g for (w, g) in zip(weights, grounds)])[None])
-        con = sp.vstack([E, A, R, -R, ground], format='csc')
-        rhs = np.r_[beq, bineq, np.tile(0.75 * speed, nt) - velocity @ current, np.tile(0.75 * speed, nt) + velocity @ current, -0.6 * W]
+        # Change only angle coordinates. Forces, the objective and every
+        # original bound are preserved. Direct local hulls avoid subtracting
+        # near-equal entries of the dense knot interpolation matrices.
+        basis,local_velocity,local_position=local_spline_maps(times,gait['period'])
+        transform=sp.eye(size,format='lil')
+        for k in range(nt):
+            row=basis.getrow(k)
+            for j in range(nr):
+                transform.rows[offset[k]+j]=[int(offset[l]+j) for l in row.indices]
+                transform.data[offset[k]+j]=row.data.tolist()
+        transform=transform.tocsc()
+        P=transform.T@P@transform;cost=transform.T@cost
+        E=E@transform;A=A@transform;ground=ground@transform
+        V=sp.kron(local_velocity[vrows],sp.eye(nr),format='csc')@S
+        Q=sp.kron(local_position[prows],sp.eye(nr),format='csc')@S
+        con = sp.vstack([E, A, V, -V, Q, -Q, ground], format='csc')
+        rhs = np.r_[beq, bineq, np.tile(0.95 * speed,2*nt)-velocity_bound@current, np.tile(0.95 * speed,2*nt)+velocity_bound@current, np.tile(upper,2*nt)-position_bound@current, -np.tile(lower,2*nt)+position_bound@current, -0.6 * W]
         col = np.zeros(con.shape[0])
         col[-1] = -1.0
         con = sp.hstack([con, col[:, None]], format='csc')
@@ -214,7 +322,7 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
         solved = clarabel.DefaultSolver(sp.triu(P, format='csc'), cost, con, rhs, [clarabel.ZeroConeT(E.shape[0]), clarabel.NonnegativeConeT(len(rhs) - E.shape[0])], settings).solve()
         if str(solved.status) not in ['Solved', 'AlmostSolved']:
             raise ValueError(str(solved.status))
-        x = np.array(solved.x[:-1])
+        x = transform@np.array(solved.x[:-1])
         angles = np.array(currents) + (S @ x).reshape(nt, nr)
         theta = np.vstack([angles, angles[0]])
         spline = CubicSpline(np.r_[times, gait['period']], theta, bc_type='periodic')
@@ -228,6 +336,7 @@ def _direction_iterations(plant, controller, spec, gait, screen_motion, iteratio
             history[-1]['phase_count'] = nt
             if report is not None:
                 return (new, dict(history=history, accepted_report=report,geometry=diagnostic.get('geometry')))
+            if diagnostic.get('reason')=='geometry':trust_angle=max(.1,trust_angle*.5)
             extra_phases = [phase for phase in cuts if np.min(abs(times / gait['period'] - phase)) > 1e-08]
     return (new, dict(history=history))
 

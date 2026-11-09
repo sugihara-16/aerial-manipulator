@@ -41,6 +41,14 @@ def foot_link(module,port):
     return f'm{module}/'+('pitch_dock_mech' if port.startswith('pitch') else 'yaw_dock_mech')+port[-1]
 
 
+def requires_face_alignment(port_or_link):
+    """Female pitch Docks face the floor; male yaw Docks may tilt."""
+    name=port_or_link.rsplit('/',1)[-1]
+    if name in ('pitch1','pitch2','pitch_dock_mech1','pitch_dock_mech2'):return True
+    if name in ('yaw1','yaw2','yaw_dock_mech1','yaw_dock_mech2'):return False
+    raise ValueError(f'unknown walking Dock: {port_or_link}')
+
+
 def rotation_z(angle):
     c,s=np.cos(angle),np.sin(angle)
     return np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])

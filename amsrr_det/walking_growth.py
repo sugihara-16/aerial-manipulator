@@ -11,7 +11,7 @@ import amsrr_det.task_structure as ts
 from amsrr_det.model import build_model
 from amsrr_det.objects import ObjectShape
 from amsrr_det.grasp_geometry import fit_contacts,aim_rotors_up,grasp_frame
-from amsrr_det.walking import foot_link,rotation_z
+from amsrr_det.walking import foot_link,rotation_z,requires_face_alignment
 from .planning_preview import GrowthPreview
 
 def select(cost,rng):
@@ -57,7 +57,13 @@ def radial_generate(spec,rng):
  ports,angles,seams,pads,names,*_=ts.part_frames(True);n=spec.modules;mass=build_model()[1]['mass'];counts=np.arange(2,min(4,n-1)+1)
  power=(n/counts)**1.5;weights=np.exp(-2*(power-power.min()));count=int(rng.choice(counts,p=weights/weights.sum()));duty=float(rng.uniform(.60,.78))
  lengths=np.full(count,(n-1)//count);lengths[rng.permutation(count)[:(n-1)%count]]+=1
- period=rng.uniform(1.6,2.25)*np.sqrt(max(1.,n/(count+1)));reach=2*np.max(np.linalg.norm(ts.port_origins(),axis=1));root=np.eye(4);root[:3,:3]=rotation_z(rng.uniform(-np.pi,np.pi));root[2,3]=rng.uniform(.95,1.3)*reach
+ period=rng.uniform(1.6,2.25)*np.sqrt(max(1.,n/(count+1)));reach=2*np.max(np.linalg.norm(ts.port_origins(),axis=1));root=np.eye(4)
+ heading=rng.uniform(-np.pi,np.pi)
+ # A transverse seed for articulated branches is an empirical initialization,
+ # not a fixed final pose or graph. Ports still follow task load and stroke,
+ # and the complete posture, finite motion and input checks remain decisive.
+ root[:3,:3]=rotation_z(np.copysign(np.pi/2,heading) if np.max(lengths)>1 else heading)
+ root[2,3]=rng.uniform(.95,1.3)*reach
  azimuth=rng.uniform(-np.pi,np.pi);phases=azimuth+np.arange(count)*2*np.pi/count;radius=rng.uniform(.8,1.15)*reach
  radii=radius+.42*(lengths-1);targets=np.c_[radii*np.cos(phases),radii*np.sin(phases),np.full(count,.03)]
  period,duty=motion_timing(spec,targets,period,duty)
@@ -103,7 +109,7 @@ def radial_generate(spec,rng):
  model,meta=build_model(n,edges);q=pin.neutral(model);q[:3]=root[:3,3];q[3:7]=pin.Quaternion(root[:3,:3]).coeffs()
  for act in meta['actuators']:
   owner,name=act['name'].split('/');q[act['q']]=values[int(owner[1:])].get(name,0.)
- links=[foot_link(*s)for s in surfaces];normals=np.tile([0.,0.,-1.],(count,1));q,fit=fit_contacts(model,meta,q,surfaces,targets[assigned],normals,normal_weight=0.,base_rotation=True,max_evaluations=60,floor_clearance=.04,floor_contact_links=links,base_upright_weight=.05,position_metric=np.diag([.2,.2,1.]))
+ links=[foot_link(*s)for s in surfaces];normals=np.tile([0.,0.,-1.],(count,1));q,fit=fit_contacts(model,meta,q,surfaces,targets[assigned],normals,normal_weight=[requires_face_alignment(port) for _,port in surfaces],base_rotation=True,max_evaluations=60,floor_clearance=.04,floor_contact_links=links,base_upright_weight=.05,position_metric=np.diag([.2,.2,1.]))
  data=model.createData();pin.framesForwardKinematics(model,data,q);actual=np.array([data.oMf[meta['frames'][grasp_frame(*s)]].translation for s in surfaces])
  if np.max(abs(actual[:,2]-.03))>.025:raise ValueError('simultaneous_foot_fit')
  return dict(modules=n,edges=edges,surfaces=surfaces,q=aim_rotors_up(model,meta,q),period=period,generation=dict(method='task_partitioned_support_branches',trace=trace,fit=fit,lengths=lengths,feet=count,duty=duty,phases=np.arange(count)/count,targets=targets))
@@ -181,12 +187,12 @@ def shared_generate(spec,rng,*,foot_count=None):
     for a in meta['actuators']:
         module,name=a['name'].split('/');q[a['q']]=values[int(module[1:])].get(name,0.)
     links=[foot_link(*s) for s in surfaces]
-    q,fit=fit_contacts(model,meta,q,surfaces,points[order],normals[order],normal_weight=0.,base_rotation=True,
+    q,fit=fit_contacts(model,meta,q,surfaces,points[order],normals[order],normal_weight=[requires_face_alignment(port) for _,port in surfaces],base_rotation=True,
         max_evaluations=60,floor_clearance=.04,floor_contact_links=links,base_upright_weight=.05)
     if fit['position_error_m']>.025:
         # The task specifies a floor, not preassigned foothold coordinates.
         # Keep an already fitted seed; otherwise free its planar placement.
-        q,fit=fit_contacts(model,meta,q,surfaces,points[order],normals[order],normal_weight=0.,base_rotation=True,
+        q,fit=fit_contacts(model,meta,q,surfaces,points[order],normals[order],normal_weight=[requires_face_alignment(port) for _,port in surfaces],base_rotation=True,
             max_evaluations=30,floor_clearance=.04,floor_contact_links=links,base_upright_weight=.05,
             position_metric=np.diag([.2,.2,1.]))
         data=model.createData();pin.framesForwardKinematics(model,data,q)

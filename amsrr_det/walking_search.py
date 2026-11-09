@@ -1,7 +1,7 @@
 """Fixed-module independent walking trials, compared by periodic burden."""
 from concurrent.futures import ProcessPoolExecutor,wait,FIRST_COMPLETED
 from dataclasses import asdict
-import multiprocessing as mp,time,os
+import multiprocessing as mp,time,os,signal
 from .valve_search import performance_cpus
 import numpy as np
 from .walking_plan import candidate,generate,prepare_candidate,finish_candidate
@@ -10,6 +10,23 @@ from .planning_preview import SearchPreview,walking_candidate
 
 _planning_cpus=None
 _force_cpus=None
+_planning_deadline=None
+_active_forces=None
+_tail_cpus=None
+
+class _DeadlineExpired(TimeoutError):pass
+
+def _expire(signum,frame):
+    raise _DeadlineExpired()
+
+def trial_stage(payload):
+    """Cancel calculation between native calls, without corrupting result pipes."""
+    remaining=_planning_deadline-time.perf_counter()
+    if remaining<=0:return dict(status="rejected",reason="planning_deadline",cost=float("inf"),index=payload[2])
+    signal.signal(signal.SIGALRM,_expire);signal.setitimer(signal.ITIMER_REAL,remaining)
+    try:return _trial_stage(payload)
+    except _DeadlineExpired:return dict(status="rejected",reason="planning_deadline",cost=float("inf"),index=payload[2])
+    finally:signal.setitimer(signal.ITIMER_REAL,0.)
 
 
 def json_value(value):
@@ -30,7 +47,7 @@ def trial(payload):
     return result
 
 
-def trial_stage(payload):
+def _trial_stage(payload):
     spec,seed,index,stage,record=payload;started=time.perf_counter()
     previous_s=0. if record is None else record.get('preparation_s',record.get('_generation_s',0.))
     try:
@@ -45,7 +62,17 @@ def trial_stage(payload):
             os.sched_setaffinity(0,_planning_cpus)
             return dict(status='prepared',record=prepare_candidate(spec,None,record),index=index)
         os.sched_setaffinity(0,_force_cpus)
-        plan=finish_candidate(spec,record)
+        with _active_forces.get_lock():_active_forces.value+=1
+        try:
+            # Use idle cores for independent phases at the tail of the queue.
+            # The candidate, all checks and their result order are unchanged.
+            def phase_cpus():
+                with _active_forces.get_lock():active=_active_forces.value
+                os.sched_setaffinity(0,_tail_cpus if active<=4 else _force_cpus)
+                return _tail_cpus if active<=2 else None
+            plan=finish_candidate(spec,record,phase_cpus=phase_cpus)
+        finally:
+            with _active_forces.get_lock():_active_forces.value-=1
         return dict(status='accepted',cost=plan['cost'],plan=plan,legs=len(plan['surfaces']),
                     index=index,wall_s=plan['wall_s'])
     except ValueError as error:
@@ -54,14 +81,15 @@ def trial_stage(payload):
 
 
 def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
-    global _planning_cpus,_force_cpus
+    global _planning_cpus,_force_cpus,_planning_deadline,_active_forces,_tail_cpus
     preview=SearchPreview()
-    allowed=set(os.sched_getaffinity(0));fast_cpus=set(sorted(performance_cpus(allowed))[:8]);_force_cpus=fast_cpus
+    _active_forces=mp.get_context('fork').Value('i',0)
+    allowed=set(os.sched_getaffinity(0));fast_cpus=set(sorted(performance_cpus(allowed))[:8]);_force_cpus=allowed;_tail_cpus=fast_cpus
     # Geometry can use idle fast cores. Once force jobs become ready, their
     # higher process priority takes precedence without leaving cores reserved
     # for an empty queue. Every trial's numerical procedure stays unchanged.
     _planning_cpus=allowed;workers=min(workers,len(allowed))
-    started=time.perf_counter();count=required_trials(groups=1)
+    started=time.perf_counter();_planning_deadline=started+budget;count=required_trials(groups=1)
     from .runtime_manifest import protocol_digest
     from .task_structure import part_frames,port_axes
     from .mujoco_model import _part_templates,CONTACT_CACHE
@@ -73,11 +101,13 @@ def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
     make_plant(1,mesh_cache=CONTACT_CACHE,floor=True,compile_threads=False)
     protocol=protocol_digest(asdict(spec));outcomes=[None]*count;records=[];best=None
     geometry=ProcessPoolExecutor(max_workers=workers,mp_context=mp.get_context('fork'))
-    forces=ProcessPoolExecutor(max_workers=min(workers,len(fast_cpus)),mp_context=mp.get_context('fork'))
+    forces=ProcessPoolExecutor(max_workers=min(workers,16),mp_context=mp.get_context('fork'))
     pending={geometry.submit(trial_stage,(spec,seed,i,'generate',None)):i for i in range(count)}
     generated={};foot_counts={};order=[];timed_out=False;generation_stage_s=None
     def complete(row):
-        nonlocal best
+        nonlocal best,timed_out
+        if row.get("reason")=="planning_deadline":
+            timed_out=True;records.append(row);return
         if row['status']=='accepted':
             plant=row['plan'].pop('_execution_plant',None)
             preview.outcome(spec.modules,'accepted',row['cost'],lambda:walking_candidate(row['plan'],plant))
@@ -105,7 +135,9 @@ def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
                 else:complete(row)
         generation_stage_s=time.perf_counter()-started
         if not timed_out:
-            order=sorted(generated,key=lambda i:(generated[i]['generation']['fit']['position_error_m'],i))
+            # Schedule larger pose repairs first to reduce the long tail; all
+            # fixed trials still complete and use their original computation.
+            order=sorted(generated,key=lambda i:(-generated[i]['generation']['fit']['position_error_m'],i))
             next_index=0;active_geometry=set()
             while (pending or next_index<len(order)) and not timed_out:
                 while next_index<len(order) and len(active_geometry)<workers:
@@ -119,9 +151,9 @@ def search(spec,*,seed=1,workers=24,budget=15.,execution_plant=None):
                     else:complete(row)
     finally:
         for future in pending:future.cancel()
+        # Workers return a deadline result through an intact pipe. Killing a
+        # worker while it writes a large plan can strand the result reader.
         for pool in [geometry,forces]:
-            if pending:
-                for process in (pool._processes or {}).values():process.terminate()
             pool.shutdown(wait=True,cancel_futures=True)
     preview.finish()
     evidence=None if best is None else fixed_count_evidence(spec.modules,outcomes,best['cost'],protocol_id=protocol)

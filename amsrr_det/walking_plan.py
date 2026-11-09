@@ -12,7 +12,7 @@ from .model import build_model
 from .task_structure import grow_to_contacts,part_frames,port_axes,port_origins
 from .grasp_geometry import fit_contacts,aim_rotors_up,grasp_frame
 from .mujoco_model import make_plant,CONTACT_CACHE
-from .walking import foot_link,foot_material,rotation_z
+from .walking import foot_link,foot_material,rotation_z,requires_face_alignment
 from .walking_control import GroundControl
 from .walking_posture import propose_support_pose,refine_support_pose
 from .walking_gait import CycleKinematics,validate_cycle
@@ -54,16 +54,25 @@ def prepare_candidate(spec,rng,record=None,*,support_weight=None):
         raise ValueError('initial_self_overlap_proposal')
     controller=GroundControl(plant,q,links)
     if support_weight is None:
-        motion=spec if any(owner==0 for owner,_ in record['surfaces']) else None
+        motion=spec if any(owner==0 or requires_face_alignment(port) for owner,port in record["surfaces"]) else None
         q,posture,parameters=propose_support_pose(plant,controller,q,iterations=16+8*spec.modules,duty=duty,phases=phases,motion=motion)
     else:
-        q,posture=refine_support_pose(plant,controller,q,iterations=16+8*spec.modules,support_weight=support_weight,duty=duty,phases=phases)
+        q,posture=refine_support_pose(plant,controller,q,iterations=16+8*spec.modules,support_weight=support_weight,duty=duty,phases=phases,motion=spec)
         parameters=dict(support_weight=support_weight,capacity_timing=support_weight==20.)
     d.qpos[:]=q;mujoco.mj_kinematics(m,d);mujoco.mj_collision(m,d)
     controller=GroundControl(plant,q,links);kin=CycleKinematics(plant,controller,q)
     if d.ncon and min(d.contact.dist)<-.001:
-        feet=kin.points()[0];feet[:,2]=0.
-        q,error=kin.fit(q,q[:7],feet,iterations=20)
+        floor=m.geom('floor').id;foot_bodies={bid for bid,_ in controller.material}
+        penetrating=[c for c in d.contact if c.dist<-.001]
+        foot_only=all(floor in c.geom and m.geom_bodyid[c.geom2 if c.geom1==floor else c.geom1] in foot_bodies for c in penetrating)
+        if foot_only and min(c.dist for c in penetrating)>-.01:
+            # This is a planning seed. A small common height correction keeps
+            # a finite-precision sole fit from being rejected before motion
+            # synthesis. Full periodic material heights are checked below.
+            q[2]-=min(c.dist for c in penetrating)-1e-6
+        else:
+            feet=kin.points()[0];feet[:,2]=0.
+            q,error=kin.fit(q,q[:7],feet,iterations=20)
         d.qpos[:]=q;mujoco.mj_kinematics(m,d);mujoco.mj_collision(m,d)
         if d.ncon and min(d.contact.dist)<-.001:raise ValueError('initial_cad_collision')
         controller=GroundControl(plant,q,links);kin=CycleKinematics(plant,controller,q)
@@ -95,7 +104,9 @@ def prepare_candidate(spec,rng,record=None,*,support_weight=None):
         report=validate_cycle(plant,preview,spec=spec)
         proposals.append(preview);reports.append(report)
     def violation(i):
-        r=reports[i];return max(1.,r['position_error']/.005,-r['penetration']/.001,r['velocity_ratio'],1+r['angle_excess_rad']/.01)
+        r=reports[i];return max(1.,r['position_error']/.005,-r['penetration']/.001,
+            r['maximum_face_angle_rad']/np.deg2rad(1.),r['velocity_ratio'],
+            1+r['angle_excess_rad']/.01)
     selected=min(range(len(proposals)),key=lambda i:(violation(i),capacities[i]['deficit'],i))
     gait=proposals[selected];record['generation']['phases']=gait['phases'].tolist()
     record['generation']['finite_order_proposal']=dict(reports=reports,capacities=capacities,selected=selected)
@@ -110,19 +121,22 @@ def prepare_candidate(spec,rng,record=None,*,support_weight=None):
                   preparation_s=previous_s+time.perf_counter()-started)
     return record
 
-def finish_candidate(spec,record):
+def finish_candidate(spec,record,*,phase_cpus=None):
     started=time.perf_counter();plant=record.pop('_prepared_plant',None)
     if plant is None:plant=plant_for(record)
     links=[foot_link(*s) for s in record['surfaces']]
     controller=GroundControl(plant,np.array(record.pop('controller_reference')),links,foot_points=record['gait']['foot_points'])
+    def screen(*args):
+        return screen_motion(*args,cpus=None if phase_cpus is None else phase_cpus())
+    if phase_cpus is not None:screen.phase_cpus=phase_cpus
     gait=record['gait'];smoothing=record['smoothing'];posture=record['posture'];generation_s=record['generation_s']
     from .walking_vectoring import periodic_directions
     # One periodic direction synthesis serves feasibility and consumption.
     # Every independent trial uses the same bounded number of updates.
-    gait,direction=periodic_directions(plant,controller,spec,gait,screen_motion,iterations=6)
+    gait,direction=periodic_directions(plant,controller,spec,gait,screen,iterations=6)
     geometry=direction.get('geometry') or validate_cycle(plant,gait,spec=spec)
     if not geometry['passed']:raise ValueError('directed_periodic_geometry')
-    report=direction.get('accepted_report') or screen_motion(plant,controller,spec,gait)
+    report=direction.get('accepted_report') or screen(plant,controller,spec,gait)
     record.update(gait=gait,report=report,geometry=geometry,smoothing=smoothing,cost=report['cost'],
                   posture=posture,direction=direction,_execution_plant=plant,generation_s=generation_s,wall_s=record['preparation_s']+time.perf_counter()-started)
     from .walking_landing import screen_landing
