@@ -7,6 +7,29 @@ from amsrr_det.walking_control import GroundControl
 from amsrr_det.walking_audit import WalkingAudit
 
 
+def test_upright_flight_fits_moments_without_changing_dock_posture():
+    from amsrr_det.walking_landing import flight_directions
+    from amsrr_det.grasp_geometry import aim_rotors_up
+    from amsrr_det.equilibrium import static_balance
+    plant=plant_for(dict(modules=1,edges=[]));m=plant.mj
+    q=m.qpos0.copy();q[2]=2.
+    rotation=np.array([[1.,1.,0.],[0.,0.,np.sqrt(2)],[1.,-1.,0.]])/np.sqrt(2)
+    mujoco.mju_mat2Quat(q[3:7],rotation.ravel())
+    data=mujoco.MjData(m);data.qpos[:]=q;qp,_=plant.observation(data)
+    vertical=aim_rotors_up(plant.pin,plant.meta,qp)
+    assert static_balance(plant.pin,plant.meta,vertical,fast_lp=True)['status']!='static_screen_pass'
+    fitted=flight_directions(plant,q)
+    data.qpos[:]=fitted;qp,_=plant.observation(data)
+    report=static_balance(plant.pin,plant.meta,qp,fast_lp=True)
+    assert report['status']=='static_screen_pass'
+    assert report['equilibrium_residual']<1e-7
+    np.testing.assert_array_equal(fitted[:7],q[:7])
+    for actuator in plant.meta['actuators']:
+        if actuator['role']=='dock':
+            index=m.joint(actuator['name']).qposadr
+            np.testing.assert_array_equal(fitted[index],q[index])
+
+
 def test_airborne_allocation_never_borrows_future_support():
     plant=plant_for(dict(modules=1,edges=[]));m=plant.mj
     q=m.qpos0.copy();q[2]=1.

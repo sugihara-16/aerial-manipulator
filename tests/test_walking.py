@@ -369,7 +369,8 @@ def test_com_force_identity_matches_geometric_derivatives():
     np.testing.assert_allclose((derivatives[1]-derivatives[0])/(2*h),expected_bias,atol=1e-8)
 
 
-def test_support_pose_gradient_matches_changes_in_real_geometry(monkeypatch):
+@pytest.mark.parametrize("with_motion",[False,True])
+def test_support_pose_gradient_matches_changes_in_real_geometry(monkeypatch,with_motion):
     from types import SimpleNamespace
     import amsrr_det.walking_posture as posture
     from amsrr_det.walking_plan import plant_for
@@ -383,6 +384,9 @@ def test_support_pose_gradient_matches_changes_in_real_geometry(monkeypatch):
         # Move off the support-deficit hinge: its residual has no unique
         # derivative exactly at the initialized 60% normal load.
         x[6+len(p.meta['actuators']):]*=.9
+        if with_motion:
+            begin=kwargs['blocks'][-2]
+            x[begin:]+=.03*np.sin(np.arange(len(x)-begin)+.3)
         lo,hi=map(np.asarray,bounds);x=np.clip(x,lo+1e-4,hi-1e-4)
         analytic=jac(x).toarray();h=1e-6;numeric=[]
         for i in range(len(x)):
@@ -391,7 +395,7 @@ def test_support_pose_gradient_matches_changes_in_real_geometry(monkeypatch):
         np.testing.assert_allclose(analytic,np.array(numeric).T,atol=3e-5,rtol=3e-5)
         return SimpleNamespace(x=x,nfev=1,cost=.5*fun(x)@fun(x))
     monkeypatch.setattr(posture,'least_squares',check)
-    posture.refine_support_pose(p,c,q,iterations=1)
+    posture.refine_support_pose(p,c,q,iterations=1,motion=WalkSpec(modules=3,speed=.22) if with_motion else None)
 
 
 def test_paired_four_foot_phases_have_only_the_selected_pairs_or_all_feet():
@@ -405,13 +409,14 @@ def test_paired_four_foot_phases_have_only_the_selected_pairs_or_all_feet():
     assert observed=={(0,2),(1,3),(0,1,2,3)}
 
 
-def test_compiled_cycle_geometry_jacobian_matches_independent_differences():
+@pytest.mark.parametrize("second",["pitch_dock_mech2","yaw_dock_mech2"])
+def test_compiled_cycle_geometry_jacobian_matches_independent_differences(second):
     from amsrr_det.walking_native import CycleGeometry
     from amsrr_det.walking_plan import plant_for
     from amsrr_det.walking_control import GroundControl
     from amsrr_det.walking_gait import CycleKinematics
     p=plant_for(dict(modules=1,edges=[]));q=p.mj.qpos0.copy();q[2]=.24
-    c=GroundControl(p,q,['m0/pitch_dock_mech1','m0/pitch_dock_mech2'])
+    c=GroundControl(p,q,['m0/pitch_dock_mech1','m0/'+second])
     k=CycleKinematics(p,c,q);geometry=CycleGeometry(k);x=np.random.default_rng(89).normal(0,.03,len(k.indices))
     points=k.points()[0];rotations=k.rotations;support=np.array([True,False]);com=np.array([.03,-.02])
     r,J=geometry.evaluate(x,q,points,rotations,support,com)
@@ -495,21 +500,27 @@ def test_compiled_foot_fit_matches_independent_linearized_motion():
     d=kin.d;d.qpos[:]=q;mujoco.mj_kinematics(m,d);mujoco.mj_comPos(m,d);mujoco.mj_collision(m,d)
     assert not any(x.dist<.002 for x in d.contact)
     points,lowest=kin.points();feet=points+np.array([.02,-.01,.005]);body=q[:7].copy();body[0]+=.01
-    J=[];angular=[];jp=np.zeros((3,m.nv));jr=jp.copy()
+    J=[];angular=[];normal_targets=[];jp=np.zeros((3,m.nv));jr=jp.copy()
     for i,((bid,_),point) in enumerate(zip(c.material,lowest)):
         center=d.xpos[bid]+d.xmat[bid].reshape(3,3)@c.foot_points[i]
-        mujoco.mj_jac(m,d,jp,jr,center,bid);j=jp.copy();angular.extend(jr[:,kin.indices])
+        mujoco.mj_jac(m,d,jp,jr,center,bid);j=jp.copy()
+        normal=d.xmat[bid].reshape(3,3)[:,0];tilt=np.eye(3)-np.outer(normal,normal)
+        nw=.2+29.8*max(0.,1-feet[i,2]/.015)
+        angular.extend((nw*tilt+np.eye(3)-tilt)@jr[:,kin.indices])
+        R=d.xmat[bid].reshape(3,3);err=np.cross(R.T,kin.rotations[i].T).sum(axis=0)
+        normal_targets.extend(nw*np.cross(normal,[0,0,-1])+.5*(np.eye(3)-tilt)@err)
         mujoco.mj_jac(m,d,jp,None,point,bid);j[2]=jp[2];J.extend(j[:,kin.indices])
     weights=np.array([1.,.5,.25,.12,.12,.12]);ref=q.copy();ref[:7]=body;delta=np.empty(m.nv)
     mujoco.mj_differentiatePos(m,delta,1.,q,ref);nd=len(kin.indices)
-    A=np.vstack([10*np.array(J),.2*np.array(angular),np.c_[np.diag(weights),np.zeros((6,nd-6))],.008*np.eye(nd)])
-    b=np.r_[10*(feet-points).ravel(),np.zeros(3*len(feet)),weights*delta[:6],.008*delta[kin.indices]]
+    A=np.vstack([10*np.array(J),np.array(angular),np.c_[np.diag(weights),np.zeros((6,nd-6))],.008*np.eye(nd)])
+    b=np.r_[10*(feet-points).ravel(),normal_targets,weights*delta[:6],.008*delta[kin.indices]]
     step=np.linalg.lstsq(A,b,rcond=1e-8)[0];step*=min(1.,.15/max(abs(step).max(),1e-9))
     v=np.zeros(m.nv);v[kin.indices]=step;expected=q.copy();mujoco.mj_integratePos(m,expected,v,1.)
     expected[kin.qi]=np.clip(expected[kin.qi],kin.limits[:,0],kin.limits[:,1])
     actual,error=kin.fit(q,body,feet,iterations=1)
     np.testing.assert_allclose(actual,expected,atol=2e-10,rtol=2e-10)
-    assert error<np.max(np.linalg.norm(feet-points,axis=1))
+    # A sideways starting foot must rotate even at the expense of position.
+    assert np.isfinite(error)
 
 
 def test_periodic_screen_checks_interpolated_angles_and_speeds():

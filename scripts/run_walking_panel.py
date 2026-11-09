@@ -1,5 +1,6 @@
 """Frozen-source independent walking evaluations, with measured control delay."""
 import argparse,json,os,signal,shutil,subprocess,time
+import numpy as np
 from pathlib import Path
 from amsrr_det.runtime_manifest import source_hashes,environment
 
@@ -15,7 +16,7 @@ def run(panel_path,out,indices=None):
     (out/'environment.json').write_text(json.dumps(environment(),indent=2))
     (out/'panel.json').write_text(json.dumps(dict(panel,cases=cases),indent=2))
     env=dict(os.environ,OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',PYTHONPATH='.')
-    rows=[];started=time.perf_counter();timeouts=0
+    rows=[];started=time.perf_counter()
     for case in cases:
         if source_hashes()!=source:raise RuntimeError('source changed during panel')
         task=case['task']
@@ -30,15 +31,17 @@ def run(panel_path,out,indices=None):
         path=out/case['id']/'result.json'
         row=json.loads(path.read_text()) if path.exists() else dict(task_success=False,reason='runner_error',exit_code=code)
         row.update(id=case['id'],task=task,seed=case['seed']);rows.append(row)
-        timeouts+=row.get('reason')=='planning_timeout'
         summary=dict(completed=len(rows),total=len(cases),successes=sum(r['task_success'] for r in rows),
                      wall_s=time.perf_counter()-started,source_changes=source_hashes()!=source,results=rows)
         (out/'summary.json').write_text(json.dumps(summary,indent=2))
         print(case['id'],row['task_success'],row.get('reason'),round(row.get('planning_s',0),3),
               [key for key,val in row.get('checks',{}).items() if not val],flush=True)
         if summary['source_changes']:raise RuntimeError('source changed during evaluation')
-        # Repeated deadline failure calls for fixing planning before more cases.
-        if timeouts>=2 or row.get('reason')=='runner_error':break
+        # Every individual calculation still has its original deadline.
+        # Stop for repairs once even success in every remaining case cannot
+        # reach the requested fraction; isolated timeouts remain failures.
+        required=int(np.ceil(panel['acceptance']['minimum_success_fraction']*len(cases)))
+        if summary['successes']+len(cases)-len(rows)<required or row.get('reason')=='runner_error':break
     return summary
 
 

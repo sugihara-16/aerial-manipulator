@@ -1,13 +1,14 @@
 """Independent physical evidence for walking, never a controller input."""
 import numpy as np
 import mujoco
-from .walking import foot_material
+from .walking import foot_material,requires_face_alignment
 
 
 class WalkingAudit:
     def __init__(self,plant,links,spec,reference,*,start_time=0.):
         self.plant=plant;self.m=plant.mj;self.spec=spec;self.reference=reference
         self.start_time=float(start_time)
+        self.face_alignment=np.array([requires_face_alignment(link) for link in links])
         self.links=links;self.material=foot_material(plant,links);self.count=len(links)
         m=self.m;self.floor=m.geom('floor').id;self.groups=np.full(m.nbody,-1,int)
         for i,link in enumerate(links):self.groups[m.body(link).id]=i
@@ -27,7 +28,7 @@ class WalkingAudit:
             support_s=0.,impulse=0.,slip=0.,start_progress=0.,end_progress=0.,contact_s=0.) for _ in links]
         self.minimum_stride=np.array([max(.1,float(np.ptp(v,axis=0).max())) for _,v in self.material])
         self.last_observation_s=None;self.start_progress=None;self.progress=0.;self.last_angle=None;self.unwrapped_angle=0.
-        self.dominant_support_s=0.;self.light_support_s=0.;self.longest_light_support_s=0.
+        self.face_angle_max=0.;self.face_bad_impulse=0.;self.face_front=np.array([v[:,0].max() for _,v in self.material]);self.dominant_support_s=0.;self.light_support_s=0.;self.longest_light_support_s=0.
 
     def reached(self):
         return self.start_progress is not None and self.progress-self.start_progress>=self.spec.distance
@@ -55,7 +56,18 @@ class WalkingAudit:
             bid=int(m.geom_bodyid[gb if ga==self.floor else ga]);group=self.groups[bid]
             mujoco.mj_contactForce(m,d,j,self.force);normal=max(float(self.force[0]),0.)
             if group<0:other+=normal
-            else:load[group]+=normal
+            else:
+                load[group]+=normal
+                rotation=d.xmat[bid].reshape(3,3)
+                cosine=-rotation[2,0]
+                local=(contact.pos-d.xpos[bid])@rotation
+                if self.face_alignment[group] and (cosine<.9961946980917455 or local[0]<self.face_front[group]-.003):
+                    self.face_bad_impulse+=normal*dt
+        # Apply the load threshold to a whole foot, not each solver contact:
+        # subdividing one face into more contact points must not hide a tilt.
+        for i in np.flatnonzero((load>.02*self.weight)&self.face_alignment):
+            cosine=-d.xmat[self.material[i][0],6]
+            if cosine<np.cos(self.face_angle_max):self.face_angle_max=float(np.arccos(np.clip(cosine,-1.,1.)))
         self.foot_impulse+=load*dt;self.other_impulse+=other*dt;self.last_load=load
         self.ground_time+=float(load.sum()>.005*self.weight)*dt
         if load.sum()>=.5*self.weight:
@@ -123,6 +135,8 @@ class WalkingAudit:
         record=dict(time_s=now,com=com.tolist(),path_error_m=float(np.linalg.norm(com[:2]-goal)),
             root_position_error_m=float(np.linalg.norm(self.delta[:3])),posture_error_rad=float(np.linalg.norm(self.delta[3:6])),
             foot_load_n=self.last_load.tolist(),foot_clearance_m=lifts,foot_positions_m=foot_positions,
+            maximum_loaded_face_angle_deg=float(np.rad2deg(self.face_angle_max)),
+            face_alignment_feet=[link for link,required in zip(self.links,self.face_alignment) if required],
             progress_m=self.progress-self.start_progress,weighted_slip_n_m_s=slip)
         self.samples.append(record);return record
 
@@ -152,6 +166,7 @@ class WalkingAudit:
             window_speed=bool(np.max(abs(window_speed/self.spec.speed-1))<=.2),
             path=path<=.1 and samples[-1]['path_error_m']<=.05,posture=posture<=.2,
             ground_support=support>=.5 and ground>=.9 and self.dominant_support_s/max(duration,1e-9)>=.5,
+            face_alignment=self.face_angle_max<=np.deg2rad(5.) and self.face_bad_impulse<=.01*max(self.foot_impulse.sum(),1e-9),
             feet=bool(min(step_counts)>=minimum_steps and min(step_fractions)>=.8),other_support=other<=.02)
         checks={name:bool(value) for name,value in checks.items()}
         return dict(task_success=all(checks.values()),checks=checks,reason=self.abort,
@@ -160,6 +175,8 @@ class WalkingAudit:
             foot_dominant_fraction=self.dominant_support_s/max(duration,1e-9),longest_light_support_s=self.longest_light_support_s,
             other_load_fraction=other,complete_cycles=len(complete),foot_cycle_success_fractions=cycles.tolist(),
             steps=self.steps,valid_steps_per_foot=step_counts,step_success_fractions=step_fractions,
+            maximum_loaded_face_angle_deg=float(np.rad2deg(self.face_angle_max)),
+            face_alignment_feet=[link for link,required in zip(self.links,self.face_alignment) if required],off_face_load_fraction=self.face_bad_impulse/max(self.foot_impulse.sum(),1e-9),
             minimum_stride_m=self.minimum_stride.tolist(),minimum_steps_per_foot=minimum_steps,
             rotor_burden_mean=self.energy_rotor/max(duration,1e-9),joint_burden_mean=self.energy_joint/max(duration,1e-9),
             rotor_thrust_weight_ratio=self.rotor_impulse/max(duration*self.weight,1e-9),

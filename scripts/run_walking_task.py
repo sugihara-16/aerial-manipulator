@@ -27,7 +27,7 @@ def prepare_execution(spec,plan,timestep,control_cpu,*,compiled_plant=None,prepa
     feet=control.positions(d)
     d.ctrl[:]=control.update(q0,np.zeros(m.nv),q0[:7],np.zeros(6),np.zeros(6),feet,
         np.zeros_like(feet),np.zeros_like(feet),np.ones(len(feet),bool),deadline=time.perf_counter()+1.)
-    control.load_path=LoadPathReference(plant,control,ref,strength=.5,cpus=preparation_cpus)
+    control.load_path=LoadPathReference(plant,control,ref,cpus=preparation_cpus)
     if air_start:
         from amsrr_det.walking_landing import LandingReference,screen_landing
         if 'landing' not in plan:plan['landing']=screen_landing(plant,plan,spec)
@@ -167,6 +167,8 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
         whole.peak_effort=max(whole.peak_effort,audit.peak_effort)
         whole.abort=whole.abort or audit.abort
         result['checks']['airborne_landing']=landing_load_time>=.15 and hover_gap>.1 and whole.abort is None
+        result['checks']['landing_face_alignment']=whole.face_angle_max<=np.deg2rad(5.) and whole.face_bad_impulse<=.01*max(whole.foot_impulse.sum(),1e-9)
+        result['landing_face_alignment']=dict(maximum_loaded_angle_deg=float(np.rad2deg(whole.face_angle_max)),off_face_load_fraction=whole.face_bad_impulse/max(whole.foot_impulse.sum(),1e-9))
         result['whole_sequence']=dict(simulation_s=whole.elapsed,rotor_proxy=whole.energy_rotor,joint_proxy=whole.energy_joint,positive_joint_work_j=whole.positive_work,rotor_burden_hover_ratio=whole.energy_rotor/max(whole.elapsed*whole.weight**1.5/np.sqrt(len(whole.rotor_sites)),1e-9),phases=phases,walk_start_s=task_clock+walk_start,task_start_s=task_clock,landing_support_s=landing_load_time,hover_minimum_foot_gap_m=hover_gap,physical_abort=whole.abort,peak_penetration_m=whole.peak_penetration,peak_actuator_ratio=whole.peak_effort)
     timing=np.array([r['publication_cpu_s'] for r in calls])*1000
     intervals=np.diff([r['observation_s'] for r in calls])
