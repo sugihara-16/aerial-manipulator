@@ -22,6 +22,7 @@ CATALOG={
  'valve':dict(label='Valve rotation',fields=[
   field('torque','Resisting torque (Nm)',1.5,.1,60.,.5),field('tilt','Axis tilt from vertical (°)',0.,0.,180.,15.),
   field('azimuth','Axis azimuth (°)',0.,-180.,180.,15.),field('angle','Initial bar angle (°)',0.,-180.,180.,15.),
+  field('x','Valve center X (m)',0.,-5.,5.,.1),field('y','Valve center Y (m)',0.,-5.,5.,.1),
   field('height','Valve center height (m)',1.5,1.,3.,.1)]),
  'walking':dict(label='Airborne start, landing, and walking',fields=[
   field('modules','Modules',4,3,8,1),field('speed','Walking speed (m/s)',.22,.2,.5,.02),
@@ -66,7 +67,7 @@ def make_spec(kind,values,mode='task'):
         spec['contacts']=dict(robot_surface='anchor',target='object',allowed_region='object_surface',model='unilateral_friction',count=dict(min=1,max=8))
         spec['goal']=dict(quantity='object_pose',frame='world',translation_m=[v['dx'],v['dy'],0.],orientation='preserve_initial',minimum_transport_clearance_m=.10,release=True)
     elif kind=='valve':
-        spec['scene']['object']=dict(model='valve_with_bar_v1',center_m=[0.,0.,v['height']],axis=dict(tilt_rad=math.radians(v['tilt']),azimuth_rad=math.radians(v['azimuth'])),initial_angle_rad=math.radians(v['angle']),resistance_torque_nm=v['torque'])
+        spec['scene']['object']=dict(model='valve_with_bar_v1',center_m=[v['x'],v['y'],v['height']],axis=dict(tilt_rad=math.radians(v['tilt']),azimuth_rad=math.radians(v['azimuth'])),initial_angle_rad=math.radians(v['angle']),resistance_torque_nm=v['torque'])
         spec['contacts']=dict(robot_surface='anchor',target='object.bar',allowed_region=['local_y_positive','local_y_negative'],model='unilateral_friction',count=dict(min=1,max=4))
         spec['goal']=dict(quantity='joint_angle',target='object.hinge',change_rad=math.pi,release=True)
     else:
@@ -91,7 +92,7 @@ def validate_spec(spec):
             o=spec['scene']['object'];p=o['initial']
             v.update(shape=o['shape'],sx=o['size_m'][0],sy=o['size_m'][1],sz=o['size_m'][2],mass=o['mass_kg'],height=o['support_height_m'],x=p['xy_m'][0],y=p['xy_m'][1],roll=math.degrees(p['rpy_rad'][0]),yaw=math.degrees(p['rpy_rad'][2]),dx=goal['translation_m'][0],dy=goal['translation_m'][1])
         elif kind=='valve':
-            o=spec['scene']['object'];v.update(torque=o['resistance_torque_nm'],height=o['center_m'][2],tilt=math.degrees(o['axis']['tilt_rad']),azimuth=math.degrees(o['axis']['azimuth_rad']),angle=math.degrees(o['initial_angle_rad']))
+            o=spec['scene']['object'];v.update(torque=o['resistance_torque_nm'],x=o['center_m'][0],y=o['center_m'][1],height=o['center_m'][2],tilt=math.degrees(o['axis']['tilt_rad']),azimuth=math.degrees(o['axis']['azimuth_rad']),angle=math.degrees(o['initial_angle_rad']))
         else:v.update(modules=spec['robot']['module_count']['fixed'],speed=goal['speed_m_s'],distance=goal['distance_m'],curvature=goal['curvature_m_inv'])
         expected=make_spec(kind,v,spec['execution']['mode'])
         def same(a,b,path='task'):
@@ -115,7 +116,7 @@ def form_values(spec):
     if kind=='grasp':
         o=spec['scene']['object'];p=o['initial'];v.update(shape=o['shape'],sx=o['size_m'][0],sy=o['size_m'][1],sz=o['size_m'][2],mass=o['mass_kg'],height=o['support_height_m'],x=p['xy_m'][0],y=p['xy_m'][1],roll=math.degrees(p['rpy_rad'][0]),yaw=math.degrees(p['rpy_rad'][2]),dx=g['translation_m'][0],dy=g['translation_m'][1])
     elif kind=='valve':
-        o=spec['scene']['object'];v.update(torque=o['resistance_torque_nm'],height=o['center_m'][2],tilt=math.degrees(o['axis']['tilt_rad']),azimuth=math.degrees(o['axis']['azimuth_rad']),angle=math.degrees(o['initial_angle_rad']))
+        o=spec['scene']['object'];v.update(torque=o['resistance_torque_nm'],x=o['center_m'][0],y=o['center_m'][1],height=o['center_m'][2],tilt=math.degrees(o['axis']['tilt_rad']),azimuth=math.degrees(o['axis']['azimuth_rad']),angle=math.degrees(o['initial_angle_rad']))
     else:v.update(modules=spec['robot']['module_count']['fixed'],speed=g['speed_m_s'],distance=g['distance_m'],curvature=g['curvature_m_inv'])
     return v
 

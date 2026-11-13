@@ -18,7 +18,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 class Jobs:
-    def __init__(self,folder):
+    def __init__(self,folder,*,render_frames=True):
+        self.render_frames=render_frames
         self.folder=Path(folder);self.folder.mkdir(parents=True,exist_ok=True);self.lock=threading.Lock();self.active=None;self.process=None;self.monitor_thread=None
 
     def start(self,spec):
@@ -40,10 +41,10 @@ class Jobs:
         out=self.folder/key;renderer=None;render_log=None;began=time.monotonic();timeout=False
         try:
             while proc.poll() is None:
-                if renderer is None and (out/'live.json').exists():
+                if self.render_frames and renderer is None and (out/'live.json').exists():
                     render_log=open(out/'render.log','w')
                     renderer=subprocess.Popen([str(ROOT/'.venv/bin/python'),'-m','scripts.render_task_live',str(out)],cwd=ROOT,env=env,stdout=render_log,stderr=subprocess.STDOUT,start_new_session=True)
-                if time.monotonic()-began>600 or (renderer is None and time.monotonic()-began>45):
+                if time.monotonic()-began>600 or (not (out/'live.json').exists() and time.monotonic()-began>45):
                     timeout=True;self.kill(proc);break
                 time.sleep(.3)
             proc.wait()

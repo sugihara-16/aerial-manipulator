@@ -2,7 +2,6 @@
 import os
 os.environ['MUJOCO_GL']='egl'
 import argparse,json,mmap,time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 import numpy as np
 import mujoco
@@ -11,19 +10,7 @@ from amsrr_det.task_live import snapshot
 from amsrr_det.task_execution import write
 
 
-def display_xml(xml):
-    """Decorate only the renderer's model; simulation geometry is untouched."""
-    root=ET.fromstring(xml)
-    asset=root.find('asset')
-    if asset is None:asset=ET.SubElement(root,'asset')
-    ET.SubElement(asset,'texture',name='console_floor_texture',type='2d',builtin='checker',rgb1='.22 .28 .33',rgb2='.55 .62 .67',width='512',height='512')
-    ET.SubElement(asset,'material',name='console_floor_material',texture='console_floor_texture',texrepeat='2 2',texuniform='true',reflectance='0',shininess='.15')
-    for geom in root.iter('geom'):
-        if geom.get('type')=='plane':
-            geom.set('material','console_floor_material');geom.set('rgba','1 1 1 1')
-    world=root.find('worldbody')
-    ET.SubElement(world,'light',name='console_sun',directional='true',pos='0 0 8',dir='0 0 -1',diffuse='.8 .8 .8',ambient='.12 .12 .12',specular='.2 .2 .2',castshadow='true')
-    return ET.tostring(root,encoding='unicode')
+from amsrr_det.display_scene import display_xml
 
 
 def render(folder,frames=None):

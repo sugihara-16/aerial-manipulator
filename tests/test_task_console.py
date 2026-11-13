@@ -44,10 +44,11 @@ def test_grasp_input_reaches_physical_request():
     assert r['derived']['gravity_force_n'][2]==-2*9.80665
 
 def test_valve_axis_and_goal_are_consumed():
-    v=defaults('valve');v.update(tilt=90.,azimuth=90.,torque=12.,angle=60.)
+    v=defaults('valve');v.update(tilt=90.,azimuth=90.,torque=12.,angle=60.,x=2.5,y=1.5)
     r,q=compile_request(make_spec('valve',v))
     np.testing.assert_allclose(q['axis'],[0,1,0],atol=1e-12)
     assert q['torque']==12. and q['target_angle']==np.pi
+    assert q['center']==(2.5,1.5,1.5)
     assert q['initial_angle']==pytest.approx(np.pi/3)
     assert r['contact_domain']['allowed_region']==['local_y_positive','local_y_negative']
 
@@ -164,3 +165,4 @@ def test_drive_encoding_switch_keeps_effort_and_physical_state():
     switch_drives(physical,control,d,Coordinates(physical,control));mujoco.mj_forward(physical,d)
     np.testing.assert_allclose(d.actuator_force,old,atol=1e-12)
     np.testing.assert_array_equal(d.qpos,before[0]);np.testing.assert_array_equal(d.qvel,before[1]);assert d.time==before[2]
+
