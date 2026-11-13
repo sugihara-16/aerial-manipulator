@@ -1,10 +1,29 @@
 """Airborne allocation and audit-clock contracts independent of saved trials."""
 import numpy as np
 import mujoco
+import copy
 from amsrr_det.walking import WalkSpec
 from amsrr_det.walking_plan import plant_for
 from amsrr_det.walking_control import GroundControl
 from amsrr_det.walking_audit import WalkingAudit
+
+
+def test_direct_descent_preserves_screened_landing_suffix():
+    from amsrr_det.walking_landing import LandingReference
+    m=mujoco.MjModel.from_xml_string('<mujoco><worldbody><body><freejoint/><geom size=".1"/></body></worldbody></mujoco>')
+    ref=LandingReference.__new__(LandingReference)
+    ref.m=m;ref.delta=np.zeros(m.nv)
+    ref.walk_pose=m.qpos0.copy();ref.walk_pose[2]=.1
+    ref.landing=ref.walk_pose.copy();ref.height=.6
+    ref.air_target=ref.landing.copy();ref.air_target[2]+=.6
+    ref.hover=ref.air_target.copy();ref.hold_end=.8;ref.morph_end=3.8
+    ref.touch_end=8.3;ref.duration=11.3
+    old=copy.copy(ref);ref.start_at_descent()
+    assert ref.phase(0.)=='DESCEND' and ref.duration==7.5
+    for t in [0.,.1,2.,4.5,6.,7.5]:
+        np.testing.assert_allclose(ref.pose(t),old.pose(t+3.8),atol=1e-12)
+        for new,previous in zip(ref.rates(t),old.rates(t+3.8)):
+            np.testing.assert_allclose(new,previous,atol=1e-7)
 
 
 def test_upright_flight_fits_moments_without_changing_dock_posture():

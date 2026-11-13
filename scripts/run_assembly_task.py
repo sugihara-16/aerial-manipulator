@@ -44,6 +44,7 @@ def run(case,out,*,timestep=.0005,worker_cpu=2,air_strength=1.,observer=None,pre
         nonlocal abort,peak_joint,max_penetration,constraint_force,constraint_moment
         for _ in range(count):
             air.apply(d);mujoco.mj_step(m,d)
+            if observer is not None:observer.update(d,fsm.stage)
             peak_joint=max(peak_joint,float(np.max(abs(d.actuator_force[:control.nj])/effort_limits)))
             if fsm.clock is not None:
                 constraint_force=max(constraint_force,float(np.linalg.norm(d.qfrc_constraint[base_force_indices],axis=1).max()))

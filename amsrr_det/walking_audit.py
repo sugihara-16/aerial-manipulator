@@ -7,6 +7,7 @@ from .walking import foot_material,requires_face_alignment
 class WalkingAudit:
     def __init__(self,plant,links,spec,reference,*,start_time=0.):
         self.plant=plant;self.m=plant.mj;self.spec=spec;self.reference=reference
+        self.observed=mujoco.MjData(self.m)
         self.start_time=float(start_time)
         self.face_alignment=np.array([requires_face_alignment(link) for link in links])
         self.links=links;self.material=foot_material(plant,links);self.count=len(links)
@@ -83,7 +84,6 @@ class WalkingAudit:
         m=self.m;now=float(d.time)-self.start_time;qr=self.reference.pose(now)
         mujoco.mj_differentiatePos(m,self.delta,1.,d.qpos,qr)
         # Separate data makes the observer unable to change the plant solver.
-        if not hasattr(self,'observed'):self.observed=mujoco.MjData(m)
         od=self.observed;od.qpos[:]=d.qpos;od.qvel[:]=d.qvel
         mujoco.mj_kinematics(m,od);mujoco.mj_comPos(m,od)
         com=od.subtree_com[0].copy();goal=self.reference.origin[:2]+self.spec.path(now)[0]

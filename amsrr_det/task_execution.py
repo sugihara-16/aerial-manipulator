@@ -45,7 +45,7 @@ def execute(spec,folder):
     req,request=compile_request(spec);write(out/'requirements.json',req);write(out/'engine_request.json',request)
     kind=spec['task'];mode=spec['execution']['mode'];seed=spec['execution']['seed']
     allowed=sorted(os.sched_getaffinity(0));control=allowed[0];worker=allowed[2] if len(allowed)>2 else allowed[-1]
-    live=LiveState(out);run=out/'execution';plan_only=mode=='assembly'
+    live=LiveState(out,preparation_started=began);run=out/'execution';plan_only=mode=='assembly'
     from .task_sequence import Sequence
     integration=Sequence(out,seed,live,worker) if mode=='integrated' else None
     try:
@@ -82,7 +82,7 @@ def execute(spec,folder):
         reason=raw.get('reason') or ('completed' if physical else 'terminal_conditions_failed')
         if physical and misses:reason='control_deadline'
         if physical and ready is not None and ready>15.:reason='planning_deadline'
-        if integration is not None:
+        if integration is not None and integration.result is not None:
             success=success and bool(integration.result and integration.result['success'])
             if not integration.result or not integration.result['success']:reason='assembly_stage_failed'
             stages=[timing,dict(max_ms=1000*integration.result.get('publication_max_s',0.),over10=integration.result.get('publication_over_10ms',0)),dict(max_ms=1000*(integration.transfer_result or {}).get('publication_max_s',0.),over10=(integration.transfer_result or {}).get('publication_over_10ms',0))]

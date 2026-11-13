@@ -13,6 +13,7 @@ _force_cpus=None
 _planning_deadline=None
 _active_forces=None
 _tail_cpus=None
+_geometry_priority_set=False
 
 class _DeadlineExpired(TimeoutError):pass
 
@@ -48,6 +49,7 @@ def trial(payload):
 
 
 def _trial_stage(payload):
+    global _geometry_priority_set
     spec,seed,index,stage,record=payload;started=time.perf_counter()
     previous_s=0. if record is None else record.get('preparation_s',record.get('_generation_s',0.))
     try:
@@ -58,7 +60,8 @@ def _trial_stage(payload):
         if stage=='prepare':
             # Change only this owned worker. Force calculations stay at the
             # original priority, so geometry work cannot delay their queue.
-            if os.getpriority(os.PRIO_PROCESS,0)==0:os.nice(5)
+            if not _geometry_priority_set:
+                os.nice(5);_geometry_priority_set=True
             os.sched_setaffinity(0,_planning_cpus)
             return dict(status='prepared',record=prepare_candidate(spec,None,record),index=index)
         os.sched_setaffinity(0,_force_cpus)

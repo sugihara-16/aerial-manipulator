@@ -166,3 +166,34 @@ def test_drive_encoding_switch_keeps_effort_and_physical_state():
     np.testing.assert_allclose(d.actuator_force,old,atol=1e-12)
     np.testing.assert_array_equal(d.qpos,before[0]);np.testing.assert_array_equal(d.qvel,before[1]);assert d.time==before[2]
 
+
+def test_integrated_planning_failure_preserves_reason(tmp_path, monkeypatch):
+    from amsrr_det.task_execution import execute
+    import scripts.run_walking_task as engine
+    monkeypatch.setattr(engine, 'run', lambda *a, **k: dict(
+        task_success=False, reason='planning_timeout', planning_s=15.1))
+    result = execute(make_spec('walking', defaults('walking'), 'integrated'), tmp_path)
+    assert result['success'] is False
+    assert result['reason'] == 'planning_timeout'
+    assert result['assembly'] is None
+    assert result['execution_started'] is False
+
+
+def test_sequence_reference_reuses_storage_without_mutating_physics(tmp_path):
+    import mujoco
+    from amsrr_det.mujoco_model import make_plant
+    from amsrr_det.assembly import make_assembly_plant
+    from amsrr_det.task_sequence import Sequence
+    reduced=make_plant(1,meshes=False)
+    seq=Sequence(tmp_path,1,None)
+    seq.physical=make_assembly_plant(1,[],meshes=False)
+    d=mujoco.MjData(seq.physical.mj);before=d.qpos.copy()
+    def pose(t):
+        q=reduced.mj.qpos0.copy();q[0]=t;return q
+    ref=seq.reference(SimpleNamespace(pose=pose),reduced)
+    workspace=(id(ref.observed),id(ref.kinematics))
+    first=ref.pose(0.);second=ref.pose(1.)
+    assert second[0]-first[0]==pytest.approx(1.)
+    np.testing.assert_array_equal(first,ref.pose(0.))
+    np.testing.assert_array_equal(d.qpos,before)
+    assert (id(ref.observed),id(ref.kinematics))==workspace

@@ -48,7 +48,8 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
     if plan_file is None and selection['status']=='accepted' and execution_plant:
         from amsrr_det.walking_refine import refine
         selection['plan'],selection['refinement']=refine(execution_plant[0],selection['plan'],spec,
-            deadline=min(began+14.1,time.perf_counter()+5.),cpu=min(preparation_cpus) if preparation_cpus else None,cpus=preparation_cpus)
+            # Continuous assembly needs additional setup before the first command.
+            deadline=min(began+(12.2 if integration is not None else 14.1),time.perf_counter()+5.),cpu=min(preparation_cpus) if preparation_cpus else None,cpus=preparation_cpus)
     (out/'request.json').write_text(json.dumps(asdict(spec),indent=2))
     (out/'selection.json').write_text(json.dumps(selection,default=json_value))
     if selection['status']!='accepted' or selection['plan'] is None:
@@ -63,6 +64,11 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
     landing=getattr(control,'landing',None);walk_start=landing.duration if landing else 0.
     task_clock=0.;physical=plant;task_preparation=time.perf_counter()-began
     if integration is not None:
+        if landing:
+            # This data is a desired pose, not the live assembly state.
+            # Fly and morph directly to the descent entry posture.
+            d.qpos[:]=landing.air_target;d.qvel[:]=0.
+            landing.start_at_descent();walk_start=landing.duration
         physical,d=integration.start(plant,d);task_clock=float(d.time)
         audit=WalkingAudit(physical,links,spec,integration.reference(ref,plant),start_time=task_clock+walk_start)
         from amsrr_det.task_sequence import BlendedControl
@@ -90,7 +96,9 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
                 entry=phases.setdefault(phase,dict(seconds=0.,rotor_proxy=0.,joint_proxy=0.,positive_joint_work_j=0.))
                 entry['seconds']+=m.opt.timestep;entry['rotor_proxy']+=whole.energy_rotor-e
                 entry['joint_proxy']+=whole.energy_joint-j;entry['positive_joint_work_j']+=whole.positive_work-w
-                if before<landing.hold_end:
+                # Direct descent has no stationary HOLD; audit its actual
+                # entry clearance over the first control period instead.
+                if before<max(landing.hold_end,.01):
                     for bid,vertices in whole.material:
                         hover_gap=min(hover_gap,float((vertices@d.xmat[bid].reshape(3,3).T+d.xpos[bid])[:,2].min()))
                 if walk_start-.3<=before<walk_start and whole.last_load.sum()>=.2*whole.weight:landing_load_time+=m.opt.timestep

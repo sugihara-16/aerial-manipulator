@@ -59,6 +59,16 @@ class LandingReference:
         self.d.qpos[:]=q;qp,_=self.plant.observation(self.d)
         return static_balance(self.plant.pin,self.plant.meta,qp,fast_lp=True)
 
+    def start_at_descent(self):
+        """Assembly transfer already reaches the airborne landing posture.
+
+        Keep the screened descent and load transfer intact; omit only the
+        preceding hover and morphology continuation. No physical state reset.
+        """
+        self.hover=self.air_target.copy()
+        self.hold_end=0.;self.morph_end=0.
+        self.touch_end=4.5;self.duration=7.5
+
     def interpolate(self,a,b,f):
         mujoco.mj_differentiatePos(self.m,self.delta,1.,a,b)
         q=a.copy();mujoco.mj_integratePos(self.m,q,self.delta,float(f));return q

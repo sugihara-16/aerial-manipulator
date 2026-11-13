@@ -10,8 +10,10 @@ HEADER=128
 
 
 class LiveState:
-    def __init__(self,folder):
+    def __init__(self,folder,*,preparation_started=None):
         self.folder=Path(folder);self.map=None;self.next_wall=0.;self.counter=0;self.ready_wall=None
+        self.preparation_started=preparation_started
+        self.phase=''
 
     def begin(self,model,xml):
         self.folder.mkdir(parents=True,exist_ok=True)
@@ -24,9 +26,13 @@ class LiveState:
         (self.folder/'live.json').write_text(json.dumps(dict(nq=self.nq,nv=self.nv,neq=self.ne,bytes=size)))
 
     def ready(self):
-        if self.ready_wall is None:self.ready_wall=time.perf_counter()
+        if self.ready_wall is None:
+            self.ready_wall=time.perf_counter()
+            if self.preparation_started is not None:
+                (self.folder/'ready.json').write_text(json.dumps(dict(preparation_s=self.ready_wall-self.preparation_started)))
 
     def update(self,data,phase):
+        self.phase=phase
         now=time.monotonic()
         if self.map is None or now<self.next_wall:return
         self.next_wall=now+1/60

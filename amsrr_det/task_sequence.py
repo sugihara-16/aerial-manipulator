@@ -161,40 +161,64 @@ class Sequence:
         mapping=Coordinates(m,robot.mj);qc,vc=mapping.observe(d.qpos,d.qvel)
         observed=mujoco.MjData(task_plant.mj);observed.qpos[:]=qc;observed.qvel[:]=vc
         start,_=task_plant.observation(observed);goal,_=task_plant.observation(target)
-        high=max(start[2],goal[2])+0.6
-        lift=start.copy();lift[2]=high
-        morph=goal.copy();morph[:3]=lift[:3]
-        over=goal.copy();over[2]=high
-        points=[start,lift,morph,over,goal]
-        durations=[]
-        for a,b in zip(points[:-1],points[1:]):
-            delta=pin.difference(task_plant.pin,a,b)
-            durations.append(max(2.,1.875*np.linalg.norm(delta[:3])/.4,1.875*float(abs(delta[3:]).max(initial=0))/.6))
+        # Move and articulate together. Horizontal translation stays straight
+        # in world coordinates; height can use a separate monotone timing.
+        delta=pin.difference(task_plant.pin,start,goal)
+        descent_delay=0.;duration=1.
+        def configuration(t):
+            def smooth(s):
+                s=float(np.clip(s,0.,1.));return s**3*(10-15*s+6*s*s)
+            f=smooth(t/duration/(1-descent_delay/2))
+            q=pin.interpolate(task_plant.pin,start,goal,f)
+            q[:3]=(1-f)*start[:3]+f*goal[:3]
+            q[2]=start[2]+smooth((t/duration-descent_delay)/(1-descent_delay))*(goal[2]-start[2])
+            return q
         control.last_command=d.ctrl.copy()
         allocation=AsyncAllocation(control,self.worker_cpu);calls=[]
+        target_kinematics=task_plant.pin.createData()
         def physical_target(q):
-            robot=forest_posture(p,task_plant,q)
+            robot=forest_posture(p,task_plant,q,target_kinematics)
             v=p.configuration(robot)
             # Preserve actual scene coordinates as references; never assign them.
             if m.nq>p.pin.nq:v[p.pin.nq:]=d.qpos[p.pin.nq:]
             return v
+        # A simultaneous straight descent can sweep a partially formed arm
+        # through the task object. Compare monotone timing curves with the
+        # actual geometry, not simulated task outcomes. Only delay descent
+        # when needed; never add altitude or a stationary waypoint.
+        query=mujoco.MjData(m)
+        robot_geoms=np.array([(m.geom(i).name or '').startswith('m') for i in range(m.ngeom)])
+        path_checks=[]
+        for descent_delay in ([0.,.2,.4,.6] if goal[2]<start[2] else [0.]):
+            early=1-descent_delay/2;late=1-descent_delay
+            distance=np.hypot(np.linalg.norm(goal[:2]-start[:2])/early,abs(goal[2]-start[2])/late)
+            duration=max(2.,1.875*distance/.4,1.875*float(abs(delta[3:]).max(initial=0))/.6/early)
+            clear=True
+            for progress in np.linspace(0.,1.,41):
+                query.qpos[:]=physical_target(configuration(progress*duration))
+                mujoco.mj_kinematics(m,query);mujoco.mj_collision(m,query)
+                contacts=query.contact
+                robot_contact=robot_geoms[contacts.geom1]|robot_geoms[contacts.geom2]
+                if np.any(robot_contact & (contacts.dist<-.0005)):
+                    clear=False;break
+            path_checks.append(dict(descent_delay=descent_delay,clear=clear))
+            if clear:break
+        if not clear:
+            allocation.close()
+            raise SequenceFailure('transfer_path_collision')
         advance=self.advance_plain
         self.resume(advance,'assembly_to_transfer')
         t0=float(d.time)
         failure=None
         try:
-            end=sum(durations)
-            while d.time-t0<end+3.:
+            while d.time-t0<duration:
                 stamp=time.perf_counter();cycle=ControlCycle(m,d,.01);t=float(d.time)-t0
-                i=min(np.searchsorted(np.cumsum(durations),t,side='right'),len(durations)-1)
-                s=float(np.clip((t-sum(durations[:i]))/durations[i],0.,1.));f=s**3*(10-15*s+6*s*s)
-                q=pin.interpolate(task_plant.pin,points[i],points[i+1],f);reference=physical_target(q)
+                reference=physical_target(configuration(t))
                 # The controller also uses position/attitude feedback; reference
                 # derivatives are formed from neighboring target configurations.
                 eps=.001
                 def at(dt):
-                    u=float(np.clip((t+dt-sum(durations[:i]))/durations[i],0.,1.));w=u**3*(10-15*u+6*u*u)
-                    return physical_target(pin.interpolate(task_plant.pin,points[i],points[i+1],w))
+                    return physical_target(configuration(t+dt))
                 qa,qb=at(-eps),at(eps);velocity=np.zeros(m.nv);acc=np.zeros(m.nv)
                 mujoco.mj_differentiatePos(m,velocity,2*eps,qa,qb)
                 for k,j in zip(context['plan']['qi'],context['plan']['vi']):
@@ -209,7 +233,7 @@ class Sequence:
             final=mapping.observe(d.qpos,d.qvel)[0];delta=np.zeros(task_plant.mj.nv);mujoco.mj_differentiatePos(task_plant.mj,delta,1.,final,target.qpos)
             # Record tracking error without resetting the physical state.
             pose_error=float(np.linalg.norm(delta[:3]));joint_error=float(np.max(abs(delta[6:]),initial=0))
-            self.transfer_result=dict(duration_s=float(d.time)-t0,position_error_m=pose_error,joint_error=joint_error,publication_max_s=max(calls,default=0),publication_over_10ms=sum(t>.01 for t in calls),failure=failure)
+            self.transfer_result=dict(duration_s=float(d.time)-t0,planned_duration_s=duration,path='simultaneous_translation_and_articulation',path_checks=path_checks,descent_delay_fraction=descent_delay,position_error_m=pose_error,joint_error=joint_error,publication_max_s=max(calls,default=0),publication_over_10ms=sum(t>.01 for t in calls),failure=failure)
             write(self.out/'transfer.json',self.transfer_result)
             if failure:raise SequenceFailure(failure)
         finally:allocation.close()
@@ -218,6 +242,7 @@ class Sequence:
         m=self.physical.mj;d=self.data
         for _ in range(n):
             self.air.apply(d);mujoco.mj_step(m,d)
+            if self.observer:self.observer.update(d,self.observer.phase)
             if not np.isfinite(d.qpos).all() or np.max(abs(d.qvel))>200:return 'extreme_instability'
             if d.ncon and np.min(d.contact.dist)<-.035:return 'extreme_collision'
         return None
@@ -228,6 +253,7 @@ class Sequence:
             self.air.apply(self.data)
             steps=min(n,max(1,int(np.ceil((self.air.next_update-self.data.time)/self.physical.mj.opt.timestep-1e-9))))
             failure=audit.advance(self.data,steps,**kwargs)
+            if self.observer:self.observer.update(self.data,self.observer.phase)
             if failure:return failure
             n-=steps
         return None
@@ -256,10 +282,13 @@ class Sequence:
     def reference(self,original,task_plant):
         sequence=self
         class PhysicalReference:
+            def __init__(self):
+                self.observed=mujoco.MjData(task_plant.mj)
+                self.kinematics=task_plant.pin.createData()
             def __getattr__(self,name):return getattr(original,name)
             def pose(self,t):
                 q=original.pose(t)
-                data=mujoco.MjData(task_plant.mj);data.qpos[:]=q
+                data=self.observed;data.qpos[:]=q
                 pin_q,_=task_plant.observation(data)
-                return sequence.physical.configuration(forest_posture(sequence.physical,task_plant,pin_q))
+                return sequence.physical.configuration(forest_posture(sequence.physical,task_plant,pin_q,self.kinematics))
         return PhysicalReference()
