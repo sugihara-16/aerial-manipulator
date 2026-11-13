@@ -197,3 +197,31 @@ def test_sequence_reference_reuses_storage_without_mutating_physics(tmp_path):
     np.testing.assert_array_equal(first,ref.pose(0.))
     np.testing.assert_array_equal(d.qpos,before)
     assert (id(ref.observed),id(ref.kinematics))==workspace
+
+
+@pytest.mark.parametrize('budget,success',[(15.,False),(20.,True)])
+def test_walking_budget_reaches_engine_and_acceptance(tmp_path,monkeypatch,budget,success):
+    import amsrr_det.task_execution as execution
+    import amsrr_det.task_live as live
+    import scripts.run_walking_task as engine
+    spec=make_spec('walking',defaults('walking'))
+    spec['execution']['planning_budget_s']=budget
+    monkeypatch.setattr(execution,'time',SimpleNamespace(perf_counter=lambda:0.))
+    monkeypatch.setattr(live,'LiveState',lambda *a,**k:SimpleNamespace(ready_wall=18.,close=lambda:None))
+    def run(*args,**kwargs):
+        assert kwargs['planning_budget_s']==budget
+        return dict(task_success=True,control=dict(max_ms=1.,over10=0))
+    monkeypatch.setattr(engine,'run',run)
+    result=execution.execute(spec,tmp_path)
+    assert result['success'] is success
+    assert result['preparation_s']==18.
+    assert result['reason']==('completed' if success else 'planning_deadline')
+
+
+def test_walking_budget_defaults_and_invalid_values():
+    assert make_spec('walking',defaults('walking'))['execution']['planning_budget_s']==20.
+    for kind in ['grasp','valve']:
+        assert make_spec(kind,defaults(kind))['execution']['planning_budget_s']==15.
+    for value in [True,0.,19.,float('nan'),21.]:
+        spec=make_spec('walking',defaults('walking'));spec['execution']['planning_budget_s']=value
+        with pytest.raises(ValueError):validate_spec(spec)

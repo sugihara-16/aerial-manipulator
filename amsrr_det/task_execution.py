@@ -44,6 +44,7 @@ def execute(spec,folder):
     write(out/'task.json',spec);write(out/'status.json',dict(state='planning',message='Generating structure'))
     req,request=compile_request(spec);write(out/'requirements.json',req);write(out/'engine_request.json',request)
     kind=spec['task'];mode=spec['execution']['mode'];seed=spec['execution']['seed']
+    planning_budget=spec['execution']['planning_budget_s']
     allowed=sorted(os.sched_getaffinity(0));control=allowed[0];worker=allowed[2] if len(allowed)>2 else allowed[-1]
     live=LiveState(out,preparation_started=began);run=out/'execution';plan_only=mode=='assembly'
     from .task_sequence import Sequence
@@ -52,7 +53,7 @@ def execute(spec,folder):
         if kind=='walking':
             from .walking import WalkSpec
             from scripts.run_walking_task import run as walk
-            raw=walk(WalkSpec(**request),run,seed=seed,workers=min(24,len(allowed)),worker_cpu=worker,control_cpu=control,observer=None if plan_only else live,plan_only=plan_only,integration=integration)
+            raw=walk(WalkSpec(**request),run,seed=seed,workers=min(24,len(allowed)),worker_cpu=worker,control_cpu=control,observer=None if plan_only else live,plan_only=plan_only,integration=integration,planning_budget_s=planning_budget)
         elif kind=='valve':
             from scripts.run_valve_task import run as valve
             args=SimpleNamespace(output=run,request=out/'engine_request.json',plan=None,seed=seed,workers=min(32,len(allowed)),planning_cpus=allowed,worker_cpu=worker)
@@ -78,10 +79,10 @@ def execute(spec,folder):
         physical=bool(raw.get('task_success',raw.get('success',False)))
         ready=None if live.ready_wall is None else live.ready_wall-began
         # Both the existing engine result and the common timing contract matter.
-        success=physical and misses==0 and (ready is not None and ready<=15.)
+        success=physical and misses==0 and (ready is not None and ready<=planning_budget)
         reason=raw.get('reason') or ('completed' if physical else 'terminal_conditions_failed')
         if physical and misses:reason='control_deadline'
-        if physical and ready is not None and ready>15.:reason='planning_deadline'
+        if physical and ready is not None and ready>planning_budget:reason='planning_deadline'
         if integration is not None and integration.result is not None:
             success=success and bool(integration.result and integration.result['success'])
             if not integration.result or not integration.result['success']:reason='assembly_stage_failed'

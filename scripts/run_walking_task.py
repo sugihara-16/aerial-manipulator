@@ -38,18 +38,18 @@ def prepare_execution(spec,plan,timestep,control_cpu,*,compiled_plant=None,prepa
     return plant,gait,links,ref,control,d,audit
 
 
-def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,timestep=.0005,air_start=True,observer=None,plan_only=False,integration=None):
+def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,timestep=.0005,air_start=True,observer=None,plan_only=False,integration=None,planning_budget_s=15.):
     out=Path(out);out.mkdir(parents=True,exist_ok=True);began=time.perf_counter()
     from amsrr_det.valve_search import performance_cpus
     preparation_cpus=performance_cpus(set(os.sched_getaffinity(0)));execution_plant=[]
-    # Leave measured setup time inside the same 15 s total acceptance bound.
-    selection=search(spec,seed=seed,workers=workers,budget=14.6,execution_plant=execution_plant) if plan_file is None else json.loads(Path(plan_file).read_text())
+    # Keep the existing preparation reserves inside the requested total budget.
+    selection=search(spec,seed=seed,workers=workers,budget=planning_budget_s-.4,execution_plant=execution_plant) if plan_file is None else json.loads(Path(plan_file).read_text())
     if plan_file is not None:spec=WalkSpec(**selection['request'])
     if plan_file is None and selection['status']=='accepted' and execution_plant:
         from amsrr_det.walking_refine import refine
         selection['plan'],selection['refinement']=refine(execution_plant[0],selection['plan'],spec,
             # Continuous assembly needs additional setup before the first command.
-            deadline=min(began+(12.2 if integration is not None else 14.1),time.perf_counter()+5.),cpu=min(preparation_cpus) if preparation_cpus else None,cpus=preparation_cpus)
+            deadline=min(began+planning_budget_s-(2.8 if integration is not None else .9),time.perf_counter()+5.),cpu=min(preparation_cpus) if preparation_cpus else None,cpus=preparation_cpus)
     (out/'request.json').write_text(json.dumps(asdict(spec),indent=2))
     (out/'selection.json').write_text(json.dumps(selection,default=json_value))
     if selection['status']!='accepted' or selection['plan'] is None:
@@ -78,7 +78,7 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
     m=physical.mj;allocation=AsyncAllocation(control,worker_cpu)
     if observer is not None and integration is None:observer.begin(m,plant.xml)
     planning=task_preparation if integration is not None else time.perf_counter()-began
-    if plan_file is None and integration is None and planning>15.:
+    if plan_file is None and integration is None and planning>planning_budget_s:
         allocation.close();result=dict(task_success=False,reason='planning_timeout',planning_s=planning)
         (out/'result.json').write_text(json.dumps(result,indent=2));return result
     (out/'physical.xml').write_text(physical.xml);np.savez(out/'initial.npz',q=d.qpos,v=d.qvel,ctrl=d.ctrl)
@@ -186,7 +186,7 @@ def run(spec,out,*,seed=1,workers=24,worker_cpu=2,control_cpu=0,plan_file=None,t
         allocation=dict(calls=len(allocation.records),errors=sum(r['error'] is not None for r in allocation.records),max_ms=max((r['calculation_s'] for r in allocation.records),default=0)*1000))
     result['control']['observation_over10']=int(np.count_nonzero(intervals>.01+1e-8))
     result['checks']['control_deadline']=result['control']['over10']==0 and result['control']['observation_over10']==0
-    result['checks']['planning_deadline']=plan_file is not None or planning<=15.
+    result['checks']['planning_deadline']=plan_file is not None or planning<=planning_budget_s
     result['task_success']=all(result['checks'].values())
     for name,value in [('result',result),('calls',calls),('allocations',allocation.records),('states',states),('audit',audit.samples)]:
         (out/(name+'.json')).write_text(json.dumps(value,default=json_value))

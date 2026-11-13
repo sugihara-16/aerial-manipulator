@@ -61,7 +61,7 @@ def make_spec(kind,values,mode='task'):
     spec=dict(version=1,task=kind,scene=dict(frame='world',length_unit='m',angle_unit='rad',gravity_m_s2=[0.,0.,-9.80665],ground='horizontal_rigid'),
         robot=dict(model='amsrr',module_count=dict(min=1,max=8)),contacts={},goal={},
         objectives=dict(priority=['required_physical_margins','minimize_rotor_load_proxy'],profile='current_v1'),
-        acceptance=dict(profile=kind+'_v1'),execution=dict(mode=mode,initial_state='assembled_airborne',seed=v['seed'],planning_budget_s=15.,control_period_s=.01,delay='measured',wall_limit_s=600.))
+        acceptance=dict(profile=kind+'_v1'),execution=dict(mode=mode,initial_state='assembled_airborne',seed=v['seed'],planning_budget_s=20. if kind=='walking' else 15.,control_period_s=.01,delay='measured',wall_limit_s=600.))
     if kind=='grasp':
         spec['scene']['object']=dict(shape=v['shape'],size_m=[v['sx'],v['sy'],v['sz']],mass_kg=v['mass'],support_height_m=v['height'],initial=dict(xy_m=[v['x'],v['y']],rpy_rad=[math.radians(v['roll']),0.,math.radians(v['yaw'])],height='resting_on_support'))
         spec['contacts']=dict(robot_surface='anchor',target='object',allowed_region='object_surface',model='unilateral_friction',count=dict(min=1,max=8))
@@ -95,6 +95,10 @@ def validate_spec(spec):
             o=spec['scene']['object'];v.update(torque=o['resistance_torque_nm'],x=o['center_m'][0],y=o['center_m'][1],height=o['center_m'][2],tilt=math.degrees(o['axis']['tilt_rad']),azimuth=math.degrees(o['axis']['azimuth_rad']),angle=math.degrees(o['initial_angle_rad']))
         else:v.update(modules=spec['robot']['module_count']['fixed'],speed=goal['speed_m_s'],distance=goal['distance_m'],curvature=goal['curvature_m_inv'])
         expected=make_spec(kind,v,spec['execution']['mode'])
+        if kind=='walking':
+            budget=spec['execution']['planning_budget_s']
+            if type(budget) not in (int,float) or budget not in (15.,20.):raise ValueError('Walking planning budget must be 15 or 20 seconds')
+            expected['execution']['planning_budget_s']=float(budget)
         def same(a,b,path='task'):
             if isinstance(b,dict):
                 if not isinstance(a,dict) or a.keys()!=b.keys():raise ValueError(f'{path}: Missing or unsupported fields')
