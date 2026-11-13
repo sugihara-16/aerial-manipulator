@@ -10,6 +10,8 @@
 
 初回は `.venv/bin/python -m pip install -r requirements-gui.txt` を実行してください。LinuxでQtの表示依存が不足する場合は `sudo apt install libxcb-cursor0` が必要です。このPCでは設定済みです。アプリ一覧への登録は `./scripts/install_desktop_entry.sh`。旧ブラウザ版は `./scripts/task_gui.sh --web` で起動できます。
 
+専用GUI・移行動作の動画と、11/12〜13の検証記録は[保管・復元手順](artifacts/release_20261114/README.md)を参照してください。新しい連続歩行の全条件成功率は未達で、旧評価とは分けて記録しています。
+
 以下は、GUI追加前の各固定条件パネルの評価結果です。GUIで入力できる全条件や、合体から後段タスクまでの連続実行すべての成功を保証する値ではありません。
 
 

@@ -1,0 +1,1977 @@
+{
+  "complete": true,
+  "overall": {
+    "successes": 16,
+    "total": 36,
+    "fraction": 0.4444444444444444
+  },
+  "strata": {
+    "modules": {
+      "3": {
+        "successes": 5,
+        "total": 6,
+        "fraction": 0.8333333333333334
+      },
+      "4": {
+        "successes": 5,
+        "total": 6,
+        "fraction": 0.8333333333333334
+      },
+      "5": {
+        "successes": 5,
+        "total": 6,
+        "fraction": 0.8333333333333334
+      },
+      "6": {
+        "successes": 1,
+        "total": 6,
+        "fraction": 0.16666666666666666
+      },
+      "7": {
+        "successes": 0,
+        "total": 6,
+        "fraction": 0.0
+      },
+      "8": {
+        "successes": 0,
+        "total": 6,
+        "fraction": 0.0
+      }
+    },
+    "speed": {
+      "0.22": {
+        "successes": 6,
+        "total": 12,
+        "fraction": 0.5
+      },
+      "0.26": {
+        "successes": 6,
+        "total": 12,
+        "fraction": 0.5
+      },
+      "0.3": {
+        "successes": 4,
+        "total": 12,
+        "fraction": 0.3333333333333333
+      }
+    },
+    "path": {
+      "straight": {
+        "successes": 7,
+        "total": 18,
+        "fraction": 0.3888888888888889
+      },
+      "left": {
+        "successes": 5,
+        "total": 9,
+        "fraction": 0.5555555555555556
+      },
+      "right": {
+        "successes": 4,
+        "total": 9,
+        "fraction": 0.4444444444444444
+      }
+    },
+    "module_speed": {
+      "(3, 0.22)": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5
+      },
+      "(3, 0.26)": {
+        "successes": 2,
+        "total": 2,
+        "fraction": 1.0
+      },
+      "(3, 0.3)": {
+        "successes": 2,
+        "total": 2,
+        "fraction": 1.0
+      },
+      "(4, 0.22)": {
+        "successes": 2,
+        "total": 2,
+        "fraction": 1.0
+      },
+      "(4, 0.26)": {
+        "successes": 2,
+        "total": 2,
+        "fraction": 1.0
+      },
+      "(4, 0.3)": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5
+      },
+      "(5, 0.22)": {
+        "successes": 2,
+        "total": 2,
+        "fraction": 1.0
+      },
+      "(5, 0.26)": {
+        "successes": 2,
+        "total": 2,
+        "fraction": 1.0
+      },
+      "(5, 0.3)": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5
+      },
+      "(6, 0.22)": {
+        "successes": 1,
+        "total": 2,
+        "fraction": 0.5
+      },
+      "(6, 0.26)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(6, 0.3)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(7, 0.22)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(7, 0.26)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(7, 0.3)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(8, 0.22)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(8, 0.26)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      },
+      "(8, 0.3)": {
+        "successes": 0,
+        "total": 2,
+        "fraction": 0.0
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "n3_v22_straight",
+      "success": false,
+      "reason": "transfer_target_not_reached",
+      "modules": 3,
+      "task": {
+        "modules": 3,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 17.332899386063218,
+      "failed_checks": [
+        "distance",
+        "minimum_speed",
+        "mean_speed",
+        "window_speed",
+        "path",
+        "posture",
+        "ground_support",
+        "feet",
+        "other_support",
+        "airborne_landing"
+      ],
+      "control": {
+        "max_ms": 3.105888143181801,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3250,
+            "mean_ms": 0.8961476693646266,
+            "p99_ms": 1.1997184390202156,
+            "max_ms": 3.105888143181801,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.409964170306921,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.0057450272142887,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 27,
+            "max_ms": 0.0076303258538246155,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 2,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 15.590000000001616,
+      "distance_m": 1.110320001186297,
+      "mean_speed_m_s": 0.044412800047242906,
+      "maximum_path_error_m": 3.4842829312048607,
+      "endpoint_path_error_m": 3.4842829312048607,
+      "rotor_burden_hover_ratio": 3.5628833223366687,
+      "landing_and_walk_hover_ratio": 2.9792078651225418,
+      "ground_load_fraction": 0.02339869197607722,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n3_v22_left",
+      "success": true,
+      "reason": "completed",
+      "modules": 3,
+      "task": {
+        "modules": 3,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 18.711549658793956,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.035600133240223,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3034,
+            "mean_ms": 0.9060073875679082,
+            "p99_ms": 1.2345094652846456,
+            "max_ms": 2.035600133240223,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.3945833779871464,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.0817870497703552,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 26,
+            "max_ms": 0.008990056812763214,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 2,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 12.470000000007326,
+      "distance_m": 5.000980517752867,
+      "mean_speed_m_s": 0.2189571154873278,
+      "maximum_path_error_m": 0.02378719091053884,
+      "endpoint_path_error_m": 0.00853259300845476,
+      "rotor_burden_hover_ratio": 0.3417876100796078,
+      "landing_and_walk_hover_ratio": 0.4641667473935108,
+      "ground_load_fraction": 0.7503707948249145,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n3_v26_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 3,
+      "task": {
+        "modules": 3,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 15.780486977193505,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.250548917800188,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2687,
+            "mean_ms": 0.854374704120669,
+            "p99_ms": 1.18009845726192,
+            "max_ms": 2.250548917800188,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.447773538529873,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.0457509197294712,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 26,
+            "max_ms": 0.009453855454921722,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 2,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 11.160000000005725,
+      "distance_m": 5.002648825005126,
+      "mean_speed_m_s": 0.2582678794522405,
+      "maximum_path_error_m": 0.03242803962378786,
+      "endpoint_path_error_m": 0.015852518827262966,
+      "rotor_burden_hover_ratio": 0.4736722079900629,
+      "landing_and_walk_hover_ratio": 0.5618927076890861,
+      "ground_load_fraction": 0.7361181092000366,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n3_v26_right",
+      "success": true,
+      "reason": "completed",
+      "modules": 3,
+      "task": {
+        "modules": 3,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 15.347663685213774,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 1.8696356564760208,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2672,
+            "mean_ms": 0.8660197215472644,
+            "p99_ms": 1.202769004739821,
+            "max_ms": 1.8696356564760208,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.3694190420210361,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.1400869116187096,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 26,
+            "max_ms": 0.00797118991613388,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 2,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 11.020000000005554,
+      "distance_m": 5.003181409246203,
+      "mean_speed_m_s": 0.2603112075560852,
+      "maximum_path_error_m": 0.04170338344758464,
+      "endpoint_path_error_m": 0.014620945668177397,
+      "rotor_burden_hover_ratio": 0.5183298888151995,
+      "landing_and_walk_hover_ratio": 0.6204077924810855,
+      "ground_load_fraction": 0.7050778079029255,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n3_v30_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 3,
+      "task": {
+        "modules": 3,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 15.427394354715943,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.2250982001423836,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2417,
+            "mean_ms": 0.8475274278369629,
+            "p99_ms": 1.1789640970528128,
+            "max_ms": 2.2250982001423836,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.390939112752676,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.1720480397343636,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 25,
+            "max_ms": 0.008637085556983948,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 2,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 11.850000000006569,
+      "distance_m": 5.002597551975525,
+      "mean_speed_m_s": 0.3000958339508673,
+      "maximum_path_error_m": 0.03220996489567573,
+      "endpoint_path_error_m": 0.013003177442783679,
+      "rotor_burden_hover_ratio": 0.4596699192652396,
+      "landing_and_walk_hover_ratio": 0.5882096991463123,
+      "ground_load_fraction": 0.6559061773537526,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n3_v30_left",
+      "success": true,
+      "reason": "completed",
+      "modules": 3,
+      "task": {
+        "modules": 3,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 16.30251999432221,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.268134616315365,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2415,
+            "mean_ms": 0.834572637611788,
+            "p99_ms": 1.2131767626851802,
+            "max_ms": 2.268134616315365,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.3905060477554798,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.171804964542389,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 25,
+            "max_ms": 0.008462928235530853,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 2,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 11.870000000006593,
+      "distance_m": 5.000372016001864,
+      "mean_speed_m_s": 0.3003226436025357,
+      "maximum_path_error_m": 0.0504137014603305,
+      "endpoint_path_error_m": 0.018850641664948587,
+      "rotor_burden_hover_ratio": 0.4798566123617999,
+      "landing_and_walk_hover_ratio": 0.5750216284590953,
+      "ground_load_fraction": 0.6631191214854086,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n4_v22_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 4,
+      "task": {
+        "modules": 4,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 18.795122428797185,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.5223935954272747,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3041,
+            "mean_ms": 0.910424752315872,
+            "p99_ms": 1.2140193954110146,
+            "max_ms": 2.5223935954272747,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.6048327088356018,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.2131789699196815,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 29,
+            "max_ms": 0.008019153028726578,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 15.270000000002362,
+      "distance_m": 5.000954488387236,
+      "mean_speed_m_s": 0.2182869702472002,
+      "maximum_path_error_m": 0.02790738909739316,
+      "endpoint_path_error_m": 0.020962439840288994,
+      "rotor_burden_hover_ratio": 0.39029564908606873,
+      "landing_and_walk_hover_ratio": 0.5358759923068265,
+      "ground_load_fraction": 0.7580329995610033,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n4_v22_right",
+      "success": true,
+      "reason": "completed",
+      "modules": 4,
+      "task": {
+        "modules": 4,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 18.987961074337363,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.4424465373158455,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3021,
+            "mean_ms": 0.9294265674014669,
+            "p99_ms": 1.2327124364674091,
+            "max_ms": 2.4424465373158455,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.4592758379876614,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.3541518710553646,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 30,
+            "max_ms": 0.008864328265190125,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 14.840000000003364,
+      "distance_m": 5.00004708606135,
+      "mean_speed_m_s": 0.22016940053006268,
+      "maximum_path_error_m": 0.034707597341155944,
+      "endpoint_path_error_m": 0.002448474720702205,
+      "rotor_burden_hover_ratio": 0.3933549013378236,
+      "landing_and_walk_hover_ratio": 0.4994106506656009,
+      "ground_load_fraction": 0.7377215171361107,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n4_v26_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 4,
+      "task": {
+        "modules": 4,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 18.822715722955763,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.5406451895833015,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2670,
+            "mean_ms": 0.8930763869794008,
+            "p99_ms": 1.2282419670373201,
+            "max_ms": 2.5406451895833015,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.5380787663161755,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.1835810728371143,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 30,
+            "max_ms": 0.00683218240737915,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 13.930000000005485,
+      "distance_m": 5.001556875168892,
+      "mean_speed_m_s": 0.26049775391394986,
+      "maximum_path_error_m": 0.023592731659796255,
+      "endpoint_path_error_m": 0.0153930797711126,
+      "rotor_burden_hover_ratio": 0.4178175521844398,
+      "landing_and_walk_hover_ratio": 0.5596787568100817,
+      "ground_load_fraction": 0.7264660774109511,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n4_v26_left",
+      "success": true,
+      "reason": "completed",
+      "modules": 4,
+      "task": {
+        "modules": 4,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 18.97987492568791,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.6057246141135693,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2677,
+            "mean_ms": 0.9271886250505841,
+            "p99_ms": 1.2562907487154003,
+            "max_ms": 2.6057246141135693,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.4432165771722794,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.0111453011631966,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 31,
+            "max_ms": 0.010329298675060272,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 15.030000000002921,
+      "distance_m": 5.003834757670037,
+      "mean_speed_m_s": 0.2596696812478539,
+      "maximum_path_error_m": 0.02559749684035564,
+      "endpoint_path_error_m": 0.0038590529155620398,
+      "rotor_burden_hover_ratio": 0.42173940107450403,
+      "landing_and_walk_hover_ratio": 0.6370965023447652,
+      "ground_load_fraction": 0.7480969802241054,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n4_v30_straight",
+      "success": false,
+      "reason": "transfer_target_not_reached",
+      "modules": 4,
+      "task": {
+        "modules": 4,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 19.011332330293953,
+      "failed_checks": [
+        "distance",
+        "minimum_speed",
+        "mean_speed",
+        "window_speed",
+        "path",
+        "posture",
+        "ground_support",
+        "feet",
+        "other_support",
+        "airborne_landing"
+      ],
+      "control": {
+        "max_ms": 2.3588151670992374,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3250,
+            "mean_ms": 0.9375266226438376,
+            "p99_ms": 1.2194368988275528,
+            "max_ms": 2.3588151670992374,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.4203712344169617,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.1194762773811817,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 29,
+            "max_ms": 0.008984003216028214,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 13.000000000007653,
+      "distance_m": 0.12670210745822952,
+      "mean_speed_m_s": 0.005068084298308488,
+      "maximum_path_error_m": 6.096275179361568,
+      "endpoint_path_error_m": 6.096275179361568,
+      "rotor_burden_hover_ratio": 4.037519089782863,
+      "landing_and_walk_hover_ratio": 3.1438069359595184,
+      "ground_load_fraction": 0.0,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n4_v30_right",
+      "success": true,
+      "reason": "completed",
+      "modules": 4,
+      "task": {
+        "modules": 4,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 18.825384232681245,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.4161669425666332,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2417,
+            "mean_ms": 0.9049527120904016,
+            "p99_ms": 1.2542333826422694,
+            "max_ms": 2.4161669425666332,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.481381244957447,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.1529689654707909,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 31,
+            "max_ms": 0.010205898433923721,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 15.020000000002945,
+      "distance_m": 5.0024069689464685,
+      "mean_speed_m_s": 0.30008440125510394,
+      "maximum_path_error_m": 0.021926743491580008,
+      "endpoint_path_error_m": 0.003066255530817064,
+      "rotor_burden_hover_ratio": 0.45230952423227694,
+      "landing_and_walk_hover_ratio": 0.6646217271926171,
+      "ground_load_fraction": 0.6941741193405644,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n5_v22_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 5,
+      "task": {
+        "modules": 5,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 19.149278864264488,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 3.1358585692942142,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3038,
+            "mean_ms": 0.9669993468820852,
+            "p99_ms": 1.331105949357152,
+            "max_ms": 3.1358585692942142,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.507357694208622,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.0042199864983559,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 35,
+            "max_ms": 0.008214730769395828,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 4,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 18.829999999994065,
+      "distance_m": 5.002993423341664,
+      "mean_speed_m_s": 0.2186622999701825,
+      "maximum_path_error_m": 0.04831214593023319,
+      "endpoint_path_error_m": 0.004796283777599166,
+      "rotor_burden_hover_ratio": 0.185379844927684,
+      "landing_and_walk_hover_ratio": 0.3803561009619802,
+      "ground_load_fraction": 0.8857076311864645,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n5_v22_left",
+      "success": true,
+      "reason": "completed",
+      "modules": 5,
+      "task": {
+        "modules": 5,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 19.28455945989117,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 3.140913788229227,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3045,
+            "mean_ms": 0.9763420216910456,
+            "p99_ms": 1.3361550867557526,
+            "max_ms": 3.140913788229227,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.5295627526938915,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 0.9026420302689075,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 36,
+            "max_ms": 0.008526258170604706,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 4,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 18.219999999995487,
+      "distance_m": 5.002257950000721,
+      "mean_speed_m_s": 0.2179633093671824,
+      "maximum_path_error_m": 0.049427056921790044,
+      "endpoint_path_error_m": 0.035681405820188264,
+      "rotor_burden_hover_ratio": 0.19003326150573402,
+      "landing_and_walk_hover_ratio": 0.37383994313495894,
+      "ground_load_fraction": 0.8787246110873925,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n5_v26_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 5,
+      "task": {
+        "modules": 5,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 19.258325478062034,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.4961926974356174,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2680,
+            "mean_ms": 0.9401224861130008,
+            "p99_ms": 1.322146956808865,
+            "max_ms": 2.4961926974356174,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.664572861045599,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 0.9413869120180607,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 35,
+            "max_ms": 0.010339077562093735,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 4,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 17.50999999999714,
+      "distance_m": 5.002708555061312,
+      "mean_speed_m_s": 0.25920769715219816,
+      "maximum_path_error_m": 0.06880141141530598,
+      "endpoint_path_error_m": 0.024186572506977293,
+      "rotor_burden_hover_ratio": 0.20138229474373942,
+      "landing_and_walk_hover_ratio": 0.5207330275307765,
+      "ground_load_fraction": 0.8839499440210353,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n5_v26_right",
+      "success": true,
+      "reason": "completed",
+      "modules": 5,
+      "task": {
+        "modules": 5,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 19.26144740311429,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.7538626454770565,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2676,
+            "mean_ms": 0.960977290727766,
+            "p99_ms": 1.3072704896330833,
+            "max_ms": 2.7538626454770565,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.827312633395195,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 0.9962301701307297,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 34,
+            "max_ms": 0.013458076864480972,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 3,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 15.150000000002642,
+      "distance_m": 5.0001337272711375,
+      "mean_speed_m_s": 0.2596123430554134,
+      "maximum_path_error_m": 0.029230492772631685,
+      "endpoint_path_error_m": 0.003199143635873835,
+      "rotor_burden_hover_ratio": 0.5176380354877947,
+      "landing_and_walk_hover_ratio": 0.622670371367654,
+      "ground_load_fraction": 0.6288916007417962,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.10263113141232182,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n5_v30_straight",
+      "success": false,
+      "reason": "no_candidate",
+      "modules": 5,
+      "task": {
+        "modules": 5,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 15.48933081375435,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": null,
+      "generation_status": "no_candidate"
+    },
+    {
+      "id": "n5_v30_left",
+      "success": true,
+      "reason": "completed",
+      "modules": 5,
+      "task": {
+        "modules": 5,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 19.33045418560505,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 2.9936647042632103,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 2416,
+            "mean_ms": 0.9508554519937429,
+            "p99_ms": 1.3589197769761086,
+            "max_ms": 2.9936647042632103,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.5148650854825974,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 0.9655468165874481,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 36,
+            "max_ms": 0.010115094482898712,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 4,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 18.779999999994182,
+      "distance_m": 5.002327683879018,
+      "mean_speed_m_s": 0.30025976493728285,
+      "maximum_path_error_m": 0.05177524206668453,
+      "endpoint_path_error_m": 0.014779989387993648,
+      "rotor_burden_hover_ratio": 0.28529196492653314,
+      "landing_and_walk_hover_ratio": 0.5209794915820254,
+      "ground_load_fraction": 0.8245776744787259,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n6_v22_straight",
+      "success": true,
+      "reason": "completed",
+      "modules": 6,
+      "task": {
+        "modules": 6,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 19.3425733782351,
+      "failed_checks": [],
+      "control": {
+        "max_ms": 3.0272058211266994,
+        "over10": 0,
+        "stages": {
+          "task": {
+            "calls": 3042,
+            "mean_ms": 0.9449829263545274,
+            "p99_ms": 1.3469123700633647,
+            "max_ms": 3.0272058211266994,
+            "over10": 0,
+            "observation_over10": 0
+          },
+          "assembly": {
+            "max_ms": 1.8246793188154697,
+            "over10": 0
+          },
+          "transfer": {
+            "max_ms": 1.1100643314421177,
+            "over10": 0
+          },
+          "transition_hold": {
+            "calls": 43,
+            "max_ms": 0.008659902960062027,
+            "over10": 0
+          }
+        }
+      },
+      "feet": 4,
+      "generation_complete": true,
+      "generation_status": "accepted",
+      "assembly_success": true,
+      "assembly_s": 18.84999999999402,
+      "distance_m": 5.000019234204742,
+      "mean_speed_m_s": 0.21815092644768183,
+      "maximum_path_error_m": 0.05445089688146978,
+      "endpoint_path_error_m": 0.03973940439020615,
+      "rotor_burden_hover_ratio": 0.31151223995506855,
+      "landing_and_walk_hover_ratio": 0.45196481161687035,
+      "ground_load_fraction": 0.7930556414627511,
+      "face_alignment": null,
+      "landing_face_alignment": {
+        "maximum_loaded_angle_deg": 0.0,
+        "off_face_load_fraction": 0.0
+      }
+    },
+    {
+      "id": "n6_v22_right",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "modules": 6,
+      "task": {
+        "modules": 6,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 21.31067355768755,
+      "failed_checks": [],
+      "control": null,
+      "feet": null,
+      "generation_complete": true,
+      "generation_status": "accepted"
+    },
+    {
+      "id": "n6_v26_straight",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "modules": 6,
+      "task": {
+        "modules": 6,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.771765366196632,
+      "failed_checks": [],
+      "control": null,
+      "feet": null,
+      "generation_complete": true,
+      "generation_status": "accepted"
+    },
+    {
+      "id": "n6_v26_left",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "modules": 6,
+      "task": {
+        "modules": 6,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 21.3580428250134,
+      "failed_checks": [],
+      "control": null,
+      "feet": null,
+      "generation_complete": true,
+      "generation_status": "accepted"
+    },
+    {
+      "id": "n6_v30_straight",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "modules": 6,
+      "task": {
+        "modules": 6,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 21.115206072106957,
+      "failed_checks": [],
+      "control": null,
+      "feet": null,
+      "generation_complete": true,
+      "generation_status": "accepted"
+    },
+    {
+      "id": "n6_v30_right",
+      "success": false,
+      "reason": "initial_planning_deadline",
+      "modules": 6,
+      "task": {
+        "modules": 6,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.556017038878053,
+      "failed_checks": [],
+      "control": null,
+      "feet": null,
+      "generation_complete": true,
+      "generation_status": "accepted"
+    },
+    {
+      "id": "n7_v22_straight",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 7,
+      "task": {
+        "modules": 7,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.596417625900358,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n7_v22_left",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 7,
+      "task": {
+        "modules": 7,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.677724397741258,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n7_v26_straight",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 7,
+      "task": {
+        "modules": 7,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.542912140022963,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n7_v26_right",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 7,
+      "task": {
+        "modules": 7,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.73589903395623,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n7_v30_straight",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 7,
+      "task": {
+        "modules": 7,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.683510328177363,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n7_v30_left",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 7,
+      "task": {
+        "modules": 7,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.799682719632983,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n8_v22_straight",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 8,
+      "task": {
+        "modules": 8,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.457092084921896,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n8_v22_right",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 8,
+      "task": {
+        "modules": 8,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.496363979764283,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n8_v26_straight",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 8,
+      "task": {
+        "modules": 8,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.745798924937844,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": false,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n8_v26_left",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 8,
+      "task": {
+        "modules": 8,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.600607175845653,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": null,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n8_v30_straight",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 8,
+      "task": {
+        "modules": 8,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      },
+      "preparation_s": 20.723988546058536,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": null,
+      "generation_status": "planning_timeout"
+    },
+    {
+      "id": "n8_v30_right",
+      "success": false,
+      "reason": "planning_timeout",
+      "modules": 8,
+      "task": {
+        "modules": 8,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      },
+      "preparation_s": 20.67754252301529,
+      "failed_checks": [],
+      "control": {},
+      "feet": null,
+      "generation_complete": null,
+      "generation_status": "planning_timeout"
+    }
+  ],
+  "issues": [],
+  "failure_concentration": {
+    "method": "one-sided Fisher exact; Holm across all predeclared group comparisons",
+    "alpha": 0.05,
+    "clear_concentration": false,
+    "equal_failure_rates_certified": false,
+    "mechanical_cause_review_required": true,
+    "comparisons": [
+      {
+        "axis": "modules",
+        "group": "3",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.6333333333333333,
+        "p_value": 0.9958886780518659,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "modules",
+        "group": "4",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.6333333333333333,
+        "p_value": 0.9958886780518659,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "modules",
+        "group": "5",
+        "total": 6,
+        "failures": 1,
+        "failure_fraction": 0.16666666666666666,
+        "other_failure_fraction": 0.6333333333333333,
+        "p_value": 0.9958886780518659,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "modules",
+        "group": "6",
+        "total": 6,
+        "failures": 5,
+        "failure_fraction": 0.8333333333333334,
+        "other_failure_fraction": 0.5,
+        "p_value": 0.14725596983661499,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "modules",
+        "group": "7",
+        "total": 6,
+        "failures": 6,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.4666666666666667,
+        "p_value": 0.01989945538332635,
+        "adjusted_p_value": 0.5969836614997905,
+        "clear_concentration": false
+      },
+      {
+        "axis": "modules",
+        "group": "8",
+        "total": 6,
+        "failures": 6,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.4666666666666667,
+        "p_value": 0.01989945538332635,
+        "adjusted_p_value": 0.5969836614997905,
+        "clear_concentration": false
+      },
+      {
+        "axis": "speed",
+        "group": "0.22",
+        "total": 12,
+        "failures": 6,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.5833333333333334,
+        "p_value": 0.7967741935483871,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "speed",
+        "group": "0.26",
+        "total": 12,
+        "failures": 6,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.5833333333333334,
+        "p_value": 0.7967741935483871,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "speed",
+        "group": "0.3",
+        "total": 12,
+        "failures": 8,
+        "failure_fraction": 0.6666666666666666,
+        "other_failure_fraction": 0.5,
+        "p_value": 0.278272154245458,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "path",
+        "group": "straight",
+        "total": 18,
+        "failures": 11,
+        "failure_fraction": 0.6111111111111112,
+        "other_failure_fraction": 0.5,
+        "p_value": 0.36899315319298864,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "path",
+        "group": "left",
+        "total": 9,
+        "failures": 4,
+        "failure_fraction": 0.4444444444444444,
+        "other_failure_fraction": 0.5925925925925926,
+        "p_value": 0.8770856507230256,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "path",
+        "group": "right",
+        "total": 9,
+        "failures": 5,
+        "failure_fraction": 0.5555555555555556,
+        "other_failure_fraction": 0.5555555555555556,
+        "p_value": 0.6522904237031045,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(3, 0.22)",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.5588235294117647,
+        "p_value": 0.8095238095238095,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(3, 0.26)",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.5882352941176471,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(3, 0.3)",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.5882352941176471,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(4, 0.22)",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.5882352941176471,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(4, 0.26)",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.5882352941176471,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(4, 0.3)",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.5588235294117647,
+        "p_value": 0.8095238095238095,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(5, 0.22)",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.5882352941176471,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(5, 0.26)",
+        "total": 2,
+        "failures": 0,
+        "failure_fraction": 0.0,
+        "other_failure_fraction": 0.5882352941176471,
+        "p_value": 1.0,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(5, 0.3)",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.5588235294117647,
+        "p_value": 0.8095238095238095,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(6, 0.22)",
+        "total": 2,
+        "failures": 1,
+        "failure_fraction": 0.5,
+        "other_failure_fraction": 0.5588235294117647,
+        "p_value": 0.8095238095238095,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(6, 0.26)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(6, 0.3)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(7, 0.22)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(7, 0.26)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(7, 0.3)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(8, 0.22)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(8, 0.26)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      },
+      {
+        "axis": "module_speed",
+        "group": "(8, 0.3)",
+        "total": 2,
+        "failures": 2,
+        "failure_fraction": 1.0,
+        "other_failure_fraction": 0.5294117647058824,
+        "p_value": 0.30158730158730157,
+        "adjusted_p_value": 1.0,
+        "clear_concentration": false
+      }
+    ]
+  },
+  "energy": {
+    "successful_cases": 16,
+    "valid": true,
+    "mean": 0.3775044317483486,
+    "maximum": 0.5183298888151995,
+    "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy",
+    "by_modules": {
+      "3": {
+        "successful_cases": 5,
+        "valid": true,
+        "mean": 0.4546632477023819,
+        "maximum": 0.5183298888151995,
+        "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy"
+      },
+      "4": {
+        "successful_cases": 5,
+        "valid": true,
+        "mean": 0.4151034055830226,
+        "maximum": 0.45230952423227694,
+        "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy"
+      },
+      "5": {
+        "successful_cases": 5,
+        "valid": true,
+        "mean": 0.27594508031829706,
+        "maximum": 0.5176380354877947,
+        "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy"
+      },
+      "6": {
+        "successful_cases": 1,
+        "valid": true,
+        "mean": 0.31151223995506855,
+        "maximum": 0.31151223995506855,
+        "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy"
+      },
+      "7": {
+        "successful_cases": 0,
+        "valid": false,
+        "mean": null,
+        "maximum": null,
+        "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy"
+      },
+      "8": {
+        "successful_cases": 0,
+        "valid": false,
+        "mean": null,
+        "maximum": null,
+        "basis": "arithmetic mean of successful task ratios; failed tasks remain in success and bias evaluation; uncalibrated rotor proxy"
+      }
+    }
+  },
+  "initial": {
+    "max_s": 21.3580428250134,
+    "over20": 17
+  },
+  "task_publication": {
+    "count": 50448,
+    "max_ms": 3.140913788229227,
+    "p99_ms": 1.3126739580184221,
+    "over10": 0
+  },
+  "new_observation_application": {
+    "count": 50386,
+    "max_ms": 22.000000000105047,
+    "p99_ms": 11.000000000052523,
+    "over10": 949
+  },
+  "maximum_ms_by_stage": {
+    "task": 3.140913788229227,
+    "assembly": 1.827312633395195,
+    "transfer": 1.3541518710553646,
+    "transition_hold": 0.013458076864480972
+  },
+  "success_and_statistical_bias_pass": false,
+  "energy_pass": true,
+  "mechanical_failure_review_required": true,
+  "source_changes": false
+}

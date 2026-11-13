@@ -1,0 +1,398 @@
+{
+  "purpose": "Fixed 3..8 module, 5 metre ground walking; requested speeds .22/.26/.30 m/s, measured travel at least .20 m/s; straight and radius 3.33 m curves. Actual load-bearing steps required.",
+  "acceptance": {
+    "minimum_success_fraction": 0.8,
+    "planning_seconds": 15,
+    "publication_seconds": 0.01,
+    "measured_delay": true,
+    "no_clear_failure_concentration": true,
+    "groups": [
+      "modules",
+      "speed",
+      "path",
+      "module_speed"
+    ],
+    "failure_test": "one-sided Fisher exact with Holm; also review common physical failure mechanisms",
+    "alpha": 0.05,
+    "maximum_mean_rotor_hover_proxy": 0.4,
+    "review_intersection": "Explicitly review .30 m/s curved tasks and repeated 3-module tracking / 7-module candidate failures observed during development; do not use nonsignificant omnibus tests as proof of equal performance."
+  },
+  "cases": [
+    {
+      "id": "n3_v22_straight",
+      "seed": 289298230,
+      "task": {
+        "modules": 3,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v22_left",
+      "seed": 676320657,
+      "task": {
+        "modules": 3,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v26_straight",
+      "seed": 1033226135,
+      "task": {
+        "modules": 3,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v26_right",
+      "seed": 995376570,
+      "task": {
+        "modules": 3,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v30_straight",
+      "seed": 104611663,
+      "task": {
+        "modules": 3,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n3_v30_left",
+      "seed": 1297096871,
+      "task": {
+        "modules": 3,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v22_straight",
+      "seed": 546264627,
+      "task": {
+        "modules": 4,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v22_right",
+      "seed": 1235311758,
+      "task": {
+        "modules": 4,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v26_straight",
+      "seed": 125745953,
+      "task": {
+        "modules": 4,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v26_left",
+      "seed": 1974988815,
+      "task": {
+        "modules": 4,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v30_straight",
+      "seed": 1031669671,
+      "task": {
+        "modules": 4,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n4_v30_right",
+      "seed": 474664094,
+      "task": {
+        "modules": 4,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v22_straight",
+      "seed": 673210472,
+      "task": {
+        "modules": 5,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v22_left",
+      "seed": 1117897524,
+      "task": {
+        "modules": 5,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v26_straight",
+      "seed": 1439279908,
+      "task": {
+        "modules": 5,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v26_right",
+      "seed": 580950864,
+      "task": {
+        "modules": 5,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v30_straight",
+      "seed": 1846621626,
+      "task": {
+        "modules": 5,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n5_v30_left",
+      "seed": 109187464,
+      "task": {
+        "modules": 5,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v22_straight",
+      "seed": 1658543865,
+      "task": {
+        "modules": 6,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v22_right",
+      "seed": 1994038022,
+      "task": {
+        "modules": 6,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v26_straight",
+      "seed": 798917654,
+      "task": {
+        "modules": 6,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v26_left",
+      "seed": 1558562810,
+      "task": {
+        "modules": 6,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v30_straight",
+      "seed": 1721944190,
+      "task": {
+        "modules": 6,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n6_v30_right",
+      "seed": 1259048042,
+      "task": {
+        "modules": 6,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v22_straight",
+      "seed": 1883826498,
+      "task": {
+        "modules": 7,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v22_left",
+      "seed": 898405716,
+      "task": {
+        "modules": 7,
+        "speed": 0.22,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v26_straight",
+      "seed": 349453618,
+      "task": {
+        "modules": 7,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v26_right",
+      "seed": 1080419351,
+      "task": {
+        "modules": 7,
+        "speed": 0.26,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v30_straight",
+      "seed": 1007504046,
+      "task": {
+        "modules": 7,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n7_v30_left",
+      "seed": 1691918709,
+      "task": {
+        "modules": 7,
+        "speed": 0.3,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v22_straight",
+      "seed": 1020460278,
+      "task": {
+        "modules": 8,
+        "speed": 0.22,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v22_right",
+      "seed": 1662859609,
+      "task": {
+        "modules": 8,
+        "speed": 0.22,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v26_straight",
+      "seed": 939802106,
+      "task": {
+        "modules": 8,
+        "speed": 0.26,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v26_left",
+      "seed": 1565609770,
+      "task": {
+        "modules": 8,
+        "speed": 0.26,
+        "curvature": 0.3,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v30_straight",
+      "seed": 2084350989,
+      "task": {
+        "modules": 8,
+        "speed": 0.3,
+        "curvature": 0.0,
+        "distance": 5.0
+      }
+    },
+    {
+      "id": "n8_v30_right",
+      "seed": 351834064,
+      "task": {
+        "modules": 8,
+        "speed": 0.3,
+        "curvature": -0.3,
+        "distance": 5.0
+      }
+    }
+  ],
+  "seed_protocol": "Fresh independent system-random seeds drawn once after implementation freeze; task inputs and acceptance unchanged.",
+  "generation_randomness": "Drawn once after fixed source587 (source584 plus regenerated common single-part bounds cache); all failures count, no seed screening or retries.",
+  "panel_stopping": "Every case keeps the 15 s planning and 10 ms publication acceptance; stop for repair when 80 percent is impossible even if all remaining cases succeed, or on runner error.",
+  "procedure_note": "Source fixed after development 598: task-driven generation, transverse root seed sign from existing heading, COM feedback 49/14. Fresh generation seed drawn once per unchanged task, before observing any evaluation result. No retries or replacement.",
+  "planning_budget_s": 20.0,
+  "scope": "Fresh generation, individual takeoff and assembly, simultaneous flight/morph, descent, ground load transfer, 5 m walking; same inputs and seeds as panel599",
+  "execution_environment": {
+    "host": "local",
+    "concurrency": 1,
+    "planning": "all allowed cores",
+    "physics_cpu": 8,
+    "control_worker_cpu": 2,
+    "nice": -15,
+    "rendering": false,
+    "live_publication": true
+  }
+}

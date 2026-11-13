@@ -1,0 +1,333 @@
+[
+  {
+    "case": "grasp_gpu",
+    "video": "artifacts/gui_recordings_v2_20261111/grasp_gpu/gui_full.mp4",
+    "task_spec": {
+      "version": 1,
+      "task": "grasp",
+      "scene": {
+        "frame": "world",
+        "length_unit": "m",
+        "angle_unit": "rad",
+        "gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.80665
+        ],
+        "ground": "horizontal_rigid",
+        "object": {
+          "shape": "ellipsoid",
+          "size_m": [
+            0.55,
+            0.7,
+            0.5
+          ],
+          "mass_kg": 2.0,
+          "support_height_m": 0.2,
+          "initial": {
+            "xy_m": [
+              2.5,
+              1.5
+            ],
+            "rpy_rad": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height": "resting_on_support"
+          }
+        }
+      },
+      "robot": {
+        "model": "amsrr",
+        "module_count": {
+          "min": 1,
+          "max": 8
+        }
+      },
+      "contacts": {
+        "robot_surface": "anchor",
+        "target": "object",
+        "allowed_region": "object_surface",
+        "model": "unilateral_friction",
+        "count": {
+          "min": 1,
+          "max": 8
+        }
+      },
+      "goal": {
+        "quantity": "object_pose",
+        "frame": "world",
+        "translation_m": [
+          0.4,
+          0.0,
+          0.0
+        ],
+        "orientation": "preserve_initial",
+        "minimum_transport_clearance_m": 0.1,
+        "release": true
+      },
+      "objectives": {
+        "priority": [
+          "required_physical_margins",
+          "minimize_rotor_load_proxy"
+        ],
+        "profile": "current_v1"
+      },
+      "acceptance": {
+        "profile": "grasp_v1"
+      },
+      "execution": {
+        "mode": "integrated",
+        "initial_state": "individual_ground_random",
+        "seed": 1,
+        "planning_budget_s": 15.0,
+        "control_period_s": 0.01,
+        "delay": "measured",
+        "wall_limit_s": 600.0,
+        "assembly": {
+          "nearest_distance_m": [
+            1.0,
+            2.0
+          ],
+          "deadline_after_hover_s": 30.0,
+          "final_hover_s": 1.0
+        }
+      }
+    },
+    "success": true,
+    "modules": 4,
+    "contacts": null,
+    "preparation_s": 13.9237593379803,
+    "control_max_ms": 5.96444308757782,
+    "control_over10": 0,
+    "simulation_s": 91.16112499870832,
+    "wall_s": 422.86240398464724,
+    "display_fps": 62.505535592461754,
+    "video_info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 900,
+          "avg_frame_rate": "60/1",
+          "nb_frames": "25661"
+        }
+      ],
+      "format": {
+        "duration": "427.684000"
+      }
+    },
+    "result": "artifacts/gui_recordings_v2_20261111/grasp_gpu/runs/e0ef50561029425a8d784ef423c55ee2/result.json"
+  },
+  {
+    "case": "valve_reserved",
+    "video": "artifacts/gui_recordings_v2_20261111/valve_reserved/gui_full.mp4",
+    "task_spec": {
+      "version": 1,
+      "task": "valve",
+      "scene": {
+        "frame": "world",
+        "length_unit": "m",
+        "angle_unit": "rad",
+        "gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.80665
+        ],
+        "ground": "horizontal_rigid",
+        "object": {
+          "model": "valve_with_bar_v1",
+          "center_m": [
+            3,
+            2,
+            1.5
+          ],
+          "axis": {
+            "tilt_rad": 0.0,
+            "azimuth_rad": 0.0
+          },
+          "initial_angle_rad": 0.0,
+          "resistance_torque_nm": 24
+        }
+      },
+      "robot": {
+        "model": "amsrr",
+        "module_count": {
+          "min": 1,
+          "max": 8
+        }
+      },
+      "contacts": {
+        "robot_surface": "anchor",
+        "target": "object.bar",
+        "allowed_region": [
+          "local_y_positive",
+          "local_y_negative"
+        ],
+        "model": "unilateral_friction",
+        "count": {
+          "min": 1,
+          "max": 4
+        }
+      },
+      "goal": {
+        "quantity": "joint_angle",
+        "target": "object.hinge",
+        "change_rad": 3.141592653589793,
+        "release": true
+      },
+      "objectives": {
+        "priority": [
+          "required_physical_margins",
+          "minimize_rotor_load_proxy"
+        ],
+        "profile": "current_v1"
+      },
+      "acceptance": {
+        "profile": "valve_v1"
+      },
+      "execution": {
+        "mode": "integrated",
+        "initial_state": "individual_ground_random",
+        "seed": 1,
+        "planning_budget_s": 15.0,
+        "control_period_s": 0.01,
+        "delay": "measured",
+        "wall_limit_s": 600.0,
+        "assembly": {
+          "nearest_distance_m": [
+            1.0,
+            2.0
+          ],
+          "deadline_after_hover_s": 30.0,
+          "final_hover_s": 1.0
+        }
+      }
+    },
+    "success": true,
+    "modules": 3,
+    "contacts": 2,
+    "preparation_s": 12.028731283266097,
+    "control_max_ms": 1.8365411087870598,
+    "control_over10": 0,
+    "simulation_s": 92.67349999867255,
+    "wall_s": 252.90915966406465,
+    "display_fps": 62.508511633906735,
+    "video_info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 900,
+          "avg_frame_rate": "60/1",
+          "nb_frames": "15465"
+        }
+      ],
+      "format": {
+        "duration": "257.750000"
+      }
+    },
+    "result": "artifacts/gui_recordings_v2_20261111/valve_reserved/runs/84e5929255b54cc5b64279aad6ad7427/result.json"
+  },
+  {
+    "case": "walking_reserved",
+    "video": "artifacts/gui_recordings_v2_20261111/walking_reserved/gui_full.mp4",
+    "task_spec": {
+      "version": 1,
+      "task": "walking",
+      "scene": {
+        "frame": "world",
+        "length_unit": "m",
+        "angle_unit": "rad",
+        "gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.80665
+        ],
+        "ground": "horizontal_rigid"
+      },
+      "robot": {
+        "model": "amsrr",
+        "module_count": {
+          "fixed": 6
+        }
+      },
+      "contacts": {
+        "robot_surface": "dock",
+        "target": "ground",
+        "allowed_region": "upper_surface",
+        "model": "unilateral_friction",
+        "count": {
+          "min": 2,
+          "max": 8
+        },
+        "support": "alternating_feet"
+      },
+      "goal": {
+        "quantity": "body_path",
+        "frame": "world",
+        "speed_m_s": 0.5,
+        "distance_m": 5.0,
+        "curvature_m_inv": 0.0,
+        "initial_xy_m": [
+          0.0,
+          0.0
+        ],
+        "initial_heading_rad": 0.0
+      },
+      "objectives": {
+        "priority": [
+          "required_physical_margins",
+          "minimize_rotor_load_proxy"
+        ],
+        "profile": "current_v1",
+        "energy_interval": "walking"
+      },
+      "acceptance": {
+        "profile": "walking_v1"
+      },
+      "execution": {
+        "mode": "integrated",
+        "initial_state": "individual_ground_random",
+        "seed": 1,
+        "planning_budget_s": 15.0,
+        "control_period_s": 0.01,
+        "delay": "measured",
+        "wall_limit_s": 600.0,
+        "assembly": {
+          "nearest_distance_m": [
+            1.0,
+            2.0
+          ],
+          "deadline_after_hover_s": 30.0,
+          "final_hover_s": 1.0
+        }
+      }
+    },
+    "success": true,
+    "modules": 6,
+    "contacts": null,
+    "preparation_s": 14.552107735071331,
+    "control_max_ms": 2.5506848469376564,
+    "control_over10": 0,
+    "simulation_s": 63.033000000118946,
+    "wall_s": 127.34119858313352,
+    "display_fps": 62.51836214961348,
+    "video_info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 900,
+          "avg_frame_rate": "60/1",
+          "nb_frames": "7927"
+        }
+      ],
+      "format": {
+        "duration": "132.117000"
+      }
+    },
+    "result": "artifacts/gui_recordings_v2_20261111/walking_reserved/runs/96c6a5e5ca85482c966772524bf5d13e/result.json"
+  }
+]

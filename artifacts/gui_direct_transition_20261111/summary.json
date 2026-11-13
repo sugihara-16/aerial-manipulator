@@ -1,0 +1,399 @@
+[
+  {
+    "case": "grasp_clear",
+    "success": true,
+    "modules": 4,
+    "contacts": null,
+    "preparation_s": 8.586330275982618,
+    "control_max_ms": 1.5043406747281551,
+    "control_over10": 0,
+    "transfer": {
+      "duration_s": 19.780000000020106,
+      "planned_duration_s": 19.771293435141683,
+      "path": "simultaneous_translation_and_articulation",
+      "path_checks": [
+        {
+          "descent_delay": 0.0,
+          "clear": false
+        },
+        {
+          "descent_delay": 0.2,
+          "clear": true
+        }
+      ],
+      "descent_delay_fraction": 0.2,
+      "position_error_m": 0.0010081741357444271,
+      "joint_error": 0.8901163234536689,
+      "publication_max_s": 0.0006052278913557529,
+      "publication_over_10ms": 0,
+      "failure": null
+    },
+    "task_entry_s": 19.780000000020106,
+    "old_task_entry_s": 37.039999999611915,
+    "wall_s": 244.57094618305564,
+    "simulation_s": 73.85024999911766,
+    "video": "artifacts/gui_direct_transition_20261111/grasp_clear/gui_full.mp4",
+    "video_info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 900,
+          "avg_frame_rate": "60/1",
+          "nb_frames": "14942"
+        }
+      ],
+      "format": {
+        "duration": "249.034000"
+      }
+    },
+    "display_fps": 62.50887494696027,
+    "result": "artifacts/gui_direct_transition_20261111/grasp_clear/runs/30aaef38813e481590fb2a003606120e/result.json",
+    "input_unchanged": true,
+    "task_spec": {
+      "version": 1,
+      "task": "grasp",
+      "scene": {
+        "frame": "world",
+        "length_unit": "m",
+        "angle_unit": "rad",
+        "gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.80665
+        ],
+        "ground": "horizontal_rigid",
+        "object": {
+          "shape": "ellipsoid",
+          "size_m": [
+            0.55,
+            0.7,
+            0.5
+          ],
+          "mass_kg": 2,
+          "support_height_m": 0.2,
+          "initial": {
+            "xy_m": [
+              2.5,
+              1.5
+            ],
+            "rpy_rad": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height": "resting_on_support"
+          }
+        }
+      },
+      "robot": {
+        "model": "amsrr",
+        "module_count": {
+          "min": 1,
+          "max": 8
+        }
+      },
+      "contacts": {
+        "robot_surface": "anchor",
+        "target": "object",
+        "allowed_region": "object_surface",
+        "model": "unilateral_friction",
+        "count": {
+          "min": 1,
+          "max": 8
+        }
+      },
+      "goal": {
+        "quantity": "object_pose",
+        "frame": "world",
+        "translation_m": [
+          0.4,
+          0.0,
+          0.0
+        ],
+        "orientation": "preserve_initial",
+        "minimum_transport_clearance_m": 0.1,
+        "release": true
+      },
+      "objectives": {
+        "priority": [
+          "required_physical_margins",
+          "minimize_rotor_load_proxy"
+        ],
+        "profile": "current_v1"
+      },
+      "acceptance": {
+        "profile": "grasp_v1"
+      },
+      "execution": {
+        "mode": "integrated",
+        "initial_state": "individual_ground_random",
+        "seed": 1,
+        "planning_budget_s": 15.0,
+        "control_period_s": 0.01,
+        "delay": "measured",
+        "wall_limit_s": 600.0,
+        "assembly": {
+          "nearest_distance_m": [
+            1.0,
+            2.0
+          ],
+          "deadline_after_hover_s": 30.0,
+          "final_hover_s": 1.0
+        }
+      }
+    }
+  },
+  {
+    "case": "valve_clear",
+    "success": true,
+    "modules": 3,
+    "contacts": 2,
+    "preparation_s": 9.03474498493597,
+    "control_max_ms": 1.4701648615300655,
+    "control_over10": 0,
+    "transfer": {
+      "duration_s": 15.220000000072673,
+      "planned_duration_s": 15.213187783057073,
+      "path": "simultaneous_translation_and_articulation",
+      "path_checks": [
+        {
+          "descent_delay": 0.0,
+          "clear": true
+        }
+      ],
+      "descent_delay_fraction": 0.0,
+      "position_error_m": 0.0015591117928089383,
+      "joint_error": 1.4977547270118563,
+      "publication_max_s": 0.0007723919115960598,
+      "publication_over_10ms": 0,
+      "failure": null
+    },
+    "task_entry_s": 15.220000000072673,
+    "old_task_entry_s": 28.869999999784945,
+    "wall_s": 176.03828456485644,
+    "simulation_s": 78.98937499899614,
+    "video": "artifacts/gui_direct_transition_20261111/valve_clear/gui_full.mp4",
+    "video_info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 900,
+          "avg_frame_rate": "60/1",
+          "nb_frames": "10831"
+        }
+      ],
+      "format": {
+        "duration": "180.517000"
+      }
+    },
+    "display_fps": 62.512833127547125,
+    "result": "artifacts/gui_direct_transition_20261111/valve_clear/runs/75a496741fa446eebe4c328770276fca/result.json",
+    "input_unchanged": true,
+    "task_spec": {
+      "version": 1,
+      "task": "valve",
+      "scene": {
+        "frame": "world",
+        "length_unit": "m",
+        "angle_unit": "rad",
+        "gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.80665
+        ],
+        "ground": "horizontal_rigid",
+        "object": {
+          "model": "valve_with_bar_v1",
+          "center_m": [
+            3,
+            2,
+            1.5
+          ],
+          "axis": {
+            "tilt_rad": 0.0,
+            "azimuth_rad": 0.0
+          },
+          "initial_angle_rad": 0.0,
+          "resistance_torque_nm": 24
+        }
+      },
+      "robot": {
+        "model": "amsrr",
+        "module_count": {
+          "min": 1,
+          "max": 8
+        }
+      },
+      "contacts": {
+        "robot_surface": "anchor",
+        "target": "object.bar",
+        "allowed_region": [
+          "local_y_positive",
+          "local_y_negative"
+        ],
+        "model": "unilateral_friction",
+        "count": {
+          "min": 1,
+          "max": 4
+        }
+      },
+      "goal": {
+        "quantity": "joint_angle",
+        "target": "object.hinge",
+        "change_rad": 3.141592653589793,
+        "release": true
+      },
+      "objectives": {
+        "priority": [
+          "required_physical_margins",
+          "minimize_rotor_load_proxy"
+        ],
+        "profile": "current_v1"
+      },
+      "acceptance": {
+        "profile": "valve_v1"
+      },
+      "execution": {
+        "mode": "integrated",
+        "initial_state": "individual_ground_random",
+        "seed": 1,
+        "planning_budget_s": 15.0,
+        "control_period_s": 0.01,
+        "delay": "measured",
+        "wall_limit_s": 600.0,
+        "assembly": {
+          "nearest_distance_m": [
+            1.0,
+            2.0
+          ],
+          "deadline_after_hover_s": 30.0,
+          "final_hover_s": 1.0
+        }
+      }
+    }
+  },
+  {
+    "case": "walking_clear",
+    "success": true,
+    "modules": 6,
+    "contacts": null,
+    "preparation_s": 13.958229475189,
+    "control_max_ms": 2.189002465456724,
+    "control_over10": 0,
+    "transfer": {
+      "duration_s": 8.019999999981309,
+      "planned_duration_s": 8.013802950419677,
+      "path": "simultaneous_translation_and_articulation",
+      "path_checks": [
+        {
+          "descent_delay": 0.0,
+          "clear": true
+        }
+      ],
+      "descent_delay_fraction": 0.0,
+      "position_error_m": 0.0018619721716930172,
+      "joint_error": 2.60711767216354,
+      "publication_max_s": 0.0006403960287570953,
+      "publication_over_10ms": 0,
+      "failure": null
+    },
+    "task_entry_s": 15.519999999981309,
+    "old_task_entry_s": 32.25000000001938,
+    "wall_s": 81.57735515804961,
+    "simulation_s": 46.25350000003883,
+    "video": "artifacts/gui_direct_transition_20261111/walking_clear/gui_full.mp4",
+    "video_info": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1440,
+          "height": 900,
+          "avg_frame_rate": "60/1",
+          "nb_frames": "5158"
+        }
+      ],
+      "format": {
+        "duration": "85.967000"
+      }
+    },
+    "display_fps": 62.5299344844337,
+    "result": "artifacts/gui_direct_transition_20261111/walking_clear/runs/a2a9ad7ee85341849c26aaa552d0004d/result.json",
+    "input_unchanged": true,
+    "task_spec": {
+      "version": 1,
+      "task": "walking",
+      "scene": {
+        "frame": "world",
+        "length_unit": "m",
+        "angle_unit": "rad",
+        "gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.80665
+        ],
+        "ground": "horizontal_rigid"
+      },
+      "robot": {
+        "model": "amsrr",
+        "module_count": {
+          "fixed": 6
+        }
+      },
+      "contacts": {
+        "robot_surface": "dock",
+        "target": "ground",
+        "allowed_region": "upper_surface",
+        "model": "unilateral_friction",
+        "count": {
+          "min": 2,
+          "max": 8
+        },
+        "support": "alternating_feet"
+      },
+      "goal": {
+        "quantity": "body_path",
+        "frame": "world",
+        "speed_m_s": 0.5,
+        "distance_m": 5.0,
+        "curvature_m_inv": 0.0,
+        "initial_xy_m": [
+          0.0,
+          0.0
+        ],
+        "initial_heading_rad": 0.0
+      },
+      "objectives": {
+        "priority": [
+          "required_physical_margins",
+          "minimize_rotor_load_proxy"
+        ],
+        "profile": "current_v1",
+        "energy_interval": "walking"
+      },
+      "acceptance": {
+        "profile": "walking_v1"
+      },
+      "execution": {
+        "mode": "integrated",
+        "initial_state": "individual_ground_random",
+        "seed": 1,
+        "planning_budget_s": 15.0,
+        "control_period_s": 0.01,
+        "delay": "measured",
+        "wall_limit_s": 600.0,
+        "assembly": {
+          "nearest_distance_m": [
+            1.0,
+            2.0
+          ],
+          "deadline_after_hover_s": 30.0,
+          "final_hover_s": 1.0
+        }
+      }
+    },
+    "distance_m": 5.001448774656194,
+    "entry_clearance_m": 0.6183149486696364
+  }
+]
